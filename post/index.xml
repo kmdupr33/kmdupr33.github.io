@@ -6,8 +6,140 @@
     <description>Recent content in Posts on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 14 Jan 2016 02:20:53 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 20 Jan 2016 10:43:26 -0500</lastBuildDate>
     <atom:link href="http://kmdupr33.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Getting started with Gomock</title>
+      <link>http://kmdupr33.github.io/post/getting-started-with-gomock/</link>
+      <pubDate>Wed, 20 Jan 2016 10:43:26 -0500</pubDate>
+      
+      <guid>http://kmdupr33.github.io/post/getting-started-with-gomock/</guid>
+      <description>
+
+&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing&#34;&gt;my last post&lt;/a&gt;, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&amp;rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&amp;rsquo;s a brief tutorial on how to get started with gomock.&lt;/p&gt;
+
+&lt;h3 id=&#34;your-first-mock-utilizing-test:6cd9afeec5930d76953b73f2578dd3db&#34;&gt;Your first mock-utilizing test&lt;/h3&gt;
+
+&lt;p&gt;To get started using gomock, first follow the installation instructions laid out in the gomock &lt;a href=&#34;https://github.com/golang/mock&#34;&gt;repo&amp;rsquo;s readme&lt;/a&gt;. Once you&amp;rsquo;ve installed gomock, you can start generating mocks for your tests. Let&amp;rsquo;s explore how gomock works with an example.&lt;/p&gt;
+
+&lt;p&gt;Suppose you&amp;rsquo;re writing a simple server that allows users to lookup go programmers (gophers) by name. The handler function for that server might look something like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; FindHandler(gf GopherFinder) http.HandlerFunc {
+
+	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt;(w http.ResponseWriter, r &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;http.Request) {
+
+		gopher, err &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gf.Find(r.URL.Path[&lt;span style=&#34;color: #666666&#34;&gt;1&lt;/span&gt;:])
+		&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;nil&lt;/span&gt; {
+			w.WriteHeader(&lt;span style=&#34;color: #666666&#34;&gt;500&lt;/span&gt;)
+			&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt;
+		}
+
+		gopherBytes, err &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; json.Marshal(gopher)
+		&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;nil&lt;/span&gt; {
+			w.WriteHeader(&lt;span style=&#34;color: #666666&#34;&gt;500&lt;/span&gt;)
+			&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt;
+		}
+
+		w.Write(gopherBytes)
+	}
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now, say we want to write a unit test that ensures that this function works properly. The first thing that this function should do is pull the gopher&amp;rsquo;s name data off of the &lt;code&gt;Request&lt;/code&gt; struct and pass that name into the &lt;code&gt;Find()&lt;/code&gt; method of the &lt;code&gt;GopherFinder&lt;/code&gt;. With Gomock, we can create a mock &lt;code&gt;GopherFinder&lt;/code&gt; that will fail the test if it does not receive a call to &lt;code&gt;Find()&lt;/code&gt; with the appropriate arguments.&lt;/p&gt;
+
+&lt;p&gt;First, we generate the file that will allow us to mock &lt;code&gt;GopherFinder&lt;/code&gt; by running following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mockgen -destination mock_gopher_finder.go \
+github.com/kmdupr33/philhackerblogcode \
+GopherFinder
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This command takes two arguments. The first argument is an import path leading to the &lt;em&gt;interfaces&lt;/em&gt; that you want to mock. The second argument is a comma separate list of interfaces to mock.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;The command also takes several flags, but the most import flag to pass in is the &lt;code&gt;-destination&lt;/code&gt; flag. This flag specifies the the file you want the mock source code to live in. Without this flag, the generated mock code is simply printed to standard output.&lt;/p&gt;
+
+&lt;p&gt;Now that we&amp;rsquo;ve generated the code to support our mock &lt;code&gt;GopherFinder&lt;/code&gt;, we can create a mock for a test of the &lt;code&gt;FindHandler&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;package&lt;/span&gt; philhackerblogcode_test
+
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;import&lt;/span&gt; (
+	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+
+	. &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;github.com/kmdupr33/philhackerblogcode&amp;quot;&lt;/span&gt;
+
+	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+	&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;github.com/kmdupr33/philhackerblogcode/mock_philhackerblogcode&amp;quot;&lt;/span&gt;
+)
+
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestHandler(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+
+	mockCtrl &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
+	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;defer&lt;/span&gt; mockCtrl.Finish()
+	mgf &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_philhackerblogcode.NewMockGopherFinder(mockCtrl)
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;	mgf.EXPECT().Find(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;)
+&lt;/span&gt;
+	h &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; FindHandler(mgf)
+
+	wr &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; httptest.NewRecorder()
+	url, _ &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; url.Parse(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;http://gopherfinder.com/andrewgerrand&amp;quot;&lt;/span&gt;)
+	r &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&lt;/span&gt;http.Request{URL: url}
+
+	h(wr, r)
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The highlighted line above is the call where you actually specify which methods the mock &lt;code&gt;GopherFinder&lt;/code&gt; is expecting to receive during the test. Here we tell the mock that we&amp;rsquo;re expecting a call to the &lt;code&gt;Find()&lt;/code&gt; method with an argument of &amp;ldquo;andrewgerrand.&amp;rdquo;&lt;/p&gt;
+
+&lt;h1 id=&#34;handling-circular-dependencies:6cd9afeec5930d76953b73f2578dd3db&#34;&gt;Handling Circular Dependencies&lt;/h1&gt;
+
+&lt;p&gt;Notice that the package for the above snippet of code is &lt;code&gt;philhackerblogcode_test&lt;/code&gt; instead of &lt;code&gt;philhackerblogcode&lt;/code&gt;. Typically, tests are placed in the same package as the code that those tests exercise, but if you do this when using gomock you are probably going to introduce a circular dependency between the package you are testing and the package that contains the generated mock code.&lt;/p&gt;
+
+&lt;p&gt;The mockgen commmand generates files that are in the package mock_&amp;lt;package_containing_interfaces_to_be_mocked&amp;gt;. The mock package generated by mockgen will likely depend on the package that you&amp;rsquo;re testing and the package you are testing, if the tests live in that package, will depend on the mock package.&lt;/p&gt;
+
+&lt;p&gt;The way to avoid this circular dependency is to place your tests in a package that&amp;rsquo;s different from the package you are testing. Next, have your test code import both the package you&amp;rsquo;d like to test and the mock package that the test depends upon. As Andrew Gerrand points out in his &lt;a href=&#34;https://www.youtube.com/watch?v=ndmB0bj7eyw&#34;&gt;testing techniques talk&lt;/a&gt;, this is a standard way of avoiding circular circular dependencies while testing.&lt;/p&gt;
+
+&lt;h1 id=&#34;stubbing-with-gomock:6cd9afeec5930d76953b73f2578dd3db&#34;&gt;Stubbing with gomock&lt;/h1&gt;
+
+&lt;p&gt;The above test ensures that the &lt;code&gt;HandlerFunc&lt;/code&gt; returned by &lt;code&gt;GetHandler&lt;/code&gt; calls the &lt;code&gt;GopherFinder&lt;/code&gt; with the appropriate arguments, but the &lt;code&gt;HandlerFunc&lt;/code&gt; has more behavior that we can test. One of the things the &lt;code&gt;HandlerFunc&lt;/code&gt; should do is respond with a 500 if the &lt;code&gt;GopherFinder&lt;/code&gt; returns an error while finding a gopher. In order to test this additional behavior, we need to force the &lt;code&gt;GopherFinder&lt;/code&gt; to return an error for the purposes of the test.&lt;/p&gt;
+
+&lt;p&gt;Fortunately, Gomock also allows us to do exactly this. It allows the mocks it generates to behave like stubs.&lt;sup&gt;2&lt;/sup&gt; You can specify the return value that should be returned by using the &lt;code&gt;Return()&lt;/code&gt; method on the result of calling &lt;code&gt;EXPECT()&lt;/code&gt; and the method you are expecting:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestHandler(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+	mgf &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_philhackerblogcode.NewMockGopherFinder(mockCtrl)
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;	mgf.EXPECT().
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		Find(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;).
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		Return(Gopher{}, errors.New(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;error for test purposes&amp;quot;&lt;/span&gt;))
+&lt;/span&gt;
+	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+
+	wr &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; httptest.NewRecorder()
+	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+	r &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&lt;/span&gt;http.Request{URL: url}
+
+	h(wr, r)
+
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; wr.Code &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;500&lt;/span&gt; {
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		t.Errorf(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Expected code: %d, actual code: %d&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #666666&#34;&gt;500&lt;/span&gt;, wr.Code)
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;	}
+&lt;/span&gt;}
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Because we&amp;rsquo;ve told the mock &lt;code&gt;GopherFinder&lt;/code&gt; to return an error when its &lt;code&gt;Find()&lt;/code&gt; method is called, we can test to see that the &lt;code&gt;HandlerFunc&lt;/code&gt; actually writes out a 500 response code when the &lt;code&gt;GopherFinder&lt;/code&gt; returns an error.&lt;/p&gt;
+
+&lt;h2 id=&#34;notes:6cd9afeec5930d76953b73f2578dd3db&#34;&gt;Notes&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;The mockgen command can also be run in &amp;ldquo;source mode.&amp;rdquo; In source mode, you simply pass in the source file containing interfaces to be mocked as an argument. See &lt;a href=&#34;https://github.com/golang/mock#running-mockgen&#34;&gt;the docs&lt;/a&gt; for more info.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;For more on the difference between mocks and stubs, see Martin Fowler&amp;rsquo;s &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;Mocks aren&amp;rsquo;t Stubs&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Should we use mocking libraries for go testing?</title>
@@ -80,7 +212,7 @@
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Of course, this is a contrived example, but its enough to help convey the idea of a mock. As you can see, the test will fail if the mock doesn&amp;rsquo;t receive a call with the appropriate arguments. The mock has been &amp;ldquo;pre-programmed&amp;rdquo; to expect a call to Send() with specify arguments and that expectation must be fulfilled in order for the test to pass.&lt;/p&gt;
+&lt;p&gt;Of course, this is a contrived example, but its enough to help convey the idea of a mock. As you can see, the test will fail if the mock doesn&amp;rsquo;t receive a call with the appropriate arguments. The mock has been &amp;ldquo;pre-programmed&amp;rdquo; to expect a call to Send() with specific arguments and that expectation must be fulfilled in order for the test to pass.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s quickly define another word: &amp;ldquo;test double.&amp;rdquo; Test doubles are objects that are used instead of a &amp;ldquo;real object&amp;rdquo; to facilitate testing. A mock is a test double, but not all test doubles are mocks.&lt;/p&gt;
 
@@ -997,92 +1129,6 @@ Par for the next course: 5&lt;/blockquote&gt;
 &lt;p&gt;My hope is to eventually have &lt;a href=&#34;https://github.com/kmdupr33/iosched&#34;&gt;a fork of Google&amp;rsquo;s IOSched app&lt;/a&gt; that allows us to unit test all of its business logic. Making a non-trivial app like IOSched unit testable will tell us a lot about what it really takes to unit test Android apps. We might find out that unit testing Android apps is just too impractical. Either way, I look forward to exploring how we might pull this off.&lt;/p&gt;
 
 &lt;p&gt;You can check out my progress towards this goal by looking at the aforementioned fork of the IOSched repo. I&amp;rsquo;ll try to make sure the master branch always has something that is semi-polished in it. I make no guarantees about other branches. I&amp;rsquo;d love to work with others toward this goal. If people are interested in contributing to the repo, I&amp;rsquo;ll put together some code standards and guidelines for contributing.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>An Introduction to Unit Testing on Android</title>
-      <link>http://kmdupr33.github.io/2015/05/29/making-the-most-of-android-studios-unit-testing-support/</link>
-      <pubDate>Fri, 29 May 2015 11:23:14 +0000</pubDate>
-      
-      <guid>http://kmdupr33.github.io/2015/05/29/making-the-most-of-android-studios-unit-testing-support/</guid>
-      <description>&lt;p&gt;Yesterday at IO Extended Orlando, I gave a talk on testing. What follows is a written version of the presentation I gave.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png&#34; alt=&#34;IO Testing Talk-01&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Android 1.2 introduced unit testing support. Now, we can run junit tests on the jvm while we&amp;rsquo;re developing our apps. During my talk, we&amp;rsquo;ll discuss the following questions:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Why should anyone care about this new feature?&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;What the heck is unit testing anyways?&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Briefly, I&amp;rsquo;ll also mention some of the challenges of writing unit tests for Android.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-02.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-02.png&#34; alt=&#34;IO Testing Talk-02&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Before we get into those questions, let me introduce myself. I&amp;rsquo;m Matt Dupree. I&amp;rsquo;m a wannabe philosophy professor turned wannabe tech entrepreneur, which is just a fancy way of saying that I studied philosophy as an undergrad and graduate student, decided I didn&amp;rsquo;t want to be poor, and become a software developer about 2 years ago. That&amp;rsquo;s a bit of an oversimplification, but you&amp;rsquo;re not here to hear about my career choices. In case you care to know more, you can check out &lt;a href=&#34;http://philosophicalhacker.com/2014/04/21/why-im-glad-my-dream-job-didnt-work-out/&#34;&gt;this post&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-03.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-03.png&#34; alt=&#34;IO Testing Talk-03&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Many of us don&amp;rsquo;t really do a lot of testing for Android. This is unfortunate because there are plenty of cases where writing tests can be very useful. Writing unit tests, moreover, can be particularly useful for getting targeted info on whether a certain class is working correctly. Here&amp;rsquo;s a little experiment designed to show the value of writing unit tests on Android.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34; alt=&#34;IO Testing Talk-04&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s say we were working on Google&amp;rsquo;s IO Sched app from last year. The above screenshot is a shot of the &lt;code&gt;SessionDetailActivity&lt;/code&gt;. This is where the user can view the details about a session and add that session to their IO schedule. The business logic for what happens when the user presses the plus button on the screen is as follows:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;If the user taps the plus button before the IO session has happened, the session is added to the user&amp;rsquo;s schedule and a notification is set to remind the user that the IO session is coming up.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;If the user taps the plus button after the IO session has happened, when the user returns to the screen, they will be presented with a card that asks them for feedback about the session.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;If the session has already been added to the user&amp;rsquo;s schedule, when they enter the session detail screen, they should see a &amp;ldquo;check&amp;rdquo; button instead of a &amp;ldquo;plus&amp;rdquo; button, and pressing this button should perform the reverse of one of the two above operations, depending on whether the check button is pressed before or after the IO session.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;You could test all of this business logic manually, but its must faster to write unit tests that verify that the &lt;code&gt;SessionDetailActivity&lt;/code&gt; does all of this correctly. Unit tests that verify this behavior will complete in seconds. Manual testing, on the other hand, takes over a minute to complete:&lt;/p&gt;
-
-&lt;p&gt;Now, at this point, some of you make the following argument:&lt;/p&gt;
-
-&lt;blockquote&gt;Because unit tests don&#39;t actually tell you anything about the overall behavior of the system, there will be bugs that will slip past a unit test. Thus, we should prefer manual testing (or perhaps automated functional UI tests) over unit testing.&lt;/blockquote&gt;
-
-&lt;p&gt;This is a tricky argument, but fortunately, I have a lot of experience with those.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-05.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-05.png&#34; alt=&#34;IO Testing Talk-05&#34; /&gt;&lt;/a&gt;Here&amp;rsquo;s my response to the above argument: Even if there are bugs that can slip past unit tests, we are better off, all other things being equal, if we have unit tests than if we didn&amp;rsquo;t have unit tests. To see this, let&amp;rsquo;s look at the three possible outcomes for unit testing the functionality I mentioned above.&lt;/p&gt;
-
-&lt;p&gt;In the first outcome (on the far left), our unit tests pass and our functional tests pass. Everything works great, so we can celebrate with &lt;a href=&#34;http://slime.clay.io/game/slime&#34;&gt;a game of slimeball&lt;/a&gt; or something.&lt;/p&gt;
-
-&lt;p&gt;In the second outcome, our unit tests fail. In that situation, we know exactly where the problem is, which makes debugging much easier.&lt;/p&gt;
-
-&lt;p&gt;In the final outcome (on the far right), our unit tests pass, but our functional tests fail. The above argument against unit testing focuses on this scenario, but even if we find ourselves in this scenario, we&amp;rsquo;re better off having unit tests because we have a good head start on where the problem lies: because our unit test passed, we know that the problem is not within the &lt;code&gt;SessionDetailActivity&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;So, in any possible scenario where we&amp;rsquo;ve run our unit and functional tests, we&amp;rsquo;re better off, all other things being equal, having our unit tests rather than not having them. Astute readers will point out that the &amp;ldquo;all other things being equal&amp;rdquo; clause of my claim is almost never satisfied when working on a project because of the time investment we make into writing unit tests. That&amp;rsquo;s true. Technically, I need to make a stronger claim about the general value of unit tests in order to completely convince you that they are worth the time investment (especially on Android), but I think I&amp;rsquo;ve said enough to show that its worth exploring whether unit tests would be useful for the project that you&amp;rsquo;re working on.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-06.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-06.png&#34; alt=&#34;IO Testing Talk-06&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;We just talked a lot about unit tests, but we never did ask a simple question: what exactly is a unit test? Some of us might have a clear definition of a unit test in our mind, but until recently, I was not one of those people. I actually think that there&amp;rsquo;s a good amount of confusion over what unit tests are, especially among android developers. The confusion on the definition of a unit test is, I think, a result of us being pretty vague when we use the term. We can see this if we look at two unit test cases mentioned on developer.android.com that are both called &amp;ldquo;unit tests,&amp;rdquo; but in fact have very different properties. The first snippet is found on &lt;a href=&#34;http://developer.android.com/training/activity-testing/activity-unit-testing.html&#34;&gt;the android page about unit testing activities&lt;/a&gt;:&lt;/p&gt;
-
-&lt;p&gt;This second snippet is found on the android page entitled &amp;rdquo;&lt;a href=&#34;http://developer.android.com/training/testing/unit-testing/local-unit-tests.html&#34;&gt;Building Effective Unit Tests&lt;/a&gt;&amp;ldquo;:&lt;/p&gt;
-
-&lt;p&gt;In spite of their differences, these two snippets are both called &amp;ldquo;unit tests.&amp;rdquo; I don&amp;rsquo;t mean to quibble over definitions, but our sloppiness with the word &amp;ldquo;unit test&amp;rdquo; is, I think, unhelpful. Here&amp;rsquo;s a more precise definition:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;A unit test is a test that can verify that &lt;strong&gt;all of the code&lt;/strong&gt; in exactly one &lt;strong&gt;non-trivial&lt;/strong&gt; class is working correctly. If this test fails, we know that the problem is located in that class being tested.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;On this definition, tests like &lt;code&gt;MyActivityUnitTestCase&lt;/code&gt; in the first snippet would not count as a unit tests because, as &lt;a href=&#34;http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;I&amp;rsquo;ve pointed out elsewhere&lt;/a&gt;, when testing activities, we often lack enough control over the pre-act state required to exercise different branches of the methods we want to test. Moreover, &lt;a href=&#34;http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;activities often contain dependencies that aren&amp;rsquo;t injected&lt;/a&gt;, so if a test fails, it may fail because of an error in the code of one of the non-mocked dependencies within the activity being tested.&lt;/p&gt;
-
-&lt;p&gt;I just talked about dependencies that have been &amp;ldquo;injected.&amp;ldquo; &amp;rdquo;Dependency injection&amp;rdquo; and its related phrases happens to be another term that has some sloppy usage. Here&amp;rsquo;s my understanding of dependency injection:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-07.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-07.png&#34; alt=&#34;IO Testing Talk-07&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This definition is a shortened version of the definition that Martin Fowler, the guy who coined the term &amp;ldquo;dependency injection,&amp;rdquo; offers in his &lt;a href=&#34;http://martinfowler.com/articles/injection.html&#34;&gt;article on dependency injection&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;If we accept my definition of &amp;ldquo;unit testing&amp;rdquo; and my interpretation of Martin Fowler&amp;rsquo;s definition of &amp;ldquo;dependency injection&amp;rdquo;, then we can say that &amp;ldquo;unit testing&amp;rdquo; Android component classes (e.g., Activities, Services, Fragments, etc.) turns out to be extremely difficult largely because there&amp;rsquo;s no way to have true dependency injection for our app component class, classes that typically hold much of the business logic that we want to test.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-08.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-08.png&#34; alt=&#34;IO Testing Talk-08&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;ve written extensively about this topic in my series entitled &amp;ldquo;&lt;a href=&#34;http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Against Android Unit Tests.&lt;/a&gt;&amp;rdquo; I&amp;rsquo;ve also made some suggestions on how we might write unit tests for android &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
