@@ -201,8 +201,6 @@
     
         
     
-        
-    
 
     
         
@@ -226,34 +224,6 @@
 </nav>
 
     </div>
-
-    
-        
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">How to Make Our Android Apps Unit Testable (Pt. 1)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p><p>Unit testing Android apps is hard, and sometimes it can be impossible. For <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">the past two posts</a>, I’ve been explaining why android unit testing is so difficult. The main conclusion from <a href="http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">the last post</a> is that it is difficult/impossible to unit test our Android applications because of the way we are encouraged to structure them. Google seems to want us to put our business logic in app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s, etc.). This approach to writing Android applications is what I have been calling the “standard way.”</p>
-
-<p>In this post, I outline an alternative approach to structuring Android applications that will make it easier to unit test them. As I pointed out in <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">the introduction to this series</a>, the approach that I suggest is a generalization of the approach that Square uses to <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html">remove Fragments from their applications</a>. Since this approach is inspired by the folks at Square, I will call it “the square way.”</p>
-
-<p>The heart of the square way way is this: remove all business logic from app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s) and place that logic into “business objects,” POJO objects whose dependencies are injected, android-specific implementations of android-agnostic interfaces. If we follow the square way of developing our apps, we will be in a better position to unit test them. In this post, I explain how the square way would have us refactor non-UI app components like the <code>SessionCalendarService</code> I’ve been discussing for the past few posts.</p>
- <a class="read-more" href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        
-            
-        
-        
-        <time class="post-date" datetime="2015-05-01T11:30:24Z">
-            1 May 2015
-        </time>
-    </footer>
-</article>
 
     
         
@@ -500,6 +470,37 @@
         
         <time class="post-date" datetime="2015-01-18T13:32:20Z">
             18 Jan 2015
+        </time>
+    </footer>
+</article>
+
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2014/10/03/an-alternative-multiproject-setup-for-android-studio/">An Alternative Multiproject Setup for Android Studio</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Google&rsquo;s Gradle Plugin user guide recommends a method for configuring your gradle files to build multiple projects. That method has some shortcomings. In this post, I will briefly explain Google&rsquo;s recommended configuration, note its shortcomings, and recommend a different way to configure your gradle files to support multi-project setups in Android Studio. The Google Way This picture illustrates how Google suggests we handle multi-project setups: our main &ldquo;app&rdquo; module is supposed to depend on library modules that reside within the project directory. <a class="read-more" href="/2014/10/03/an-alternative-multiproject-setup-for-android-studio/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        
+            
+        
+        on
+            
+                <a href="http://kmdupr33.github.io/tags/android/">#android</a>,
+            
+                <a href="http://kmdupr33.github.io/tags/android-studio/">#android studio</a>,
+            
+                <a href="http://kmdupr33.github.io/tags/multiproject-setups/">#multiproject setups</a>,
+            
+        
+        <time class="post-date" datetime="2014-10-03T03:02:54Z">
+            3 Oct 2014
         </time>
     </footer>
 </article>

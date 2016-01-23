@@ -6,152 +6,8 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Jan 2016 19:27:36 -0500</lastBuildDate>
+    <lastBuildDate>Wed, 20 Jan 2016 10:43:26 -0500</lastBuildDate>
     <atom:link href="http://kmdupr33.github.io/index.xml" rel="self" type="application/rss+xml" />
-    
-    <item>
-      <title>Integration Tests in Go</title>
-      <link>http://kmdupr33.github.io/post/integration-tests-in-go/</link>
-      <pubDate>Fri, 22 Jan 2016 19:27:36 -0500</pubDate>
-      
-      <guid>http://kmdupr33.github.io/post/integration-tests-in-go/</guid>
-      <description>
-
-&lt;p&gt;Although Go has support for testing built in to its toolchain, certain kinds of testing can be a bit tricky. For example, it may not be immediately obvious how you would go about writing and running &lt;em&gt;integration tests&lt;/em&gt; in go. This post contains info on how to write and run integration tests for your go code.&lt;/p&gt;
-
-&lt;h3 id=&#34;clarifying-terms:cee31ec0056c5269248fe8706a45b932&#34;&gt;Clarifying Terms&lt;/h3&gt;
-
-&lt;p&gt;As &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/&#34;&gt;I&amp;rsquo;ve said before&lt;/a&gt;, many terms in software are vague or ambiguous. So, before I get into how to write and run integration tests, let&amp;rsquo;s make sure we&amp;rsquo;re referring to the same thing when we use the word &amp;ldquo;integration&amp;rdquo; test. Sometimes it seems like people use &amp;ldquo;integration test&amp;rdquo; and &amp;ldquo;acceptance test&amp;rdquo; interchangeably. I do think, however, that there&amp;rsquo;s a useful distinction to be made between these types of tests, a distinction that&amp;rsquo;s made nicely by Steve Freeman and Nat Pryce in the following quotations:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Acceptance: Does the whole system work?&lt;/p&gt;
-
-&lt;p&gt;Integration: Does our code work against code we can’t change?&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Later on, they elaborate on the definition of an integration test:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;We use the term integration tests to refer to the tests that check how some of our code works with code from outside the team that we can’t change. It might be a public framework, such as a persistence mapper, or a library from another team within our organization. The distinction is that integration tests make sure that any abstractions we build over third-party code work as we expect.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&#34;integration-testing-in-go:cee31ec0056c5269248fe8706a45b932&#34;&gt;Integration Testing in Go&lt;/h3&gt;
-
-&lt;p&gt;Now, that we&amp;rsquo;re clear on what we mean by the terms &amp;ldquo;acceptance&amp;rdquo; and &amp;ldquo;integration tests,&amp;rdquo; let&amp;rsquo;s briefly take a look at how we can write and run integration tests in go.&lt;/p&gt;
-
-&lt;p&gt;Suppose you&amp;rsquo;re working with a database in your go code. Many databases have a go client sdk that you can use in your application. Typically, you&amp;rsquo;ll build some kind of abstraction on top of that sdk that your application will use to access and update the data in the database. This abstraction is a prime candidate for integration testing.&lt;/p&gt;
-
-&lt;p&gt;Obviously, in order to perform this kind of integration testing, your go code needs to be able to communicate with the database. How can we ensure that there is a database available for our test code to talk to?&lt;/p&gt;
-
-&lt;h4 id=&#34;a-naive-solution:cee31ec0056c5269248fe8706a45b932&#34;&gt;A naive solution&lt;/h4&gt;
-
-&lt;p&gt;The &lt;code&gt;TestMain()&lt;/code&gt; function is a great way to perform the extra setup and teardown of your test database. When there&amp;rsquo;s a &lt;code&gt;TestMain()&lt;/code&gt; function in any of your test files, that function is called directly by &lt;code&gt;go test&lt;/code&gt;. The function can then perform any necessary setup, run the tests, and then teardown whatever was needed to support the tests:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestMain(m &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.M) {
-    setupDatabase()
-    result &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; m.Run()
-    teardownDatabase()
-    os.Exit(result)
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The problem with using &lt;code&gt;TestMain&lt;/code&gt; this way, however, is that integration tests are typically much slower than unit tests, so running our tests this way will make invocations of &lt;code&gt;go test&lt;/code&gt; take much longer. If we&amp;rsquo;re working on a part of the code that has nothing to do with integrating with 3rd party code, this can be pretty frustrating.&lt;/p&gt;
-
-&lt;h4 id=&#34;a-less-naive-solution:cee31ec0056c5269248fe8706a45b932&#34;&gt;A less naive solution&lt;/h4&gt;
-
-&lt;p&gt;Fortunately, the testing package itself suggests a solution to this problem. The testing package actually has a function called &lt;code&gt;testing.Short()&lt;/code&gt;. This function returns true if the &lt;code&gt;-short&lt;/code&gt; flag has been passed into the &lt;code&gt;go test&lt;/code&gt; command. Tests can check the value of &lt;code&gt;Short()&lt;/code&gt; to determine whether they should execute code and/or tests that will take a long time. This flag could be leveraged to determine whether the tests should spin up external services for integration tests:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestMain(m &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.M) {
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    flag.Parse()
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; !testing.Short() {
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        setupDatabase()    
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    }
-&lt;/span&gt;    result &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; m.Run()
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; !testing.Short() {
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        teardownDatabase()        
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    }    
-&lt;/span&gt;    os.Exit(result)
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The actual integration tests can check the value of &lt;code&gt;testing.Short()&lt;/code&gt; to see if they should execute:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestDatabaseGet(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; testing.Short() {
-        t.Skip()
-    }
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;h4 id=&#34;a-scalable-solution:cee31ec0056c5269248fe8706a45b932&#34;&gt;A scalable solution&lt;/h4&gt;
-
-&lt;p&gt;This solution is definitely better than just always setting up and tearing down a database in the &lt;code&gt;TestMain()&lt;/code&gt; function, but it has a few disadvantages:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;It requires us to pass in the &lt;code&gt;-short&lt;/code&gt; flag every time we want to avoid running integration tests.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;It doesn&amp;rsquo;t scale well to multiple types of integration tests.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Having to pass in the &lt;code&gt;-short&lt;/code&gt; flag whenever we want to avoid slow integration tests is inconvenient. Most of the time writing an application is probably spend writing code that isn&amp;rsquo;t covered by integration tests, so most of the time you&amp;rsquo;ll have to add the flag &lt;code&gt;-short&lt;/code&gt; to your &lt;code&gt;go test&lt;/code&gt; invocations.&lt;/p&gt;
-
-&lt;p&gt;This inconvenience can be mitigated if we just tell our text editors to add the flag whenever they usually run &lt;code&gt;go test&lt;/code&gt; (e.g., on saving a file). However, since most of the time we aren&amp;rsquo;t interested in running integration tests, it seems like it would be better if &lt;code&gt;go test&lt;/code&gt; didn&amp;rsquo;t run integration tests by default. Instead, it&amp;rsquo;d be better if we had to explicitly tell &lt;code&gt;go test&lt;/code&gt; to run the integration tests.&lt;/p&gt;
-
-&lt;p&gt;The second problem with using the &lt;code&gt;-short&lt;/code&gt; flag is that it doesn&amp;rsquo;t scale well to multiple types of integration tests. Suppose, for example, that our code utilized a database and a message queue. We can ensure that both our database and message queues are setup if we&amp;rsquo;re doing both types of integration tests, but if we just want to run the integration tests for our database and not for our message queue, we are again forced to wait longer for our tests to run.&lt;/p&gt;
-
-&lt;p&gt;The solution to both of these problems is to use custom flags. You can pass custom flags into the &lt;code&gt;go test&lt;/code&gt; command and handle them however you like within your tests. We can define a flag for database integration tests and a flag for message queue tests and only run the respective integration tests when those flags are passed in. For example, &lt;code&gt;go test -database&lt;/code&gt; will only run the database-related integration tests and: &lt;code&gt;go test -queue&lt;/code&gt; will only run the message-queue-related integration tests.&lt;/p&gt;
-
-&lt;p&gt;Briefly, here&amp;rsquo;s how you could support that behavior in &lt;code&gt;TestMain()&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; (
-    database = flag.Bool(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;database&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;run database integration tests&amp;quot;&lt;/span&gt;)    
-    messageQueue = flag.Bool(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;messageQueue&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;run message queue integration tests&amp;quot;&lt;/span&gt;)
-)
-
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestMain(m &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.M) {
-    flag.Parse()
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;database {
-        setupDatabase()    
-    }
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;messageQueue {
-        setupMessageQueue()
-    }
-    result &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; m.Run()
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;database {
-        teardownDatabase()        
-    }
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;messageQueue {
-        teardownMessageQueue()
-    }    
-    os.Exit(result)
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Of course, your database and message queue integration tests should also check for these flags and skip if they are not set to true.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion:cee31ec0056c5269248fe8706a45b932&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;We&amp;rsquo;ve just seen three ways of writing and running integration tests in go.&lt;/p&gt;
-
-&lt;p&gt;The first way was to simply use the &lt;code&gt;TestMain()&lt;/code&gt; function to perform whatever setup and teardown you need for your tests. I called this solution &amp;ldquo;naive&amp;rdquo; because it dramatically increases the time it takes for &lt;code&gt;go test&lt;/code&gt; to execute, even if you aren&amp;rsquo;t interested in running integration tests.&lt;/p&gt;
-
-&lt;p&gt;The second &amp;ldquo;less naive&amp;rdquo; solution was to take advantage of the &lt;code&gt;-short&lt;/code&gt; flag built in to the testing package. This solution is better because it gives us a way of shortening our test runs when we don&amp;rsquo;t want to run integration tests. However, this solution forces us to pass the &lt;code&gt;-short&lt;/code&gt; flag whenever we want to shorten our test run, and since we aren&amp;rsquo;t usually interested in running integration tests, this is inconvenient. Moreover, this solution doesn&amp;rsquo;t give us fine-grained control over which kinds of integration tests we want to run, and this again forces us to wait longer for &lt;code&gt;go test&lt;/code&gt; to complete.&lt;/p&gt;
-
-&lt;p&gt;I believe that the last solution we explored is a very scalable way of handling integration testing in go. It gives us fine-grained control over which integration tests we want to run and doesn&amp;rsquo;t run any slow integration tests by default. This allows us to run our tests as quickly as possible. I also suspect that there&amp;rsquo;s another advantage to using custom flags for your integration testing: it makes acceptance testing easier, but this something that I&amp;rsquo;ll have to explore another time.&lt;/p&gt;
-
-&lt;h4 id=&#34;notes:cee31ec0056c5269248fe8706a45b932&#34;&gt;Notes:&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627&#34;&gt;Growing Object Oriented Software Guided by Tests&lt;/a&gt;, pg 40-41&lt;/li&gt;
-&lt;li&gt;Ibid., pg 41-42&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
     
     <item>
       <title>Getting started with Gomock</title>
@@ -1237,6 +1093,42 @@ Par for the next course: 5&lt;/blockquote&gt;
 &lt;h2 id=&#34;conclusion:de96b0d86be079e91b1b191cfad3b31b&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;To sum it all up: dynamically constructed views often have two different types of business logic: view-hierarchy-affecting business logic and view-property-affecting business logic. Making these views unit testable consists of two steps: First, place the view-hierarchy-affecting business logic in a top level presenter like the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;. Second have an MVP-View (like the &lt;code&gt;SessionDetailActivity&lt;/code&gt;) create View-Presenter pairs for each Android view that&amp;rsquo;s added to the view hierarchy.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Towards A Unit Testable Fork of Google&#39;s IOSched App</title>
+      <link>http://kmdupr33.github.io/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/</link>
+      <pubDate>Sun, 31 May 2015 20:11:16 +0000</pubDate>
+      
+      <guid>http://kmdupr33.github.io/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/</guid>
+      <description>
+
+&lt;p&gt;In my recent &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Against Android Unit Tests&lt;/a&gt; series, I discussed the difficulties of unit testing android applications and proposed a different way of building applications that would enhance their unit testability. My proposal in that series was really largely a rough sketch of what it would take to make parts of Google&amp;rsquo;s IOSched app unit testable.&lt;/p&gt;
+
+&lt;p&gt;More recently, I&amp;rsquo;ve started to fill in the details of that proposal by forking the IOSched repo and refactoring it to make it unit testable. In the next few posts, I&amp;rsquo;ll be discussing some of the challenges that arose when attempting to make the &lt;code&gt;SessionDetailActivity&lt;/code&gt; unit testable within the IOSched app. In this post, I want to provide a broad overview of the challenges I&amp;rsquo;ll be discussing.&lt;/p&gt;
+
+&lt;h2 id=&#34;unit-testing-dynamically-constructed-views:be0df47147e69281d62bde6a0150c690&#34;&gt;Unit Testing Dynamically Constructed Views&lt;/h2&gt;
+
+&lt;p&gt;Some of the views within the &lt;code&gt;SessionDetailActivity&lt;/code&gt; are built dynamically. The tags that appear below the session&amp;rsquo;s description are a good example of this:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/04/screenshot-0646am-apr-17-2015.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/04/screenshot-0646am-apr-17-2015-169x300.png&#34; alt=&#34;Screenshot (06:46AM, Apr 17, 2015)&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;It wasn&amp;rsquo;t immediately obvious to me how to leverage the &amp;ldquo;MVP&amp;rdquo; pattern to maintain the class&amp;rsquo;s unit testability in the face of dynamically built views. I&amp;rsquo;ll discuss how I solved this problem in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;the first post of this series&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;circular-dependencies-between-viewtranslators-and-presenters:be0df47147e69281d62bde6a0150c690&#34;&gt;Circular Dependencies between ViewTranslators and Presenters&lt;/h2&gt;
+
+&lt;p&gt;&amp;ldquo;ViewTranslator&amp;rdquo; is just the name that I prefer for what is traditionally called the &amp;ldquo;View&amp;rdquo; within the MVP pattern. In &lt;a href=&#34;https://corner.squareup.com/2014/10/advocating-against-android-fragments.html&#34;&gt;Square&amp;rsquo;s description of the MVP pattern&lt;/a&gt;, we can see that there&amp;rsquo;s a circular dependency between the ViewTranslator and Presenter. For reasons that will be clear after I&amp;rsquo;ve discussed my solution to the problem of creating unit testable dynamically constructed views, this circular dependency is not ideal. In the second post, I&amp;rsquo;ll discuss how I resolved this circular dependency.&lt;/p&gt;
+
+&lt;h2 id=&#34;static-methods:be0df47147e69281d62bde6a0150c690&#34;&gt;Static Methods&lt;/h2&gt;
+
+&lt;p&gt;As &lt;a href=&#34;http://googletesting.blogspot.com/2008/12/static-methods-are-death-to-testability.html&#34;&gt;Google&amp;rsquo;s testing blog points out&lt;/a&gt;, static methods spell trouble for your app&amp;rsquo;s unit testability. Unfortunately, there are several static methods within &lt;code&gt;SessionDetailActivity&lt;/code&gt; that needed to remove to make unit testing possible. In the third post, I discuss how I removed those static methods.&lt;/p&gt;
+
+&lt;h2 id=&#34;towards-a-unit-testable-fork-of-google-s-iosched-app:be0df47147e69281d62bde6a0150c690&#34;&gt;Towards a Unit Testable Fork of Google&amp;rsquo;s IOSched App&lt;/h2&gt;
+
+&lt;p&gt;My hope is to eventually have &lt;a href=&#34;https://github.com/kmdupr33/iosched&#34;&gt;a fork of Google&amp;rsquo;s IOSched app&lt;/a&gt; that allows us to unit test all of its business logic. Making a non-trivial app like IOSched unit testable will tell us a lot about what it really takes to unit test Android apps. We might find out that unit testing Android apps is just too impractical. Either way, I look forward to exploring how we might pull this off.&lt;/p&gt;
+
+&lt;p&gt;You can check out my progress towards this goal by looking at the aforementioned fork of the IOSched repo. I&amp;rsquo;ll try to make sure the master branch always has something that is semi-polished in it. I make no guarantees about other branches. I&amp;rsquo;d love to work with others toward this goal. If people are interested in contributing to the repo, I&amp;rsquo;ll put together some code standards and guidelines for contributing.&lt;/p&gt;
 </description>
     </item>
     
