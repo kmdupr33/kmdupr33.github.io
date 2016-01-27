@@ -6,8 +6,185 @@
     <description>Recent content in Go on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Jan 2016 19:27:36 -0500</lastBuildDate>
+    <lastBuildDate>Sat, 23 Jan 2016 13:01:07 -0500</lastBuildDate>
     <atom:link href="http://kmdupr33.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Table-driven tests with Gomock</title>
+      <link>http://kmdupr33.github.io/post/post-title/</link>
+      <pubDate>Sat, 23 Jan 2016 13:01:07 -0500</pubDate>
+      
+      <guid>http://kmdupr33.github.io/post/post-title/</guid>
+      <description>
+
+&lt;p&gt;Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&amp;rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.&lt;/p&gt;
+
+&lt;h3 id=&#34;table-driven-tests:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Table-Driven Tests&lt;/h3&gt;
+
+&lt;p&gt;There are many examples of table-driven tests in the standard library. One example of a table-driven test can be found in the &lt;code&gt;fmt_test&lt;/code&gt; package:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; fmtTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+	fmt &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;
+	val &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;interface&lt;/span&gt;{}
+	out &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;
+}{
+	{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;%d&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #666666&#34;&gt;12345&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;12345&amp;quot;&lt;/span&gt;},
+	{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;%v&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #666666&#34;&gt;12345&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;12345&amp;quot;&lt;/span&gt;},
+	{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;%t&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;true&amp;quot;&lt;/span&gt;},
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As the above code suggests, table-driven tests typically make use of slice literals of anonymous structs. The anonymous struct has fields that support various test cases. In this case, the fields are &lt;code&gt;fmt&lt;/code&gt;, the actual format specifier used within a format string, &lt;code&gt;val&lt;/code&gt;, the value formatted according to the format specifier, and &lt;code&gt;out&lt;/code&gt;, the string that is expected as a result of calling &lt;code&gt;fmt.Sprintf()&lt;/code&gt; on a formatted string with its specifiers and values.&lt;/p&gt;
+
+&lt;p&gt;Within the &lt;code&gt;Test-&lt;/code&gt; method, the tests are run by ranging over the elements of the slice literal.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestSprintf(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; fmtTests {
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		s &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; Sprintf(tt.fmt, tt.val)
+&lt;/span&gt;		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; s &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; tt.out {
+&lt;/span&gt;			&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; _, ok &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; tt.val.(&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;); ok {
+				&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Don&amp;#39;t requote the already-quoted strings.&lt;/span&gt;
+				&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// It&amp;#39;s too confusing to read the errors.&lt;/span&gt;
+				t.Errorf(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Sprintf(%q, %q) = &amp;lt;%s&amp;gt; want &amp;lt;%s&amp;gt;&amp;quot;&lt;/span&gt;, tt.fmt, tt.val, s, tt.out)
+			} &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; {
+				t.Errorf(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Sprintf(%q, %v) = %q want %q&amp;quot;&lt;/span&gt;, tt.fmt, tt.val, s, tt.out)
+			}
+		}
+	}
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id=&#34;gomock-mocks:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Gomock Mocks&lt;/h3&gt;
+
+&lt;p&gt;Gomock mocks are generated in two steps. The first step is to generate the mock code using the &lt;code&gt;mockgen&lt;/code&gt; command. The second step is to create the mock for use in your test:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;mockCtrl &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;defer&lt;/span&gt; mockCtrl.Finish()
+mgf &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_gopher.NewMockGopherFinder(mockCtrl)
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If this snippet doesn&amp;rsquo;t make sense to you, it might be a good idea to read &lt;a href=&#34;http://www.philosophicalhacker.com/post/getting-started-with-gomock/&#34;&gt;my post on gomock&lt;/a&gt; before proceeding.&lt;/p&gt;
+
+&lt;h3 id=&#34;why-bother:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Why bother?&lt;/h3&gt;
+
+&lt;p&gt;To see why we might want to use table-driven tests with gomock, suppose we want to write a test for a cache of &lt;code&gt;Gopher&lt;/code&gt;s. When we ask the cache for a &lt;code&gt;Gopher&lt;/code&gt;, the cache will first check its own map to see if the &lt;code&gt;Gopher&lt;/code&gt; is available in memory. If the &lt;code&gt;Gopher&lt;/code&gt; is unavailable it will call on a &lt;code&gt;GopherFinder&lt;/code&gt; to fetch the &lt;code&gt;Gopher&lt;/code&gt; from some remote location:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; (s &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;lruCache) GetGopher(name &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;) (Gopher, &lt;span style=&#34;color: #B00040&#34;&gt;error&lt;/span&gt;) {
+	gopher, ok &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; s.CachedGophers[name]
+	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; !ok {
+		&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; s.GopherFinder.Find(name)
+	}
+	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; gopher, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;nil&lt;/span&gt;
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Suppose we want to test this behavior. There are two cases we want test:&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the first case:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Given a Cache that does not contain the Gopher named &amp;quot;andrewgerrand&amp;quot;
+When we ask the Cache for the Gopher named &amp;quot;andrewgerrand&amp;quot;
+Then the Cache calls `Find()` on its `GopherFinder` to satisfy the request
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And the second case:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Given a Cache that does contain the Gopher named &amp;quot;andrewgerrand&amp;quot;
+When we ask the Cache for the Gopher named &amp;quot;andrewgerrand&amp;quot;
+Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it returns a cached &amp;quot;andrewgerrand&amp;quot; `Gopher`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Obviously, these test cases can share some code. Using a table-driven test can help us avoid duplicating the support code we need to execute these two test cases. Moreover, Cache&amp;rsquo;s, as &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;Martin Fowler points out&lt;/a&gt;, are prime candidates for behavior/mock-based testing, so in this case, it doesn&amp;rsquo;t seem crazy to combine mocks with a table-driven test.&lt;/p&gt;
+
+&lt;h3 id=&#34;putting-it-all-together:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Putting it All Together&lt;/h3&gt;
+
+&lt;p&gt;The struct that supports the table-driven tests should contain fields for the values that need to change in order to support different, but related test cases. The first difference between our two cache test cases is that the in one case, the cache already contains a cached &lt;code&gt;Gopher&lt;/code&gt; for the name &amp;ldquo;andrewgerrand&amp;rdquo; and in the other case, it does not. So, our slice of anonymous structs should start off looking like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+	cachedGophers &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher
+	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+}{
+	{cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;nil&lt;/span&gt;,
+		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+	},
+	{cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;: Gopher{}},
+		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+	},
+}
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;When we range over the values of &lt;code&gt;cacheTests&lt;/code&gt;, we can use the value of the &lt;code&gt;cachedGophers&lt;/code&gt; field to setup our &lt;code&gt;Cache&lt;/code&gt; appropriately so we can test that it behaves correctly:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+    con &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
+	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; cacheTests {
+
+		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+		cache &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; NewLRUCache(mc)
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		cache.CachedGophers = tt.cachedGophers
+&lt;/span&gt;
+		cache.GetGopher(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;)
+	}
+}
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The second thing that&amp;rsquo;s different about our two test cases is the actual calls we should expect on the &lt;code&gt;GohperFinder&lt;/code&gt;. Again, when the cache can&amp;rsquo;t find a &lt;code&gt;Gopher&lt;/code&gt; in memory, it should call on its &lt;code&gt;GopherFinder&lt;/code&gt;. Otherwise, it shouldn&amp;rsquo;t call the &lt;code&gt;GopherFinder&lt;/code&gt; at all, and it should simply return the &lt;code&gt;Gopher&lt;/code&gt; it has in memory. So, we need a field in our struct that captures this difference between the two test cases:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+	cachedGophers &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher
+	Configurer    Configurer
+}{
+    {cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;nil&lt;/span&gt;,
+		Configurer: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt;(gf &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder) &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder {
+			gf.EXPECT().
+				Find(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;)
+			&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; gf
+		},
+	},
+	{cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;: Gopher{}},
+		Configurer: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt;(gf &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder) &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder {
+			&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; gf
+		},
+	},
+}
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;Configurer&lt;/code&gt;, as you probably figured out, is just a function that takes a mock as a parameter, configures it, and returns the configured mock to be used by the test. When &lt;code&gt;cachedGophers&lt;/code&gt; is nil, the &lt;code&gt;Cache&lt;/code&gt; created for the test won&amp;rsquo;t have any cached &lt;code&gt;Gophers&lt;/code&gt; in memory, so we should expect the &lt;code&gt;Cache&lt;/code&gt; to call &lt;code&gt;Find()&lt;/code&gt; on its &lt;code&gt;GopherFinder&lt;/code&gt;. On the other hand, the second struct has a &lt;code&gt;cachedGohpers&lt;/code&gt; map that should cause the &lt;code&gt;Cache&lt;/code&gt; to return a cached version of the &lt;code&gt;Gopher&lt;/code&gt; rather than fetch one from a remote location.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;TestCache()&lt;/code&gt; function can leverage the fields of this struct to run the two test cases:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+
+	con &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; cacheTests {
+&lt;/span&gt;
+		mc &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_gopher.NewMockGopherFinder(con)
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		mc = tt.Configurer(mc)
+&lt;/span&gt;
+		cache &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; NewLRUCache(mc)
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		cache.CachedGophers = tt.cachedGophers
+&lt;/span&gt;
+		cache.GetGopher(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;)
+	}
+	con.Finish()
+}
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;what-do-you-think:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;What do you think?&lt;/h3&gt;
+
+&lt;p&gt;This strikes me as a fairly reasonable way of avoiding duplicating code while using gomock mocks in testing, but it might be silly and/or there might be a better solution. I&amp;rsquo;m interested in hearing alternative solutions to this problem, so I&amp;rsquo;d love to hear your thoughts on this. For the reasons I pointed out &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/&#34;&gt;here&lt;/a&gt;, I don&amp;rsquo;t find the typical arguments offered against mocking libraries compelling, so I&amp;rsquo;m less interested in hearing people repeat those reasons, but if you have a novel reason for why gomock is a bad idea in the first place, I&amp;rsquo;d definitely like to hear it.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Integration Tests in Go</title>

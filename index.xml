@@ -6,8 +6,185 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Jan 2016 19:27:36 -0500</lastBuildDate>
+    <lastBuildDate>Sat, 23 Jan 2016 13:01:07 -0500</lastBuildDate>
     <atom:link href="http://kmdupr33.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Table-driven tests with Gomock</title>
+      <link>http://kmdupr33.github.io/post/post-title/</link>
+      <pubDate>Sat, 23 Jan 2016 13:01:07 -0500</pubDate>
+      
+      <guid>http://kmdupr33.github.io/post/post-title/</guid>
+      <description>
+
+&lt;p&gt;Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&amp;rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.&lt;/p&gt;
+
+&lt;h3 id=&#34;table-driven-tests:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Table-Driven Tests&lt;/h3&gt;
+
+&lt;p&gt;There are many examples of table-driven tests in the standard library. One example of a table-driven test can be found in the &lt;code&gt;fmt_test&lt;/code&gt; package:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; fmtTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+	fmt &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;
+	val &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;interface&lt;/span&gt;{}
+	out &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;
+}{
+	{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;%d&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #666666&#34;&gt;12345&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;12345&amp;quot;&lt;/span&gt;},
+	{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;%v&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #666666&#34;&gt;12345&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;12345&amp;quot;&lt;/span&gt;},
+	{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;%t&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;true&amp;quot;&lt;/span&gt;},
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As the above code suggests, table-driven tests typically make use of slice literals of anonymous structs. The anonymous struct has fields that support various test cases. In this case, the fields are &lt;code&gt;fmt&lt;/code&gt;, the actual format specifier used within a format string, &lt;code&gt;val&lt;/code&gt;, the value formatted according to the format specifier, and &lt;code&gt;out&lt;/code&gt;, the string that is expected as a result of calling &lt;code&gt;fmt.Sprintf()&lt;/code&gt; on a formatted string with its specifiers and values.&lt;/p&gt;
+
+&lt;p&gt;Within the &lt;code&gt;Test-&lt;/code&gt; method, the tests are run by ranging over the elements of the slice literal.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestSprintf(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; fmtTests {
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		s &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; Sprintf(tt.fmt, tt.val)
+&lt;/span&gt;		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; s &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; tt.out {
+&lt;/span&gt;			&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; _, ok &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; tt.val.(&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;); ok {
+				&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Don&amp;#39;t requote the already-quoted strings.&lt;/span&gt;
+				&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// It&amp;#39;s too confusing to read the errors.&lt;/span&gt;
+				t.Errorf(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Sprintf(%q, %q) = &amp;lt;%s&amp;gt; want &amp;lt;%s&amp;gt;&amp;quot;&lt;/span&gt;, tt.fmt, tt.val, s, tt.out)
+			} &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; {
+				t.Errorf(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Sprintf(%q, %v) = %q want %q&amp;quot;&lt;/span&gt;, tt.fmt, tt.val, s, tt.out)
+			}
+		}
+	}
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id=&#34;gomock-mocks:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Gomock Mocks&lt;/h3&gt;
+
+&lt;p&gt;Gomock mocks are generated in two steps. The first step is to generate the mock code using the &lt;code&gt;mockgen&lt;/code&gt; command. The second step is to create the mock for use in your test:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;mockCtrl &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;defer&lt;/span&gt; mockCtrl.Finish()
+mgf &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_gopher.NewMockGopherFinder(mockCtrl)
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If this snippet doesn&amp;rsquo;t make sense to you, it might be a good idea to read &lt;a href=&#34;http://www.philosophicalhacker.com/post/getting-started-with-gomock/&#34;&gt;my post on gomock&lt;/a&gt; before proceeding.&lt;/p&gt;
+
+&lt;h3 id=&#34;why-bother:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Why bother?&lt;/h3&gt;
+
+&lt;p&gt;To see why we might want to use table-driven tests with gomock, suppose we want to write a test for a cache of &lt;code&gt;Gopher&lt;/code&gt;s. When we ask the cache for a &lt;code&gt;Gopher&lt;/code&gt;, the cache will first check its own map to see if the &lt;code&gt;Gopher&lt;/code&gt; is available in memory. If the &lt;code&gt;Gopher&lt;/code&gt; is unavailable it will call on a &lt;code&gt;GopherFinder&lt;/code&gt; to fetch the &lt;code&gt;Gopher&lt;/code&gt; from some remote location:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; (s &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;lruCache) GetGopher(name &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;) (Gopher, &lt;span style=&#34;color: #B00040&#34;&gt;error&lt;/span&gt;) {
+	gopher, ok &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; s.CachedGophers[name]
+	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; !ok {
+		&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; s.GopherFinder.Find(name)
+	}
+	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; gopher, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;nil&lt;/span&gt;
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Suppose we want to test this behavior. There are two cases we want test:&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the first case:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Given a Cache that does not contain the Gopher named &amp;quot;andrewgerrand&amp;quot;
+When we ask the Cache for the Gopher named &amp;quot;andrewgerrand&amp;quot;
+Then the Cache calls `Find()` on its `GopherFinder` to satisfy the request
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And the second case:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Given a Cache that does contain the Gopher named &amp;quot;andrewgerrand&amp;quot;
+When we ask the Cache for the Gopher named &amp;quot;andrewgerrand&amp;quot;
+Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it returns a cached &amp;quot;andrewgerrand&amp;quot; `Gopher`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Obviously, these test cases can share some code. Using a table-driven test can help us avoid duplicating the support code we need to execute these two test cases. Moreover, Cache&amp;rsquo;s, as &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;Martin Fowler points out&lt;/a&gt;, are prime candidates for behavior/mock-based testing, so in this case, it doesn&amp;rsquo;t seem crazy to combine mocks with a table-driven test.&lt;/p&gt;
+
+&lt;h3 id=&#34;putting-it-all-together:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Putting it All Together&lt;/h3&gt;
+
+&lt;p&gt;The struct that supports the table-driven tests should contain fields for the values that need to change in order to support different, but related test cases. The first difference between our two cache test cases is that the in one case, the cache already contains a cached &lt;code&gt;Gopher&lt;/code&gt; for the name &amp;ldquo;andrewgerrand&amp;rdquo; and in the other case, it does not. So, our slice of anonymous structs should start off looking like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+	cachedGophers &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher
+	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+}{
+	{cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;nil&lt;/span&gt;,
+		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+	},
+	{cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;: Gopher{}},
+		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+	},
+}
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;When we range over the values of &lt;code&gt;cacheTests&lt;/code&gt;, we can use the value of the &lt;code&gt;cachedGophers&lt;/code&gt; field to setup our &lt;code&gt;Cache&lt;/code&gt; appropriately so we can test that it behaves correctly:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+    con &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
+	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; cacheTests {
+
+		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+		cache &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; NewLRUCache(mc)
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		cache.CachedGophers = tt.cachedGophers
+&lt;/span&gt;
+		cache.GetGopher(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;)
+	}
+}
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The second thing that&amp;rsquo;s different about our two test cases is the actual calls we should expect on the &lt;code&gt;GohperFinder&lt;/code&gt;. Again, when the cache can&amp;rsquo;t find a &lt;code&gt;Gopher&lt;/code&gt; in memory, it should call on its &lt;code&gt;GopherFinder&lt;/code&gt;. Otherwise, it shouldn&amp;rsquo;t call the &lt;code&gt;GopherFinder&lt;/code&gt; at all, and it should simply return the &lt;code&gt;Gopher&lt;/code&gt; it has in memory. So, we need a field in our struct that captures this difference between the two test cases:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+	cachedGophers &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher
+	Configurer    Configurer
+}{
+    {cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;nil&lt;/span&gt;,
+		Configurer: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt;(gf &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder) &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder {
+			gf.EXPECT().
+				Find(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;)
+			&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; gf
+		},
+	},
+	{cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;: Gopher{}},
+		Configurer: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt;(gf &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder) &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder {
+			&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; gf
+		},
+	},
+}
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;Configurer&lt;/code&gt;, as you probably figured out, is just a function that takes a mock as a parameter, configures it, and returns the configured mock to be used by the test. When &lt;code&gt;cachedGophers&lt;/code&gt; is nil, the &lt;code&gt;Cache&lt;/code&gt; created for the test won&amp;rsquo;t have any cached &lt;code&gt;Gophers&lt;/code&gt; in memory, so we should expect the &lt;code&gt;Cache&lt;/code&gt; to call &lt;code&gt;Find()&lt;/code&gt; on its &lt;code&gt;GopherFinder&lt;/code&gt;. On the other hand, the second struct has a &lt;code&gt;cachedGohpers&lt;/code&gt; map that should cause the &lt;code&gt;Cache&lt;/code&gt; to return a cached version of the &lt;code&gt;Gopher&lt;/code&gt; rather than fetch one from a remote location.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;TestCache()&lt;/code&gt; function can leverage the fields of this struct to run the two test cases:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+
+	con &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; cacheTests {
+&lt;/span&gt;
+		mc &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_gopher.NewMockGopherFinder(con)
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		mc = tt.Configurer(mc)
+&lt;/span&gt;
+		cache &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; NewLRUCache(mc)
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		cache.CachedGophers = tt.cachedGophers
+&lt;/span&gt;
+		cache.GetGopher(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;)
+	}
+	con.Finish()
+}
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;what-do-you-think:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;What do you think?&lt;/h3&gt;
+
+&lt;p&gt;This strikes me as a fairly reasonable way of avoiding duplicating code while using gomock mocks in testing, but it might be silly and/or there might be a better solution. I&amp;rsquo;m interested in hearing alternative solutions to this problem, so I&amp;rsquo;d love to hear your thoughts on this. For the reasons I pointed out &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/&#34;&gt;here&lt;/a&gt;, I don&amp;rsquo;t find the typical arguments offered against mocking libraries compelling, so I&amp;rsquo;m less interested in hearing people repeat those reasons, but if you have a novel reason for why gomock is a bad idea in the first place, I&amp;rsquo;d definitely like to hear it.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Integration Tests in Go</title>
@@ -1197,46 +1374,6 @@ Par for the next course: 5&lt;/blockquote&gt;
 &lt;p&gt;&lt;strong&gt;Team play:&lt;/strong&gt; You could introduce team play simply by treating teams as you would individuals.&lt;/p&gt;
 
 &lt;p&gt;Happy golfing!&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Unit Testing Dynamically Constructed Views</title>
-      <link>http://kmdupr33.github.io/2015/06/06/unit-testing-dynamically-constructed-views/</link>
-      <pubDate>Sat, 06 Jun 2015 11:08:03 +0000</pubDate>
-      
-      <guid>http://kmdupr33.github.io/2015/06/06/unit-testing-dynamically-constructed-views/</guid>
-      <description>
-
-&lt;p&gt;Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&amp;rsquo;ve fetched or in response to some input. The &lt;code&gt;SessionDetailActivity&lt;/code&gt; in Google&amp;rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the &lt;code&gt;SessionDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34; alt=&#34;IO Testing Talk-04&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;In this screenshot, the &amp;ldquo;Distribute,&amp;rdquo; &amp;ldquo;Android,&amp;rdquo; and &amp;ldquo;Games&amp;rdquo; tags are added to the view hierarchy based on the tags associated with the &amp;rdquo;Going global with Google Play&amp;rdquo; IO session. In this post, I&amp;rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the &lt;code&gt;SesisonDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;As &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;I&amp;rsquo;ve stated elsewhere&lt;/a&gt;, dependency injection is key to making our apps unit testable. Because the MVP pattern allows us to inject dependencies into Presenters, objects which contain much of our app&amp;rsquo;s business logic, the pattern plays a key role in making our apps unit testable in general. Unsurprisingly, the pattern also plays a role in helping us write unit testable dynamically constructed views.&lt;/p&gt;
-
-&lt;p&gt;If you&amp;rsquo;re not familiar with MVP, you should check out &lt;a href=&#34;https://corner.squareup.com/2014/10/advocating-against-android-fragments.html&#34;&gt;this post&lt;/a&gt; in which Square talks about how they use MVP to get rid of fragments and to facilitate unit testing. &lt;a href=&#34;http://hannesdorfmann.com/android/mosby/&#34;&gt;This post&lt;/a&gt; in which Hannes Dorfmann introduces a library he wrote to facilitate the application of the MVP pattern also contains a decent introduction to the pattern.&lt;/p&gt;
-
-&lt;p&gt;Before I outline my approach to refactoring the &lt;code&gt;SessionDetailActivity&lt;/code&gt; so that we can have unit testable, view constructing code, let&amp;rsquo;s try to get a handle on how the &lt;code&gt;SessionDetailActivity&lt;/code&gt;works without any kind of refactoring. Here&amp;rsquo;s what the code currently looks like:&lt;/p&gt;
-
-&lt;p&gt;There are few important things to notice about this code fragment.&lt;/p&gt;
-
-&lt;p&gt;First, note that there&amp;rsquo;s business logic that &lt;em&gt;determines the structure of the view hierarchy that&amp;rsquo;s being built&lt;/em&gt; by this method. For example, if one of the tags has an id that&amp;rsquo;s equal to the keynote speaker tag id, we don&amp;rsquo;t want to add a view to the tags container for that tag (lines 18-31). Let&amp;rsquo;s call this kind of business logic &amp;ldquo;view-hierarchy-affecting business logic.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Also note that there&amp;rsquo;s business logic that determines the properties of the views that have been added by the view-hierarchy-affecting business logic. More specifically, it contains code that determines how the &lt;em&gt;how the app should respond when the user interacts with the views that are a part of the dynamically constructed view hierarchy&lt;/em&gt;. Here I have in mind the piece of the method that set&amp;rsquo;s up the tag view&amp;rsquo;s &lt;code&gt;OnClickListener&lt;/code&gt; to show them a list of IO sessions that have the tag associated with the tag view the user selected (lines 55 - 64). Let&amp;rsquo;s call this kind of business logic &amp;ldquo;view-property-affecting business logic.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;The problem of creating unit testable, dynamically constructed views is basically the problem of finding sensible places to put these two different kinds of business logic. Here&amp;rsquo;s what I suggest, the view-hierarchy-affecting business logic should go in a &lt;code&gt;SessionDetailPresenter&lt;/code&gt;:&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;SessionDetailActivity&lt;/code&gt; in this code segment is acting as the View within the MVP triad, and as such, it should not contain any business logic. Thus, we know that the view-property-affecting business logic should not be within the &lt;code&gt;SessionDetailActivity&lt;/code&gt;. Instead of placing the view-property affecting business logic within the &lt;code&gt;SessionDetailActivity&lt;/code&gt;, we have the &lt;code&gt;SessionDetailActivity&lt;/code&gt; delegate that logic out to another View-Presenter pair:&lt;/p&gt;
-
-&lt;p&gt;The &amp;ldquo;SessionTagViewTranslator&amp;rdquo; in this code segment is really just the View within the View-Presenter pair. For reasons that I discuss &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/05/dont-call-it-mvp/&#34;&gt;here&lt;/a&gt;, I prefer the name &amp;ldquo;ViewTranslator&amp;rdquo; over &amp;ldquo;View&amp;rdquo; because it more clearly marks the difference between an MVP View and an Android View. Astute readers will notice that the SessionDetailActivity shouldn&amp;rsquo;t be responsible for forwarding the click event on the view to the TagPresenter. This problem arises because of a circular dependency between MVP Views and Presenters. I&amp;rsquo;ll discuss how to break this dependency in my next post. The &lt;code&gt;TagPresenter&lt;/code&gt; is fairly trivial, but here&amp;rsquo;s what it looks like:&lt;/p&gt;
-
-&lt;p&gt;The SesionTagViewTranslator is even more trivial, so I won&amp;rsquo;t bother showing the code for that.&lt;/p&gt;
-
-&lt;h2 id=&#34;conclusion:de96b0d86be079e91b1b191cfad3b31b&#34;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;To sum it all up: dynamically constructed views often have two different types of business logic: view-hierarchy-affecting business logic and view-property-affecting business logic. Making these views unit testable consists of two steps: First, place the view-hierarchy-affecting business logic in a top level presenter like the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;. Second have an MVP-View (like the &lt;code&gt;SessionDetailActivity&lt;/code&gt;) create View-Presenter pairs for each Android view that&amp;rsquo;s added to the view hierarchy.&lt;/p&gt;
 </description>
     </item>
     

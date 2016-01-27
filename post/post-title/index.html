@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" Table-driven tests with Gomock &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://kmdupr33.github.io/post/post-title/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2016-01-23T13:01:07-05:00" />
+
+    
+    <meta property="og:article:tag" content="go" />
+    
+    
+
+  <title>
+     Table-driven tests with Gomock &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android and go development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://kmdupr33.github.io/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://kmdupr33.github.io/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://kmdupr33.github.io/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://kmdupr33.github.io/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://kmdupr33.github.io/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.15" />
+
+    <link rel="canonical" href="http://kmdupr33.github.io/post/post-title/" />
+
+
+    
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-63544399-1', 'auto');
+          ga('send', 'pageview');
+
+        </script>
+    
+
+    
+</head>
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://kmdupr33.github.io/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+<header class="main-header post-head no-cover">
+  <nav class="main-nav clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">Table-driven tests with Gomock</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2016-01-23T13:01:07-05:00">
+            Jan 23, 2016
+          </time>
+        
+         
+          <span class="post-tag small"><a href="http://kmdupr33.github.io/tags/go/">#go</a></span>
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<p>Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.</p>
+
+<h3 id="table-driven-tests:66f5f9f3ad6818e7e7888e03cf1ad34c">Table-Driven Tests</h3>
+
+<p>There are many examples of table-driven tests in the standard library. One example of a table-driven test can be found in the <code>fmt_test</code> package:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">var</span> fmtTests = []<span style="color: #008000; font-weight: bold">struct</span> {
+	fmt <span style="color: #B00040">string</span>
+	val <span style="color: #008000; font-weight: bold">interface</span>{}
+	out <span style="color: #B00040">string</span>
+}{
+	{<span style="color: #BA2121">&quot;%d&quot;</span>, <span style="color: #666666">12345</span>, <span style="color: #BA2121">&quot;12345&quot;</span>},
+	{<span style="color: #BA2121">&quot;%v&quot;</span>, <span style="color: #666666">12345</span>, <span style="color: #BA2121">&quot;12345&quot;</span>},
+	{<span style="color: #BA2121">&quot;%t&quot;</span>, <span style="color: #008000; font-weight: bold">true</span>, <span style="color: #BA2121">&quot;true&quot;</span>},
+    <span style="color: #408080; font-style: italic">//...</span>
+}
+</pre></div>
+
+
+<p>As the above code suggests, table-driven tests typically make use of slice literals of anonymous structs. The anonymous struct has fields that support various test cases. In this case, the fields are <code>fmt</code>, the actual format specifier used within a format string, <code>val</code>, the value formatted according to the format specifier, and <code>out</code>, the string that is expected as a result of calling <code>fmt.Sprintf()</code> on a formatted string with its specifiers and values.</p>
+
+<p>Within the <code>Test-</code> method, the tests are run by ranging over the elements of the slice literal.</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> TestSprintf(t <span style="color: #666666">*</span>testing.T) {
+	<span style="color: #008000; font-weight: bold">for</span> _, tt <span style="color: #666666">:=</span> <span style="color: #008000; font-weight: bold">range</span> fmtTests {
+<span style="background-color: #ffffcc">		s <span style="color: #666666">:=</span> Sprintf(tt.fmt, tt.val)
+</span>		<span style="color: #408080; font-style: italic">//...</span>
+<span style="background-color: #ffffcc">		<span style="color: #008000; font-weight: bold">if</span> s <span style="color: #666666">!=</span> tt.out {
+</span>			<span style="color: #008000; font-weight: bold">if</span> _, ok <span style="color: #666666">:=</span> tt.val.(<span style="color: #B00040">string</span>); ok {
+				<span style="color: #408080; font-style: italic">// Don&#39;t requote the already-quoted strings.</span>
+				<span style="color: #408080; font-style: italic">// It&#39;s too confusing to read the errors.</span>
+				t.Errorf(<span style="color: #BA2121">&quot;Sprintf(%q, %q) = &lt;%s&gt; want &lt;%s&gt;&quot;</span>, tt.fmt, tt.val, s, tt.out)
+			} <span style="color: #008000; font-weight: bold">else</span> {
+				t.Errorf(<span style="color: #BA2121">&quot;Sprintf(%q, %v) = %q want %q&quot;</span>, tt.fmt, tt.val, s, tt.out)
+			}
+		}
+	}
+}
+</pre></div>
+
+
+<h3 id="gomock-mocks:66f5f9f3ad6818e7e7888e03cf1ad34c">Gomock Mocks</h3>
+
+<p>Gomock mocks are generated in two steps. The first step is to generate the mock code using the <code>mockgen</code> command. The second step is to create the mock for use in your test:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%">mockCtrl <span style="color: #666666">:=</span> gomock.NewController(t)
+<span style="color: #008000; font-weight: bold">defer</span> mockCtrl.Finish()
+mgf <span style="color: #666666">:=</span> mock_gopher.NewMockGopherFinder(mockCtrl)
+</pre></div>
+
+
+<p>If this snippet doesn&rsquo;t make sense to you, it might be a good idea to read <a href="http://www.philosophicalhacker.com/post/getting-started-with-gomock/">my post on gomock</a> before proceeding.</p>
+
+<h3 id="why-bother:66f5f9f3ad6818e7e7888e03cf1ad34c">Why bother?</h3>
+
+<p>To see why we might want to use table-driven tests with gomock, suppose we want to write a test for a cache of <code>Gopher</code>s. When we ask the cache for a <code>Gopher</code>, the cache will first check its own map to see if the <code>Gopher</code> is available in memory. If the <code>Gopher</code> is unavailable it will call on a <code>GopherFinder</code> to fetch the <code>Gopher</code> from some remote location:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> (s <span style="color: #666666">*</span>lruCache) GetGopher(name <span style="color: #B00040">string</span>) (Gopher, <span style="color: #B00040">error</span>) {
+	gopher, ok <span style="color: #666666">:=</span> s.CachedGophers[name]
+	<span style="color: #008000; font-weight: bold">if</span> !ok {
+		<span style="color: #008000; font-weight: bold">return</span> s.GopherFinder.Find(name)
+	}
+	<span style="color: #008000; font-weight: bold">return</span> gopher, <span style="color: #008000; font-weight: bold">nil</span>
+}
+</pre></div>
+
+
+<p>Suppose we want to test this behavior. There are two cases we want test:</p>
+
+<p>Here&rsquo;s the first case:</p>
+
+<pre><code>Given a Cache that does not contain the Gopher named &quot;andrewgerrand&quot;
+When we ask the Cache for the Gopher named &quot;andrewgerrand&quot;
+Then the Cache calls `Find()` on its `GopherFinder` to satisfy the request
+</code></pre>
+
+<p>And the second case:</p>
+
+<pre><code>Given a Cache that does contain the Gopher named &quot;andrewgerrand&quot;
+When we ask the Cache for the Gopher named &quot;andrewgerrand&quot;
+Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns a cached &quot;andrewgerrand&quot; `Gopher`
+</code></pre>
+
+<p>Obviously, these test cases can share some code. Using a table-driven test can help us avoid duplicating the support code we need to execute these two test cases. Moreover, Cache&rsquo;s, as <a href="http://martinfowler.com/articles/mocksArentStubs.html">Martin Fowler points out</a>, are prime candidates for behavior/mock-based testing, so in this case, it doesn&rsquo;t seem crazy to combine mocks with a table-driven test.</p>
+
+<h3 id="putting-it-all-together:66f5f9f3ad6818e7e7888e03cf1ad34c">Putting it All Together</h3>
+
+<p>The struct that supports the table-driven tests should contain fields for the values that need to change in order to support different, but related test cases. The first difference between our two cache test cases is that the in one case, the cache already contains a cached <code>Gopher</code> for the name &ldquo;andrewgerrand&rdquo; and in the other case, it does not. So, our slice of anonymous structs should start off looking like this:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">var</span> cacheTests = []<span style="color: #008000; font-weight: bold">struct</span> {
+	cachedGophers <span style="color: #008000; font-weight: bold">map</span>[<span style="color: #B00040">string</span>]Gopher
+	<span style="color: #408080; font-style: italic">//...</span>
+}{
+	{cachedGophers: <span style="color: #008000; font-weight: bold">nil</span>,
+		<span style="color: #408080; font-style: italic">//...</span>
+	},
+	{cachedGophers: <span style="color: #008000; font-weight: bold">map</span>[<span style="color: #B00040">string</span>]Gopher{<span style="color: #BA2121">&quot;andrewgerrand&quot;</span>: Gopher{}},
+		<span style="color: #408080; font-style: italic">//...</span>
+	},
+}
+</pre></div>
+</p>
+
+<p>When we range over the values of <code>cacheTests</code>, we can use the value of the <code>cachedGophers</code> field to setup our <code>Cache</code> appropriately so we can test that it behaves correctly:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> TestCache(t <span style="color: #666666">*</span>testing.T) {
+    con <span style="color: #666666">:=</span> gomock.NewController(t)
+	<span style="color: #008000; font-weight: bold">for</span> _, tt <span style="color: #666666">:=</span> <span style="color: #008000; font-weight: bold">range</span> cacheTests {
+
+		<span style="color: #408080; font-style: italic">//...</span>
+		cache <span style="color: #666666">:=</span> NewLRUCache(mc)
+<span style="background-color: #ffffcc">		cache.CachedGophers = tt.cachedGophers
+</span>
+		cache.GetGopher(<span style="color: #BA2121">&quot;andrewgerrand&quot;</span>)
+	}
+}
+</pre></div>
+</p>
+
+<p>The second thing that&rsquo;s different about our two test cases is the actual calls we should expect on the <code>GohperFinder</code>. Again, when the cache can&rsquo;t find a <code>Gopher</code> in memory, it should call on its <code>GopherFinder</code>. Otherwise, it shouldn&rsquo;t call the <code>GopherFinder</code> at all, and it should simply return the <code>Gopher</code> it has in memory. So, we need a field in our struct that captures this difference between the two test cases:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">var</span> cacheTests = []<span style="color: #008000; font-weight: bold">struct</span> {
+	cachedGophers <span style="color: #008000; font-weight: bold">map</span>[<span style="color: #B00040">string</span>]Gopher
+	Configurer    Configurer
+}{
+    {cachedGophers: <span style="color: #008000; font-weight: bold">nil</span>,
+		Configurer: <span style="color: #008000; font-weight: bold">func</span>(gf <span style="color: #666666">*</span>MockGopherFinder) <span style="color: #666666">*</span>MockGopherFinder {
+			gf.EXPECT().
+				Find(<span style="color: #BA2121">&quot;andrewgerrand&quot;</span>)
+			<span style="color: #008000; font-weight: bold">return</span> gf
+		},
+	},
+	{cachedGophers: <span style="color: #008000; font-weight: bold">map</span>[<span style="color: #B00040">string</span>]Gopher{<span style="color: #BA2121">&quot;andrewgerrand&quot;</span>: Gopher{}},
+		Configurer: <span style="color: #008000; font-weight: bold">func</span>(gf <span style="color: #666666">*</span>MockGopherFinder) <span style="color: #666666">*</span>MockGopherFinder {
+			<span style="color: #008000; font-weight: bold">return</span> gf
+		},
+	},
+}
+</pre></div>
+</p>
+
+<p>The <code>Configurer</code>, as you probably figured out, is just a function that takes a mock as a parameter, configures it, and returns the configured mock to be used by the test. When <code>cachedGophers</code> is nil, the <code>Cache</code> created for the test won&rsquo;t have any cached <code>Gophers</code> in memory, so we should expect the <code>Cache</code> to call <code>Find()</code> on its <code>GopherFinder</code>. On the other hand, the second struct has a <code>cachedGohpers</code> map that should cause the <code>Cache</code> to return a cached version of the <code>Gopher</code> rather than fetch one from a remote location.</p>
+
+<p>The <code>TestCache()</code> function can leverage the fields of this struct to run the two test cases:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> TestCache(t <span style="color: #666666">*</span>testing.T) {
+
+	con <span style="color: #666666">:=</span> gomock.NewController(t)
+<span style="background-color: #ffffcc">	<span style="color: #008000; font-weight: bold">for</span> _, tt <span style="color: #666666">:=</span> <span style="color: #008000; font-weight: bold">range</span> cacheTests {
+</span>
+		mc <span style="color: #666666">:=</span> mock_gopher.NewMockGopherFinder(con)
+<span style="background-color: #ffffcc">		mc = tt.Configurer(mc)
+</span>
+		cache <span style="color: #666666">:=</span> NewLRUCache(mc)
+<span style="background-color: #ffffcc">		cache.CachedGophers = tt.cachedGophers
+</span>
+		cache.GetGopher(<span style="color: #BA2121">&quot;andrewgerrand&quot;</span>)
+	}
+	con.Finish()
+}
+</pre></div>
+</p>
+
+<h3 id="what-do-you-think:66f5f9f3ad6818e7e7888e03cf1ad34c">What do you think?</h3>
+
+<p>This strikes me as a fairly reasonable way of avoiding duplicating code while using gomock mocks in testing, but it might be silly and/or there might be a better solution. I&rsquo;m interested in hearing alternative solutions to this problem, so I&rsquo;d love to hear your thoughts on this. For the reasons I pointed out <a href="http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/">here</a>, I don&rsquo;t find the typical arguments offered against mocking libraries compelling, so I&rsquo;m less interested in hearing people repeat those reasons, but if you have a novel reason for why gomock is a bad idea in the first place, I&rsquo;d definitely like to hear it.</p>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+    
+
+    
+
+
+
+
+
+<section class="author">
+  <h4><a href="http://kmdupr33.github.io/"></a></h4>
+  
+  <p>Read <a href="http://kmdupr33.github.io/">more posts</a> by this author.</p>
+  
+  <div class="author-meta">
+    
+    
+  </div>
+</section>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Table-driven%20tests%20with%20Gomock&amp;url=http%3a%2f%2fkmdupr33.github.io%2fpost%2fpost-title%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fkmdupr33.github.io%2fpost%2fpost-title%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fkmdupr33.github.io%2fpost%2fpost-title%2f&amp;description=Table-driven%20tests%20with%20Gomock"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fkmdupr33.github.io%2fpost%2fpost-title%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/kmdupr33.github.io\/post\/post-title\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://kmdupr33.github.io/js/jquery.js"></script>
+    <script type="text/javascript" src="http://kmdupr33.github.io/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://kmdupr33.github.io/js/index.js"></script>
+    
+</body>
+</html>
+
