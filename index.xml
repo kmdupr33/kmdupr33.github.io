@@ -6,8 +6,98 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 Feb 2016 21:30:42 -0500</lastBuildDate>
+    <lastBuildDate>Tue, 29 Mar 2016 18:02:27 -0400</lastBuildDate>
     <atom:link href="http://kmdupr33.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Sicp 1.1.1-1.1.7</title>
+      <link>http://kmdupr33.github.io/post/sicp-111-117/</link>
+      <pubDate>Tue, 29 Mar 2016 18:02:27 -0400</pubDate>
+      
+      <guid>http://kmdupr33.github.io/post/sicp-111-117/</guid>
+      <description>
+
+&lt;p&gt;Today was my first work day at &lt;a href=&#34;recurse.com&#34;&gt;the Recurse Center&lt;/a&gt;. Yesterday, I found out that there&amp;rsquo;s an &lt;a href=&#34;https://mitpress.mit.edu/sicp/full-text/book/book.html&#34;&gt;SICP&lt;/a&gt; study group. I&amp;rsquo;ve been wanting to study SICP for a while now, so naturally I joined. What follows are my thoughts and key take-aways from sections 1.1.1-1.1.7.&lt;/p&gt;
+
+&lt;h1 id=&#34;declarative-vs-procedural-knowledge:0f8c34f6c54fdc748cbbb725b29baac0&#34;&gt;Declarative vs. Procedural Knowledge&lt;/h1&gt;
+
+&lt;p&gt;Abelson et al. open the book with a really interesting distinction between declarative and procedural knowledge. Moreover, they suggest that the most significant achievement of computer science is that it provides a way for us to study procedural knowledge.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip;‘‘computer science’’ is not a science and&amp;hellip;its significance has little to do with computers. The computer revolution is a revolution in the way we think and in the way we express what we think. The essence of this change is the emergence of what might best be called procedural epistemology &amp;ndash; the study of the structure of knowledge from an imperative point of view, as opposed to the more declarative point of view taken by classical mathematical subjects. Mathematics provides a framework for dealing precisely with notions of ‘‘what is.’’ Computation provides a framework for dealing precisely with notions of ‘‘how to.’’&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This distinction comes out more clearly in section 1.1.7 when they emphasize the difference between a procedure in scheme and a mathematical function. This difference is brought out with an example function definition for the square root:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;sqrt (x) = the y such that y &amp;gt;= 0 and y^2=x&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Although this is a perfectly valid function definition for mathematics, it tells us nothing about how to define a procedure that will return the square root of x. After pointing this out, the authors connect the difference between procedures and functions with their distinction between procedural and declarative knowledge:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The contrast between function and procedure is a reflection of the general distinction between describing properties of things and describing how to do things, or, as it is sometimes referred to, the distinction between declarative knowledge and imperative knowledge. In mathematics we are usually concerned with declarative (what is) descriptions, whereas in computer science we are usually concerned with imperative (how to) descriptions.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;There are two main thoughts I have about these passages.&lt;/p&gt;
+
+&lt;p&gt;First, the distinction between declarative vs. procedural knowledge is philosophical interesting. It raises interesting questions about the relationship between these types of knowledge. The definitions of these two types of knowledge could probably use some further clarification, but once they are clarified, we can ask: Does procedural knowledge depend on declarative knowledge? Is it possible that procedural knowledge reduces to declarative knowledge? If we acknowledge something like procedural knowledge and it turns out that the knowledge doesn&amp;rsquo;t reduce to declarative knowledge, then are we committed to &lt;a href=&#34;http://plato.stanford.edu/entries/platonism/&#34;&gt;Platonism&lt;/a&gt; about algorithms? &lt;a href=&#34;http://www.philosophicalhacker.com/2014/04/22/why-im-glad-my-dream-job-didnt-work-out/&#34;&gt;My philosophy days are over&lt;/a&gt;, but it was interesting to briefly think about these questions anyway.&lt;/p&gt;
+
+&lt;p&gt;Second, I think that this distinction means that some of our programming languages are misleading. Go, for example, uses the &lt;code&gt;func&lt;/code&gt; keyword to define a &amp;ldquo;function&amp;rdquo; in go. However, many of the functions we define in go are definitely not functions in the mathematical sense of the word, and as the above example points out, mathematical functions often fail to map neatly on to the stuff we put in our &lt;code&gt;func&lt;/code&gt; bodies.&lt;/p&gt;
+
+&lt;h1 id=&#34;a-definition-of-syntax:0f8c34f6c54fdc748cbbb725b29baac0&#34;&gt;A definition of syntax&lt;/h1&gt;
+
+&lt;p&gt;The authors do a great job of explaining what it means for a language to have a syntax. Crucial to understanding &amp;ldquo;syntax&amp;rdquo; is the idea of an &amp;ldquo;expression.&amp;rdquo; An expression is something that can be evaluated. Each type of expression has an evaluation rule. For example, the expression &lt;code&gt;42&lt;/code&gt; evaluates to &lt;code&gt;42&lt;/code&gt; in Lisp. So, the evaluation rule for the type of expression exemplified by &lt;code&gt;42&lt;/code&gt; must be something like &amp;ldquo;simply return the expression as is.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;A language has different types of expressions, and these other expression types have more complicated evaluation rules. For example, Lisp has expressions called &amp;ldquo;combinations.&amp;rdquo; Here&amp;rsquo;s an example of a combination:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(+ 1 2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This combination evaluates to &lt;code&gt;3&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Combinations have a &lt;em&gt;recursive&lt;/em&gt; evaluation rule:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;Evaluate the subexpressions of the combination.&lt;/li&gt;
+&lt;li&gt;Apply the procedure that is the value of the leftmost subexpression (the operator) to the
+arguments that are the values of the other subexpressions (the operands).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Now that we have a decent understanding of expressions, the author&amp;rsquo;s definition of syntax will (hopefully) be clear:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The various kinds of expressions (each with its associated evaluation rule)
+constitute the syntax of the programming language.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;From this definition, I suspect that we can infer that there are at least two kinds of syntax errors:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Errors that result from using an expression type that is not recognized by the language. (E.g., try to use the keyword &lt;code&gt;func&lt;/code&gt; to define a method in Java)&lt;/li&gt;
+&lt;li&gt;Errors that result from violating assumptions made by the evaluation rule for an expression. (E.g., try to use a non-final variable within a lamdba in Java)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;These two kinds of errors seem to cover the syntax errors I&amp;rsquo;ve run into. Maybe there are more.&lt;/p&gt;
+
+&lt;h1 id=&#34;code-is-data:0f8c34f6c54fdc748cbbb725b29baac0&#34;&gt;Code is data&lt;/h1&gt;
+
+&lt;p&gt;Early on, the authors make a distinction between procedures and data:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;In programming, we deal with two kinds of elements: procedures and data. (Later we will discover that they are really not so distinct.) Informally, data is ‘‘stuff’’ that we want to manipulate, and procedures are descriptions of the rules for manipulating the data.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;As you can see in this quote, however, the authors are quick to point out that the distinction between procedures and data is actually pretty tenuous. I don&amp;rsquo;t think I&amp;rsquo;ve made it to the point in the text where they explicitly say why the distinction doesn&amp;rsquo;t hold up, but there are few points in these sections that already suggest some important similarities between the two:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;It can be helpful to think through the results of both procedures and data by using a substitution model.&lt;/li&gt;
+&lt;li&gt;Defining variables names and procedure names both serve to make our code more abstract, thereby making it more manageable to write more complex programs.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Testing Package Implementation from &#39;the Outside&#39;</title>
@@ -1292,95 +1382,6 @@ Photographers need to earn a living as well.&lt;/blockquote&gt;
 &lt;p&gt;&lt;a href=&#34;http://prezi.com/xby6mpyb_4uo/?utm_campaign=share&amp;amp;utm_medium=copy&#34;&gt;Here&lt;/a&gt; are the slides that I used.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/kmdupr33/iosched/tree/feature/rxjava_rewrite&#34;&gt;Here&amp;rsquo;s&lt;/a&gt; the source for the rxjava rewrite of the session search functionality. I&amp;rsquo;m particularly interested in what experienced RxJava-ers think of how I created an Observable from the SearchActivity&amp;rsquo;s search widget text listener.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>An Introduction to RxJava for Android (Pt. 1)</title>
-      <link>http://kmdupr33.github.io/2015/06/12/an-introduction-to-rxjava-for-android/</link>
-      <pubDate>Fri, 12 Jun 2015 12:34:53 +0000</pubDate>
-      
-      <guid>http://kmdupr33.github.io/2015/06/12/an-introduction-to-rxjava-for-android/</guid>
-      <description>&lt;p&gt;I&amp;rsquo;m taking a brief break from talking about testing. I&amp;rsquo;ll resume my discussion of how &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;I&amp;rsquo;m making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt; after I&amp;rsquo;ve posted the content from &lt;a href=&#34;http://www.meetup.com/University-Android/events/222048562/&#34;&gt;my upcoming talk on RxJava&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt; &lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg&#34; alt=&#34;rxjava_prezi_rxjava_def&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;RxJava is a library that let&amp;rsquo;s you represent anything as an asynchronous data-stream that can be created on any thread, functionally transformed, and consumed by everyone on any thread.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_outline_talk.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_outline_talk-1024x791.jpg&#34; alt=&#34;rxjava_prezi_outline_talk&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;I don&amp;rsquo;t expect that definition to mean much to you at this point, but don&amp;rsquo;t worry. During this presentation, we&amp;rsquo;re going to break down each piece of the statement I just made, and by the time we&amp;rsquo;re through, you&amp;rsquo;ll understand what RxJava is and why its awesome.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_teaser.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_teaser-1024x791.jpg&#34; alt=&#34;rxjava_prezi_teaser&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Before we start trying to understand what RxJava is, let me give you a small teaser that will give you some idea of what RxJava can do. This screenshot is from Google&amp;rsquo;s IOSched app. On this screen, you can search through the various IO sessions. Whenever users type in text into the the &lt;code&gt;SearchWidget&lt;/code&gt; in the &lt;code&gt;Actionbar&lt;/code&gt;, the database is re-queried using the entered text and the results are displayed in a list below the &lt;code&gt;Actionbar&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Now, suppose that you&amp;rsquo;re supposed to implement something like this for an app you&amp;rsquo;re building, but suppose that there are some further requirements, namely, that the query should only execute if:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;there are at least three characters entered into the &lt;code&gt;SearchWidget&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;there has been at least a 100 millisecond delay before any other characters have been entered into the &lt;code&gt;SearchWidget&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;How many lines of code do you think it would take to implement something like this? If you look at the &lt;a href=&#34;https://github.com/kmdupr33/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/SearchActivity.java&#34;&gt;IOSched source code&lt;/a&gt;, you&amp;rsquo;ll get an idea of what it would take. If you followed the strategy in the IOSched app, you&amp;rsquo;d probably set a listener on the &lt;code&gt;SearchWidget&lt;/code&gt; text and use an if-statement to check to see if the text is at least three characters long. If it is, you&amp;rsquo;d call a method that uses a &lt;code&gt;Handler&lt;/code&gt; to remove any messages that have been scheduled to execute in the last 100 milliseconds and that schedules a new message to be sent at the end of a 100 millisecond delay.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s what&amp;rsquo;s awesome about RxJava: Once you have an RxJava &lt;code&gt;Observable&lt;/code&gt; that&amp;rsquo;s set up to report events about text changes in the SearchWidget, you can do the equivalent of all of this in three lines of code. The RxJava way of doing this, moreover, will provide you with more flexibility that will help you cope with any subsequent changes you&amp;rsquo;ll need to make to this portion of the code.&lt;/p&gt;
-
-&lt;p&gt;Hopefully, that&amp;rsquo;s enough to keep you interested in learning about RxJava in case I&amp;rsquo;ve failed to make my introduction to it easy to understand.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_async_data.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_async_data-1024x791.jpg&#34; alt=&#34;rxjava_prezi_async_data&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s start with something that&amp;rsquo;s familiar. RxJava let&amp;rsquo;s you deliver asynchronous data to anyone who&amp;rsquo;s interested in receiving it. Of course, RxJava does more than that, but, this is definitely something that you can do with RxJava. This is something that you do all the time without RxJava. Here&amp;rsquo;s a snippet that shows how how changes in the search query string for an IO session are delivered to a &lt;code&gt;OnQueryTextListener&lt;/code&gt;, a consumer of asynchronous data.&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_async_data_code.jpg&#34;&gt;
-&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_async_data_code1.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_async_data_code1-1024x791.jpg&#34; alt=&#34;rxjava_prezi_async_data_code&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s what this would look like with RxJava:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_async_data_rxjava_code.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_async_data_rxjava_code-1024x791.jpg&#34; alt=&#34;rxjava_prezi_async_data_rxjava_code&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;In this snippet, we have an &lt;code&gt;Observable&lt;/code&gt; that represents the data stream produced by changes in the text of the &lt;code&gt;SearchWidget&lt;/code&gt;. We also have a &lt;code&gt;Subscriber&lt;/code&gt; (created from the &lt;code&gt;Action1&lt;/code&gt; passed into the &lt;code&gt;subscribe()&lt;/code&gt; method) who&amp;rsquo;s interested in any changes in the text of the &lt;code&gt;SearchWidget&lt;/code&gt;. Let&amp;rsquo;s get a little clearer on the definitions of &lt;code&gt;Observable&lt;/code&gt;s and &lt;code&gt;Subscriber&lt;/code&gt;s.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_define_observer_subscriber.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_define_observer_subscriber-1024x791.jpg&#34; alt=&#34;rxjava_prezi_define_observer_subscriber&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Notice that an &lt;code&gt;Observable&lt;/code&gt; represents a &lt;em&gt;data stream&lt;/em&gt; and that there can be &lt;em&gt;multiple Subscribers&lt;/em&gt; who are interested in consuming this asynchronous data stream. I&amp;rsquo;ll say more about what I mean by the phrase &amp;ldquo;data stream&amp;rdquo; later. For now, let&amp;rsquo;s focus on the fact that RxJava let&amp;rsquo;s multiple &lt;code&gt;Subscribers&lt;/code&gt; consume asynchronous data.&lt;/p&gt;
-
-&lt;p&gt;By itself, this fact isn&amp;rsquo;t really a big deal. Its basically just the observer pattern. You work with objects that leverage the observer pattern to deliver asynchronous data to multiple recipients all the time. Anytime you call &lt;code&gt;RecyclerView.Adapter.notifyDatasetChanged()&lt;/code&gt; (or the &lt;code&gt;ListView&lt;/code&gt; equivalent), you&amp;rsquo;re taking advantage of the observer pattern.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;RecyclerView&lt;/code&gt; is an observer of any changes to the &lt;code&gt;Adapter&lt;/code&gt;&amp;rsquo;s data, but you could have more than one observer. Any object that wants to be an observer of the &lt;code&gt;Adapter&lt;/code&gt;&amp;rsquo;s data would just have to call &lt;code&gt;registerDatasetObserver()&lt;/code&gt; just like the &lt;code&gt;RecyclerView&lt;/code&gt; does.&lt;/p&gt;
-
-&lt;p&gt;If you want to use RxJava to deliver asynchronous data to multiple &lt;code&gt;Subscribers&lt;/code&gt; here&amp;rsquo;s what that might look like:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/Screen-Shot-2015-06-12-at-7.18.56-AM.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/Screen-Shot-2015-06-12-at-7.18.56-AM-e1434108030545-1024x397.png&#34; alt=&#34;Screen Shot 2015-06-12 at 7.18.56 AM&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Ignore the &lt;code&gt;publish()&lt;/code&gt; and &lt;code&gt;connect()&lt;/code&gt; method calls for a moment. We&amp;rsquo;ll talk about those later. The important thing here is that there are multiple &lt;code&gt;Subscribers&lt;/code&gt; set up to be notified of any changes in the &lt;code&gt;SearchWidget&lt;/code&gt;&amp;rsquo;s query string text. (By the way, if you&amp;rsquo;re not familiar with &lt;a href=&#34;https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html#syntax&#34;&gt;lambda expressions&lt;/a&gt;, you should probably get familiar before continuing.)&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/?attachment_id=440&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/RxJavaTalk-02-e1434108825723-300x72.png&#34; alt=&#34;RxJavaTalk-02&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Alright, so we&amp;rsquo;ve just established that RxJava let&amp;rsquo;s you deliver asynchronous data to everyone who&amp;rsquo;s interested. The data delivered to &lt;code&gt;Subscriber&lt;/code&gt;&amp;rsquo;s, however, has a specific structure. &amp;rdquo;Data stream&amp;rdquo; is the phrase that I&amp;rsquo;ve been using to refer to that specific structure. We&amp;rsquo;re now in a position to see precisely what I&amp;rsquo;ve meant by this phrase.&lt;/p&gt;
-
-&lt;p&gt;A data stream, as Im defining it, is just ordered data that has a well-defined stopping point and a way of notifying processors of the data that an error has occurred.  Java&amp;rsquo;s &lt;code&gt;Reader&lt;/code&gt; would count as a data stream in the sense that I&amp;rsquo;m defining it here because its &lt;code&gt;read()&lt;/code&gt; method returns -1 once its reached the end of a byte[] and because it throws exceptions if there&amp;rsquo;s an error with processing the data.&lt;/p&gt;
-
-&lt;p&gt;I admit that this is might be an unnatural definition of the phrase &amp;rdquo;data stream,&amp;rdquo; but my primary goal here is to have a succinct phrase for referring to the structured data delivered by Observables rather than to come up with a definition for the phrase &amp;ldquo;data stream&amp;rdquo; that fits our ordinary usage, so don&amp;rsquo;t get philosophical on me. Just know that when I say &amp;ldquo;data stream,&amp;rdquo; I mean an ordered data that has a well-defined stopping point and a way of notifying processors of the data that an error has occurred.&lt;/p&gt;
-
-&lt;p&gt;The fact that RxJava deals with data streams rather than just data is reflected in their use of marble diagrams to represent Observables. I&amp;rsquo;ve been using these diagrams throughout the presentation. Let me briefly explain them:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/RxJavaTalk_as-a-data-stream.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/RxJavaTalk_as-a-data-stream-300x58.png&#34; alt=&#34;RxJavaTalk_as a data stream&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Each circle along this line represents a piece of data emitted by an Observable. The arrow at the end of the line represents the fact that the data is ordered. The solid line following the word &amp;ldquo;stream&amp;rdquo; indicates that the Observable stream has successfully emitted all of its items. An &amp;ldquo;X&amp;rdquo; at any point along the line, however, indicates that an error has occurred while attempting to emit the asynchronous data:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/RxJavaTalk_wtf-is-he-saying.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/RxJavaTalk_wtf-is-he-saying-300x58.png&#34; alt=&#34;RxJavaTalk_wtf is he saying&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;You saw this digram earlier. Its was a (bad) joke that represented your stream of consciousness as an Observable sequence that&amp;rsquo;s experienced an error because your mind was just blown by my initial summary of RxJava. Terrible jokes aside, that&amp;rsquo;s how you represent errors on a marble diagram.&lt;/p&gt;
-
-&lt;p&gt;Technically, these marble diagrams could represent synchronous data streams, but RxJava is really all about &lt;em&gt;asynchronous&lt;/em&gt; data streams. Asynchronous data streams are just data streams that are processed by consumers who aren&amp;rsquo;t going to just wait around for all of the data to be available. Consumers of a synchronous data stream say, &amp;ldquo;I&amp;rsquo;m not going anywhere until you give me that data!&amp;rdquo; Consumers of asynchronous data say, &amp;ldquo;Fetching the data sounds like it could take a while. I&amp;rsquo;m going to go about my day. Why don&amp;rsquo;t you notify me when you get that data for me.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s recap. We started off with this statement of what RxJava does:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg&#34; alt=&#34;rxjava_prezi_rxjava_def&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that&amp;rsquo;s interested. We still don&amp;rsquo;t know, however, what it means for a data stream to be &amp;ldquo;functionally transformed&amp;rdquo; nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I&amp;rsquo;ll have to tackle in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/19/introduction-to-rxjava-for-android-pt-2/&#34;&gt;the second part&lt;/a&gt; of this written version of &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/16/introduction-to-rxjava-for-android-the-talk/&#34;&gt;my upcoming RxJava talk&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
