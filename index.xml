@@ -6,8 +6,59 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 29 Mar 2016 18:02:27 -0400</lastBuildDate>
+    <lastBuildDate>Wed, 06 Apr 2016 07:47:43 -0400</lastBuildDate>
     <atom:link href="http://kmdupr33.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Abstraction Scope and Bound Variables</title>
+      <link>http://kmdupr33.github.io/post/abstraction-scope-and-bound-variables/</link>
+      <pubDate>Wed, 06 Apr 2016 07:47:43 -0400</pubDate>
+      
+      <guid>http://kmdupr33.github.io/post/abstraction-scope-and-bound-variables/</guid>
+      <description>
+
+&lt;p&gt;Here&amp;rsquo;s my big take away from sicp section 1.1.8:&lt;/p&gt;
+
+&lt;h1 id=&#34;abstraction-requires-scope-and-bound-variables:43bc873cfa67de41b2d89932b659d9d8&#34;&gt;Abstraction requires Scope and Bound Variables&lt;/h1&gt;
+
+&lt;p&gt;Procedures (or functions or methods) let us abstract our code. Abstraction is about dividing our program into identifiable tasks that can be reused in the construction of other (identifiable) tasks in our program, which can in turn be used to construct more complex identifiable tasks, etc.&lt;/p&gt;
+
+&lt;p&gt;In order for procedures to enable us to abstract our code, parameter names of a procedure must only have meaning within body of that procedure. To see this, suppose the opposite is true. Suppose, in other words, that parameter names of a procedure can have meaning outside the body of the procedure. If that&amp;rsquo;s the case, then the following code is problematic:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(defn square [x] (* x x))
+(defn good-enough? [guess x]
+  (&amp;lt; (abs (- (square guess) x)) 0.001))
+(good-enough? 1 2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using applicative-order evaluation, the last line of the above code simplifies to this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(&amp;lt; (abs (- (square 1) 2)) 0.001)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, typically, the next step of substitution is results in (A):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(&amp;lt; (abs (- (* 1 1) 2)) 0.001)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;However, if the &lt;code&gt;x&lt;/code&gt; in &lt;code&gt;(defn square [x] (* x x))&lt;/code&gt; can refer to an x that is outside the body of the method, then this &lt;code&gt;x&lt;/code&gt;, in this case, could refer to the value passed in as the parameter named &amp;ldquo;x&amp;rdquo; for the &lt;code&gt;good-enough?&lt;/code&gt; procedure call. In this case, the next step of the substitution would be (B):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;; 2 is the value for x passed in to (good-enough? 1 2)
+(&amp;lt; (abs (- (* 2 2) 2)) 0.001)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Clearly, (A) would evaluate differently than (B).
+More importantly, if the above code evaluated to the result of evaluating (B), then the &lt;code&gt;square&lt;/code&gt; procedure wouldn&amp;rsquo;t actually serve as an &lt;em&gt;effective&lt;/em&gt; abstraction, it would not be a piece of code that identifies a task that could be &lt;em&gt;effectively&lt;/em&gt; reused in &lt;code&gt;good-enough?&lt;/code&gt;. Why? Because we could break &lt;code&gt;square&lt;/code&gt; simply by choosing the wrong name for the parameters of the procedure that uses &lt;code&gt;square&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Because parameters of procedures only have meaning within the body of a procedure, they are said to be &amp;ldquo;bound&amp;rdquo; variables. Presumably, they are called this because their meaning is &lt;em&gt;bound&lt;/em&gt; to the body of the procedure definitions for which they are arguments. The names have no meaning outside the procedure definition body. Free variables, on the other hand, have meaning outside of the procedure definition.&lt;/p&gt;
+
+&lt;p&gt;Abelson et. al haven&amp;rsquo;t yet said that Scope and Bound variables are necessary for abstracting data, but I suspect that they will when I get to that chapter.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;From Sicp pgs. 34-35&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
     
     <item>
       <title>Sicp 1.1.1-1.1.7</title>
@@ -1366,22 +1417,6 @@ Photographers need to earn a living as well.&lt;/blockquote&gt;
 &lt;p&gt;The &lt;code&gt;map()&lt;/code&gt; operators transform the data emitted by their source &lt;code&gt;Observable&lt;/code&gt;. The first &lt;code&gt;map()&lt;/code&gt; operator converts the query string into an intent created from that query string. The second &lt;code&gt;map()&lt;/code&gt; operator converts that intent into a &lt;code&gt;Bundle&lt;/code&gt; that can be used by the &lt;code&gt;SessionsFragment&lt;/code&gt; to load the appropriate sessions (based on the original query string).&lt;/p&gt;
 
 &lt;p&gt;If I&amp;rsquo;ve done my job right, hopefully now you know what RxJava is and why its awesome! Feel free to point out anything that was unclear or inaccurate.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Introduction to RxJava for Android: The Talk</title>
-      <link>http://kmdupr33.github.io/2015/06/16/introduction-to-rxjava-for-android-the-talk/</link>
-      <pubDate>Wed, 17 Jun 2015 01:48:45 +0000</pubDate>
-      
-      <guid>http://kmdupr33.github.io/2015/06/16/introduction-to-rxjava-for-android-the-talk/</guid>
-      <description>&lt;p&gt;Earlier today, I gave my Intro To RxJava talk. I&amp;rsquo;m not thrilled at how clear I was at explaining certain aspects of RxJava, but here&amp;rsquo;s the video nonetheless. My talk starts at 28:32. Hopefully, I&amp;rsquo;ll do a better job when I finish &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/12/an-introduction-to-rxjava-for-android/&#34;&gt;the written version of this talk&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;If you want to hear a hilarious take down of the design of the new Pizza Hut app, check out &lt;a href=&#34;https://www.linkedin.com/profile/view?id=51923912&amp;amp;trk=hp-feed-member-name&#34;&gt;Ian&amp;rsquo;s&lt;/a&gt; talk that happens before mine.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://prezi.com/xby6mpyb_4uo/?utm_campaign=share&amp;amp;utm_medium=copy&#34;&gt;Here&lt;/a&gt; are the slides that I used.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/kmdupr33/iosched/tree/feature/rxjava_rewrite&#34;&gt;Here&amp;rsquo;s&lt;/a&gt; the source for the rxjava rewrite of the session search functionality. I&amp;rsquo;m particularly interested in what experienced RxJava-ers think of how I created an Observable from the SearchActivity&amp;rsquo;s search widget text listener.&lt;/p&gt;
 </description>
     </item>
     
