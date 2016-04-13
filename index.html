@@ -213,6 +213,10 @@
     
         
     
+        
+    
+        
+    
 
     
         
@@ -234,6 +238,46 @@
 </nav>
 
     </div>
+
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/post/sicp-in-swift/">SICP in Swift</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>The Structure and Interpretation of Computer Programs is widely regarded as essential reading for serious programmers. Unfortunately, the programming language used in SICP (viz., scheme) isn&rsquo;t one that&rsquo;s in serious use anywhere. Moreover, the tools available for working with scheme are quite limited. Its unfortunate that the language and tooling can often be an obstacle to learning the concepts expressed in SICP. SICP, after all, is not about a particular programming language: &hellip;we believe that the essential material to be addressed by a subject at this level is not the syntax of particular programming-language constructs, nor clever algorithms for computing particular functions efficiently, nor even the mathematical analysis of algorithms and the foundations of computing, but rather the techniques used to control the intellectual complexity of large software systems. <a class="read-more" href="/post/sicp-in-swift/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        
+        <time class="post-date" datetime="2016-04-13T15:14:55-04:00">
+            13 Apr 2016
+        </time>
+    </footer>
+</article>
+
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/post/process-vs-procedure-recursion/">Process vs. Procedure Recursion</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Just because a procedure is recursive, doesn&rsquo;t mean the process that it generates is recursive. A procedure is recursive when that procedure refers to itself in order to evaluate. (defn factorial [x] (letfn [(fact-iter [product counter max-count] (if (&gt; counter max-count) product (fact-iter (* counter product) (inc counter) max-count)) )] (fact-iter 1 1 n)) ) fact-iter, in the above code, is a recursive procedure, but the process it generates is not recursive. <a class="read-more" href="/post/process-vs-procedure-recursion/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        
+        <time class="post-date" datetime="2016-04-06T07:58:01-04:00">
+            6 Apr 2016
+        </time>
+    </footer>
+</article>
 
     
         
@@ -440,80 +484,6 @@
         
         <time class="post-date" datetime="2015-07-17T11:53:55Z">
             17 Jul 2015
-        </time>
-    </footer>
-</article>
-
-    
-        
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/">Why Having Global Static References to Application Contexts is Probably not the Best Idea</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p><p>In my last post, I went over <a href="http://www.philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/">6 things I wish I knew before I wrote my first Android app</a>. One of the things I listed in that post was this:</p>
-
-<blockquote>
-<ol>
-<li>Don’t have static references to Contexts</li>
-</ol>
-</blockquote>
-
-<p>The reason I warned against this is that static references to Contexts can cause memory leaks. An astute reader pointed out that a static reference to an application Context wouldn&rsquo;t cause a memory leak since the application Context is around for the lifetime the app is running anyway. I then qualified my warning by saying:</p>
-
-<blockquote>Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but I wouldn’t recommend that you do that either.</blockquote>
-
-<p>In this post, I want to say a little more about why think having and using a static reference to an application Context is <em>less-than-ideal</em>. I emphasize &ldquo;less-than-ideal&rdquo; in the previous sentence as a way of highlighting what I&rsquo;m not saying: I&rsquo;m not saying that a kitten dies every time you use a static reference to an application Context. Once again, @codestandards is hilarious and relevant here:</p>
-
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Please, for the sake of the kittens. <a href="http://t.co/xaj7pNDVfH">pic.twitter.com/xaj7pNDVfH</a></p>&mdash; Code Standards (@codestandards) <a href="https://twitter.com/codestandards/status/570224843536277504">February 24, 2015</a></blockquote>
-<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-<p>Instead, all I&rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps.</p>
- <a class="read-more" href="/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        
-            
-        
-        
-        <time class="post-date" datetime="2015-07-14T18:35:40Z">
-            14 Jul 2015
-        </time>
-    </footer>
-</article>
-
-    
-        
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/">6 Things I wish I Knew before I Wrote my first Android App</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p><p>My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&rsquo;t even bother listing it on my resume&rsquo; anymore. That app wouldn&rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.</p>
-
-<p>Here&rsquo;s a list of things to keep in mind as you&rsquo;re writing your first Android apps. These lessons are derived from actual mistakes that I made in the source code of my first app, mistakes that I&rsquo;ll be showing below. Keeping these things in mind will help you write an app that you can be a little prouder of.</p>
-
-<p>Of course, if you&rsquo;re doing your job right as a student of Android development, you&rsquo;ll probably hate your app later regardless. As @codestandards says,</p>
-
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">If the code you wrote a year ago doesn&#39;t seem bad to you, you&#39;re probably not learning enough.</p>&mdash; Code Standards (@codestandards) <a href="https://twitter.com/codestandards/status/601373392059518976">May 21, 2015</a></blockquote>
-<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-<p>If you&rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&rsquo;ve never been guilty of making the mistakes I demo in those items.</p>
- <a class="read-more" href="/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        
-            
-        
-        
-        <time class="post-date" datetime="2015-07-09T21:07:51Z">
-            9 Jul 2015
         </time>
     </footer>
 </article>

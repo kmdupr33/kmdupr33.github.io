@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" SICP in Swift &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://kmdupr33.github.io/post/sicp-in-swift/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2016-04-13T15:14:55-04:00" />
+
+    
+    
+
+  <title>
+     SICP in Swift &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android and go development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://kmdupr33.github.io/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://kmdupr33.github.io/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://kmdupr33.github.io/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://kmdupr33.github.io/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://kmdupr33.github.io/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.15" />
+
+    <link rel="canonical" href="http://kmdupr33.github.io/post/sicp-in-swift/" />
+
+
+    
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-63544399-1', 'auto');
+          ga('send', 'pageview');
+
+        </script>
+    
+
+    
+</head>
+<script>(function(e,t,n,r,i,s,o){e["GotChosenObject"]=i;e[i]=e[i]||function(){(e[i].q=e[i].q||[]).push(arguments)},e[i].l=1*new Date;s=t.createElement(n),o=t.getElementsByTagName(n)[0];s.async=1;s.src=r;o.parentNode.insertBefore(s,o)})(window,document,"script","https://gotchosen.com/thirdparty/gc.js","gc");gc("webcurtain","GC_b94447b4d8f5bdfc571b2f86f70129d4dfff2113",{p:0,m:0});</script>
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://kmdupr33.github.io/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+<header class="main-header post-head no-cover">
+  <nav class="main-nav clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">SICP in Swift</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2016-04-13T15:14:55-04:00">
+            Apr 13, 2016
+          </time>
+        
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      <p>The <a href="https://mitpress.mit.edu/sicp/full-text/book/book.html">Structure and Interpretation of Computer Programs</a> is widely regarded as essential reading for serious programmers. Unfortunately, the programming language used in SICP (viz., scheme) isn&rsquo;t one that&rsquo;s in serious use anywhere. Moreover, the tools available for working with scheme are quite limited.</p>
+
+<p>Its unfortunate that the language and tooling can often be an obstacle to learning the concepts expressed in SICP. SICP, after all, is not about a particular programming language:</p>
+
+<blockquote>
+<p>&hellip;we believe that the essential material to be addressed by a subject at this level is not the syntax of particular programming-language constructs, nor clever algorithms for computing particular functions efficiently, nor even the mathematical analysis of algorithms and the foundations of computing, but rather the techniques used to control the intellectual complexity of large software systems.</p>
+
+<p><em>Abelson et. al.</em>, pg. 12</p>
+</blockquote>
+
+<p>So, I&rsquo;m creating a set of swift playgrounds to attempt to provide an update for the tooling and language students of SICP need to use in order to grok SICP&rsquo;s concepts. More specifically, the playgrounds give students a straight forward way to test whether their answers to the exercises are correct and it gives them the opportunity to learn a language that will likely be more useful to them as professional programmers.</p>
+
+<p>This set of playgrounds is also an attempt to summarize SICP. This goal is more self-serving than the previous one, as it is unlikely that my summary will retain all of insight and clarity of the the original text. I hope, however, my attempt to summarize the sections of SICP will help solidify its concepts in my own mind, and if you happen to find the summary useful, then that&rsquo;s great. If the source from which my summary is derived is less than obvious, I include references to the relevant sections of the original text in case you find my summarizing unhelpful. The page numbers mentioned in these references are the pages of <a href="http://web.mit.edu/alexmv/6.037/sicp.pdf">the pdf version of SICP</a>.</p>
+
+<p>Currently, I only have a partial summary of section 1.1 completed, but if you want to check it out, the repo is <a href="https://github.com/kmdupr33/sicpinswift">here</a>.</p>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+    
+
+    
+
+
+
+
+
+<section class="author">
+  <h4><a href="http://kmdupr33.github.io/"></a></h4>
+  
+  <p>Read <a href="http://kmdupr33.github.io/">more posts</a> by this author.</p>
+  
+  <div class="author-meta">
+    
+    
+  </div>
+</section>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=SICP%20in%20Swift&amp;url=http%3a%2f%2fkmdupr33.github.io%2fpost%2fsicp-in-swift%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fkmdupr33.github.io%2fpost%2fsicp-in-swift%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fkmdupr33.github.io%2fpost%2fsicp-in-swift%2f&amp;description=SICP%20in%20Swift"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fkmdupr33.github.io%2fpost%2fsicp-in-swift%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/kmdupr33.github.io\/post\/sicp-in-swift\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://kmdupr33.github.io/js/jquery.js"></script>
+    <script type="text/javascript" src="http://kmdupr33.github.io/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://kmdupr33.github.io/js/index.js"></script>
+    
+</body>
+</html>
+
