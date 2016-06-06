@@ -663,9 +663,7 @@ We try to make sure that we always create a valid object…Partially creating an
       <pubDate>Sat, 06 Jun 2015 11:08:03 +0000</pubDate>
       
       <guid>http://philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/</guid>
-      <description>
-
-&lt;p&gt;Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&amp;rsquo;ve fetched or in response to some input. The &lt;code&gt;SessionDetailActivity&lt;/code&gt; in Google&amp;rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the &lt;code&gt;SessionDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy.&lt;/p&gt;
+      <description>&lt;p&gt;Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&amp;rsquo;ve fetched or in response to some input. The &lt;code&gt;SessionDetailActivity&lt;/code&gt; in Google&amp;rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the &lt;code&gt;SessionDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34; alt=&#34;IO Testing Talk-04&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
@@ -677,6 +675,8 @@ We try to make sure that we always create a valid object…Partially creating an
 
 &lt;p&gt;Before I outline my approach to refactoring the &lt;code&gt;SessionDetailActivity&lt;/code&gt; so that we can have unit testable, view constructing code, let&amp;rsquo;s try to get a handle on how the &lt;code&gt;SessionDetailActivity&lt;/code&gt;works without any kind of refactoring. Here&amp;rsquo;s what the code currently looks like:&lt;/p&gt;
 
+&lt;script src=&#34;//gist.github.com/kmdupr33/0560695307233112cf3f.js&#34;&gt;&lt;/script&gt;
+
 &lt;p&gt;There are few important things to notice about this code fragment.&lt;/p&gt;
 
 &lt;p&gt;First, note that there&amp;rsquo;s business logic that &lt;em&gt;determines the structure of the view hierarchy that&amp;rsquo;s being built&lt;/em&gt; by this method. For example, if one of the tags has an id that&amp;rsquo;s equal to the keynote speaker tag id, we don&amp;rsquo;t want to add a view to the tags container for that tag (lines 18-31). Let&amp;rsquo;s call this kind of business logic &amp;ldquo;view-hierarchy-affecting business logic.&amp;rdquo;&lt;/p&gt;
@@ -685,15 +685,7 @@ We try to make sure that we always create a valid object…Partially creating an
 
 &lt;p&gt;The problem of creating unit testable, dynamically constructed views is basically the problem of finding sensible places to put these two different kinds of business logic. Here&amp;rsquo;s what I suggest, the view-hierarchy-affecting business logic should go in a &lt;code&gt;SessionDetailPresenter&lt;/code&gt;:&lt;/p&gt;
 
-&lt;p&gt;The &lt;code&gt;SessionDetailActivity&lt;/code&gt; in this code segment is acting as the View within the MVP triad, and as such, it should not contain any business logic. Thus, we know that the view-property-affecting business logic should not be within the &lt;code&gt;SessionDetailActivity&lt;/code&gt;. Instead of placing the view-property affecting business logic within the &lt;code&gt;SessionDetailActivity&lt;/code&gt;, we have the &lt;code&gt;SessionDetailActivity&lt;/code&gt; delegate that logic out to another View-Presenter pair:&lt;/p&gt;
-
-&lt;p&gt;The &amp;ldquo;SessionTagViewTranslator&amp;rdquo; in this code segment is really just the View within the View-Presenter pair. For reasons that I discuss &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/05/dont-call-it-mvp/&#34;&gt;here&lt;/a&gt;, I prefer the name &amp;ldquo;ViewTranslator&amp;rdquo; over &amp;ldquo;View&amp;rdquo; because it more clearly marks the difference between an MVP View and an Android View. Astute readers will notice that the SessionDetailActivity shouldn&amp;rsquo;t be responsible for forwarding the click event on the view to the TagPresenter. This problem arises because of a circular dependency between MVP Views and Presenters. I&amp;rsquo;ll discuss how to break this dependency in my next post. The &lt;code&gt;TagPresenter&lt;/code&gt; is fairly trivial, but here&amp;rsquo;s what it looks like:&lt;/p&gt;
-
-&lt;p&gt;The SesionTagViewTranslator is even more trivial, so I won&amp;rsquo;t bother showing the code for that.&lt;/p&gt;
-
-&lt;h2 id=&#34;conclusion:de96b0d86be079e91b1b191cfad3b31b&#34;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;To sum it all up: dynamically constructed views often have two different types of business logic: view-hierarchy-affecting business logic and view-property-affecting business logic. Making these views unit testable consists of two steps: First, place the view-hierarchy-affecting business logic in a top level presenter like the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;. Second have an MVP-View (like the &lt;code&gt;SessionDetailActivity&lt;/code&gt;) create View-Presenter pairs for each Android view that&amp;rsquo;s added to the view hierarchy.&lt;/p&gt;
+&lt;p&gt;&lt;script src=&#34;//gist.github.com/kmdupr33/&lt;/p&gt;
 </description>
     </item>
     
