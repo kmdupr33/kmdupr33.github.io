@@ -712,6 +712,23 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;h2 id=&#34;conclusion:de96b0d86be079e91b1b191cfad3b31b&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;To sum it all up: dynamically constructed views often have two different types of business logic: view-hierarchy-affecting business logic and view-property-affecting business logic. Making these views unit testable consists of two steps: First, place the view-hierarchy-affecting business logic in a top level presenter like the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;. Second have an MVP-View (like the &lt;code&gt;SessionDetailActivity&lt;/code&gt;) create View-Presenter pairs for each Android view that&amp;rsquo;s added to the view hierarchy.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Against Android Unit Tests:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Why Android Unit Testing is so Hard: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;How to Make Our Android Apps Unit Testable: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/&#34;&gt;Quick Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;Followup: Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;Followup: Unit Testing Dynamically Constructed Views&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
 </description>
     </item>
     
@@ -748,6 +765,23 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;p&gt;My hope is to eventually have &lt;a href=&#34;https://github.com/kmdupr33/iosched&#34;&gt;a fork of Google&amp;rsquo;s IOSched app&lt;/a&gt; that allows us to unit test all of its business logic. Making a non-trivial app like IOSched unit testable will tell us a lot about what it really takes to unit test Android apps. We might find out that unit testing Android apps is just too impractical. Either way, I look forward to exploring how we might pull this off.&lt;/p&gt;
 
 &lt;p&gt;You can check out my progress towards this goal by looking at the aforementioned fork of the IOSched repo. I&amp;rsquo;ll try to make sure the master branch always has something that is semi-polished in it. I make no guarantees about other branches. I&amp;rsquo;d love to work with others toward this goal. If people are interested in contributing to the repo, I&amp;rsquo;ll put together some code standards and guidelines for contributing.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Against Android Unit Tests:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Why Android Unit Testing is so Hard: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;How to Make Our Android Apps Unit Testable: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/&#34;&gt;Quick Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;Followup: Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;Followup: Unit Testing Dynamically Constructed Views&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
 </description>
     </item>
     
@@ -834,6 +868,23 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-08.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-08.png&#34; alt=&#34;IO Testing Talk-08&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;I&amp;rsquo;ve written extensively about this topic in my series entitled &amp;ldquo;&lt;a href=&#34;http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Against Android Unit Tests.&lt;/a&gt;&amp;rdquo; I&amp;rsquo;ve also made some suggestions on how we might write unit tests for android &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Against Android Unit Tests:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Why Android Unit Testing is so Hard: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;How to Make Our Android Apps Unit Testable: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/&#34;&gt;Quick Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;Followup: Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;Followup: Unit Testing Dynamically Constructed Views&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
 </description>
     </item>
     
@@ -911,6 +962,23 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;p&gt;I think the Square Way is the way to go if we want to make our apps unit testable. Of course, I&amp;rsquo;m open to other alternative proposals. I have not shown that all other ways of enhancing an app&amp;rsquo;s testability are inferior to the Square Way.&lt;/p&gt;
 
 &lt;p&gt;Since this is the end of the series, I also wanted to say thanks to everyone for their support as I wrote these articles. I appreciate all of the feedback &amp;ndash; positive and otherwise, the retweets, and the general social media love. The positive response has helped me realize how sorely we need to think and talk about testing for Android, and because of this realization, I&amp;rsquo;ve decided to spend the foreseeable future discussing Android testing on this blog. I&amp;rsquo;ll be posting new posts every Friday. I look forward to continuing the conversation.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Against Android Unit Tests:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Why Android Unit Testing is so Hard: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;How to Make Our Android Apps Unit Testable: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/&#34;&gt;Quick Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;Followup: Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;Followup: Unit Testing Dynamically Constructed Views&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
 </description>
     </item>
     
@@ -931,6 +999,23 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;p&gt;The second guide gives you the steps to follow if you&amp;rsquo;re interested in following The Square Way of structuring your applications to enhance its unit testability. This guide summarizes How to Make Our Android Appps Unit Testable &lt;a href=&#34;http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt; and &lt;a href=&#34;http://philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;. Disclaimer: Just because I&amp;rsquo;ve tried to present the The Square Way in a pretty infographic, doesn&amp;rsquo;t mean that I think that its the best way increase an app&amp;rsquo;s unit testability. There&amp;rsquo;s still a lot to say about the disadvantages of The Square Way. Again, I&amp;rsquo;ll talk about those disadvantages in my next post.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/againstandroidunittestsseries_squarewayrefactorcheatsheet.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/againstandroidunittestsseries_squarewayrefactorcheatsheet.png&#34; alt=&#34;AgainstAndroidUnitTestsSeries_SquareWayRefactorCheatSheet&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Against Android Unit Tests:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Why Android Unit Testing is so Hard: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;How to Make Our Android Apps Unit Testable: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/&#34;&gt;Quick Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;Followup: Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;Followup: Unit Testing Dynamically Constructed Views&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
 </description>
     </item>
     
@@ -1010,6 +1095,23 @@ We try to make sure that we always create a valid object…Partially creating an
 
 &lt;p&gt;The Square Way is a significant departure from what I have called the “standard way” of building android applications. We should consider the disadvantages of following it. To that end, the next posts will be a presentation of the potential problems that may arise with The Square Way to developing apps, along with some potential solutions to those problems. The final post of this series, will point out some other advantages of The Square Way, advantages that are broader than the extent to which The Square Way enhances an app’s unit testability.&lt;/p&gt;
 
+&lt;hr /&gt;
+
+&lt;p&gt;Against Android Unit Tests:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Why Android Unit Testing is so Hard: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;How to Make Our Android Apps Unit Testable: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/&#34;&gt;Quick Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;Followup: Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;Followup: Unit Testing Dynamically Constructed Views&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
 &lt;h2 id=&#34;notes:f90144975a120e4b94c67ad8628e0439&#34;&gt;Notes:&lt;/h2&gt;
 
 &lt;ol&gt;
@@ -1063,6 +1165,23 @@ Let’s see how the square way would have us write this. Again, the square way r
 &lt;h1 id=&#34;conclusion:f3c1255ae52f3ab94cc2c6b0d8a993e0&#34;&gt;Conclusion&lt;/h1&gt;
 
 &lt;p&gt;In addition to being unit testable, I think that this code is also easier to read and maintain. To be sure, there’s probably more that could be done to make it better, but I wanted to keep it as close to the old implementation as possible while also making the code unit testable. In &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;the next post&lt;/a&gt;, I’ll explore what it looks like to apply the square way of structuring UI app component classes like &lt;code&gt;Fragment&lt;/code&gt;s and &lt;code&gt;Activity&lt;/code&gt;s.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Against Android Unit Tests:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Why Android Unit Testing is so Hard: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;How to Make Our Android Apps Unit Testable: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/&#34;&gt;Quick Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;Followup: Summary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;Followup: Unit Testing Dynamically Constructed Views&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
 </description>
     </item>
     
