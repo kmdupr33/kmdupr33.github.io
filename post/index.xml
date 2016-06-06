@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Philosophical Hacker</title>
-    <link>http://kmdupr33.github.io/post/</link>
+    <link>http://philosophicalhacker.com/post/</link>
     <description>Recent content in Posts on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 06 Apr 2016 07:58:01 -0400</lastBuildDate>
-    <atom:link href="http://kmdupr33.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Process vs. Procedure Recursion</title>
-      <link>http://kmdupr33.github.io/post/process-vs-procedure-recursion/</link>
+      <link>http://philosophicalhacker.com/post/process-vs-procedure-recursion/</link>
       <pubDate>Wed, 06 Apr 2016 07:58:01 -0400</pubDate>
       
-      <guid>http://kmdupr33.github.io/post/process-vs-procedure-recursion/</guid>
+      <guid>http://philosophicalhacker.com/post/process-vs-procedure-recursion/</guid>
       <description>&lt;p&gt;Just because a procedure is recursive, doesn&amp;rsquo;t mean the process that it generates is recursive. A procedure is recursive when that procedure refers to itself in order to evaluate.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;(defn factorial [x]
@@ -41,10 +41,10 @@
     
     <item>
       <title>Abstraction, Scope, and Bound Variables</title>
-      <link>http://kmdupr33.github.io/post/abstraction-scope-and-bound-variables/</link>
+      <link>http://philosophicalhacker.com/post/abstraction-scope-and-bound-variables/</link>
       <pubDate>Wed, 06 Apr 2016 07:47:43 -0400</pubDate>
       
-      <guid>http://kmdupr33.github.io/post/abstraction-scope-and-bound-variables/</guid>
+      <guid>http://philosophicalhacker.com/post/abstraction-scope-and-bound-variables/</guid>
       <description>
 
 &lt;p&gt;Here&amp;rsquo;s my big take away from sicp section 1.1.8:&lt;/p&gt;
@@ -92,10 +92,10 @@ More importantly, if the above code evaluated to the result of evaluating (B), t
     
     <item>
       <title>Sicp 1.1.1-1.1.7</title>
-      <link>http://kmdupr33.github.io/post/sicp-111-117/</link>
+      <link>http://philosophicalhacker.com/post/sicp-111-117/</link>
       <pubDate>Tue, 29 Mar 2016 18:02:27 -0400</pubDate>
       
-      <guid>http://kmdupr33.github.io/post/sicp-111-117/</guid>
+      <guid>http://philosophicalhacker.com/post/sicp-111-117/</guid>
       <description>
 
 &lt;p&gt;Today was my first work day at &lt;a href=&#34;recurse.com&#34;&gt;the Recurse Center&lt;/a&gt;. Yesterday, I found out that there&amp;rsquo;s an &lt;a href=&#34;https://mitpress.mit.edu/sicp/full-text/book/book.html&#34;&gt;SICP&lt;/a&gt; study group. I&amp;rsquo;ve been wanting to study SICP for a while now, so naturally I joined. What follows are my thoughts and key take-aways from sections 1.1.1-1.1.7.&lt;/p&gt;
@@ -182,10 +182,10 @@ constitute the syntax of the programming language.&lt;/p&gt;
     
     <item>
       <title>Testing Package Implementation from &#39;the Outside&#39;</title>
-      <link>http://kmdupr33.github.io/post/testing-package-implmentation-details-from-the-outside/</link>
+      <link>http://philosophicalhacker.com/post/testing-package-implmentation-details-from-the-outside/</link>
       <pubDate>Wed, 03 Feb 2016 21:30:42 -0500</pubDate>
       
-      <guid>http://kmdupr33.github.io/post/testing-package-implmentation-details-from-the-outside/</guid>
+      <guid>http://philosophicalhacker.com/post/testing-package-implmentation-details-from-the-outside/</guid>
       <description>
 
 &lt;p&gt;Sometimes you need to test a package&amp;rsquo;s implementation from outside of the package containing the implementation you&amp;rsquo;d like to test. This post briefly covers why this need arises and how we can meet  that need. Much of the information here is already covered in Andrew Gerrand&amp;rsquo;s &lt;a href=&#34;https://www.youtube.com/watch?v=ndmB0bj7eyw&#34;&gt;testing techniques talk&lt;/a&gt;, so if you&amp;rsquo;ve watched that, you&amp;rsquo;ll probably only think the last section of this post is interesting.&lt;/p&gt;
@@ -255,10 +255,10 @@ Now, suppose you wanted to test the &lt;span style=&#34;color: #BA2121&#34;&gt;`
     
     <item>
       <title>Table-driven tests with Gomock</title>
-      <link>http://kmdupr33.github.io/post/table-driven-tests-with-gomock/</link>
+      <link>http://philosophicalhacker.com/post/table-driven-tests-with-gomock/</link>
       <pubDate>Sat, 23 Jan 2016 13:01:07 -0500</pubDate>
       
-      <guid>http://kmdupr33.github.io/post/table-driven-tests-with-gomock/</guid>
+      <guid>http://philosophicalhacker.com/post/table-driven-tests-with-gomock/</guid>
       <description>
 
 &lt;p&gt;Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&amp;rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.&lt;/p&gt;
@@ -432,10 +432,10 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
     
     <item>
       <title>Integration Tests in Go</title>
-      <link>http://kmdupr33.github.io/post/integration-tests-in-go/</link>
+      <link>http://philosophicalhacker.com/post/integration-tests-in-go/</link>
       <pubDate>Fri, 22 Jan 2016 19:27:36 -0500</pubDate>
       
-      <guid>http://kmdupr33.github.io/post/integration-tests-in-go/</guid>
+      <guid>http://philosophicalhacker.com/post/integration-tests-in-go/</guid>
       <description>
 
 &lt;p&gt;Although Go has support for testing built in to its toolchain, certain kinds of testing can be a bit tricky. For example, it may not be immediately obvious how you would go about writing and running &lt;em&gt;integration tests&lt;/em&gt; in go. This post contains info on how to write and run integration tests for your go code.&lt;/p&gt;
@@ -576,10 +576,10 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
     
     <item>
       <title>Getting started with Gomock</title>
-      <link>http://kmdupr33.github.io/post/getting-started-with-gomock/</link>
+      <link>http://philosophicalhacker.com/post/getting-started-with-gomock/</link>
       <pubDate>Wed, 20 Jan 2016 10:43:26 -0500</pubDate>
       
-      <guid>http://kmdupr33.github.io/post/getting-started-with-gomock/</guid>
+      <guid>http://philosophicalhacker.com/post/getting-started-with-gomock/</guid>
       <description>
 
 &lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing&#34;&gt;my last post&lt;/a&gt;, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&amp;rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&amp;rsquo;s a brief tutorial on how to get started with gomock.&lt;/p&gt;
@@ -708,10 +708,10 @@ GopherFinder
     
     <item>
       <title>Should we use mocking libraries for go testing?</title>
-      <link>http://kmdupr33.github.io/2016/01/13/should-we-use-mocking-libraries-for-go-testing/</link>
+      <link>http://philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/</link>
       <pubDate>Thu, 14 Jan 2016 02:20:53 +0000</pubDate>
       
-      <guid>http://kmdupr33.github.io/2016/01/13/should-we-use-mocking-libraries-for-go-testing/</guid>
+      <guid>http://philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/</guid>
       <description>
 
 &lt;p&gt;A few weeks ago, I started learning go. Since I&amp;rsquo;m a wannabe TDD-er, I took a look at some resources on testing go code. I stumbled upon &lt;a href=&#34;https://talks.golang.org/2014/testing.slide#1&#34;&gt;Andrew Gerrand&amp;rsquo;s excellent Testing Techniques talk&lt;/a&gt; in which he says this:&lt;/p&gt;
@@ -823,10 +823,10 @@ GopherFinder
     
     <item>
       <title>Making a TDD-based HackerNews client for Android</title>
-      <link>http://kmdupr33.github.io/2015/07/17/making-a-tdd-based-hackernews-client-for-android/</link>
+      <link>http://philosophicalhacker.com/2015/07/17/making-a-tdd-based-hackernews-client-for-android/</link>
       <pubDate>Fri, 17 Jul 2015 11:53:55 +0000</pubDate>
       
-      <guid>http://kmdupr33.github.io/2015/07/17/making-a-tdd-based-hackernews-client-for-android/</guid>
+      <guid>http://philosophicalhacker.com/2015/07/17/making-a-tdd-based-hackernews-client-for-android/</guid>
       <description>
 
 &lt;p&gt;I&amp;rsquo;m using TDD to write a HackerNews client for Android. This post (and the ones that will likely follow it) share a little bit about some of the techniques I used to follow a TDD-based work-flow for developing this application. It also discusses the architecture that arises when Android apps are built with testability in mind from the ground up.&lt;/p&gt;
@@ -903,10 +903,10 @@ Pg. 90&lt;/blockquote&gt;
     
     <item>
       <title>Why Having Global Static References to Application Contexts is Probably not the Best Idea</title>
-      <link>http://kmdupr33.github.io/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/</link>
+      <link>http://philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/</link>
       <pubDate>Tue, 14 Jul 2015 18:35:40 +0000</pubDate>
       
-      <guid>http://kmdupr33.github.io/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/</guid>
+      <guid>http://philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/</guid>
       <description>
 
 &lt;p&gt;In my last post, I went over &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/&#34;&gt;6 things I wish I knew before I wrote my first Android app&lt;/a&gt;. One of the things I listed in that post was this:&lt;/p&gt;
@@ -983,10 +983,10 @@ Accessing global state statically doesn’t clarify those shared dependencies to
     
     <item>
       <title>6 Things I wish I Knew before I Wrote my first Android App</title>
-      <link>http://kmdupr33.github.io/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/</link>
+      <link>http://philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/</link>
       <pubDate>Thu, 09 Jul 2015 21:07:51 +0000</pubDate>
       
-      <guid>http://kmdupr33.github.io/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/</guid>
+      <guid>http://philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/</guid>
       <description>
 
 &lt;p&gt;My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&amp;rsquo;t even bother listing it on my resume&amp;rsquo; anymore. That app wouldn&amp;rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.&lt;/p&gt;
@@ -1066,10 +1066,10 @@ Accessing global state statically doesn’t clarify those shared dependencies to
     
     <item>
       <title>My Response to Hannes Dorfmann on &#34;the Circular Dependency Problem&#34;</title>
-      <link>http://kmdupr33.github.io/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/</link>
+      <link>http://philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/</link>
       <pubDate>Wed, 08 Jul 2015 13:42:14 +0000</pubDate>
       
-      <guid>http://kmdupr33.github.io/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/</guid>
+      <guid>http://philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/</guid>
       <description>&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/&#34;&gt;my last post&lt;/a&gt;, I argued that there are two disadvantages to &lt;code&gt;Activities&lt;/code&gt; and Presenters. The first disadvantage is that they are often bloated classes. The second disadvantage is that these classes often have a circular dependency between themselves and their Views. Yesterday, Hannes Dorfmann made a comment on my post that was so thoughtful and excellent that I think its worth dedicating an entire post to responding to it.&lt;/p&gt;
 
 &lt;p&gt;Specifically, Hannes&amp;rsquo; comments challenge my claim that the circular dependency between Activities/Fragments/Presenters and their Views are a problem.&lt;/p&gt;
@@ -1155,10 +1155,10 @@ That’s open to dispute. [Is] a presenter...in an invalid state without a View
     
     <item>
       <title>MVPR: A Flexible, Testable Architecture for Android (Pt. 1)</title>
-      <link>http://kmdupr33.github.io/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/</link>
+      <link>http://philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/</link>
       <pubDate>Tue, 07 Jul 2015 18:29:16 +0000</pubDate>
       
-      <guid>http://kmdupr33.github.io/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/</guid>
+      <guid>http://philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/</guid>
       <description>
 
 &lt;blockquote&gt;Thorough unit testing helps us improve the internal quality because, to be tested, a unit has to be structured to run outside the system in a test fixture. A unit test for an object needs to create the object, provide its dependencies, interact with it, and check that it behaved as expected. So, for a class to be easy to unit-test, the class must have explicit dependencies that can easily be substituted and clear responsibilities that can easily be invoked and verified. In software engineering terms, that means that the code must be loosely coupled and highly cohesive —in other words, well-designed.
@@ -1261,20 +1261,20 @@ We try to make sure that we always create a valid object…Partially creating an
     
     <item>
       <title>I&#39;m taking a brief hiatus from blogging here...</title>
-      <link>http://kmdupr33.github.io/2015/06/26/im-taking-a-brief-hiatus-from-blogging-here/</link>
+      <link>http://philosophicalhacker.com/2015/06/26/im-taking-a-brief-hiatus-from-blogging-here/</link>
       <pubDate>Fri, 26 Jun 2015 12:48:20 +0000</pubDate>
       
-      <guid>http://kmdupr33.github.io/2015/06/26/im-taking-a-brief-hiatus-from-blogging-here/</guid>
+      <guid>http://philosophicalhacker.com/2015/06/26/im-taking-a-brief-hiatus-from-blogging-here/</guid>
       <description>&lt;p&gt;&amp;hellip;so that I can focus on ensuring that &lt;a href=&#34;http://droidjournal.com&#34;&gt;Droid Journal&lt;/a&gt; has a successful inaugural edition. I did, however, just post on &lt;a href=&#34;http://www.droidjournal.com/blog/reviews/2015/06/26/review-advocating-against-android-fragments.html&#34;&gt;Droid Journal&amp;rsquo;s blog&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Taylor Swift, Photographers, and &#34;working for nothing&#34;</title>
-      <link>http://kmdupr33.github.io/2015/06/25/taylor-swift-photographers-and-working-for-nothing/</link>
+      <link>http://philosophicalhacker.com/2015/06/25/taylor-swift-photographers-and-working-for-nothing/</link>
       <pubDate>Thu, 25 Jun 2015 01:44:15 +0000</pubDate>
       
-      <guid>http://kmdupr33.github.io/2015/06/25/taylor-swift-photographers-and-working-for-nothing/</guid>
+      <guid>http://philosophicalhacker.com/2015/06/25/taylor-swift-photographers-and-working-for-nothing/</guid>
       <description>
 
 &lt;p&gt;If you don&amp;rsquo;t already know, here&amp;rsquo;s a quick run down of what&amp;rsquo;s happening with the whole Taylor Swift/Apple/Indie Artists debacle: Last month, Apple released its streaming service and offered a three month trial period to users for free. During the trial period, they weren&amp;rsquo;t planning on paying the artists whose music was streamed by the service. Last week, Taylor Swift published &lt;a href=&#34;http://taylorswift.tumblr.com/post/122071902085/to-apple-love-taylor&#34;&gt;an open letter to Apple&lt;/a&gt; in which she basically claimed that Apple was wronging artists by not paying them for three months. Two days ago, Jason Sheldon produced a contract that he had to sign to photograph one of Swift&amp;rsquo;s older tours, and because the contract allows for his work to be used indefinitely without compensating him for each use, &lt;a href=&#34;http://petapixel.com/2015/06/22/an-open-response-to-taylor-swifts-rant-against-apple/&#34;&gt;he basically calls Swift a hypocrite&lt;/a&gt;. &lt;a href=&#34;http://money.cnn.com/2015/06/23/media/taylor-swift-photographer-response/&#34;&gt;Swift&amp;rsquo;s spokesman said that Sheldon is misrepresenting the contract&lt;/a&gt;. A few hours ago, Joel Goodman, another freelance photographer, &lt;a href=&#34;http://consequenceofsound.net/2015/06/newly-leaked-contract-stipulates-taylor-swift-can-destroy-equipment-of-defiant-photographers/&#34;&gt;leaked a contract for the 1989 tour that contains even stricter rules&lt;/a&gt;.&lt;/p&gt;
