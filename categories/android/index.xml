@@ -194,13 +194,17 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;h2 id=&#34;1-don-t-have-static-references-to-contexts:252a31459148d28701172cdc4197120e&#34;&gt;1. Don&amp;rsquo;t have static references to Contexts&lt;/h2&gt;
 
+&lt;script src=&#34;//gist.github.com/kmdupr33/e9af62a0ad04abbb0a7d.js&#34;&gt;&lt;/script&gt;
+
 &lt;p&gt;This might seem like an impossible mistake for anyone to make. Its not. I made this mistake. I&amp;rsquo;ve seen others make this mistake, and I&amp;rsquo;ve interviewed people who weren&amp;rsquo;t very quick at figuring out why this is a mistake in the first place. Don&amp;rsquo;t do this. Its a n00b move.&lt;/p&gt;
 
-&lt;p&gt;If MeTrackerStore keeps a reference to the Activity passed into its constructor, the Activity will never be garbage collected. (Unless the static variable is reassigned to a different Activity.) This is because mMeTrackerStore is static, and the memory for static variables isn&amp;rsquo;t reclaimed until the process in which the application is running quits. If you find yourself tempted to do this, there&amp;rsquo;s probably something seriously wrong with your code. Find help. Maybe looking at Google&amp;rsquo;s Udacity course on &lt;a href=&#34;https://www.udacity.com/course/android-development-for-beginners--ud837&#34;&gt;&amp;ldquo;Android Development for Beginners&amp;rdquo;&lt;/a&gt; will help you out.&lt;/p&gt;
+&lt;p&gt;If &lt;code&gt;MeTrackerStore&lt;/code&gt; keeps a reference to the Activity passed into its constructor, the Activity will never be garbage collected. (Unless the static variable is reassigned to a different Activity.) This is because &lt;code&gt;mMeTrackerStore&lt;/code&gt; is static, and the memory for static variables isn&amp;rsquo;t reclaimed until the process in which the application is running quits. If you find yourself tempted to do this, there&amp;rsquo;s probably something seriously wrong with your code. Find help. Maybe looking at Google&amp;rsquo;s Udacity course on &lt;a href=&#34;https://www.udacity.com/course/android-development-for-beginners--ud837&#34;&gt;&amp;ldquo;Android Development for Beginners&amp;rdquo;&lt;/a&gt; will help you out.&lt;/p&gt;
 
 &lt;p&gt;Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/&#34;&gt;I wouldn&amp;rsquo;t recommend that you do that either&lt;/a&gt;. &lt;/p&gt;
 
 &lt;h2 id=&#34;2-beware-of-implicit-references-to-objects-whose-lifecycle-you-do-not-control:252a31459148d28701172cdc4197120e&#34;&gt;2. Beware of &amp;ldquo;implicit references&amp;rdquo; to objects whose lifecycle you do not control&lt;/h2&gt;
+
+&lt;script src=&#34;//gist.github.com/kmdupr33/494707e126e5fc7156ea.js&#34;&gt;&lt;/script&gt;
 
 &lt;p&gt;There&amp;rsquo;s multiple problems with this code. I&amp;rsquo;m only going to focus on one of those problems. In Java, (non-static) inner classes have an implicit reference to the instances of the class that encloses them.&lt;/p&gt;
 
@@ -211,6 +215,8 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 &lt;p&gt;There&amp;rsquo;s a great Google IO video &lt;a href=&#34;https://www.youtube.com/watch?v=_CruQY55HOk&#34;&gt;that explains why this sort of thing happens&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2 id=&#34;3-make-android-studio-work-for-you:252a31459148d28701172cdc4197120e&#34;&gt;3. Make Android Studio work for You&lt;/h2&gt;
+
+&lt;script src=&#34;//gist.github.com/kmdupr33/f0e08822fe0d3b74973a.js&#34;&gt;&lt;/script&gt;
 
 &lt;p&gt;This snippet is what Android Studio generated when I used the &amp;ldquo;Generate Getter&amp;rdquo; code completion in Android Studio. The getter keeps the &amp;rsquo;m&amp;rsquo; prefixed to the instance variable and uses it when generating a getter method name. This is not ideal.&lt;/p&gt;
 

@@ -141,13 +141,17 @@
 
 <h2 id="1-don-t-have-static-references-to-contexts:252a31459148d28701172cdc4197120e">1. Don&rsquo;t have static references to Contexts</h2>
 
+<script src="//gist.github.com/kmdupr33/e9af62a0ad04abbb0a7d.js"></script>
+
 <p>This might seem like an impossible mistake for anyone to make. Its not. I made this mistake. I&rsquo;ve seen others make this mistake, and I&rsquo;ve interviewed people who weren&rsquo;t very quick at figuring out why this is a mistake in the first place. Don&rsquo;t do this. Its a n00b move.</p>
 
-<p>If MeTrackerStore keeps a reference to the Activity passed into its constructor, the Activity will never be garbage collected. (Unless the static variable is reassigned to a different Activity.) This is because mMeTrackerStore is static, and the memory for static variables isn&rsquo;t reclaimed until the process in which the application is running quits. If you find yourself tempted to do this, there&rsquo;s probably something seriously wrong with your code. Find help. Maybe looking at Google&rsquo;s Udacity course on <a href="https://www.udacity.com/course/android-development-for-beginners--ud837">&ldquo;Android Development for Beginners&rdquo;</a> will help you out.</p>
+<p>If <code>MeTrackerStore</code> keeps a reference to the Activity passed into its constructor, the Activity will never be garbage collected. (Unless the static variable is reassigned to a different Activity.) This is because <code>mMeTrackerStore</code> is static, and the memory for static variables isn&rsquo;t reclaimed until the process in which the application is running quits. If you find yourself tempted to do this, there&rsquo;s probably something seriously wrong with your code. Find help. Maybe looking at Google&rsquo;s Udacity course on <a href="https://www.udacity.com/course/android-development-for-beginners--ud837">&ldquo;Android Development for Beginners&rdquo;</a> will help you out.</p>
 
 <p>Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but <a href="http://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/">I wouldn&rsquo;t recommend that you do that either</a>. </p>
 
 <h2 id="2-beware-of-implicit-references-to-objects-whose-lifecycle-you-do-not-control:252a31459148d28701172cdc4197120e">2. Beware of &ldquo;implicit references&rdquo; to objects whose lifecycle you do not control</h2>
+
+<script src="//gist.github.com/kmdupr33/494707e126e5fc7156ea.js"></script>
 
 <p>There&rsquo;s multiple problems with this code. I&rsquo;m only going to focus on one of those problems. In Java, (non-static) inner classes have an implicit reference to the instances of the class that encloses them.</p>
 
@@ -158,6 +162,8 @@
 <p>There&rsquo;s a great Google IO video <a href="https://www.youtube.com/watch?v=_CruQY55HOk">that explains why this sort of thing happens</a>.</p>
 
 <h2 id="3-make-android-studio-work-for-you:252a31459148d28701172cdc4197120e">3. Make Android Studio work for You</h2>
+
+<script src="//gist.github.com/kmdupr33/f0e08822fe0d3b74973a.js"></script>
 
 <p>This snippet is what Android Studio generated when I used the &ldquo;Generate Getter&rdquo; code completion in Android Studio. The getter keeps the &rsquo;m&rsquo; prefixed to the instance variable and uses it when generating a getter method name. This is not ideal.</p>
 
