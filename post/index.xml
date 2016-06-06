@@ -940,7 +940,11 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;Here&amp;rsquo;s a quick example to illustrate this. Suppose you run across this method signature while you&amp;rsquo;re looking at code:&lt;/p&gt;
 
+&lt;script src=&#34;//gist.github.com/kmdupr33/b3ae8532aa3ef1f738b9.js&#34;&gt;&lt;/script&gt;
+
 &lt;p&gt;When you encounter this signature, you have no idea how this method displays the string passed in as a parameter. Now, suppose instead that you encountered this signature:&lt;/p&gt;
+
+&lt;script src=&#34;//gist.github.com/kmdupr33/d783e83a14b2cbc3807b.js&#34;&gt;&lt;/script&gt;
 
 &lt;p&gt;With this signature you have a hint that maybe this method uses a &lt;code&gt;Toast&lt;/code&gt; to display the string. Because &lt;code&gt;Context&lt;/code&gt; is a god-object, knowing that a particular class or method depends on it doesn&amp;rsquo;t always shed much light on what that class/method does or how it does it, but a little help in understanding what a class/method does is better than no help. &lt;/p&gt;
 
@@ -960,7 +964,7 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;If one of your classes calls a method on an application Context and you would like to verify that that method has been called in a unit test, using an static reference will not make your life easy. As I&amp;rsquo;ve pointed out in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;this post&lt;/a&gt;, there are cases where you&amp;rsquo;ll probably want to do this. Suppose you&amp;rsquo;ve got an ServiceLauncher object that launches an Android Service. If you&amp;rsquo;ve used dependency injection to pass in the Context upon which the ServiceLauncher depends, unit testing is easy:&lt;/p&gt;
 
-&lt;p&gt; &lt;/p&gt;
+&lt;p&gt;&lt;script src=&#34;//gist.github.com/kmdupr33/4b9cf75237955e97558a.js&#34;&gt;&lt;/script&gt; &lt;/p&gt;
 
 &lt;p&gt;If the ServiceLauncher used a static reference to an application Context, this class would more difficult to unit test. In this particular case, you could use the testing support library to verify that intents are sent with a UI test, but UI tests are slower than unit tests, and, in any case, there are methods on a Context that you might want to verify that don&amp;rsquo;t use intents, so injecting a Context into a target object will give you more flexibility when testing than using a globally accessible static reference, even if you leverage the testing support library to help you verify that certain intents were sent.&lt;/p&gt;
 
