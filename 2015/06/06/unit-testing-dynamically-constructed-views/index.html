@@ -126,7 +126,9 @@
     </header>
 
     <section class="post-content">
-      <p>Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&rsquo;ve fetched or in response to some input. The <code>SessionDetailActivity</code> in Google&rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the <code>SessionDetailActivity</code>&rsquo;s view hierarchy.</p>
+      
+
+<p>Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&rsquo;ve fetched or in response to some input. The <code>SessionDetailActivity</code> in Google&rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the <code>SessionDetailActivity</code>&rsquo;s view hierarchy.</p>
 
 <p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png" alt="IO Testing Talk-04" /></a></p>
 
@@ -148,7 +150,21 @@
 
 <p>The problem of creating unit testable, dynamically constructed views is basically the problem of finding sensible places to put these two different kinds of business logic. Here&rsquo;s what I suggest, the view-hierarchy-affecting business logic should go in a <code>SessionDetailPresenter</code>:</p>
 
-<p><script src="//gist.github.com/kmdupr33/</p>
+<script src="//gist.github.com/kmdupr33/a0cef94a26e88f4f5ecf.js"></script>
+
+<p>The <code>SessionDetailActivity</code> in this code segment is acting as the View within the MVP triad, and as such, it should not contain any business logic. Thus, we know that the view-property-affecting business logic should not be within the <code>SessionDetailActivity</code>. Instead of placing the view-property affecting business logic within the <code>SessionDetailActivity</code>, we have the <code>SessionDetailActivity</code> delegate that logic out to another View-Presenter pair:</p>
+
+<script src="//gist.github.com/kmdupr33/49428a2fcaf71df555f0.js"></script>
+
+<p>The &ldquo;SessionTagViewTranslator&rdquo; in this code segment is really just the View within the View-Presenter pair. For reasons that I discuss <a href="http://www.philosophicalhacker.com/2015/04/05/dont-call-it-mvp/">here</a>, I prefer the name &ldquo;ViewTranslator&rdquo; over &ldquo;View&rdquo; because it more clearly marks the difference between an MVP View and an Android View. Astute readers will notice that the SessionDetailActivity shouldn&rsquo;t be responsible for forwarding the click event on the view to the TagPresenter. This problem arises because of a circular dependency between MVP Views and Presenters. I&rsquo;ll discuss how to break this dependency in my next post. The <code>TagPresenter</code> is fairly trivial, but here&rsquo;s what it looks like:</p>
+
+<script src="//gist.github.com/kmdupr33/fd03667d4593eff59b1a.js"></script>
+
+<p>The SesionTagViewTranslator is even more trivial, so I won&rsquo;t bother showing the code for that.</p>
+
+<h2 id="conclusion:de96b0d86be079e91b1b191cfad3b31b">Conclusion</h2>
+
+<p>To sum it all up: dynamically constructed views often have two different types of business logic: view-hierarchy-affecting business logic and view-property-affecting business logic. Making these views unit testable consists of two steps: First, place the view-hierarchy-affecting business logic in a top level presenter like the <code>SessionDetailPresenter</code>. Second have an MVP-View (like the <code>SessionDetailActivity</code>) create View-Presenter pairs for each Android view that&rsquo;s added to the view hierarchy.</p>
 
     </section>
 
