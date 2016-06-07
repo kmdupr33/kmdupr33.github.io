@@ -6,8 +6,145 @@
     <description>Recent content in Android on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 06 Apr 2015 03:39:02 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 07 Jun 2016 06:54:20 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>PSA: Dont Use Espresso Idling Resources like Google does</title>
+      <link>http://philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/</link>
+      <pubDate>Tue, 07 Jun 2016 06:54:20 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;Roman Nurik: &amp;hellip;That&amp;rsquo;s actually one of the harder things with writing good sample code. People are going to be copying and pasting the heck out of it so you can&amp;rsquo;t take those shortcuts that you sometimes hopefully aren&amp;rsquo;t taking.&lt;/p&gt;
+
+&lt;p&gt;Chet Haase: I always take the shortcuts. That&amp;rsquo;s one of the more interesting things that the developer relations group does in general&amp;hellip;we will put together tests and sample code for the features that we work but we really don&amp;rsquo;t have the time to dive in deeply and do it in a real context.&lt;/p&gt;
+
+&lt;p&gt;Android Developers Backstage, &lt;a href=&#34;http://androidbackstage.blogspot.com/2015/04/episode-24-roman-holiday.html&#34;&gt;Episode 23&lt;/a&gt;, 17:35-18:34&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Google has to put together a series of &amp;ldquo;code labs&amp;rdquo; that are meant to provide a hands on learning experience for grokking Android-related topics. It&amp;rsquo;s been a while since I&amp;rsquo;ve worked seriously on the Android platform, so I thought I&amp;rsquo;d take a look at the code lab on Android testing to see what has changed. (Cause I care &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests&#34;&gt;about testing&lt;/a&gt;.)&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#0&#34;&gt;The Android testing code lab&lt;/a&gt; walks you through the process of creating tests for a Todo application. One of the features of the todo application is that it shows a list of todos. This feature is implemented by a &lt;code&gt;NotesPresenter&lt;/code&gt; class (presenter as in &amp;ldquo;&lt;a href=&#34;https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter&#34;&gt;Model View Presenter&lt;/a&gt;&amp;rdquo;). While I was looking at the testing code lab on testing, I stumbled upon something disturbing within the &lt;code&gt;NotesPresenter&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; forceUpdate&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;    
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The network request might be handled in a different thread so make sure Espresso knows&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// that the app is busy until the response is handled.&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;increment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// App is busy until further notice&lt;/span&gt;
+&lt;/span&gt;
+    mNotesRepository&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; NotesRepository&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoadNotesCallback&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Note&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; notes&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;decrement&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Set app as idle.&lt;/span&gt;
+&lt;/span&gt;            mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setProgressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;notes&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isEmpty&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotesEmptyPlaceholder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;notes&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This article is about why this code is disturbing and what we can do to fix it. Spoiler: it violates the principle of single responsibility and we can fix it using the dependency injection and decorator patterns.&lt;/p&gt;
+
+&lt;h1 id=&#34;disturbing:813c76fa4c1d10d216b03cc879b8cf73&#34;&gt;Disturbing&lt;/h1&gt;
+
+&lt;p&gt;The comments in the above code definitely help to point out why this is troubling, but if you&amp;rsquo;re not familiar with &lt;code&gt;IdlingResource&lt;/code&gt;, you may not immediately see why the problem with this code. &lt;code&gt;IdlingResource&lt;/code&gt;s help you write robust functional UI tests with espresso. These tests are &amp;ldquo;robust&amp;rdquo; because you don&amp;rsquo;t need to explicitly tell your tests to &amp;ldquo;sleep&amp;rdquo; for a &lt;em&gt;predetermined&lt;/em&gt; amount of time while some asynchronous task completes. &lt;code&gt;IdlingResource&lt;/code&gt;s is a way of telling espresso &amp;ldquo;don&amp;rsquo;t do any more assertions because the app is doing something that might affect whether your assertions are satisfied.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;For example, suppose we have an espresso test that verifies that the todo notes are displayed after they are loaded and that the progressIndicator in the view is hidden after those notes are loaded:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    onView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;withId&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;progressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;check&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;matches&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;not&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isDisplayed&lt;span style=&#34;color: #666666&#34;&gt;())));&lt;/span&gt;
+    onView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;withId&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;notes_list&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;check&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;matches&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isDisplayed&lt;span style=&#34;color: #666666&#34;&gt;()));&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;We don&amp;rsquo;t want this code to immediately assert that the progressIndicator is invisible and the notes list are visible because it takes some time for the notes to load from the network. So, the previous code snippet with an &lt;code&gt;IdlingResource&lt;/code&gt; would tell this test that it needs to wait until the notes are loaded from the network before performing this verification.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s take a second look at the disturbing code:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; forceUpdate&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;    
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The network request might be handled in a different thread so make sure Espresso knows&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// that the app is busy until the response is handled.&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;increment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// App is busy until further notice&lt;/span&gt;
+&lt;/span&gt;
+    mNotesRepository&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; NotesRepository&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoadNotesCallback&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Note&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; notes&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;decrement&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Set app as idle.&lt;/span&gt;
+&lt;/span&gt;            mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setProgressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;notes&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isEmpty&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotesEmptyPlaceholder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;notes&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;We can now quickly say what&amp;rsquo;s disturbing about this: this presenter violates the principle of single responsibility. More than that: it violates the principle in a particularly egregious way: it mixes &lt;em&gt;application&lt;/em&gt; responsibilities with &lt;em&gt;testing&lt;/em&gt; responsibilities. This is silly. Don&amp;rsquo;t do this. Violating the principle of single responsibility is a sure-fire way to create spaghetti code and spaghetti doesn&amp;rsquo;t look as good in code as it does on a plate.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/spaghetti.jpeg&#34; alt=&#34;spaghetti on a plate&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;fixit:813c76fa4c1d10d216b03cc879b8cf73&#34;&gt;Fixit&lt;/h1&gt;
+
+&lt;p&gt;Instead of mixing responsibilities, register your &lt;code&gt;IdlingResource&lt;/code&gt; in your tests-related code, where test-related responsibilities belong. One way to do this is the use dependency injection and decorators. The code lab project already has a limited dependency injection mechanism, so we can just use that. The project has a dependency injector that&amp;rsquo;s specifically used for testing called &lt;code&gt;Injection.&lt;/code&gt; All we need to do is decorate the &lt;code&gt;NotesRepository&lt;/code&gt; that&amp;rsquo;s injected by the &lt;code&gt;Injection&lt;/code&gt; class, and we have what we need to avoid mixing responsibilities:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; NotesRepository &lt;span style=&#34;color: #0000FF&#34;&gt;provideNotesRepository&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; NotesRepository inMemoryRepoInstance
+      &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; NoteRepositories&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getInMemoryRepoInstance&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; FakeNotesServiceApiImpl&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; NotesRepository&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@NonNull&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; LoadNotesCallback callback&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;increment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+            inMemoryRepoInstance&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LoadNotesCallback&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+                &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Note&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; notes&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                    EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;decrement&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+                    callback&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;notes&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+                &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;NotesRepository&lt;/code&gt; returned by this method gets injected into the &lt;code&gt;Presenter&lt;/code&gt; here:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;NotesFragment&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; NotesContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;View&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Nullable&lt;/span&gt; Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;/...&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mActionsListener
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;          &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; NotesPresenter&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Injection&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;provideNotesRepository&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Voila. And now your espresso tests will wait until the notes have been loaded before asserting the view state and you&amp;rsquo;ve avoiding mixing testing responsibilities with your business logic. Bon Appetite.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Don&#39;t call it &#34;MVP&#34;</title>
