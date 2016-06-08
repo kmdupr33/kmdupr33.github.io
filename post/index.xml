@@ -6,8 +6,152 @@
     <description>Recent content in Posts on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 07 Jun 2016 06:54:20 -0400</lastBuildDate>
+    <lastBuildDate>Wed, 08 Jun 2016 17:30:09 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>React-and-Redux-like Architectures for Android</title>
+      <link>http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/</link>
+      <pubDate>Wed, 08 Jun 2016 17:30:09 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;I think there&amp;rsquo;s a lot of value in seeing what else is happening, even if you&amp;rsquo;re not a master of one of those other languages. As long as you&amp;rsquo;re being exposed to it, you&amp;rsquo;re opening your mind up to different ways of approaching problems and solving problems and different techniques.&lt;/p&gt;
+
+&lt;p&gt;Jake Wharton, Fragmented, &lt;a href=&#34;http://fragmentedpodcast.com/episodes/6/&#34;&gt;Episode 6&lt;/a&gt;, 27:45-28:20&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;React and Redux are libraries that have taken the web development world by storm. Touted benefits of these libraries include code that&amp;rsquo;s &amp;ldquo;easier to reason about,&amp;rdquo; &lt;a href=&#34;https://www.youtube.com/watch?v=xsSnOQynTHs&#34;&gt;time traveling debugging, and hot reloading&lt;/a&gt;. Recently, &lt;a href=&#34;https://www.youtube.com/watch?v=UsuzhTlccRk&#34;&gt;Christiana Lee spoke&lt;/a&gt; about how these benefits could be applied to Android development in general.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;m interested in how the central principles underlying React and Redux may improve our ability to write unit tests for our Android code. In this article, I&amp;rsquo;ll try to briefly bring out the important bits of React/Redux for our purposes. In the next article, I&amp;rsquo;ll talk about why structuring our code in a React/Redux way can be beneficial for testing.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/lambda.png&#34; alt=&#34;lambda symbol&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;the-principle-behind-react:e17f3de67d028efe7b502b7cdad57382&#34;&gt;The Principle behind React&lt;/h1&gt;
+
+&lt;p&gt;React, as I see it, is about making what gets rendered to our screen a &lt;em&gt;function of some view-state object&lt;/em&gt;. We do something like this every time we write a &lt;code&gt;RecyclerView&lt;/code&gt; or &lt;code&gt;ListView&lt;/code&gt;. The view-state object is usually some kind of collection (e.g., a &lt;code&gt;List&lt;/code&gt; or &lt;code&gt;Array&lt;/code&gt;). We pass that object to an &lt;code&gt;Adapter&lt;/code&gt; which renders our view. Typically, what is rendered is just a function of the collection we pass to the adapter.&lt;/p&gt;
+
+&lt;p&gt;However, we can use view-state objects in contexts other than collection views. To see this, let&amp;rsquo;s look at an example view from the Google IO app.&lt;/p&gt;
+
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;//www.youtube.com/embed/qUYP1WNz50U&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
+ &lt;/div&gt;
+
+
+&lt;p&gt;Notice that when we tap one of the filter items in the IO app, the list of sessions updates so that it incorporates that filter. Let&amp;rsquo;s start with how this is currently implemented in the IO app:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; isChecked &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;CheckBox&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isChecked&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;        LOGD&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Checkbox with tag: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; isChecked =&amp;gt; &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; isChecked&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isChecked&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Note here that &lt;code&gt;mTagFilterHolder&lt;/code&gt; is a state object that&amp;rsquo;s used to determine what should be shown in the list. We can see this more clearly if we look at &lt;code&gt;reloadFragment()&lt;/code&gt;, which looks like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;reloadFragment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Build the tag URI&lt;/span&gt;
+    Uri uri &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mCurrentUri&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;uri &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        uri &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; ScheduleContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Sessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;buildCategoryTagFilterUri&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
+                ScheduleContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Sessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CONTENT_URI&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;toStringArray&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategoryCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// build a uri with the specific filters&lt;/span&gt;
+        uri &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; ScheduleContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Sessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;buildCategoryTagFilterUri&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;uri&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;toStringArray&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategoryCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    setActivityTitle&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    Intent intent &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Intent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Intent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ACTION_VIEW&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; uri&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    intent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;putExtra&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ExploreSessionsFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;EXTRA_SHOW_LIVESTREAMED_SESSIONS&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isShowLiveStreamedSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+
+    LOGD&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Reloading fragment with categories &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategoryCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt;
+            &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; uri: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; uri &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt;
+            &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; showLiveStreamedEvents: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isShowLiveStreamedSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+
+    mFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reloadFromArguments&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intentToFragmentArguments&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intent&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;mTagFilterHolder&lt;/code&gt; is being used to construct the URI that a &lt;code&gt;ContentProvider&lt;/code&gt; will use to filter the results that get passed to a &lt;code&gt;ListView&lt;/code&gt;. So, this implementation of the list filter is already well on its way to an implementation the follows principle behind React. That&amp;rsquo;s because what&amp;rsquo;s rendered is already partially &lt;em&gt;a function of some view-state object&lt;/em&gt;. In this case, the view-state object is the &lt;code&gt;mTagFilterHolder&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;the-principle-behind-redux:e17f3de67d028efe7b502b7cdad57382&#34;&gt;The Principle Behind Redux&lt;/h1&gt;
+
+&lt;p&gt;Redux, as I see it, as is about making any updates to our view &lt;em&gt;a function of the view-state object and an object that describes a view-related action that just occurred&lt;/em&gt;. In Redux, these functions are called &amp;ldquo;reducers,&amp;rdquo; and they return a new view-state object that is used to render the view.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;OnClickListener&lt;/code&gt; we saw above is almost a reducer in Redux&amp;rsquo;s sense of the word because it updates the view by updating the view-state object and telling the fragment to re-render itself. Let&amp;rsquo;s take a second look at that &lt;code&gt;OnClickListener&lt;/code&gt; to remind ourselves of this:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; isChecked &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;CheckBox&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isChecked&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+        TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+        LOGD&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Checkbox with tag: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; isChecked =&amp;gt; &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; isChecked&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isChecked&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;This &lt;code&gt;ClickListener&lt;/code&gt; isn&amp;rsquo;t quite a reducer. Remember: reducers are functions of a view-state object and an object that describes a view-related action that just occurred. This &lt;code&gt;ClickListener&lt;/code&gt;, however, is in a good position to call a reducer function:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        mTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reduce&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+          &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Click&lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()));&lt;/span&gt;
+        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
+
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; TagFilterHolder &lt;span style=&#34;color: #0000FF&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagFilterHolder tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Click click&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Create a new holder with all the values from the old holder&lt;/span&gt;
+  TagFilterHolder newTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+  TagMetadata theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; click&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;  
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;reduce&lt;/code&gt; method fits the Redux&amp;rsquo;s definition of a reducer function. The &lt;code&gt;tagFilterHodler&lt;/code&gt; parameter passed into &lt;code&gt;reduce&lt;/code&gt; method is the current state and the &lt;code&gt;click&lt;/code&gt; parameter is an object that describes a view-related action that just occurred. &lt;code&gt;reduce&lt;/code&gt;, moreover, returns a new view-state that describes how the view should render.&lt;/p&gt;
+
+&lt;h1 id=&#34;conclusion:e17f3de67d028efe7b502b7cdad57382&#34;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;That&amp;rsquo;s all for now, but you can anticipate how this might make unit testing logic within the click listener easier. The &lt;code&gt;reduce&lt;/code&gt; function works only with POJOs and we know that it&amp;rsquo;s working properly when it returns an object that has the correct &lt;em&gt;state&lt;/em&gt;. This allows us to use &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;state-based verification&lt;/a&gt; in our tests, and as we&amp;rsquo;ll see next time, this can make our tests less brittle and more meaningful. I believe that writing our UI-related business logic in reducers &lt;em&gt;may&lt;/em&gt; give us a better way of writing tests that writing that logic in &lt;code&gt;Presenters&lt;/code&gt;. More on that next time.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>PSA: Dont Use Espresso Idling Resources like Google does</title>
@@ -1403,16 +1547,6 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;hr /&gt;
 
 &lt;p&gt;Below, Hannes Dorfmann has a great comment to this article. I&amp;rsquo;ve responded to that &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>I&#39;m taking a brief hiatus from blogging here...</title>
-      <link>http://philosophicalhacker.com/2015/06/26/im-taking-a-brief-hiatus-from-blogging-here/</link>
-      <pubDate>Fri, 26 Jun 2015 12:48:20 +0000</pubDate>
-      
-      <guid>http://philosophicalhacker.com/2015/06/26/im-taking-a-brief-hiatus-from-blogging-here/</guid>
-      <description>&lt;p&gt;&amp;hellip;so that I can focus on ensuring that &lt;a href=&#34;http://droidjournal.com&#34;&gt;Droid Journal&lt;/a&gt; has a successful inaugural edition. I did, however, just post on &lt;a href=&#34;http://www.droidjournal.com/blog/reviews/2015/06/26/review-advocating-against-android-fragments.html&#34;&gt;Droid Journal&amp;rsquo;s blog&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
