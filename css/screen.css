@@ -520,6 +520,10 @@ body.nav-opened .site-wrapper {
     width: 80%;
 }
 
+.main-header a.bloglogo {
+    text-decoration: none;
+}
+
 .main-nav {
     position: relative;
     padding: 35px 40px;
@@ -1156,17 +1160,6 @@ body:not(.post-template) .post-title {
 
 .post-footer h4 a:hover {
     text-decoration: underline;
-}
-
-/* Drop the share links in the space to the right.
-   Doing it like this means it's easier for the author bio
-   to be flexible at smaller screen sizes while the share
-   links remain at a fixed width the whole time */
-.post-footer .share {
-    position: absolute;
-    top: 6rem;
-    right: 0;
-    width: 180px;
 }
 
 .post-footer .share a {
