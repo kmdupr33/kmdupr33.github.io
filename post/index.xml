@@ -6,8 +6,130 @@
     <description>Recent content in Posts on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 08 Jun 2016 17:30:09 -0400</lastBuildDate>
+    <lastBuildDate>Thu, 09 Jun 2016 15:22:47 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Testing Strategies with a React/Redux Architecture</title>
+      <link>http://philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/</link>
+      <pubDate>Thu, 09 Jun 2016 15:22:47 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/</guid>
+      <description>
+
+&lt;p&gt;In &lt;a href=&#34;http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/&#34;&gt;my last post&lt;/a&gt;, I briefly introduced the principles behind React and Redux. I said that React is about making what gets rendered to the screen a function of some view-state object. I also said that Redux is about making updates to the screen a function of the current view-state object and an action describing a user&amp;rsquo;s interaction with the view.&lt;/p&gt;
+
+&lt;p&gt;In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis testing. More specifically, I suggest that a React/Redux-like architecture opens up a testing strategy that doesn&amp;rsquo;t suffer from the disadvantages of the testing strategy we use with the MVP architecture.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-disadvantage-of-mvp:ccbda8f4effd5469f618aeed8eb34e5d&#34;&gt;A Disadvantage of MVP&lt;/h2&gt;
+
+&lt;p&gt;Android architectures that rely on MVP are forced to use behavior-based verification in their unit tests. Behavior-based verification is about ensuring that the unit being tested is interacting properly with it&amp;rsquo;s collaborators. For example, consider this test from &lt;a href=&#34;https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#5&#34;&gt;Google&amp;rsquo;s testing code lab&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadNotesFromRepositoryAndLoadIntoView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Given an initialized NotesPresenter with initialized notes&lt;/span&gt;
+   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// When loading of Notes is requested&lt;/span&gt;
+   mNotesPresenter&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;loadNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Callback is captured and invoked with stubbed notes&lt;/span&gt;
+   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesRepository&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mLoadNotesCallbackCaptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;capture&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+   mLoadNotesCallbackCaptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getValue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;NOTES&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Then progress indicator is hidden and notes are shown in UI&lt;/span&gt;
+   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setProgressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;NOTES&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The test ensures that the &lt;code&gt;mNotesPresenter&lt;/code&gt;&amp;rsquo;s &lt;code&gt;loadNotes&lt;/code&gt; works properly by verifying that it&amp;rsquo;s called &lt;code&gt;setProgressIndicator&lt;/code&gt; and &lt;code&gt;showNotes&lt;/code&gt; on that &lt;code&gt;mNotesPresenter&lt;/code&gt;&amp;rsquo;s &lt;code&gt;View&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Behavior-based based verification and mocks can be useful, but there are some costs with using this method of verification for our tests. Martin Fowler summarizes these costs well in his essay &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;&amp;ldquo;Mocks aren&amp;rsquo;t Stubs&amp;rdquo;&lt;/a&gt;. In this essay he talks about the costs of &amp;ldquo;mockist tests,&amp;rdquo; tests that uses mocks and behavior-based verification. Here are some relevant excerpts:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;When you write a mockist test, you are testing the outbound calls of the SUT [System Under Test] to ensure it talks properly to its suppliers. A classic test only cares about the final state - not how that state was derived. Mockist tests are thus more coupled to the implementation of a method. Changing the nature of calls to collaborators usually cause a mockist test to break&amp;hellip;implementation changes are much more likely to break tests than with classic testing.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Here&amp;rsquo;s another disadvantage he points out:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Mockist testers do talk more about avoiding &amp;lsquo;train wrecks&amp;rsquo; - method chains of style of getThis().getThat().getTheOther(). Avoiding method chains is also known as following the Law of Demeter. While method chains are a smell, the opposite problem of middle men objects bloated with forwarding methods is also a smell. (I&amp;rsquo;ve always felt I&amp;rsquo;d be more comfortable with the Law of Demeter if it were called the Suggestion of Demeter.)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If we&amp;rsquo;re sympathetic with Fowler here and we think that middle men objects bloated with forwarding methods is just as much a smell as law of demeter violations, then we might regret the fact that effective use of mocks require that we follow the law of demeter &amp;ldquo;to the T.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;Fowler also mentions some advantages of behavior-based verification. Ultimately, he doesn&amp;rsquo;t seem to have a strong opinion on which strategy should be used. I&amp;rsquo;m not going to try to settle that question here either. It might turn out that the benefits of mockist tests outweigh the costs. For the remainder of the article, I just want to focus on how a React/Redux architecture opens up the possibility of state-based verification for our UI-related unit tests.&lt;/p&gt;
+
+&lt;h2 id=&#34;state-based-verification-with-react-redux:ccbda8f4effd5469f618aeed8eb34e5d&#34;&gt;State-based Verification with React/Redux&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s return the filtered list example we introduced in &lt;a href=&#34;http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/&#34;&gt;the last article&lt;/a&gt;. Again, here&amp;rsquo;s a video of the functionality we want to test:&lt;/p&gt;
+
+&lt;p&gt;
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;//www.youtube.com/embed/qUYP1WNz50U&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
+ &lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Last time, I showed how we might implement this functionality according to the principles of React and Redux. Again those principles are that the content of a screen is a function of some view-state object and updates to the screen are a function of some view-state object and some action describing a user&amp;rsquo;s interaction with the screen. Here&amp;rsquo;s what our React/Redux-like code looked like:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Reducer reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reducer&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; tag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reducer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Click&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tag&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+&lt;/span&gt;        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
+
+&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Reducer&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; TagFilterHolder &lt;span style=&#34;color: #0000FF&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagFilterHolder tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Click click&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Create a new holder with all the values from the old holder&lt;/span&gt;
+      TagFilterHolder newTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+      TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; click&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+          newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+          newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Recall that the &lt;code&gt;reloadFragment&lt;/code&gt; call uses the &lt;code&gt;mTagFilterHolder&lt;/code&gt; as a view-state object to determine what get&amp;rsquo;s rendered to the screen. Testing this &lt;code&gt;reduce&lt;/code&gt; method doesn&amp;rsquo;t require the use of mocks:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;shouldToggleFilter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Arrange&lt;/span&gt;
+    ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt; reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    TagFilterHolder tagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Config&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tags&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CATEGORY_THEME&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; tag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Config&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tags&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CATEGORY_THEME&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1,&lt;/span&gt;
+            &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;some stuff&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1);&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Click&lt;/span&gt; clickAction &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Click&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tag&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Act&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagFilterHolder holder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reducer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; clickAction&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Assert&lt;/span&gt;
+    assertFalse&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;holder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;This shows that React/Redux-like architectures open up the possibility of using state-based verification in our UI unit test code. This opens up the possibility of unit tests that don&amp;rsquo;t suffer from the disadvantages pointed out by Martin Fowler.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:ccbda8f4effd5469f618aeed8eb34e5d&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;The fact that React/Redux-like architectures open up the possibility of alternative testing strategies is an additional reason that we should consider these architectures for Android Development. I think that by utilizing RxJava with a subset of the features provided by the Android data-binding library, the approach I&amp;rsquo;ve sketched here can scale to an architecture that allows for time-travel debugging, hotswap, and a more flexible testing strategy, but that&amp;rsquo;s something that I&amp;rsquo;ll have to explore another time.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>How React-and-Redux-like Architectures for Android can make Testing Easier</title>
@@ -1441,112 +1563,6 @@ That’s open to dispute. [Is] a presenter...in an invalid state without a View
 &lt;p&gt;By now, you can probably guess what I would say to Hannes&amp;rsquo; first argument: I would deny its first premise. I would say, in other words, that there&amp;rsquo;s something fishy about the circular dependency between an &lt;code&gt;Activity&lt;/code&gt; and its &lt;code&gt;Button&lt;/code&gt; in the first place and I think there&amp;rsquo;s something fishy about it, regardless of whether the &lt;code&gt;Button&lt;/code&gt; programs against an interface. Whether the &lt;code&gt;Button&lt;/code&gt; programs against an interface has nothing to do with the fact that, in the context of our application, it has a dependency on a click listener and that setting an &lt;code&gt;Activity&lt;/code&gt; as a Button&amp;rsquo;s click listener makes it more difficult for the button to have a different click listener, a difficulty we might want to avoid if we want to take full advantage of polymorphism in implementing ui-related business logic.&lt;/p&gt;
 
 &lt;p&gt;Regardless of whether I&amp;rsquo;m right or wrong to criticize the circular dependency between Activities/Presenters and their Views, I&amp;rsquo;ve learned a lot by thinking about this and by engaging with Hannes in this discussion. So thanks, Hannes, and thanks to everyone who takes the time to make thoughtful comments on what I&amp;rsquo;ve written. I owe you.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>MVPR: A Flexible, Testable Architecture for Android (Pt. 1)</title>
-      <link>http://philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/</link>
-      <pubDate>Tue, 07 Jul 2015 18:29:16 +0000</pubDate>
-      
-      <guid>http://philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/</guid>
-      <description>
-
-&lt;blockquote&gt;Thorough unit testing helps us improve the internal quality because, to be tested, a unit has to be structured to run outside the system in a test fixture. A unit test for an object needs to create the object, provide its dependencies, interact with it, and check that it behaved as expected. So, for a class to be easy to unit-test, the class must have explicit dependencies that can easily be substituted and clear responsibilities that can easily be invoked and verified. In software engineering terms, that means that the code must be loosely coupled and highly cohesive —in other words, well-designed.
-
-Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&lt;/blockquote&gt;
-
-&lt;p&gt;Lately, I&amp;rsquo;ve been working towards making Google&amp;rsquo;s IO app unit testable. A part of the reason I&amp;rsquo;m doing this is to test the claims that Freeman and Pryce make in the above quotation about unit testing. Although I&amp;rsquo;m still not even done with refactoring one Activity in Google&amp;rsquo;s IOSched app, I&amp;rsquo;m already finding some truth to what they&amp;rsquo;re saying.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;Activity&lt;/code&gt; that I&amp;rsquo;ve been working on is the &lt;code&gt;SessionDetailActivity&lt;/code&gt;. If you&amp;rsquo;ve been following me for a while, you know exactly what Activity I&amp;rsquo;m talking about, but if you&amp;rsquo;re tuning in the first time, here&amp;rsquo;s what the &lt;code&gt;SessionDetailActivity&lt;/code&gt; UI looks like:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34; alt=&#34;IO Testing Talk-04&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;As I mentioned in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;the post that introduced this series&lt;/a&gt;, there have been several challenges to making the &lt;code&gt;SessionDetailActivity&lt;/code&gt; unit testable. Unit testing its dynamically constructed views was a challenge that I discussed in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;my last post in this series&lt;/a&gt;, but in that post, I noted that my strategy for testing dynamically constructed views wasn&amp;rsquo;t entirely clean because of a circular dependency between &lt;code&gt;Views&lt;/code&gt; and &lt;code&gt;Presenters&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;This circular dependency is a symptom of a larger problem with how we structure our Android applications: both &lt;code&gt;Activities&lt;/code&gt; and &lt;code&gt;Presenters&lt;/code&gt; violate the principle of single responsibility. They are often responsible for at least two things: binding data to a &lt;code&gt;View&lt;/code&gt; and responding to user input. This is a part of the reason why &lt;a href=&#34;https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/SessionDetailActivity.java&#34;&gt;the &lt;code&gt;SessionDetailActivity&lt;/code&gt;&lt;/a&gt;, a class that&amp;rsquo;s supposed to serve as a model for Android development, is over 1000 lines long.&lt;/p&gt;
-
-&lt;p&gt;I think there&amp;rsquo;s a better way to structure our applications. In the next few posts, I&amp;rsquo;ll propose a new architecture that has the following properties:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;It breaks up the multiple responsibilities typically handled by &lt;code&gt;Presenters&lt;/code&gt; and &lt;code&gt;Activities&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;It breaks the circular dependency that traditionally exists between Views on the one hand and Activities or Presenters on the other hand.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;It enables us to use constructor dependency injection for all of our objects that present data to the user and respond to user input.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;It makes our ui-related business logic classes easier to unit test, impossible to construct without the dependencies necessary to fulfill their responsibilities, and (slightly) more amenable to the use of composition and polymorphism to extend and/or modify object behavior.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;In this post, I will try to give some reasons why we might consider a new architecture for Android development in the first place.&lt;/p&gt;
-
-&lt;h2 id=&#34;why-a-new-architecture:25be7690f1d98142cd41730b0d055142&#34;&gt;Why a New Architecture?&lt;/h2&gt;
-
-&lt;h3 id=&#34;activities-fragments-presenters-can-become-bloated:25be7690f1d98142cd41730b0d055142&#34;&gt;Activities/Fragments/Presenters can become Bloated&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;Activities&lt;/code&gt; and &lt;code&gt;Fragments&lt;/code&gt; (I&amp;rsquo;m just going say &amp;ldquo;Activities&amp;rdquo; from now on, but what I say applies equally to &lt;code&gt;Fragments&lt;/code&gt;.) are egregious violators of the principle of single responsibility. At Droidcon Montreal, Richa Khandelwal &lt;a href=&#34;https://speakerdeck.com/richk/clean-android-architecture&#34;&gt;listed the responsibilities&lt;/a&gt; that often wind up in an &lt;code&gt;Activity&lt;/code&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Handle View Events&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Update Model&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Invoke another View&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Interact with System Components&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Handle System Events&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Update View based on System Events&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;As Richa shows later in the presentation, many of these responsibilities can be moved out of Activities, but even if we do that, Activities still violate the principle of single responsibility. Even the slimmest Activities are still responsible for binding a model&amp;rsquo;s data to the View and for responding to user input. Here&amp;rsquo;s an example:&lt;/p&gt;
-
-&lt;p&gt;The SessionDetailActivity in Google&amp;rsquo;s IOSched app is actually a good example of how bloated an Activity can get even if its only concerned with the two responsibilities of binding data to views and responding to user input. ~70% of the 1000+ lines of SessionDetailActivity are only concerned with these two responsibilities, so even if we moved all other code out of the SessionDetailActivity, we&amp;rsquo;d still have a class that&amp;rsquo;s about 700 lines long. Don&amp;rsquo;t believe me? Take a look at &lt;a href=&#34;https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/SessionDetailActivity.java&#34;&gt;the source code&lt;/a&gt;. Presenters can become bloated for the same reason an Activity does: Presenters are typically responsible for binding data to a View and for responding to user input, so a Presenter would be just as long as an Activity that&amp;rsquo;s slimmed down by removing all of its other extra responsibilities. &lt;/p&gt;
-
-&lt;h3 id=&#34;activities-fragments-presenters-often-have-a-circular-dependency-on-their-views:25be7690f1d98142cd41730b0d055142&#34;&gt;Activities/Fragments/Presenters often have a Circular Dependency on their Views&lt;/h3&gt;
-
-&lt;p&gt;Activities typically fulfill their responsibilities of binding data to views and responding to user input by creating a circular dependency between themselves and the Views that make up their Content View (i.e., the view passed in to the setContentView() method). There&amp;rsquo;s a piece of code in the same gist that I showed above that provides an example of this.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;SessionDetailActivity&lt;/code&gt; has a reference to &lt;code&gt;mAddScheduleButton&lt;/code&gt; and &lt;code&gt;mAddSchedule&lt;/code&gt; button has a reference to &lt;code&gt;SessionDetailActivity&lt;/code&gt;. As we&amp;rsquo;ll see later, this circular dependency limits the approaches we can take to implementing the UI-related business logic that&amp;rsquo;s typically found in Activities.&lt;/p&gt;
-
-&lt;p&gt;MVP Presenters have basically the same circular dependency between themselves and their Views. Before I can explain this in more detail, I have to make a brief distinction between MVP-Views and Android-Views.&lt;/p&gt;
-
-&lt;p&gt;An MVP-View, as I&amp;rsquo;m defining it, is just an object that&amp;rsquo;s a part of the MVP triad. It&amp;rsquo;s typically defined as an interface, and it may be implemented by an Activity, Fragment, or an Android-View. An Android-View, as the name implies, is a class that is a part of the Android framework. More specifically, it&amp;rsquo;s a subclass of the &lt;code&gt;View&lt;/code&gt; class.&lt;/p&gt;
-
-&lt;p&gt;Using MVP-Views and Presenters just recreates virtually the same circular dependency between MVP-Views and Presenters that exists between Android-Views and Activities.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/CircularDependency-011.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/CircularDependency-011-300x222.png&#34; alt=&#34;CircularDependency-01&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/CircularDependency-021.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/CircularDependency-021-300x222.png&#34; alt=&#34;CircularDependency-02&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Presenters need MVP-Views so that they can bind data to the MVP-View. The MVP-View needs a reference to the Presenter so that it can forward clicks and other ui-related events to the Presenter. Square&amp;rsquo;s &lt;a href=&#34;https://corner.squareup.com/2014/10/advocating-against-android-fragments.html&#34;&gt;post against Fragments&lt;/a&gt; has an MVP implementation that exhibits this circular dependency. Hannes Dorfmann&amp;rsquo;s &lt;a href=&#34;http://hannesdorfmann.com/android/mosby/&#34;&gt;post introducing his library to help implement MVP&lt;/a&gt; also has some code that has this circular dependency.&lt;/p&gt;
-
-&lt;p&gt;Circular dependencies pose a problem when you try to construct objects for unit testing (or in general). However, typically, we don&amp;rsquo;t see the circular dependency between MVP-Views and Presenters or Activities and their Android-Views as a problem because Activities and Fragments are instantiated by the system and because we don&amp;rsquo;t usually use dependency injection to inject an Activity and/or Fragment&amp;rsquo;s dependencies. Instead, we just instantiate whatever dependences the Activity needs in onCreate():&lt;/p&gt;
-
-&lt;p&gt;Instantiating concrete classes of our dependencies in onCreate(), however, limits our ability to use composition and polymorphism to implement our ui-related business logic. Here&amp;rsquo;s an example where you might wish you could use polymorphism to implement ui-related business logic: Suppose your implementing an application that has users. Suppose further that the users have different privileges based on the level they attain. They might attain higher levels by verifying an email or by answering a question that others users have asked (StackOverflow style). Finally, suppose that the user interface that&amp;rsquo;s presented to the user is largely dependent on the level they have attained as a user. We might imagine that there a many buttons that do different things depending on the level the user has achieved or that the initial state of the view depends on the user&amp;rsquo;s level.&lt;/p&gt;
-
-&lt;p&gt;Polymorphism provides us with a clean, scalable way to implement this kind of logic: we can have a Presenter for each level the user can attain. Regardless of the level the user has attained, we can pass the same MVP-View to into a particular Presenter subclass and let that particular subclass appropriately handle clicks or present the initial UI based on the user&amp;rsquo;s level. Of course, there are ways of architecting Android apps so that we can take advantage of polymorphism in spite of the circular dependency between Presenters and MVP-Views, but none of the approaches that I&amp;rsquo;ve seen are particularly pretty, nor do they do a great job of facilitating unit testing. &lt;/p&gt;
-
-&lt;p&gt;I don&amp;rsquo;t have the space here to go over all of those different solutions that I have in mind, but I can briefly say why one easy way of resolving the circular dependency between MVP-Views and Presenters is not ideal. You might think that we can just create an MVP-View or Presenter without the dependencies they need to fulfill their responsibilities. We could, in other words, do something like this:&lt;/p&gt;
-
-&lt;p&gt;This would allow us to use polymorphism to solve problems like the one I mentioned above, but it doesn&amp;rsquo;t really break the circular dependency between MVP-Views and Presenters. All it does is allow us to create an object in an invalid state. This isn&amp;rsquo;t cleanest solution. To put the point in Freeman and Pryce&amp;rsquo;s words:&lt;/p&gt;
-
-&lt;blockquote&gt;“New or new not, there is no try”
-
-We try to make sure that we always create a valid object…Partially creating an object and then finishing it off by setting its properties is brittle…&lt;/blockquote&gt;
-
-&lt;h2 id=&#34;conclusion:25be7690f1d98142cd41730b0d055142&#34;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;Presenters and Activities violate the principle of single responsibility. They are often responsible for binding data to a View and for responding to user input/actions. This can cause both Activities and Presenters to become bloated.&lt;/p&gt;
-
-&lt;p&gt;Presenters and Activities often carry out their multiple responsibilities by creating a circular dependency between themselves and their Views. Although this circular reference doesn&amp;rsquo;t appear to be a problem, it can make it more difficult to unit test our Views and/or Presenters and it can limit our ability to use polymorphism to implement ui-related business logic.&lt;/p&gt;
-
-&lt;p&gt;As I said before, I think there&amp;rsquo;s a way of structuring our applications that doesn&amp;rsquo;t have these disadvantages, and in the next post, I&amp;rsquo;ll go over this alternative architecture.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Below, Hannes Dorfmann has a great comment to this article. I&amp;rsquo;ve responded to that &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
