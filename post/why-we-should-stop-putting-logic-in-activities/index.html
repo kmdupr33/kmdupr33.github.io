@@ -300,6 +300,8 @@
 
 <p>We can&rsquo;t afford to wait this long! We need the <code>EspressoNotifyingLoaderCallbacks</code> to be injected into the <code>Activity</code> before that <code>Activity</code> adds the <code>PresenterFragmentImpl</code>, thereby triggering it&rsquo;s lifecycle methods that create a <code>Loader</code>.</p>
 
+<p>Technically, in this particular case, we can inject the <code>EspressoNotifyingLoaderCallbacks</code> into the <code>PresenterFragmentImpl</code> before that Fragment is added to it&rsquo;s hosting <code>Activity</code>, but if we were trying to test logic in an <code>Activity</code>, we&rsquo;d be out of luck. Either way, moving our logic out of the <code>PresenterFragmentImpl</code> would give us a cleaner way of separating our test code from our application code. I&rsquo;ll attempt to show this cleaner separation in another post.</p>
+
 <p>I can think of a few ways around this problem, but none of them seem particularly pretty. If we didn&rsquo;t have any logic in our <code>Activity</code> and <code>PresenterFragmentImpl</code> in the first place and if we placed that logic in a POJO that could make use of <a href="http://misko.hevery.com/2009/02/19/constructor-injection-vs-setter-injection/">constructor dependency injection</a>, this would be much easier. We could just pass the <code>EspressoNotifyingLoaderCallbacks</code> as a dependency to some POJO&rsquo;s constructor. The <code>Activity</code>, moreover, could just forward its lifecycle calls to that POJO, so that it would act appropriately.</p>
 
 <p>So, the reason why functional testing with Android <code>Activity</code>&rsquo;s is so hard is the same reason why unit testing <code>Activity</code>&rsquo;s is hard: we can&rsquo;t do proper dependency injection.</p>
