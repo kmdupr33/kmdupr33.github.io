@@ -11,10 +11,10 @@
     
     <item>
       <title>How to Safely move Logic out of Activities</title>
-      <link>http://philosophicalhacker.com/post/post-title/</link>
+      <link>http://philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/</link>
       <pubDate>Thu, 16 Jun 2016 16:58:30 -0400</pubDate>
       
-      <guid>http://philosophicalhacker.com/post/post-title/</guid>
+      <guid>http://philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/</guid>
       <description>
 
 &lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;my last post&lt;/a&gt;, I argued that we should stop putting our app logic in &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s because it makes both unit testing &lt;em&gt;and&lt;/em&gt; functional testing our apps more difficult. In this post, I&amp;rsquo;ll try to suggest a method of safely removing app logic from our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s, drawing on a central idea discussed in Michael Feathers&amp;rsquo; &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;: characterization tests.&lt;/p&gt;
