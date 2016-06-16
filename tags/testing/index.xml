@@ -6,8 +6,178 @@
     <description>Recent content in Testing on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 14 Jun 2016 23:13:00 -0400</lastBuildDate>
+    <lastBuildDate>Thu, 16 Jun 2016 16:58:30 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/tags/testing/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>How to Safely move Logic out of Activities</title>
+      <link>http://philosophicalhacker.com/post/post-title/</link>
+      <pubDate>Thu, 16 Jun 2016 16:58:30 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/post-title/</guid>
+      <description>
+
+&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;my last post&lt;/a&gt;, I argued that we should stop putting our app logic in &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s because it makes both unit testing &lt;em&gt;and&lt;/em&gt; functional testing our apps more difficult. In this post, I&amp;rsquo;ll try to suggest a method of safely removing app logic from our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s, drawing on a central idea discussed in Michael Feathers&amp;rsquo; &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;: characterization tests.&lt;/p&gt;
+
+&lt;p&gt;In the first section, I briefly introduce the idea of characterization tests. In the second section, I walk through some of the complications that arise when you&amp;rsquo;re trying to write characterization tests for &lt;code&gt;Activity&lt;/code&gt;/&lt;code&gt;Fragment&lt;/code&gt;s. Source code examples are excerpts from &lt;a href=&#34;https://github.com/kmdupr33/iosched/tree/refactor/characterization_tests&#34;&gt;my fork of the Google IO app&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;brief-intro-characterization-tests:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Brief Intro Characterization Tests&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&amp;hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&amp;hellip;Cover and Modify is a different way of making changes. The idea behind it is that it is possible to work with a safety net when we change software.&lt;/p&gt;
+
+&lt;p&gt;Michael Feathers, &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, pg. 32&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Characterization tests are tests that form the &amp;ldquo;safety net&amp;rdquo; that Feathers refers to in the above quotation. The purpose of characterization tests is, as the name implies, to &lt;em&gt;characterize&lt;/em&gt; the &lt;em&gt;current behavior&lt;/em&gt; of the system. These tests help us ensure that when we refactor our code, we are preserving the current behavior of the system. For every change we make, the result of running our characterization tests will tell us whether we&amp;rsquo;ve accidentally changed the behavior of our app.&lt;/p&gt;
+
+&lt;p&gt;Usually, writing a characterization tests is a pretty simple process. According to Feathers:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;Write tests for the area where you will make your changes. Write as many cases as you feel you need to understand the behavior of the code.&lt;/li&gt;
+&lt;li&gt;After doing this, take a look at the specific things you are going to change, and attempt to write tests for those.&lt;/li&gt;
+&lt;li&gt;If you are attempting to extract or move some functionality, write tests that verify the existence and connection of those behaviors on a case-by-case basis. Verify that you are exercising the code that you are going to move and that it is connected properly. Exercise conversions.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Pg. 218&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/net.jpg&#34; alt=&#34;safety net&#34; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Image Credit: Cea on &lt;a href=&#34;https://www.flickr.com/photos/centralasian/3896333282/in/photolist-6WiJ93-i2ZU8-AL26v-NqLkJ-57Gmup-4QiXwQ-67j8Sw-fuf5d1-5DJrYY-9YjbZP-7UJ75S-piX5fr-jzCox-8s9BdN-uST4Hi-tw8VdM-5yxEvF-2QSfpF-onBRex-6Aj5cU-3Jyy7k-8YYKtq-8TRZ33-as2Fdq-rhXdJ8-oTXJh5-aNqeHH-hcEk7d-7ACDg-6EcoYB-mmgBPF-mz68zf-sFGHZq-6EhPsd-dor5Cp-6EcFhV-coe1tY-EDaP5-9Yn6dW-2zCxU-8YiQA1-7dQsZA-8Fq6BQ-n1F765-7dQssm-6wskCt-C44Dg-6EepXT-6EesLa-C4543&#34;&gt;Flickr Creative Commons&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;characterization-tests-for-activities-and-fragments:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Characterization Tests for Activities and Fragments&lt;/h3&gt;
+
+&lt;p&gt;Unfortunately, writing characterization tests for &lt;code&gt;Activity&lt;/code&gt;/&lt;code&gt;Fragment&lt;/code&gt;s is not as simple as writing characterization tests in the general case. In fact, writing characterization tests for any object instantiated by the Android OS is not easy (think &lt;code&gt;Activity&lt;/code&gt;, &lt;code&gt;Fragment&lt;/code&gt;, &lt;code&gt;Service&lt;/code&gt;, &lt;code&gt;BroadcastReceiver&lt;/code&gt;, etc.). In this section, I explore two things that make writing characterization tests for &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s challenging. I also suggest ways to work around these challenges.&lt;/p&gt;
+
+&lt;h4 id=&#34;law-of-demeter-violations:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Law of Demeter Violations&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s have dependencies. Some of those dependencies are only accessible if we violate the law of demeter. For example, the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; needs to get a hold of a &lt;code&gt;ContentResolver&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onAttach&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Activity activity&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onAttach&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;activity&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Register content observers with the content resolver.&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mContentObservers &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        Iterator&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Map&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Entry&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Uri&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; ThrottledContentObserver&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; observers &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
+                mContentObservers&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;entrySet&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;iterator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;while&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;observers&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;hasNext&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            Map&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Entry&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Uri&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; ThrottledContentObserver&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; entry &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; observers&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;next&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            activity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getContentResolver&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;registerContentObserver&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
+&lt;/span&gt;                    entry&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getKey&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; entry&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getValue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Characterizing the behavior of this method is challenging because law of demeter violations force us to make our mocks return mocks so that we can verify the interactions with the &lt;code&gt;Fragment&lt;/code&gt;&amp;rsquo;s dependencies:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeOnAttach&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Actor actor&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Asserter asserter&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Arrange&lt;/span&gt;
+    mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;configure&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mFragmentManager&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0,&lt;/span&gt; mModel&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; QueryEnum&lt;span style=&#34;color: #666666&#34;&gt;[]{},&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; UserActionEnum&lt;span style=&#34;color: #666666&#34;&gt;[]{});&lt;/span&gt;
+
+
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Activity activity &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Activity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; ContentResolver contentResolver &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ContentResolver&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    when&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;activity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getContentResolver&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;thenReturn&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;contentResolver&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Act&lt;/span&gt;
+    actor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;act&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;activity&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Assert&lt;/span&gt;
+    asserter&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;doAssert&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;contentResolver&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeOnAttachIfRegisteredContentObservers&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+    characterizeOnAttach&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Actor&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;act&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Activity activity&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;registerContentObserverOnUri&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Uri&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;EMPTY&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; queriesToRun&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+            mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onAttach&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;activity&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Asserter&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;doAssert&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ContentResolver contentResolver&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// ...&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;contentResolver&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;registerContentObserver&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;eq&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Uri&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;EMPTY&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;              eq&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;),&lt;/span&gt; notNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ThrottledContentObserver&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Typically, we don&amp;rsquo;t want to write tests with mocks returning mocks since this suggests that our design may smell. In this case, we are merely trying to characterize the already existing behavior of our &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt;. Once we refactor, we should have a design that doesn&amp;rsquo;t require this, but in the mean-time, we need this characterization test to make sure that we are preserving app behavior during our refactor.&lt;/p&gt;
+
+&lt;h4 id=&#34;nearly-impossible-di:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;(Nearly) Impossible DI&lt;/h4&gt;
+
+&lt;p&gt;&lt;code&gt;Fragment&lt;/code&gt;s and &lt;code&gt;Activity&lt;/code&gt;s get their dependencies via an accessor method. &lt;code&gt;getLoaderManager&lt;/code&gt;, &lt;code&gt;getContentResolver&lt;/code&gt;, or &lt;code&gt;getFragmentManager&lt;/code&gt; are a few examples of such accessor methods. Here&amp;rsquo;s a method that uses one of these accessors:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 1 &lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 2 &lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 3 &lt;/span&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 4 &lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 5 &lt;/span&gt;    mLoaderIdlingResource &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 6 &lt;/span&gt;            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getClass&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;/&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; getId&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; getLoaderManager&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 7 &lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 8 &lt;/span&gt;    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Load data queries if any.&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 9 &lt;/span&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mInitialQueriesToLoad &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;10 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        LoaderManager manager &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; getLoaderManager&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;11 &lt;/span&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0;&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt; mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt; i&lt;span style=&#34;color: #666666&#34;&gt;++)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;12 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            manager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;].&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;13 &lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;14 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;15 &lt;/span&gt;        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// No data query to load, update the view.&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;16 &lt;/span&gt;        mUpdatableView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayData&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mModel&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;17 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;18 &lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;If we&amp;rsquo;re characterizing a method like this one, we need to verify that the &lt;code&gt;Fragment&lt;/code&gt; calls the correct methods on the dependencies returned by these accessor methods. Verifying the interaction of an object with its dependencies means that we need to be able to swap out those dependencies with mocks.&lt;/p&gt;
+
+&lt;p&gt;One way of doing this would be to have a special subclass of the &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt; you&amp;rsquo;d like to test. This sub-class could override the accessors to return mocks. Our characterization tests could then instantiate these special subclasses and use the mocks returned by the accessors to verify the interactions.&lt;/p&gt;
+
+&lt;p&gt;This isn&amp;rsquo;t a great solution. For reasons that I hope are clear, using this solution would force us to repeatedly subclass every &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt; in our app to return mock accessors.&lt;/p&gt;
+
+&lt;p&gt;A better solution is to use mockito spies. Like mocks returning mocks, we typically don&amp;rsquo;t use spies in our tests because it suggests a smelly design. However, in this case, spies help us write characterization tests without having make a non-trivial changes to the code we are trying to characterize or without having to repeatedly subclass all of our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s to return mocks. Here&amp;rsquo;s an example of how spies help us do this:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeOnActivityCreatedIfInitialQueriesToLoad&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; ExploreModel&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ExploreQueryEnum&lt;/span&gt; sessions &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; ExploreModel&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ExploreQueryEnum&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;SESSIONS&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;configure&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mFragmentManager&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0,&lt;/span&gt; mModel&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; QueryEnum&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;sessions&lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; UserActionEnum&lt;span style=&#34;color: #666666&#34;&gt;[]{});&lt;/span&gt;
+
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; LoaderManager loaderManager &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    when&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getLoaderManager&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;thenReturn&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderManager&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;
+    mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+
+    assertNotNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getLoaderIdlingResource&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderManager&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;eq&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;sessions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()),&lt;/span&gt; isNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;),&lt;/span&gt; notNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Using a spy, we&amp;rsquo;re able to stub out the &lt;code&gt;getLoaderManager&lt;/code&gt; method to return a mock &lt;code&gt;LoaderManager&lt;/code&gt;. We can then verify that &lt;code&gt;onActivityCreated&lt;/code&gt; calls the right methods on the &lt;code&gt;LoaderManager&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Safely moving logic out of large &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s can be a lot of work, but its less work than manually verifying that we haven&amp;rsquo;t broken anything every time we make a change to the &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt; we are refactoring.&lt;/p&gt;
+
+&lt;p&gt;Even if we recognize that writing these characterization tests is better than manual verification, writing them can be pretty soul-sucking. Keep in mind that we don&amp;rsquo;t need to move all of the logic out at once, so we don&amp;rsquo;t need to write all characterization tests at once.&lt;/p&gt;
+
+&lt;p&gt;Instead, we can identify various responsibilities that are carried out by our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s and plan to extract classes to handle those responsibilities. Once we have a clear picture of the class we want to extract from the &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt;, we can write characterization tests that will serve as a safety net for that single extraction, rather than attempting to write characterization tests for all the non-trivial methods in the &lt;code&gt;Activity&lt;/code&gt;/&lt;code&gt;Fragment&lt;/code&gt; we are refactoring.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Why we Should Stop Putting Logic in Activities</title>
@@ -1399,108 +1569,6 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;/ul&gt;
 
 &lt;hr /&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>How to Make Our Android Apps Unit Testable (Pt. 2)</title>
-      <link>http://philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/</link>
-      <pubDate>Fri, 08 May 2015 11:46:13 +0000</pubDate>
-      
-      <guid>http://philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/</guid>
-      <description>
-
-&lt;p&gt;In &lt;a href=&#34;http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;my last post&lt;/a&gt;, I introduced the “The Square Way” of structuring our android code. I said that The Square Way is a generalization of the approach that Square used to make the logic within their &lt;code&gt;Fragment&lt;/code&gt;s unit testable. I also showed how The Square Way would have us rewrite the &lt;code&gt;SessionCalendarService&lt;/code&gt; within Google’s IOSched app so that we could unit test the business logic within it. As we’ll see in this post, The Square Way also makes it easier/possible for us to unit test UI app component business logic.&lt;/p&gt;
-
-&lt;h1 id=&#34;this-article-has-dependencies:f90144975a120e4b94c67ad8628e0439&#34;&gt;This Article has “Dependencies”&lt;/h1&gt;
-
-&lt;p&gt;Applying The Square Way to UI app components classes like &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s is a little more complicated than its corresponding application to non-ui components. The source of this additional complication relates to the importance of structuring our code so that we can alter pre-act-state and verify post-act-state for a unit test. If those terms sound hazy or completely unfamiliar, read &lt;a href=&#34;http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;this post&lt;/a&gt; before continuing. While you’re at it, make sure you understand what the &lt;code&gt;SessionDetailActivity&lt;/code&gt; does. To see how The Square Way would be applied to UI app component classes, we are going to apply it to rewrite the &lt;code&gt;SessionDetailActivity&lt;/code&gt; so that we could unit test the business logic within its &lt;code&gt;onStop()&lt;/code&gt; method.&lt;/p&gt;
-
-&lt;p&gt;Understanding how The Square Way is applied to UI app component classes will be easier if you have an understanding of MVP. However, since Square does a decent job of introducing this pattern in &lt;a href=&#34;https://corner.squareup.com/2014/10/advocating-against-android-fragments.html&#34;&gt;their post about fragments&lt;/a&gt;, I won’t rehearse that introduction here. If you find yourself confused about how the View fits within MVP, read &lt;a href=&#34;http://philosophicalhacker.com/2015/04/05/dont-call-it-mvp/&#34;&gt;my post&lt;/a&gt; that helps clarify the distinction between an Android View and a MVP View. I actually prefer to call the object that everyone calls a “View” a “ViewTranslator” instead because it makes clearer the distinction between an Android View and a “View” within MVP. Going forward, I will use “ViewTranslator” instead of “View” to refer to the object the Presenter uses to update the content on the app’s screen.&lt;/p&gt;
-
-&lt;h1 id=&#34;the-square-way-for-ui-app-component-classes:f90144975a120e4b94c67ad8628e0439&#34;&gt;The Square Way for UI App Component Classes&lt;/h1&gt;
-
-&lt;p&gt;Although applying The Square Way to UI app components classes can be more complicated, the basic strategy is the same: remove all business logic from app component classes (e.g., &lt;code&gt;Activity&lt;/code&gt;s, &lt;code&gt;Fragment&lt;/code&gt;s, &lt;code&gt;Service&lt;/code&gt;s) and place that logic into what I have been calling “business objects,” POJO objects whose dependencies are injected, android-specific implementations of android-agnostic interfaces.&lt;/p&gt;
-
-&lt;p&gt;Here’s what &lt;code&gt;onStop()&lt;/code&gt; looks like currently:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/4c90e155dcaf6c4e0147.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;One problem with this code, as I’ve mentioned before, is that the code that launches the &lt;code&gt;SessionCalendarService&lt;/code&gt; does not belong to a method on an dependency that’s been injected into the &lt;code&gt;SessionDetailActivity&lt;/code&gt;. Following The Square Way fixes this problem. The first step for restructuring this code to follow The Square Way is to move the business logic from the &lt;code&gt;SessionDetailActivity&lt;/code&gt; to a business object. The folks at Square have a name for a business object that contains the business logic that used to live in an &lt;code&gt;Activity&lt;/code&gt; (or &lt;code&gt;Fragment&lt;/code&gt;, etc.): they call it a “Presenter.”&lt;/p&gt;
-
-&lt;p&gt;The Presenter is responsible for, among other things, updating the View with data from the Model. In order to make the Presenter unit-testable, this means that the Model and View must both be dependencies that are injected into the Presenter. These three objects together make up the objects of the MVP architectural pattern.&lt;/p&gt;
-
-&lt;p&gt;Here’s what the equivalent of &lt;code&gt;onStop()&lt;/code&gt; would look like within the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/5e06819aec1694453ff3.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;The key thing to note here is that the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;’s dependencies are passed into its constructor. Because these dependencies are injected, we now have a way of verifying the post-act-state of a unit test against &lt;code&gt;SessionDetailPresenter&lt;/code&gt;’s &lt;code&gt;onViewTranslatorStopped()&lt;/code&gt; method:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/c2edd738031bb9314268.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;Although we now have a way of verifying post-act-state for our test, this is not enough. This test, as it’s written, will fail. To see why, let’s take a second look at &lt;code&gt;onViewTranslatorStopped()&lt;/code&gt;:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/bee17bc98248e662f748.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;The code within onViewTranslatorStopped() is wrapped in an if-statement. It only executes if the starred button state is different from the state in which it was initialized. Recall that &lt;code&gt;mInitStarred&lt;/code&gt; is initialized in a Loader callback. IOSched checks the database for whether the session has been added to the user’s calendar and uses information to update the UI appropriately once the user returns to the &lt;code&gt;SessionDetailActivity&lt;/code&gt;. In the above unit test, &lt;code&gt;mInitStarred&lt;/code&gt; will have a default value of false and &lt;code&gt;mStarred&lt;/code&gt; will also have a default value of false, so the code within the if-statement will never execute.&lt;/p&gt;
-
-&lt;p&gt;Even if we could make the code within that if-statement execute, however, we still wouldn’t have everything we needed for a unit test. The code that launches the &lt;code&gt;SessionCalendarService&lt;/code&gt; lives within another if-statement that ensures that it only executes if &lt;code&gt;System.currentTimeMillis()&lt;/code&gt; is less than &lt;code&gt;mSessionStart&lt;/code&gt;. Since we have no way of altering the value of &lt;code&gt;mSessionStart&lt;/code&gt;, there’s no guarantee that the &lt;code&gt;SessionCalendarService&lt;/code&gt; launching code will ever be run.&lt;/p&gt;
-
-&lt;p&gt;Both of these problems are particular examples of a general problem I pointed out with android unit testing: we often lack sufficient control over the pre-act-state of our test. However, because we’ve injected a &lt;code&gt;SessionRepositoryManager&lt;/code&gt; into the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;, we can determine the values of &lt;code&gt;mSessionStart&lt;/code&gt; and &lt;code&gt;mInitStarred&lt;/code&gt;. &lt;code&gt;SessionRepositoryManager&lt;/code&gt; is an Android-agnostic interface¹:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/310eee93627547b34c22.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;However, when we create the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;, we inject an android-specific implementation of the &lt;code&gt;SessionRepositoryManager&lt;/code&gt; that wraps a &lt;code&gt;LoaderManager&lt;/code&gt;:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/f22e6ee78bf4c40901a5.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;Because &lt;code&gt;SessionRepositoryManager&lt;/code&gt; is just an interface, we can easily define a MockRepositoryManager to facilitate unit testing:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/54d1b6a42139dcae8c2e.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;Notice that we can specify which values we’d like the &lt;code&gt;MockSessionRepositoryManager&lt;/code&gt; to return when there’s a call to &lt;code&gt;initRepository()&lt;/code&gt; by passing in a &lt;code&gt;Session&lt;/code&gt; object into its constructor. Values like &lt;code&gt;mSessionStart&lt;/code&gt; within the &lt;code&gt;SessionDetailPresenter&lt;/code&gt; will be initialized with the &lt;code&gt;startTimeStamp&lt;/code&gt; instance var on the &lt;code&gt;Session&lt;/code&gt; model object. Now that we have control over these values, we almost have what we need to complete the arrange-step of a unit test for &lt;code&gt;onViewTranslatorStopped()&lt;/code&gt;:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/472d6cd32f935475773d.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;I say “almost” above because there’s still one part of &lt;code&gt;onViewTranslatorStopped()&lt;/code&gt; that the above test code doesn’t cover. At the bottom of &lt;code&gt;onViewTranslatorStopped()&lt;/code&gt; there’s a block of code that will run only if &lt;code&gt;mStarred&lt;/code&gt; is true. This code launches a service that will remind will remind the user attend and/or rate the session they’ve added to their calendar:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/5e06819aec1694453ff3.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;To make this code run, we need to make sure that &lt;code&gt;mStarred&lt;/code&gt; is true. We can do this by calling the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;’s onSessionStarred() method, a method that’s called by the &lt;code&gt;SessionDetailViewTranslator&lt;/code&gt; (or, if you like confusing names, you would just call this the “SessionDetailView”) when the user taps the star button:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/144b53d71871e18e4c3e.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;With all of these pieces in place, we finally have everything we need to write a unit test against &lt;code&gt;onViewTranslatorStopped()&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h1 id=&#34;conclusion:f90144975a120e4b94c67ad8628e0439&#34;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;If you felt like we had to do too much work in the arrange-step of this unit test, you’re probably right. Ultimately, I think that the &lt;code&gt;SessionDetailActivity&lt;/code&gt;, a class that’s over 1000 lines long, does too much. Because of this, writing unit tests against it is more difficult than it has to be. Since the purpose of this post was just to show the heart of The Square Way, I didn’t discuss further techniques that could be used to facilitate unit testing.²&lt;/p&gt;
-
-&lt;p&gt;The Square Way is a significant departure from what I have called the “standard way” of building android applications. We should consider the disadvantages of following it. To that end, the next posts will be a presentation of the potential problems that may arise with The Square Way to developing apps, along with some potential solutions to those problems. The final post of this series, will point out some other advantages of The Square Way, advantages that are broader than the extent to which The Square Way enhances an app’s unit testability.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Against Android Unit Tests:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Why Android Unit Testing is so Hard: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;How to Make Our Android Apps Unit Testable: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/&#34;&gt;Quick Summary&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;Followup: Summary&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;Followup: Unit Testing Dynamically Constructed Views&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;notes:f90144975a120e4b94c67ad8628e0439&#34;&gt;Notes:&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Technically this interface isn’t android agnostic because its main method takes a Bundle as an argument. I suspect that this won’t pose a problem. A Bundle is trivial; it’s not something that we’d ever want to test. Mocking it, moreover, shouldn&amp;rsquo;t be difficult.&lt;/li&gt;
-&lt;li&gt;At Droidcon Montreal, Richa Khandelwal over at Coursera suggested &lt;a href=&#34;https://speakerdeck.com/richk/clean-android-architecture&#34;&gt;a cleaner, more testable architecture&lt;/a&gt; that would probably make it even easier to write unit tests.&lt;/li&gt;
-&lt;/ol&gt;
 </description>
     </item>
     
