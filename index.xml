@@ -6,8 +6,110 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 16 Jun 2016 16:58:30 -0400</lastBuildDate>
+    <lastBuildDate>Wed, 22 Jun 2016 13:25:16 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Vice: A Regression Test Generation Library</title>
+      <link>http://philosophicalhacker.com/post/vice-a-regression-test-generation-library/</link>
+      <pubDate>Wed, 22 Jun 2016 13:25:16 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/vice-a-regression-test-generation-library/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&amp;hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&amp;hellip;Cover and Modify is a different way of making changes. The idea behind it is that it is possible to work with a safety net when we change software&amp;hellip;&lt;strong&gt;When you have tests around the areas in which you are going to make changes, they act as a software vise. You can keep most of the behavior fixed and know that you are changing only what you intend to.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Michael Feathers, &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, pg. 32-33&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The &amp;ldquo;regression tests&amp;rdquo; that Feathers refers to in the above quotation are a huge asset to refactoring code. Unfortunately, they can often be time-consuming and soul-sucking to write. Vice is a library that I just started working on that helps to reduce the burden of writing these regression tests.&lt;/p&gt;
+
+&lt;p&gt;With Vice, we can simply exercise the code we want regression tests for, and Vice will generate our unit-level regression tests for us. This post sketches how my current proof of concept of this library and suggests some ways I plan to expand the library, with special attention to how this library might aid in generating regression tests for Android applications. You can find the source code &lt;a href=&#34;https://github.com/kmdupr33/Vice&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-trivial-proof-of-concept:e80b726be6592e9b4fd9f6556e16b7ec&#34;&gt;A Trivial Proof of Concept&lt;/h3&gt;
+
+&lt;p&gt;Suppose we have a simple class that reverses a string:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Reverser&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; String &lt;span style=&#34;color: #0000FF&#34;&gt;reverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;String string&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; StringBuilder&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;string&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;toString&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Suppose further that we don&amp;rsquo;t like the way &lt;code&gt;Reverser.reverse&lt;/code&gt; is implemented. If we want to be sure that our modifications don&amp;rsquo;t break anything, we would normally write a unit test for this method that looks like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;ReverserCharacterization&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeReverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    Reverser reverser &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reverser&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String result &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reverser&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;hello&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    assertEquals&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;olleh&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; result&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vice allows us to generate tests by simply writing code that exercises the classes for which we want tests. Let&amp;rsquo;s look at the Vice code that generates the above test.&lt;/p&gt;
+
+&lt;p&gt;First, we create a &lt;code&gt;ViceMaker&lt;/code&gt; object:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@ViceFor&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Reverser&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;ViceMaker&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Clamp&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;clampReverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Reverser reverser&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        reverser&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;hello&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Next, we run &lt;code&gt;Vice.make&lt;/code&gt;, passing in the class of our &lt;code&gt;ViceMaker&lt;/code&gt; and the path where we want our generated tests to live:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Vice vice &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Vice&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String pathToGeneratedCharacterizationTest
+        &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;/Users/mattdupree/Developer/Vice/src/test/java/&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Path testFilesPath &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; Paths&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;get&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;pathToGeneratedCharacterizationTest&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;make&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;testFilesPath&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; ViceMaker&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;  
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Once the above code is run, you&amp;rsquo;ll have regression test generated with code that is identical the code we would have written:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;ReverserCharacterization&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeReverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    Reverser reverser &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reverser&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String result &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reverser&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;hello&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    assertEquals&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;olleh&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; result&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Once this code is generated, you can ensure that your refactoring doesn&amp;rsquo;t break &lt;code&gt;Reverser&lt;/code&gt; simply by running your tests.&lt;/p&gt;
+
+&lt;p&gt;In order to accomplish this, I&amp;rsquo;m using reflection and &lt;a href=&#34;http://bytebuddy.net/#/&#34;&gt;bytebuddy&lt;/a&gt;, a library that lets us rewrite java classes at runtime. With these two tools I&amp;rsquo;m rewriting the classes we want to generate regressions tests for so that every method on that class records its method invocations. This &amp;ldquo;recording&amp;rdquo; captures what method was called, the arguments that were passed in, and the return value of the method. Once I have this information, I use &lt;a href=&#34;https://github.com/square/javapoet&#34;&gt;javapoet&lt;/a&gt; to write out java test files.&lt;/p&gt;
+
+&lt;h3 id=&#34;limitations-and-future-directions:e80b726be6592e9b4fd9f6556e16b7ec&#34;&gt;Limitations and Future Directions&lt;/h3&gt;
+
+&lt;h4 id=&#34;supporting-void-methods:e80b726be6592e9b4fd9f6556e16b7ec&#34;&gt;Supporting Void Methods&lt;/h4&gt;
+
+&lt;p&gt;Currently, my proof of concept only supports adding tests for methods with return values. However, I&amp;rsquo;d like to expand it to test methods that don&amp;rsquo;t return anything. Void methods are typically tested by examining the way in which those methods interact with their dependencies. Using bytebuddy, I can rewrite the dependencies of the methods we want to test so that they record their interactions. Once I have this information, I can generate mockito-powered tests that verify that the method interacts with its dependencies correctly.&lt;/p&gt;
+
+&lt;h4 id=&#34;supporting-complex-method-parameters:e80b726be6592e9b4fd9f6556e16b7ec&#34;&gt;Supporting Complex Method Parameters&lt;/h4&gt;
+
+&lt;p&gt;As I said earlier, bytebuddy let&amp;rsquo;s me rewrite the target classes so that they record the parameters that are passed into their methods. However, this is not enough. The tests that are generated will need to know how to construct complex method parameters so that methods can be invoked. To support this, the &lt;code&gt;ViceMaker&lt;/code&gt; object can contain annotated methods that provide the dependencies of the methods whose interactions we want to record.&lt;/p&gt;
+
+&lt;h4 id=&#34;supporting-android-test-recording:e80b726be6592e9b4fd9f6556e16b7ec&#34;&gt;Supporting Android Test Recording&lt;/h4&gt;
+
+&lt;p&gt;In the next release of Android Studio, we&amp;rsquo;ll be able to record espresso tests. These tests are great, but they can be slow and flaky, so they need to be augmented with unit tests.&lt;/p&gt;
+
+&lt;p&gt;Ideally, I&amp;rsquo;d like to build upon the functionality of Vice to support Android &lt;em&gt;unit test&lt;/em&gt; recording. This functionality is less fleshed out in my mind, but it seems doable. The hope here is that you&amp;rsquo;d be able to launch your Android app, interact with it and your interactions would generate unit tests for your activities and fragments. These unit tests will allow us to move application logic out of our Activities and Fragments without having to spend an inordinate amount of time writing and running regression tests.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>How to Safely move Logic out of Activities</title>
@@ -1591,86 +1693,6 @@ GopherFinder
 &lt;ol&gt;
 &lt;li&gt;Steve Freeman claims that Robert Martin conflates mocks with stubs in the comments of Robert Martin&amp;rsquo;s article.&lt;/li&gt;
 &lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Making a TDD-based HackerNews client for Android</title>
-      <link>http://philosophicalhacker.com/2015/07/17/making-a-tdd-based-hackernews-client-for-android/</link>
-      <pubDate>Fri, 17 Jul 2015 11:53:55 +0000</pubDate>
-      
-      <guid>http://philosophicalhacker.com/2015/07/17/making-a-tdd-based-hackernews-client-for-android/</guid>
-      <description>
-
-&lt;p&gt;I&amp;rsquo;m using TDD to write a HackerNews client for Android. This post (and the ones that will likely follow it) share a little bit about some of the techniques I used to follow a TDD-based work-flow for developing this application. It also discusses the architecture that arises when Android apps are built with testability in mind from the ground up.&lt;/p&gt;
-
-&lt;h2 id=&#34;testing-a-walking-skeleton:3782b8d1a760da7b5dd9b3f3d0554607&#34;&gt;Testing a Walking Skeleton&lt;/h2&gt;
-
-&lt;p&gt;The first step in kick-starting a TDD workflow, according to Steve Freeman and Nat Pryce in &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;, is to &amp;ldquo;test a walking skeleton.&amp;rdquo; A walking skeleton, as they define it, is this:&lt;/p&gt;
-
-&lt;blockquote&gt;A “walking skeleton” is an implementation of the thinnest possible slice of real functionality that we can automatically build, deploy, and test end-to-end.
-
-pg. 69-70&lt;/blockquote&gt;
-
-&lt;p&gt;A walking skeleton for a HackerNews client, as I see it, should just display a list of HackerNews story ids. To implement this test, I use a simple espresso test that looks like this:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/a25db0930e583db05535.js&#34;&gt;&lt;/script&gt;
-
-&lt;h3 id=&#34;how-i-got-consistent-test-data:3782b8d1a760da7b5dd9b3f3d0554607&#34;&gt;How I Got Consistent Test Data&lt;/h3&gt;
-
-&lt;p&gt;Here&amp;rsquo;s a question that arose immediately when writing this test: How can we ensure that the MainActivity was fetching the same data for every test run so that the value 9897306 that we&amp;rsquo;re checking against is always appropriate. &lt;a href=&#34;https://www.google.com/webhp?sourceid=chrome-instant&amp;amp;ion=1&amp;amp;espv=2&amp;amp;ie=UTF-8#q=jake%20wharton%20dagger%20parley&#34;&gt;Jake Wharton&amp;rsquo;s discussion&lt;/a&gt; on Dagger modules that can override the dependencies that are injected into your Android objects came to mind here, so I decided to use this approach to ensure that the data the test uses is always the same.&lt;/p&gt;
-
-&lt;p&gt;Let me briefly describe how I used this approach in my application.&lt;/p&gt;
-
-&lt;p&gt;Objects in PhilHackerNews access the Dagger object graph from the &lt;code&gt;PhilHackerNewsApplication&lt;/code&gt; subclass. That class is responsible for making the &lt;code&gt;ObjectGraph&lt;/code&gt;:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/eb4565747da03d9f1309.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;So, when I&amp;rsquo;m running a test, I use a custom test runner that creates a subclass of &lt;code&gt;PhilHackerNewsApplication&lt;/code&gt; to create the &lt;code&gt;ObjectGraph&lt;/code&gt; with the overridden module:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/d8a344157014e3cf0c8a.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;The &lt;code&gt;TestApplication&lt;/code&gt; class creates the &lt;code&gt;ObjectGraph&lt;/code&gt; with a module that overrides the dependencies responsible for fetching HackerNews data:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/36c1e516b335092057c2.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;&lt;code&gt;TestLoaderModule&lt;/code&gt; is the module that provides the overridden dependency. It provides a HackerNewsRestAdapter that simply loads HackerNews data from memory instead of the server:&lt;/p&gt;
-
-&lt;h3 id=&#34;the-current-state-of-app-s-architecture:3782b8d1a760da7b5dd9b3f3d0554607&#34;&gt;The Current State of App&amp;rsquo;s Architecture&lt;/h3&gt;
-
-&lt;p&gt;Let me point out a few things about the architecture needed to get this test to pass. First off, I want to say that this architecture is likely to change for the same reasons that Pryce and Freeman point out:&lt;/p&gt;
-
-&lt;blockquote&gt;[When testing a walking skeleton, w]e’re not trying to elaborate the whole design down to classes and algorithms before we start coding. Any ideas we have now are likely to be wrong, so we prefer to discover those details as we grow the system.
-
-Pg. 73&lt;/blockquote&gt;
-
-&lt;p&gt;Here&amp;rsquo;s something interesting about the state of the architecture currently: it uses a combination of RxJava and Loaders to ensure that&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The network calls are made and delivered properly even if the MainActivity and its Fragment are destroyed because of a configuration change&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;The classes in the &amp;ldquo;Application Layer&amp;rdquo; of this app are freed from having to worry about the Android-specific problem of asynchronous data loading for app components that can be destroyed and recreated at any time.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The inspiration for this decision comes from Freeman and Pryce&amp;rsquo;s advice:&lt;/p&gt;
-
-&lt;blockquote&gt;We don’t want technical concepts to leak into the application model, so we write interfaces to describe its relationships with the outside world in its terminology (Cockburn’s ports ). Then we write bridges between the application core and each technical domain (Cockburn’s adapters ).
-
-Pg. 90&lt;/blockquote&gt;
-
-&lt;p&gt;The problem that Loaders attempt to solve, as I see it, is a technical one that doesn&amp;rsquo;t belong in the Application Layer. To shield application layer objects from this technical detail, I&amp;rsquo;ve created and pass around an Observable that, upon subscription, initializes a load from a Loader using a LoaderManager:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/c6c1641ed1a24e07e062.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;Rather than dealing with loaders directly, clients that want to consume the &amp;ldquo;loaded&amp;rdquo; data subscribe to the &lt;code&gt;Observable&lt;/code&gt; that&amp;rsquo;s created with a &lt;code&gt;LoaderInitializingOnSubscribe&lt;/code&gt;. In my application, Activities/Fragments/Presenters will not interact with this Observable directly, however. Instead, they&amp;rsquo;ll interact with a StoryRepository that will (eventually) be responsible for deciding whether data gets loaded from the cache or from the network. Here&amp;rsquo;s what that class looks like at the moment:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/378997639d5bac95a392.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;And here&amp;rsquo;s a relevant snippet of the Fragment that uses this class to load the HackerNews data:&lt;/p&gt;
-
-&lt;p&gt;&lt;script src=&#34;//gist.github.com/kmdupr33/fb1c638f2fdbe6a8bd68.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
-
-&lt;p&gt;If you want to have a closer look at what I&amp;rsquo;ve done, feel free to take a look at &lt;a href=&#34;https://github.com/kmdupr33/PhilHackerNews&#34;&gt;the repo for this project&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
