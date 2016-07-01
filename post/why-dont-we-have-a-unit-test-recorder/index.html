@@ -148,34 +148,7 @@
 
 <p>Last week, I introduced Vice, a <em>proof of concept</em> regression test generation library. Vice generates regression tests simply by exercising the code we want to test.</p>
 
-<p>For example, this class exercises the <code>reverse</code> method on the <code>Reverser</code> class:</p>
-
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@ViceFor</span><span style="color: #666666">(</span>Reverser<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">)</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">ViceMaker</span> <span style="color: #666666">{</span>
-    <span style="color: #AA22FF">@Clamp</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">clampReverse</span><span style="color: #666666">(</span>Reverser reverser<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        reverser<span style="color: #666666">.</span><span style="color: #7D9029">reverse</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;hello&quot;</span><span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
-
-<p>When we run Vice, the following unit test is generated:</p>
-
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">ReverserCharacterization</span> <span style="color: #666666">{</span>
-  <span style="color: #AA22FF">@Test</span>
-  <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeReverse</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-    Reverser reverser <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Reverser<span style="color: #666666">();</span>
-    <span style="color: #008000; font-weight: bold">final</span> String result <span style="color: #666666">=</span> reverser<span style="color: #666666">.</span><span style="color: #7D9029">reverse</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;hello&quot;</span><span style="color: #666666">);</span>
-    assertEquals<span style="color: #666666">(</span><span style="color: #BA2121">&quot;olleh&quot;</span><span style="color: #666666">,</span> result<span style="color: #666666">);</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
-
-<p>This is neat, but there&rsquo;s already <a href="https://github.com/dmcg/okey-doke">something else out there that does something like this</a>, and ultimately, Vice as it stands doesn&rsquo;t answer a fundamental question I have about regression tests: if we can record functional UI tests using <a href="http://android-developers.blogspot.com/2016/05/android-studio-22-preview-new-ui.html">the espresso test recorder</a> or <a href="https://developer.apple.com/library/mac/documentation/ToolsLanguages/Conceptual/Xcode_Overview/RecordingUITests.html">apple&rsquo;s test recorder</a>, why don&rsquo;t we have a <em>unit test recorder</em>?</p>
-
-<p>In case its not obvious, this seems like an important question because unit-level tests can run much more quickly than functional UI tests, so they can actually serve as, to use Michael Feathers&rsquo; metaphor, a &ldquo;software vice&rdquo; when we&rsquo;re refactoring or adding features. Having to wait 5+ minutes to know if you&rsquo;re changes have broken anything is way too long for functional UI tests to be useful feedback while programming.</p>
+<p>This is neat, but there&rsquo;s already <a href="https://github.com/dmcg/okey-doke">something else out there that does something like this</a>, and ultimately, Vice as it stands doesn&rsquo;t answer a fundamental question I have about regression tests: if we can record functional UI tests using <a href="http://android-developers.blogspot.com/2016/05/android-studio-22-preview-new-ui.html">the espresso test recorder</a> or <a href="https://developer.apple.com/library/mac/documentation/ToolsLanguages/Conceptual/Xcode_Overview/RecordingUITests.html">apple&rsquo;s test recorder</a>, why don&rsquo;t we have a <em>unit test recorder</em>?<sup>1</sup></p>
 
 <p>This past week, I&rsquo;ve been exploring potential ways creating a unit test recorder with special attention to implementing this functionality for Android development. In this post, I present an overall strategy for doing this and I present what I&rsquo;ve learned so far vis-a-vis practically implementing this strategy for Android development.</p>
 
@@ -249,6 +222,12 @@
 </ol>
 
 <p>I&rsquo;ll be trying out these alternative approaches in the coming week. Hopefully, next time I&rsquo;ll have a working unit test recorder!</p>
+
+<h3 id="notes:e62a285e1a5be9bf46dd3bef4e886e02">Notes</h3>
+
+<ol>
+<li>In case its not obvious, this seems like an important question because unit-level tests can run much more quickly than functional UI tests, so they can actually serve as, to use Michael Feathers&rsquo; metaphor, a &ldquo;software vice&rdquo; when we&rsquo;re refactoring or adding features. Having to wait 5+ minutes to know if you&rsquo;re changes have broken anything is way too long for functional UI tests to be useful feedback while programming.</li>
+</ol>
 
     </section>
 

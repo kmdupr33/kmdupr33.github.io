@@ -19,34 +19,7 @@
 
 &lt;p&gt;Last week, I introduced Vice, a &lt;em&gt;proof of concept&lt;/em&gt; regression test generation library. Vice generates regression tests simply by exercising the code we want to test.&lt;/p&gt;
 
-&lt;p&gt;For example, this class exercises the &lt;code&gt;reverse&lt;/code&gt; method on the &lt;code&gt;Reverser&lt;/code&gt; class:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@ViceFor&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Reverser&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;ViceMaker&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Clamp&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;clampReverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Reverser reverser&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        reverser&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;hello&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;When we run Vice, the following unit test is generated:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;ReverserCharacterization&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeReverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    Reverser reverser &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reverser&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String result &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reverser&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;hello&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    assertEquals&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;olleh&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; result&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This is neat, but there&amp;rsquo;s already &lt;a href=&#34;https://github.com/dmcg/okey-doke&#34;&gt;something else out there that does something like this&lt;/a&gt;, and ultimately, Vice as it stands doesn&amp;rsquo;t answer a fundamental question I have about regression tests: if we can record functional UI tests using &lt;a href=&#34;http://android-developers.blogspot.com/2016/05/android-studio-22-preview-new-ui.html&#34;&gt;the espresso test recorder&lt;/a&gt; or &lt;a href=&#34;https://developer.apple.com/library/mac/documentation/ToolsLanguages/Conceptual/Xcode_Overview/RecordingUITests.html&#34;&gt;apple&amp;rsquo;s test recorder&lt;/a&gt;, why don&amp;rsquo;t we have a &lt;em&gt;unit test recorder&lt;/em&gt;?&lt;/p&gt;
-
-&lt;p&gt;In case its not obvious, this seems like an important question because unit-level tests can run much more quickly than functional UI tests, so they can actually serve as, to use Michael Feathers&amp;rsquo; metaphor, a &amp;ldquo;software vice&amp;rdquo; when we&amp;rsquo;re refactoring or adding features. Having to wait 5+ minutes to know if you&amp;rsquo;re changes have broken anything is way too long for functional UI tests to be useful feedback while programming.&lt;/p&gt;
+&lt;p&gt;This is neat, but there&amp;rsquo;s already &lt;a href=&#34;https://github.com/dmcg/okey-doke&#34;&gt;something else out there that does something like this&lt;/a&gt;, and ultimately, Vice as it stands doesn&amp;rsquo;t answer a fundamental question I have about regression tests: if we can record functional UI tests using &lt;a href=&#34;http://android-developers.blogspot.com/2016/05/android-studio-22-preview-new-ui.html&#34;&gt;the espresso test recorder&lt;/a&gt; or &lt;a href=&#34;https://developer.apple.com/library/mac/documentation/ToolsLanguages/Conceptual/Xcode_Overview/RecordingUITests.html&#34;&gt;apple&amp;rsquo;s test recorder&lt;/a&gt;, why don&amp;rsquo;t we have a &lt;em&gt;unit test recorder&lt;/em&gt;?&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
 
 &lt;p&gt;This past week, I&amp;rsquo;ve been exploring potential ways creating a unit test recorder with special attention to implementing this functionality for Android development. In this post, I present an overall strategy for doing this and I present what I&amp;rsquo;ve learned so far vis-a-vis practically implementing this strategy for Android development.&lt;/p&gt;
 
@@ -120,6 +93,12 @@
 &lt;/ol&gt;
 
 &lt;p&gt;I&amp;rsquo;ll be trying out these alternative approaches in the coming week. Hopefully, next time I&amp;rsquo;ll have a working unit test recorder!&lt;/p&gt;
+
+&lt;h3 id=&#34;notes:e62a285e1a5be9bf46dd3bef4e886e02&#34;&gt;Notes&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;In case its not obvious, this seems like an important question because unit-level tests can run much more quickly than functional UI tests, so they can actually serve as, to use Michael Feathers&amp;rsquo; metaphor, a &amp;ldquo;software vice&amp;rdquo; when we&amp;rsquo;re refactoring or adding features. Having to wait 5+ minutes to know if you&amp;rsquo;re changes have broken anything is way too long for functional UI tests to be useful feedback while programming.&lt;/li&gt;
+&lt;/ol&gt;
 </description>
     </item>
     
