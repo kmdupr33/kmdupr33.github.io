@@ -6,8 +6,214 @@
     <description>Recent content in Android on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 16 Jun 2016 16:58:30 -0400</lastBuildDate>
+    <lastBuildDate>Thu, 07 Jul 2016 23:28:29 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>An Espresso Test Recorder Deep Dive</title>
+      <link>http://philosophicalhacker.com/post/an-espresso-test-recorder-deep-dive/</link>
+      <pubDate>Thu, 07 Jul 2016 23:28:29 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/an-espresso-test-recorder-deep-dive/</guid>
+      <description>
+
+&lt;p&gt;I&amp;rsquo;ve been working on &lt;a href=&#34;http://www.philosophicalhacker.com/post/why-dont-we-have-a-unit-test-recorder/&#34;&gt;a unit test recorder&lt;/a&gt; for Android. After struggling to find a way to implement the unit test recorder,&lt;sup&gt;1&lt;/sup&gt; I decided to take a look at how Google implements the espresso test recorder. This post presents what I found when I dug into the source code of the espresso test recorder.&lt;/p&gt;
+
+&lt;h3 id=&#34;collecting-user-interaction-info:1493ec85bb1efc1b3440fa2d0a91873f&#34;&gt;Collecting User Interaction Info&lt;/h3&gt;
+
+&lt;p&gt;Before I took a look at the source for the espresso recorder, I half expected to find some fancy bytecode manipulation of the sort we see for the &lt;a href=&#34;https://android.googlesource.com/platform/tools/base/+/gradle_2.0.0/build-system/gradle-core/src/main/groovy/com/android/build/gradle/internal/transforms&#34;&gt;proguard or jacoco transformers&lt;/a&gt;. I was surprised to find that the espresso recorder actually relies heavily on breakpoints and the java debugger. To see this, let&amp;rsquo;s start at the code that gets executed when you press the &amp;ldquo;record espresso test button:&amp;rdquo;&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;TestRecorderAction&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AnAction &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;actionPerformed&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AnActionEvent event&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;try&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      environment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getRunner&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;execute&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;environment&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ProgramRunner&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Callback&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;processStarted&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;RunContentDescriptor descriptor&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+          ApplicationManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getApplication&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;executeOnPooledThread&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; SessionInitializer&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;myFacet&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                          environment&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                          launchOptionState&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+      &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;catch&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ExecutionException e&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; RuntimeException&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Could not start debugging of the app: &amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; e&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;environment&lt;/code&gt; variable here is just an &lt;code&gt;ExecutionEnvironment,&lt;/code&gt; an object that uses an android studio run configuration to run the app. So, the code here is (roughly) using a run configuration to start the app and creating a &lt;code&gt;SessionInitializer&lt;/code&gt; once the app process starts. Let&amp;rsquo;s look at what the &lt;code&gt;SessionInitializer&lt;/code&gt; does:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;SessionInitializer&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; Runnable &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;SessionInitializer&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AndroidFacet facet&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; ExecutionEnvironment environment&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; LaunchOptionState launchOptionState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+    myBreakpointDescriptors&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; BreakpointDescriptor&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;VIEW_CLICK&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                          SdkConstants&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CLASS_VIEW&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                          &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;performClick&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                          &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+    myBreakpointDescriptors&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; BreakpointDescriptor&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;MENU_ITEM_CLICK&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.widget.AbsListView&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;performItemClick&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+    myBreakpointDescriptors&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; BreakpointDescriptor&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TEXT_CHANGE&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.widget.TextView$ChangeWatcher&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;beforeTextChanged&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+    myBreakpointDescriptors&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; BreakpointDescriptor&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TEXT_CHANGE&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.widget.TextView$ChangeWatcher&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;onTextChanged&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+
+    myBreakpointDescriptors&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; BreakpointDescriptor&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;PRESS_BACK&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.view.inputmethod.InputMethodManager&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;invokeFinishedInputEventCallback&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+
+    myBreakpointDescriptors&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; BreakpointDescriptor&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;PRESS_EDITOR_ACTION&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.widget.TextView&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;onEditorAction&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here they are just creating BreakpointDescriptor that will be used to create &lt;em&gt;method breakpoints&lt;/em&gt; so that they can capture information about the parameters that are passed in to these methods. Here&amp;rsquo;s where the method breakpints are created:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; Set&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;BreakpointCommand&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;scheduleBreakpointCommands&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  Set&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;BreakpointCommand&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; breakpointCommands &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; Sets&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;newHashSet&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+  DebugProcessImpl debugProcess &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; myDebuggerSession&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getProcess&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;BreakpointDescriptor breakpointDescriptor &lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; myBreakpointDescriptors&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    BreakpointCommand breakpointCommand &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; BreakpointCommand&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;debugProcess&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                                breakpointDescriptor&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    breakpointCommands&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;breakpointCommand&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    debugProcess&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getManagerThread&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;schedule&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;breakpointCommand&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; breakpointCommands&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;These &lt;code&gt;BreakpointCommand&lt;/code&gt;s are apparently nothing special. They are subclasses of &lt;code&gt;DebuggerCommandImpl&lt;/code&gt;, a class that&amp;rsquo;s a part of the IntelliJ source code. These breakpoint commands simply notify a &lt;code&gt;TestRecorderEventListener&lt;/code&gt; with a &lt;code&gt;TestRecorderEvent&lt;/code&gt; whenever a breakpoint is hit. The &lt;code&gt;TestRecorderEvent&lt;/code&gt; contains the info needed to write out the espresso tests and this info is snagged from the (paused) Execution context when the debugger stops at a breakpoint. Here&amp;rsquo;s a hint of how some of that works:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Nullable&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; TestRecorderEvent &lt;span style=&#34;color: #0000FF&#34;&gt;prepareEvent&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;EvaluationContextImpl evalContext&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; NodeManagerImpl nodeManager&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  TestRecorderEvent event &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TestRecorderEvent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;myBreakpointDescriptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;eventType&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; System&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;currentTimeMillis&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;event&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isPressEvent&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; populatePressEvent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;event&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; evalContext&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; nodeManager&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+  String receiverReference &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; getReceiverReference&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;evalContext&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; nodeManager&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+  populateElementDescriptors&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;event&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; evalContext&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; nodeManager&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; receiverReference&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1);&lt;/span&gt;
+
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;event&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getElementDescriptorsCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    event&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setReplacementText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;event&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getElementDescriptor&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(0).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; event&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a nice lower-level method that gets close to the IntelliJ api for accessing the data from the paused execution context:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; Value &lt;span style=&#34;color: #0000FF&#34;&gt;evaluateExpression&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;String expression&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; EvaluationContextImpl evalContext&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; NodeManagerImpl nodeManager&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  TextWithImports text &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; TextWithImportsImpl&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;fromXExpression&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;XExpressionImpl&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;fromText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;expression&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+  WatchItemDescriptor descriptor &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; nodeManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getWatchItemDescriptor&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; text&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+  descriptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setContext&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;evalContext&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; descriptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getEvaluateException&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;?&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; descriptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getValue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;writing-out-the-source-files:1493ec85bb1efc1b3440fa2d0a91873f&#34;&gt;Writing out the Source Files&lt;/h3&gt;
+
+&lt;p&gt;Now, that we have some idea of how the information for writing the source files is collected, let&amp;rsquo;s look at how Google uses that info to actually write out the espresso test files. Let&amp;rsquo;s start at the code that gets called when you click the &amp;ldquo;Complete Recording&amp;rdquo; button:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;myCompleteRecordingButton&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addActionListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ActionListener&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;actionPerformed&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ActionEvent e&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Get all events (UI events and assertions).&lt;/span&gt;
+    ArrayList&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Object&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; events &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ArrayList&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Object&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0;&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt; myEventListModel&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;size&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt; i&lt;span style=&#34;color: #666666&#34;&gt;++)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      events&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;myEventListModel&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;get&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    TestClassNameInputDialog chooser &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TestClassNameInputDialog&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;myFacet&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                                    launchedActivityName&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    chooser&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;show&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+
+    PsiClass testClass &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; chooser&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTestClass&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;testClass &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      doOKAction&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TestCodeGenerator&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;myFacet&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; testClass&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                            events&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; launchedActivityName&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                            hasCustomEspressoDependency&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;generate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Looks like most of the work of generating the test code lives in this &lt;code&gt;TestCodeGenerator&lt;/code&gt; class, so let&amp;rsquo;s look at that:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;TestCodeGenerator&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;generate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Write code to the test class file.&lt;/span&gt;
+    BufferedWriter writer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;try&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      writer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; BufferedWriter&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; FileWriter&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;testFilePath&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+      VelocityEngine velocityEngine &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; VelocityEngine&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+      velocityEngine&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;init&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+      velocityEngine&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;evaluate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;createVelocityContext&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;testVirtualFile&lt;span style=&#34;color: #666666&#34;&gt;),&lt;/span&gt;
+                              writer&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                              RecordingDialog&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt;
+                              readTemplateFileContent&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+      writer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;flush&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;catch&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Exception e&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; RuntimeException&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Failed to generate test class file: &amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; e&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;finally&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;writer &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;try&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+          writer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;close&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;catch&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Exception e&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+          &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// ignore&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Its interesting to see here that they are using &lt;a href=&#34;http://velocity.apache.org/&#34;&gt;Velocity&lt;/a&gt;, a java templating library from apache. I&amp;rsquo;d never heard of it before I stumbled upon the code here. I wonder why they didn&amp;rsquo;t use &lt;a href=&#34;https://github.com/square/javapoet&#34;&gt;java poet&lt;/a&gt; instead, a library from square that&amp;rsquo;s especially designed for writing java class files. In any case, the actual construction of the source code file to be written happens in &lt;code&gt;createVelocityContext&lt;/code&gt; if you&amp;rsquo;re curious. I&amp;rsquo;m not going to get into how that method works since that method is more about Velocity than it is about espresso test recording.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion:1493ec85bb1efc1b3440fa2d0a91873f&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Google&amp;rsquo;s debugger/breakpoint based approach may actually work for the kind of unit test recorder I want to create. This approach would probably require me have the user select which classes they want to &amp;ldquo;clamp&amp;rdquo; down with Vice through a GUI of some sort, but that may be a nicer experience than using annotations or passing command line arguments anyway. I&amp;rsquo;ll be exploring this approach in the coming weeks. Check back for updates.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes:1493ec85bb1efc1b3440fa2d0a91873f&#34;&gt;Notes&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Using the Transform api from the Gradle plugin proved to be a dead end because I needed my Transform implementation to load classes that depend on the android SDK and depending on the Android SDK from a gradle build script is not well supported.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>How to Safely move Logic out of Activities</title>
@@ -1437,71 +1643,6 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg&#34; alt=&#34;rxjava_prezi_rxjava_def&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that&amp;rsquo;s interested. We still don&amp;rsquo;t know, however, what it means for a data stream to be &amp;ldquo;functionally transformed&amp;rdquo; nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I&amp;rsquo;ll have to tackle in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/19/introduction-to-rxjava-for-android-pt-2/&#34;&gt;the second part&lt;/a&gt; of this written version of &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/16/introduction-to-rxjava-for-android-the-talk/&#34;&gt;my upcoming RxJava talk&lt;/a&gt;.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Unit Testing Dynamically Constructed Views</title>
-      <link>http://philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/</link>
-      <pubDate>Sat, 06 Jun 2015 11:08:03 +0000</pubDate>
-      
-      <guid>http://philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/</guid>
-      <description>
-
-&lt;p&gt;Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&amp;rsquo;ve fetched or in response to some input. The &lt;code&gt;SessionDetailActivity&lt;/code&gt; in Google&amp;rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the &lt;code&gt;SessionDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34; alt=&#34;IO Testing Talk-04&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;In this screenshot, the &amp;ldquo;Distribute,&amp;rdquo; &amp;ldquo;Android,&amp;rdquo; and &amp;ldquo;Games&amp;rdquo; tags are added to the view hierarchy based on the tags associated with the &amp;rdquo;Going global with Google Play&amp;rdquo; IO session. In this post, I&amp;rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the &lt;code&gt;SesisonDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;As &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;I&amp;rsquo;ve stated elsewhere&lt;/a&gt;, dependency injection is key to making our apps unit testable. Because the MVP pattern allows us to inject dependencies into Presenters, objects which contain much of our app&amp;rsquo;s business logic, the pattern plays a key role in making our apps unit testable in general. Unsurprisingly, the pattern also plays a role in helping us write unit testable dynamically constructed views.&lt;/p&gt;
-
-&lt;p&gt;If you&amp;rsquo;re not familiar with MVP, you should check out &lt;a href=&#34;https://corner.squareup.com/2014/10/advocating-against-android-fragments.html&#34;&gt;this post&lt;/a&gt; in which Square talks about how they use MVP to get rid of fragments and to facilitate unit testing. &lt;a href=&#34;http://hannesdorfmann.com/android/mosby/&#34;&gt;This post&lt;/a&gt; in which Hannes Dorfmann introduces a library he wrote to facilitate the application of the MVP pattern also contains a decent introduction to the pattern.&lt;/p&gt;
-
-&lt;p&gt;Before I outline my approach to refactoring the &lt;code&gt;SessionDetailActivity&lt;/code&gt; so that we can have unit testable, view constructing code, let&amp;rsquo;s try to get a handle on how the &lt;code&gt;SessionDetailActivity&lt;/code&gt;works without any kind of refactoring. Here&amp;rsquo;s what the code currently looks like:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/0560695307233112cf3f.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;There are few important things to notice about this code fragment.&lt;/p&gt;
-
-&lt;p&gt;First, note that there&amp;rsquo;s business logic that &lt;em&gt;determines the structure of the view hierarchy that&amp;rsquo;s being built&lt;/em&gt; by this method. For example, if one of the tags has an id that&amp;rsquo;s equal to the keynote speaker tag id, we don&amp;rsquo;t want to add a view to the tags container for that tag (lines 18-31). Let&amp;rsquo;s call this kind of business logic &amp;ldquo;view-hierarchy-affecting business logic.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Also note that there&amp;rsquo;s business logic that determines the properties of the views that have been added by the view-hierarchy-affecting business logic. More specifically, it contains code that determines how the &lt;em&gt;how the app should respond when the user interacts with the views that are a part of the dynamically constructed view hierarchy&lt;/em&gt;. Here I have in mind the piece of the method that set&amp;rsquo;s up the tag view&amp;rsquo;s &lt;code&gt;OnClickListener&lt;/code&gt; to show them a list of IO sessions that have the tag associated with the tag view the user selected (lines 55 - 64). Let&amp;rsquo;s call this kind of business logic &amp;ldquo;view-property-affecting business logic.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;The problem of creating unit testable, dynamically constructed views is basically the problem of finding sensible places to put these two different kinds of business logic. Here&amp;rsquo;s what I suggest, the view-hierarchy-affecting business logic should go in a &lt;code&gt;SessionDetailPresenter&lt;/code&gt;:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/a0cef94a26e88f4f5ecf.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;The &lt;code&gt;SessionDetailActivity&lt;/code&gt; in this code segment is acting as the View within the MVP triad, and as such, it should not contain any business logic. Thus, we know that the view-property-affecting business logic should not be within the &lt;code&gt;SessionDetailActivity&lt;/code&gt;. Instead of placing the view-property affecting business logic within the &lt;code&gt;SessionDetailActivity&lt;/code&gt;, we have the &lt;code&gt;SessionDetailActivity&lt;/code&gt; delegate that logic out to another View-Presenter pair:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/49428a2fcaf71df555f0.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;The &amp;ldquo;SessionTagViewTranslator&amp;rdquo; in this code segment is really just the View within the View-Presenter pair. For reasons that I discuss &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/05/dont-call-it-mvp/&#34;&gt;here&lt;/a&gt;, I prefer the name &amp;ldquo;ViewTranslator&amp;rdquo; over &amp;ldquo;View&amp;rdquo; because it more clearly marks the difference between an MVP View and an Android View. Astute readers will notice that the SessionDetailActivity shouldn&amp;rsquo;t be responsible for forwarding the click event on the view to the TagPresenter. This problem arises because of a circular dependency between MVP Views and Presenters. I&amp;rsquo;ll discuss how to break this dependency in my next post. The &lt;code&gt;TagPresenter&lt;/code&gt; is fairly trivial, but here&amp;rsquo;s what it looks like:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/fd03667d4593eff59b1a.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;The SesionTagViewTranslator is even more trivial, so I won&amp;rsquo;t bother showing the code for that.&lt;/p&gt;
-
-&lt;h2 id=&#34;conclusion:de96b0d86be079e91b1b191cfad3b31b&#34;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;To sum it all up: dynamically constructed views often have two different types of business logic: view-hierarchy-affecting business logic and view-property-affecting business logic. Making these views unit testable consists of two steps: First, place the view-hierarchy-affecting business logic in a top level presenter like the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;. Second have an MVP-View (like the &lt;code&gt;SessionDetailActivity&lt;/code&gt;) create View-Presenter pairs for each Android view that&amp;rsquo;s added to the view hierarchy.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Against Android Unit Tests:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Why Android Unit Testing is so Hard: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;How to Make Our Android Apps Unit Testable: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/&#34;&gt;Quick Summary&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;Followup: Summary&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;Followup: Unit Testing Dynamically Constructed Views&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
 </description>
     </item>
     
