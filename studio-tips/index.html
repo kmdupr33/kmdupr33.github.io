@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/bower_components/webcomponentsjs/webcomponents-lite.js" charset="utf-8"></script>
+    <link rel="import" href="/bower_components/paper-toolbar/paper-toolbar.html">
+    <link rel="import" href="/bower_components/paper-card/paper-card.html">
+    
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <style media="screen">
+      body {
+        padding: 0px;
+        margin: 0px;
+        font-family: "Roboto";
+      }
+
+      paper-card {
+        margin: 10px;
+        width: 98%;
+      }
+
+      h1 {
+        font-size: 20px;
+        margin: 10px;
+        text-align: center;
+      }
+
+      a {
+        text-decoration: none;
+        color: white;
+      }
+    </style>
+    <meta charset="utf-8">
+    <title>Android Studio Tips</title>
+  </head>
+  <body>
+    <paper-toolbar>
+      
+      <div class="title">
+        Android Studio Tips
+      </div>
+      <h3><a href="http://philosophicalhacker.com">from Philosophical Hacker</a></h3>
+    </paper-toolbar>
+    <h1>This is a curated list of Android Studio Tips. Contribute on github <a href="https://github.com/kmdupr33/PhilHackerBlogSource/blob/master/content/studio-tips/CONTRIBUTING.md">here</a></h1>
+    <section id="main">
+      
+        <paper-card>
+          <div class="card-content">
+            
+
+<h1 id="adding-your-own-studio-tips:6a3371457528722a734f3c51d9238c13">Adding your own Studio Tips</h1>
+
+<ol>
+<li>Fork the project</li>
+<li>Create a markdown file in the studio-tips directory. The file should contain a short summary of the tip you are submitting and a youtube video demoing the tip. Use the youtube shortcode to embed your video. The format is: `
+<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/" allowfullscreen frameborder="0"></iframe>
+ </div>
+</li>
+</ol>
+
+          </div>
+        </paper-card>
+      
+        <paper-card>
+          <div class="card-content">
+            
+
+<h1 id="syntactically-extend-selection:d156122e40aff6ce4e0089b8f4d27469">(Syntactically) Extend Selection</h1>
+
+<p>Many Android Studio refactorings require that your cursor has selected an expression (e.g., extract method). Sometimes selecting an expression can be tricky (e.g., when the expression inside of nested parentheses and/or closures). The extend selection action comes in handy big time here.</p>
+
+
+<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/w92X_FR2HMQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
+ </div>
+
+
+          </div>
+        </paper-card>
+      
+        <paper-card>
+          <div class="card-content">
+            
+
+<h1 id="logging-live-templates:d86e2e6c077c8027c43b06b8bbae5aec">Logging Live Templates</h1>
+
+<p>Sometimes its useful to log the parameters and/or return value of a method that you&rsquo;re debugging. Android Studio has live templates that help you do just that.</p>
+
+
+<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/2NwiS0NgDnw" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
+ </div>
+
+
+          </div>
+        </paper-card>
+      
+        <paper-card>
+          <div class="card-content">
+            
+
+<h1 id="postfix-templates:50464b67bd0f38473170b5da4ac7a555">Postfix Templates</h1>
+
+<p>Sometimes you need a live template to be applied to a particular variable that you&rsquo;re working with. This can be accomplished through the use of Postfix Templates. As the name suggests, these templates are invoked by <em>appending</em> a period to the variable you want to invoke a template on. After appending the period, invoke autocomplete to see the list of available postfix templates.</p>
+
+
+<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/CEF7uM78odE" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
+ </div>
+
+
+          </div>
+        </paper-card>
+      
+        <paper-card>
+          <div class="card-content">
+            
+
+<h1 id="smart-completion:f3fc5f8eec3648cef91eb4980971abd7">Smart Completion</h1>
+
+<p>You can invoke auto completion by pressing Ctrl + Space. This will display a list of possible ways to complete the line of code your typing by, for example, suggesting method calls or variable names. You can further refine the list of completion options displayed to you by using smart completion, which can be invoked by pressing Ctrl + Shift + Space.</p>
+
+<p>I want to point out one really neat thing about the way in which the list is refined. Smart autocomplete actually contains suggests that involve methods on the variables that are in the current scope. This means that you can use smart completion to ask Android Studio a key question: given the variables in the local scope, how can I get an object of type X, where X is any type. This is demoed below.</p>
+
+
+<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/PDEPuOUA6aM" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
+ </div>
+
+
+          </div>
+        </paper-card>
+      
+        <paper-card>
+          <div class="card-content">
+            
+
+<h1 id="tab-vs-enter-for-autocomplete:a38820ccc6f9bda6e397258b49f2efbe">Tab vs. Enter for autocomplete</h1>
+
+<p>Enter can be used to select an item from an auto complete list. When enter is used, the selected item will simply be inserted into the text at the cursors current position. Pressing tab as a way of selecting an autocomplete list item, however, will replace the symbol currently underneath the cursor with the one that you&rsquo;ve selected from the autocomplete list.</p>
+
+
+<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/LnAV8dJ9JTo" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
+ </div>
+
+
+          </div>
+        </paper-card>
+      
+    </section>
+  </body>
+  
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+</html>
