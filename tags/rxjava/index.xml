@@ -6,8 +6,186 @@
     <description>Recent content in Rxjava on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 19 Jun 2015 12:19:14 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 23 Jul 2016 15:43:29 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/tags/rxjava/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava</title>
+      <link>http://philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</link>
+      <pubDate>Sat, 23 Jul 2016 15:43:29 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;Loaders are awesome&amp;hellip;they&amp;rsquo;re essentially the best practice implementation of asynchronous data loading in your Activities.&lt;/p&gt;
+
+&lt;p&gt;-Reto Meier, Developing Android Apps Udacity Course&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The following code should make you nervous:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        setContentView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;activity_boilerplate_free&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        mLoginObservable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Action1&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt; authResponse&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                Log&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;d&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;call: Successfully logged in&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;                
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;When you see this code you should be asking, &amp;ldquo;What will happen upon a configuration change? Will the &lt;code&gt;Activity&lt;/code&gt; leak? Do we need to re-query the network just because of a configuration change?&amp;rdquo; (Hopefully, when you see this code, you&amp;rsquo;re also wondering, &lt;a href=&#34;http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;like I do&lt;/a&gt;, &amp;ldquo;Why are we putting logic in our &lt;code&gt;Activitys&lt;/code&gt;?&amp;ldquo;)&lt;/p&gt;
+
+&lt;p&gt;Nervous questions aside, wouldn&amp;rsquo;t it be better if we &lt;em&gt;could&lt;/em&gt; write data loading code like this? Wouldn&amp;rsquo;t it be nice if we load data into our apps using &lt;code&gt;Observable&lt;/code&gt;s without worrying about leaking activities and/or wasting the user&amp;rsquo;s data by re-querying the network every time there was a configuration change? Wouldn&amp;rsquo;t it be nice, moreover, if we could do this without writing any boilerplate code?&lt;/p&gt;
+
+&lt;p&gt;I think so, and in this post, I&amp;rsquo;ll introduce a &lt;em&gt;tiny&lt;/em&gt; library that&amp;rsquo;ll help us write code like this. The gist of the approach is to use Loaders &lt;em&gt;with&lt;/em&gt; RxJava. Before we get into this approach, however, lets look at some other ways that people handle asynchronous data loading in their apps so that we can see what this approach offers that other ones don&amp;rsquo;t.&lt;/p&gt;
+
+&lt;h3 id=&#34;prior-art:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Prior Art&lt;/h3&gt;
+
+&lt;h4 id=&#34;loaders:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Loaders&lt;/h4&gt;
+
+&lt;p&gt;Loaders give us what we want vis-a-vis memory-leak-free querying whose results persist across orientation changes, but many people find the API clunky and/or confusing. Apparently, Jake Wharton is one of these people:&lt;/p&gt;
+
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;The fragment and loader APIs fit in perfectly on Android. Useful enough that you use them but also want shoot yourself in the face.&lt;/p&gt;&amp;mdash; Jake Wharton (@JakeWharton) &lt;a href=&#34;https://twitter.com/JakeWharton/status/325630461852413952&#34;&gt;April 20, 2013&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+
+&lt;h4 id=&#34;retained-fragment:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Retained Fragment&lt;/h4&gt;
+
+&lt;p&gt;Using a retained fragment is another approach for persisting the results of a network request across orientation changes and avoiding memory leaks. Unfortunately, this approach requires a fair amount of boiler-plate code. The barebones implementation as discussed in &lt;a href=&#34;https://developer.android.com/guide/topics/resources/runtime-changes.html&#34;&gt;the docs&lt;/a&gt; will make this clear enough. Even if we could get rid of most of this boilerplate, we still don&amp;rsquo;t have an api for working with our asynchronous data that&amp;rsquo;s as nice as RxJava&amp;rsquo;s &lt;code&gt;Observable&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;cache-replay:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Cache-Replay&lt;/h4&gt;
+
+&lt;p&gt;Cache-Replay is an approach suggested in Dan Lew&amp;rsquo;s &lt;a href=&#34;http://blog.danlew.net/2014/10/08/grokking-rxjava-part-4/&#34;&gt;&amp;ldquo;Grokking RxJava Pt 4&amp;rdquo;&lt;/a&gt;. The idea here is do the following:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;store our &lt;code&gt;Obersvable&lt;/code&gt; outside the Activity life-cycle (e.g., a retained fragment or singleton)&lt;/li&gt;
+&lt;li&gt;un-subscribe from this &lt;code&gt;Observable&lt;/code&gt; when our Activity is being destroyed&lt;/li&gt;
+&lt;li&gt;use the &lt;code&gt;cache&lt;/code&gt; and &lt;code&gt;replay&lt;/code&gt; operators to ensure that when we re-subscribe to this &lt;code&gt;Observable&lt;/code&gt;, we&amp;rsquo;re getting the same data&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This approach may be the best we&amp;rsquo;ve seen so far. We get all the benefits of &lt;code&gt;Loader&lt;/code&gt;s and &lt;code&gt;Observable&lt;/code&gt;s, but unfortunately, we still have some boilerplate: we have to find a place outside the activity life-cycle for our &lt;code&gt;Observable&lt;/code&gt; and we have to remember to un-subscribe from that &lt;code&gt;Obsevable&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;rxlifecycle:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;RxLifecycle&lt;/h4&gt;
+
+&lt;p&gt;RxLifecycle can alleviate some of the weaknesses of the previous approach by giving us a way to automatically complete observable &amp;ldquo;sequences based on Activity or Fragment life-cycle events.&amp;rdquo;&lt;sup&gt;1&lt;/sup&gt; There&amp;rsquo;s not much boilerplate we have to write to take advantage of this, which is an impressive feat of the library:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RxActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onResume&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onResume&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+        myObservable
+            &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;compose&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;bindToLifecycle&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Unfortunately, if we don&amp;rsquo;t want to subclass a particular kind of Activity to take advantage of this we&amp;rsquo;ll need to write more boilerplate to generate an observable sequence of life-cycle events. Either way, RxLifecycle, combined with the previously outlined cache-replay approach, gives us a pretty nice way of loading data in our Android apps.&lt;/p&gt;
+
+&lt;h4 id=&#34;rxgroups:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;RxGroups&lt;/h4&gt;
+
+&lt;p&gt;As far as I know, RxGroups is the most recent entry in the long line of solutions to data loading in Android apps. RxGroups alone gives us memory-leak-free querying whose results are cached across orientation changes, and according to &lt;a href=&#34;https://github.com/airbnb/RxGroups&#34;&gt;the docs&lt;/a&gt;, the code we need to write to get this is pretty small. Since RxGroups seems to give us all of the benefits of &lt;code&gt;Loader&lt;/code&gt;s and &lt;code&gt;Observable&lt;/code&gt;s with the smallest amount of boilerplate, I think it may be the best solution out there, aside from the solution I&amp;rsquo;m about to propose.&lt;/p&gt;
+
+&lt;h4 id=&#34;other-rxloader-libraries:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Other &amp;ldquo;RxLoader&amp;rdquo; Libraries&lt;/h4&gt;
+
+&lt;p&gt;There are a at least two other libraries that leverage RxJava for data loading. Neither of these libraries, however, use Android Loaders, so they wind up reinventing much of the functionality of &lt;code&gt;Loader&lt;/code&gt;s and users of these libraries are still stuck with a few lines of boilerplate.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-better-way:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;A Better Way?&lt;/h3&gt;
+
+&lt;p&gt;I think if we use &lt;code&gt;Loader&lt;/code&gt;s &lt;em&gt;with&lt;/em&gt; &lt;code&gt;Observable&lt;/code&gt;s, we can come up with a solution that&amp;rsquo;s better than the above solutions. Here&amp;rsquo;s the basic idea: we wrap the call to &lt;code&gt;LoaderManager.initLoader&lt;/code&gt; in an &lt;code&gt;Observable&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;create&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnSubscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Subscriber&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt; T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; subscriber&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        loaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderId&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+                    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;U&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// return some loader&lt;/span&gt;
+                    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+                    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+                    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; T data&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                        subscriber&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onNext&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;data&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+                    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+                    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+                    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoaderReset&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{}&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;        
+&lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;To be sure, this isn&amp;rsquo;t the cleanest way of doing this, but I think its a useful way of initially presenting the idea. Let&amp;rsquo;s think for a second about what this simple little trick gives us.&lt;/p&gt;
+
+&lt;p&gt;First, we don&amp;rsquo;t have to worry about un-subscribing from this &lt;code&gt;Observable&lt;/code&gt; to avoid memory leaks because the &lt;code&gt;Observable&lt;/code&gt; &lt;em&gt;won&amp;rsquo;t survive the configuration change.&lt;/em&gt; Moreover, although the Observable gets garbage collected upon an orientation change, the data it emits will persist across orientation changes because that data is loaded with a &lt;code&gt;Loader.&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;These two properties let us write boilerplate-free data loading code like the code with which we began this article:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        setContentView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;activity_boilerplate_free&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        mLoginObservable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Action1&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt; authResponse&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                Log&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;d&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;call: Successfully logged in&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;                
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;But where does the &lt;code&gt;mLoginObservable&lt;/code&gt; that&amp;rsquo;s wrapped the &lt;code&gt;LoaderManager.init&lt;/code&gt; call come from? That&amp;rsquo;s where RxLoader comes into play. RxLoader is a &lt;em&gt;very&lt;/em&gt; lightweight library (less than 150 LOC). It&amp;rsquo;s simply an RxJava &lt;code&gt;Transformer&lt;/code&gt; that lets you take an Observable and compose it into something with loader-like behaviour, something that in fact uses a &lt;code&gt;Loader&lt;/code&gt; to get this behaviour for free. With RxLoader, your data loading code is as simple as this:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        setContentView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;activity_boilerplate_free&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoginObservable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;compose&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;RxLoader&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;from&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt;
+&lt;/span&gt;            &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Action1&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt; authResponse&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                Log&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;d&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;call: Successfully logged in&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;                
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;One line of code gets you an &lt;code&gt;Observable&lt;/code&gt; with memory-leak-proof data loading whose results are cached across orientation changes.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/kmdupr33/RxLoader&#34;&gt;Here&amp;rsquo;s&lt;/a&gt; the project on github. I&amp;rsquo;ll be improving it and getting it on to maven central soon.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Notes&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Quote is from &lt;a href=&#34;https://github.com/trello/RxLifecycle&#34;&gt;the RxLifecycle docs&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Introduction to RxJava for Android (Pt. 2)</title>

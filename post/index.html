@@ -141,6 +141,32 @@
 	   
 <article class="post post">
     <header class="post-header">
+        <h2 class="post-title"><a href="/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/">RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Loaders are awesome&hellip;they&rsquo;re essentially the best practice implementation of asynchronous data loading in your Activities. -Reto Meier, Developing Android Apps Udacity Course The following code should make you nervous: public class BoilerplateFree extends AppCompatActivity { //... @Override protected void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); setContentView(R.layout.activity_boilerplate_free); mLoginObservable.subscribe(new Action1&lt;AuthManager.AuthResponse&gt;() { @Override public void call(AuthManager.AuthResponse authResponse) { Log.d(TAG, &quot;call: Successfully logged in&quot;); } }); } } When you see this code you should be asking, &ldquo;What will happen upon a configuration change? <a class="read-more" href="/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        on
+            
+                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="http://philosophicalhacker.com/tags/rxjava/">#rxjava</a>,
+            
+        
+        <time class="post-date" datetime="2016-07-23T15:43:29-04:00">
+            23 Jul 2016
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
         <h2 class="post-title"><a href="/post/an-espresso-test-recorder-deep-dive/">An Espresso Test Recorder Deep Dive</a></h2>
     </header>
     <section class="post-excerpt">
@@ -363,26 +389,6 @@
         
         <time class="post-date" datetime="2016-06-07T06:54:20-04:00">
             7 Jun 2016
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/post/process-vs-procedure-recursion/">Process vs. Procedure Recursion</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>Just because a procedure is recursive, doesn&rsquo;t mean the process that it generates is recursive. A procedure is recursive when that procedure refers to itself in order to evaluate. (defn factorial [x] (letfn [(fact-iter [product counter max-count] (if (&gt; counter max-count) product (fact-iter (* counter product) (inc counter) max-count)) )] (fact-iter 1 1 n)) ) fact-iter, in the above code, is a recursive procedure, but the process it generates is not recursive. <a class="read-more" href="/post/process-vs-procedure-recursion/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        
-        <time class="post-date" datetime="2016-04-06T07:58:01-04:00">
-            6 Apr 2016
         </time>
     </footer>
 </article>

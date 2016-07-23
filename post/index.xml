@@ -6,8 +6,186 @@
     <description>Recent content in Posts on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 07 Jul 2016 23:28:29 -0400</lastBuildDate>
+    <lastBuildDate>Sat, 23 Jul 2016 15:43:29 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava</title>
+      <link>http://philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</link>
+      <pubDate>Sat, 23 Jul 2016 15:43:29 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;Loaders are awesome&amp;hellip;they&amp;rsquo;re essentially the best practice implementation of asynchronous data loading in your Activities.&lt;/p&gt;
+
+&lt;p&gt;-Reto Meier, Developing Android Apps Udacity Course&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The following code should make you nervous:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        setContentView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;activity_boilerplate_free&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        mLoginObservable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Action1&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt; authResponse&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                Log&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;d&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;call: Successfully logged in&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;                
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;When you see this code you should be asking, &amp;ldquo;What will happen upon a configuration change? Will the &lt;code&gt;Activity&lt;/code&gt; leak? Do we need to re-query the network just because of a configuration change?&amp;rdquo; (Hopefully, when you see this code, you&amp;rsquo;re also wondering, &lt;a href=&#34;http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;like I do&lt;/a&gt;, &amp;ldquo;Why are we putting logic in our &lt;code&gt;Activitys&lt;/code&gt;?&amp;ldquo;)&lt;/p&gt;
+
+&lt;p&gt;Nervous questions aside, wouldn&amp;rsquo;t it be better if we &lt;em&gt;could&lt;/em&gt; write data loading code like this? Wouldn&amp;rsquo;t it be nice if we load data into our apps using &lt;code&gt;Observable&lt;/code&gt;s without worrying about leaking activities and/or wasting the user&amp;rsquo;s data by re-querying the network every time there was a configuration change? Wouldn&amp;rsquo;t it be nice, moreover, if we could do this without writing any boilerplate code?&lt;/p&gt;
+
+&lt;p&gt;I think so, and in this post, I&amp;rsquo;ll introduce a &lt;em&gt;tiny&lt;/em&gt; library that&amp;rsquo;ll help us write code like this. The gist of the approach is to use Loaders &lt;em&gt;with&lt;/em&gt; RxJava. Before we get into this approach, however, lets look at some other ways that people handle asynchronous data loading in their apps so that we can see what this approach offers that other ones don&amp;rsquo;t.&lt;/p&gt;
+
+&lt;h3 id=&#34;prior-art:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Prior Art&lt;/h3&gt;
+
+&lt;h4 id=&#34;loaders:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Loaders&lt;/h4&gt;
+
+&lt;p&gt;Loaders give us what we want vis-a-vis memory-leak-free querying whose results persist across orientation changes, but many people find the API clunky and/or confusing. Apparently, Jake Wharton is one of these people:&lt;/p&gt;
+
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;The fragment and loader APIs fit in perfectly on Android. Useful enough that you use them but also want shoot yourself in the face.&lt;/p&gt;&amp;mdash; Jake Wharton (@JakeWharton) &lt;a href=&#34;https://twitter.com/JakeWharton/status/325630461852413952&#34;&gt;April 20, 2013&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+
+&lt;h4 id=&#34;retained-fragment:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Retained Fragment&lt;/h4&gt;
+
+&lt;p&gt;Using a retained fragment is another approach for persisting the results of a network request across orientation changes and avoiding memory leaks. Unfortunately, this approach requires a fair amount of boiler-plate code. The barebones implementation as discussed in &lt;a href=&#34;https://developer.android.com/guide/topics/resources/runtime-changes.html&#34;&gt;the docs&lt;/a&gt; will make this clear enough. Even if we could get rid of most of this boilerplate, we still don&amp;rsquo;t have an api for working with our asynchronous data that&amp;rsquo;s as nice as RxJava&amp;rsquo;s &lt;code&gt;Observable&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;cache-replay:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Cache-Replay&lt;/h4&gt;
+
+&lt;p&gt;Cache-Replay is an approach suggested in Dan Lew&amp;rsquo;s &lt;a href=&#34;http://blog.danlew.net/2014/10/08/grokking-rxjava-part-4/&#34;&gt;&amp;ldquo;Grokking RxJava Pt 4&amp;rdquo;&lt;/a&gt;. The idea here is do the following:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;store our &lt;code&gt;Obersvable&lt;/code&gt; outside the Activity life-cycle (e.g., a retained fragment or singleton)&lt;/li&gt;
+&lt;li&gt;un-subscribe from this &lt;code&gt;Observable&lt;/code&gt; when our Activity is being destroyed&lt;/li&gt;
+&lt;li&gt;use the &lt;code&gt;cache&lt;/code&gt; and &lt;code&gt;replay&lt;/code&gt; operators to ensure that when we re-subscribe to this &lt;code&gt;Observable&lt;/code&gt;, we&amp;rsquo;re getting the same data&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This approach may be the best we&amp;rsquo;ve seen so far. We get all the benefits of &lt;code&gt;Loader&lt;/code&gt;s and &lt;code&gt;Observable&lt;/code&gt;s, but unfortunately, we still have some boilerplate: we have to find a place outside the activity life-cycle for our &lt;code&gt;Observable&lt;/code&gt; and we have to remember to un-subscribe from that &lt;code&gt;Obsevable&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;rxlifecycle:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;RxLifecycle&lt;/h4&gt;
+
+&lt;p&gt;RxLifecycle can alleviate some of the weaknesses of the previous approach by giving us a way to automatically complete observable &amp;ldquo;sequences based on Activity or Fragment life-cycle events.&amp;rdquo;&lt;sup&gt;1&lt;/sup&gt; There&amp;rsquo;s not much boilerplate we have to write to take advantage of this, which is an impressive feat of the library:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RxActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onResume&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onResume&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+        myObservable
+            &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;compose&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;bindToLifecycle&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Unfortunately, if we don&amp;rsquo;t want to subclass a particular kind of Activity to take advantage of this we&amp;rsquo;ll need to write more boilerplate to generate an observable sequence of life-cycle events. Either way, RxLifecycle, combined with the previously outlined cache-replay approach, gives us a pretty nice way of loading data in our Android apps.&lt;/p&gt;
+
+&lt;h4 id=&#34;rxgroups:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;RxGroups&lt;/h4&gt;
+
+&lt;p&gt;As far as I know, RxGroups is the most recent entry in the long line of solutions to data loading in Android apps. RxGroups alone gives us memory-leak-free querying whose results are cached across orientation changes, and according to &lt;a href=&#34;https://github.com/airbnb/RxGroups&#34;&gt;the docs&lt;/a&gt;, the code we need to write to get this is pretty small. Since RxGroups seems to give us all of the benefits of &lt;code&gt;Loader&lt;/code&gt;s and &lt;code&gt;Observable&lt;/code&gt;s with the smallest amount of boilerplate, I think it may be the best solution out there, aside from the solution I&amp;rsquo;m about to propose.&lt;/p&gt;
+
+&lt;h4 id=&#34;other-rxloader-libraries:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Other &amp;ldquo;RxLoader&amp;rdquo; Libraries&lt;/h4&gt;
+
+&lt;p&gt;There are a at least two other libraries that leverage RxJava for data loading. Neither of these libraries, however, use Android Loaders, so they wind up reinventing much of the functionality of &lt;code&gt;Loader&lt;/code&gt;s and users of these libraries are still stuck with a few lines of boilerplate.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-better-way:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;A Better Way?&lt;/h3&gt;
+
+&lt;p&gt;I think if we use &lt;code&gt;Loader&lt;/code&gt;s &lt;em&gt;with&lt;/em&gt; &lt;code&gt;Observable&lt;/code&gt;s, we can come up with a solution that&amp;rsquo;s better than the above solutions. Here&amp;rsquo;s the basic idea: we wrap the call to &lt;code&gt;LoaderManager.initLoader&lt;/code&gt; in an &lt;code&gt;Observable&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;create&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnSubscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Subscriber&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt; T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; subscriber&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        loaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderId&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+                    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;U&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// return some loader&lt;/span&gt;
+                    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+                    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+                    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; T data&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                        subscriber&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onNext&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;data&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+                    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+                    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+                    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoaderReset&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{}&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;        
+&lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;To be sure, this isn&amp;rsquo;t the cleanest way of doing this, but I think its a useful way of initially presenting the idea. Let&amp;rsquo;s think for a second about what this simple little trick gives us.&lt;/p&gt;
+
+&lt;p&gt;First, we don&amp;rsquo;t have to worry about un-subscribing from this &lt;code&gt;Observable&lt;/code&gt; to avoid memory leaks because the &lt;code&gt;Observable&lt;/code&gt; &lt;em&gt;won&amp;rsquo;t survive the configuration change.&lt;/em&gt; Moreover, although the Observable gets garbage collected upon an orientation change, the data it emits will persist across orientation changes because that data is loaded with a &lt;code&gt;Loader.&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;These two properties let us write boilerplate-free data loading code like the code with which we began this article:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        setContentView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;activity_boilerplate_free&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        mLoginObservable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Action1&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt; authResponse&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                Log&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;d&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;call: Successfully logged in&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;                
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;But where does the &lt;code&gt;mLoginObservable&lt;/code&gt; that&amp;rsquo;s wrapped the &lt;code&gt;LoaderManager.init&lt;/code&gt; call come from? That&amp;rsquo;s where RxLoader comes into play. RxLoader is a &lt;em&gt;very&lt;/em&gt; lightweight library (less than 150 LOC). It&amp;rsquo;s simply an RxJava &lt;code&gt;Transformer&lt;/code&gt; that lets you take an Observable and compose it into something with loader-like behaviour, something that in fact uses a &lt;code&gt;Loader&lt;/code&gt; to get this behaviour for free. With RxLoader, your data loading code is as simple as this:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        setContentView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;activity_boilerplate_free&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoginObservable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;compose&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;RxLoader&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;from&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt;
+&lt;/span&gt;            &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Action1&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt; authResponse&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                Log&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;d&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;call: Successfully logged in&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;                
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;One line of code gets you an &lt;code&gt;Observable&lt;/code&gt; with memory-leak-proof data loading whose results are cached across orientation changes.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/kmdupr33/RxLoader&#34;&gt;Here&amp;rsquo;s&lt;/a&gt; the project on github. I&amp;rsquo;ll be improving it and getting it on to maven central soon.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Notes&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Quote is from &lt;a href=&#34;https://github.com/trello/RxLifecycle&#34;&gt;the RxLifecycle docs&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>An Espresso Test Recorder Deep Dive</title>
@@ -1601,150 +1779,6 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 &lt;h3 id=&#34;what-do-you-think:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;What do you think?&lt;/h3&gt;
 
 &lt;p&gt;This strikes me as a fairly reasonable way of avoiding duplicating code while using gomock mocks in testing, but it might be silly and/or there might be a better solution. I&amp;rsquo;m interested in hearing alternative solutions to this problem, so I&amp;rsquo;d love to hear your thoughts on this. For the reasons I pointed out &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/&#34;&gt;here&lt;/a&gt;, I don&amp;rsquo;t find the typical arguments offered against mocking libraries compelling, so I&amp;rsquo;m less interested in hearing people repeat those reasons, but if you have a novel reason for why gomock is a bad idea in the first place, I&amp;rsquo;d definitely like to hear it.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Integration Tests in Go</title>
-      <link>http://philosophicalhacker.com/post/integration-tests-in-go/</link>
-      <pubDate>Fri, 22 Jan 2016 19:27:36 -0500</pubDate>
-      
-      <guid>http://philosophicalhacker.com/post/integration-tests-in-go/</guid>
-      <description>
-
-&lt;p&gt;Although Go has support for testing built in to its toolchain, certain kinds of testing can be a bit tricky. For example, it may not be immediately obvious how you would go about writing and running &lt;em&gt;integration tests&lt;/em&gt; in go. This post contains info on how to write and run integration tests for your go code.&lt;/p&gt;
-
-&lt;h3 id=&#34;clarifying-terms:cee31ec0056c5269248fe8706a45b932&#34;&gt;Clarifying Terms&lt;/h3&gt;
-
-&lt;p&gt;As &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/&#34;&gt;I&amp;rsquo;ve said before&lt;/a&gt;, many terms in software are vague or ambiguous. So, before I get into how to write and run integration tests, let&amp;rsquo;s make sure we&amp;rsquo;re referring to the same thing when we use the word &amp;ldquo;integration&amp;rdquo; test. Sometimes it seems like people use &amp;ldquo;integration test&amp;rdquo; and &amp;ldquo;acceptance test&amp;rdquo; interchangeably. I do think, however, that there&amp;rsquo;s a useful distinction to be made between these types of tests, a distinction that&amp;rsquo;s made nicely by Steve Freeman and Nat Pryce in the following quotations:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Acceptance: Does the whole system work?&lt;/p&gt;
-
-&lt;p&gt;Integration: Does our code work against code we can’t change?&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Later on, they elaborate on the definition of an integration test:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;We use the term integration tests to refer to the tests that check how some of our code works with code from outside the team that we can’t change. It might be a public framework, such as a persistence mapper, or a library from another team within our organization. The distinction is that integration tests make sure that any abstractions we build over third-party code work as we expect.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&#34;integration-testing-in-go:cee31ec0056c5269248fe8706a45b932&#34;&gt;Integration Testing in Go&lt;/h3&gt;
-
-&lt;p&gt;Now, that we&amp;rsquo;re clear on what we mean by the terms &amp;ldquo;acceptance&amp;rdquo; and &amp;ldquo;integration tests,&amp;rdquo; let&amp;rsquo;s briefly take a look at how we can write and run integration tests in go.&lt;/p&gt;
-
-&lt;p&gt;Suppose you&amp;rsquo;re working with a database in your go code. Many databases have a go client sdk that you can use in your application. Typically, you&amp;rsquo;ll build some kind of abstraction on top of that sdk that your application will use to access and update the data in the database. This abstraction is a prime candidate for integration testing.&lt;/p&gt;
-
-&lt;p&gt;Obviously, in order to perform this kind of integration testing, your go code needs to be able to communicate with the database. How can we ensure that there is a database available for our test code to talk to?&lt;/p&gt;
-
-&lt;h4 id=&#34;a-naive-solution:cee31ec0056c5269248fe8706a45b932&#34;&gt;A naive solution&lt;/h4&gt;
-
-&lt;p&gt;The &lt;code&gt;TestMain()&lt;/code&gt; function is a great way to perform the extra setup and teardown of your test database. When there&amp;rsquo;s a &lt;code&gt;TestMain()&lt;/code&gt; function in any of your test files, that function is called directly by &lt;code&gt;go test&lt;/code&gt;. The function can then perform any necessary setup, run the tests, and then teardown whatever was needed to support the tests:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestMain(m &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.M) {
-    setupDatabase()
-    result &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; m.Run()
-    teardownDatabase()
-    os.Exit(result)
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The problem with using &lt;code&gt;TestMain&lt;/code&gt; this way, however, is that integration tests are typically much slower than unit tests, so running our tests this way will make invocations of &lt;code&gt;go test&lt;/code&gt; take much longer. If we&amp;rsquo;re working on a part of the code that has nothing to do with integrating with 3rd party code, this can be pretty frustrating.&lt;/p&gt;
-
-&lt;h4 id=&#34;a-less-naive-solution:cee31ec0056c5269248fe8706a45b932&#34;&gt;A less naive solution&lt;/h4&gt;
-
-&lt;p&gt;Fortunately, the testing package itself suggests a solution to this problem. The testing package actually has a function called &lt;code&gt;testing.Short()&lt;/code&gt;. This function returns true if the &lt;code&gt;-short&lt;/code&gt; flag has been passed into the &lt;code&gt;go test&lt;/code&gt; command. Tests can check the value of &lt;code&gt;Short()&lt;/code&gt; to determine whether they should execute code and/or tests that will take a long time. This flag could be leveraged to determine whether the tests should spin up external services for integration tests:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestMain(m &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.M) {
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    flag.Parse()
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; !testing.Short() {
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        setupDatabase()    
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    }
-&lt;/span&gt;    result &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; m.Run()
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; !testing.Short() {
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        teardownDatabase()        
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    }    
-&lt;/span&gt;    os.Exit(result)
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The actual integration tests can check the value of &lt;code&gt;testing.Short()&lt;/code&gt; to see if they should execute:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestDatabaseGet(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; testing.Short() {
-        t.Skip()
-    }
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;h4 id=&#34;a-scalable-solution:cee31ec0056c5269248fe8706a45b932&#34;&gt;A scalable solution&lt;/h4&gt;
-
-&lt;p&gt;This solution is definitely better than just always setting up and tearing down a database in the &lt;code&gt;TestMain()&lt;/code&gt; function, but it has a few disadvantages:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;It requires us to pass in the &lt;code&gt;-short&lt;/code&gt; flag every time we want to avoid running integration tests.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;It doesn&amp;rsquo;t scale well to multiple types of integration tests.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Having to pass in the &lt;code&gt;-short&lt;/code&gt; flag whenever we want to avoid slow integration tests is inconvenient. Most of the time writing an application is probably spend writing code that isn&amp;rsquo;t covered by integration tests, so most of the time you&amp;rsquo;ll have to add the flag &lt;code&gt;-short&lt;/code&gt; to your &lt;code&gt;go test&lt;/code&gt; invocations.&lt;/p&gt;
-
-&lt;p&gt;This inconvenience can be mitigated if we just tell our text editors to add the flag whenever they usually run &lt;code&gt;go test&lt;/code&gt; (e.g., on saving a file). However, since most of the time we aren&amp;rsquo;t interested in running integration tests, it seems like it would be better if &lt;code&gt;go test&lt;/code&gt; didn&amp;rsquo;t run integration tests by default. Instead, it&amp;rsquo;d be better if we had to explicitly tell &lt;code&gt;go test&lt;/code&gt; to run the integration tests.&lt;/p&gt;
-
-&lt;p&gt;The second problem with using the &lt;code&gt;-short&lt;/code&gt; flag is that it doesn&amp;rsquo;t scale well to multiple types of integration tests. Suppose, for example, that our code utilized a database and a message queue. We can ensure that both our database and message queues are setup if we&amp;rsquo;re doing both types of integration tests, but if we just want to run the integration tests for our database and not for our message queue, we are again forced to wait longer for our tests to run.&lt;/p&gt;
-
-&lt;p&gt;The solution to both of these problems is to use custom flags. You can pass custom flags into the &lt;code&gt;go test&lt;/code&gt; command and handle them however you like within your tests. We can define a flag for database integration tests and a flag for message queue tests and only run the respective integration tests when those flags are passed in. For example, &lt;code&gt;go test -database&lt;/code&gt; will only run the database-related integration tests and: &lt;code&gt;go test -queue&lt;/code&gt; will only run the message-queue-related integration tests.&lt;/p&gt;
-
-&lt;p&gt;Briefly, here&amp;rsquo;s how you could support that behavior in &lt;code&gt;TestMain()&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; (
-    database = flag.Bool(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;database&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;run database integration tests&amp;quot;&lt;/span&gt;)    
-    messageQueue = flag.Bool(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;messageQueue&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;run message queue integration tests&amp;quot;&lt;/span&gt;)
-)
-
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestMain(m &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.M) {
-    flag.Parse()
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;database {
-        setupDatabase()    
-    }
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;messageQueue {
-        setupMessageQueue()
-    }
-    result &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; m.Run()
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;database {
-        teardownDatabase()        
-    }
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;messageQueue {
-        teardownMessageQueue()
-    }    
-    os.Exit(result)
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Of course, your database and message queue integration tests should also check for these flags and skip if they are not set to true.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion:cee31ec0056c5269248fe8706a45b932&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;We&amp;rsquo;ve just seen three ways of writing and running integration tests in go.&lt;/p&gt;
-
-&lt;p&gt;The first way was to simply use the &lt;code&gt;TestMain()&lt;/code&gt; function to perform whatever setup and teardown you need for your tests. I called this solution &amp;ldquo;naive&amp;rdquo; because it dramatically increases the time it takes for &lt;code&gt;go test&lt;/code&gt; to execute, even if you aren&amp;rsquo;t interested in running integration tests.&lt;/p&gt;
-
-&lt;p&gt;The second &amp;ldquo;less naive&amp;rdquo; solution was to take advantage of the &lt;code&gt;-short&lt;/code&gt; flag built in to the testing package. This solution is better because it gives us a way of shortening our test runs when we don&amp;rsquo;t want to run integration tests. However, this solution forces us to pass the &lt;code&gt;-short&lt;/code&gt; flag whenever we want to shorten our test run, and since we aren&amp;rsquo;t usually interested in running integration tests, this is inconvenient. Moreover, this solution doesn&amp;rsquo;t give us fine-grained control over which kinds of integration tests we want to run, and this again forces us to wait longer for &lt;code&gt;go test&lt;/code&gt; to complete.&lt;/p&gt;
-
-&lt;p&gt;I believe that the last solution we explored is a very scalable way of handling integration testing in go. It gives us fine-grained control over which integration tests we want to run and doesn&amp;rsquo;t run any slow integration tests by default. This allows us to run our tests as quickly as possible. I also suspect that there&amp;rsquo;s another advantage to using custom flags for your integration testing: it makes acceptance testing easier, but this something that I&amp;rsquo;ll have to explore another time.&lt;/p&gt;
-
-&lt;h4 id=&#34;notes:cee31ec0056c5269248fe8706a45b932&#34;&gt;Notes:&lt;/h4&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627&#34;&gt;Growing Object Oriented Software Guided by Tests&lt;/a&gt;, pg 40-41&lt;/li&gt;
-&lt;li&gt;Ibid., pg 41-42&lt;/li&gt;
-&lt;/ol&gt;
 </description>
     </item>
     
