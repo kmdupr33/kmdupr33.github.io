@@ -6,8 +6,219 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 Jul 2016 15:43:29 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 08 Aug 2016 08:34:46 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Unit Testable RecyclerViews</title>
+      <link>http://philosophicalhacker.com/post/unit-testable-recycler-views/</link>
+      <pubDate>Mon, 08 Aug 2016 08:34:46 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/unit-testable-recycler-views/</guid>
+      <description>
+
+&lt;p&gt;When building our Android apps, we can often wind up with a decent amount of code in our &lt;code&gt;RecyclerView.Adapter&lt;/code&gt;s that we want to test. In this article, I briefly suggest two ways of structuring our &lt;code&gt;RecyclerView&lt;/code&gt;-related classes so that we can accomplish this.&lt;/p&gt;
+
+&lt;p&gt;First, let&amp;rsquo;s look at a simple list that&amp;rsquo;ll serve as a working example:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/simple-list.png&#34; alt=&#34;Simple RecyclerView&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the code that creates this list:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MainActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        setContentView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;activity_main&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; RecyclerView recyclerView &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; findViewById&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;recyclerView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        recyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setLayoutManager&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LinearLayoutManager&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+        recyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setAdapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Adapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ViewHolder&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateViewHolder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ViewGroup parent&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; viewType&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ViewHolder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TextView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;parent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getContext&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{};&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onBindViewHolder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ViewHolder&lt;/span&gt; holder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; position&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                &lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;TextView&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; holder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;itemView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;String&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;valueOf&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;position&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;getItemCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;100;&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now that we&amp;rsquo;ve introduced a working example, let&amp;rsquo;s look at two ways of making RecyclerView-related code unit testable.&lt;/p&gt;
+
+&lt;h3 id=&#34;an-obvious-way-mvp:391b17626bccf7689e1e02d86c15ebb0&#34;&gt;An Obvious Way: MVP&lt;/h3&gt;
+
+&lt;p&gt;One of the oft-cited benefits of using MVP in Android apps is that it enhances testability. So, a natural way of structuring our &lt;code&gt;RecyclerView&lt;/code&gt; related classes so that we can enhance testability is to apply MVP to those classes. To do this, we make the &lt;code&gt;ViewHolder&lt;/code&gt; sublcass implement an MVP &lt;code&gt;View&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;SimpleListItemViewHolder&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ViewHolder&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; SimpleListItemView &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View itemView&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;itemView&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// From SimpleListItemView interface&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;setText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;String text&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;TextView&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; itemView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;text&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Next, we setup our RecyclerView.Adapter to create Presenters for each ViewHolder and we delegate the presentation logic to those presenters in &lt;code&gt;onBindViewHolder&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyAdapter&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Adapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; SimpleListItemViewHolder &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateViewHolder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ViewGroup parent&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                        &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; viewType&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TextView itemView &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TextView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;parent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getContext&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        itemView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Presenter&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+&lt;/span&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;itemView&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onBindViewHolder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SimpleListItemViewHolder holder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; position&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;Presenter&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; holder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;itemView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;presentListItem&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;holder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; position&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Notice here that we set the &lt;code&gt;Presenter&lt;/code&gt; as a tag on the &lt;code&gt;ViewHolder&lt;/code&gt;&amp;rsquo;s itemView. When it&amp;rsquo;s time to bind the ViewHolder, we can grab the &lt;code&gt;Presenter&lt;/code&gt; from the tag delegate the presentation logic to it. Here&amp;rsquo;s what the &lt;code&gt;Presenter&lt;/code&gt; looks like:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;presentListItem&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SimpleListItemView view&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; position&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        view&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;String&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;valueOf&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;position&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Because the logic we want to test now lives inside of the &lt;code&gt;Presenter&lt;/code&gt;, a simple POJO, unit testing the presentation logic for our &lt;code&gt;RecyclerView&lt;/code&gt;s becomes much easier. We simply instantiate a &lt;code&gt;Presenter&lt;/code&gt;, call its main presentation method, and verify that it interacts properly with its MVP View.&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PresenterTest&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;presentListItemShouldSetViewTextToPosition&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        MainActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Presenter&lt;/span&gt; presenter &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; MainActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Presenter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+
+        presenter&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;presentListItem&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mSimpleListItemView&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0);&lt;/span&gt;
+
+        verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mSimpleListItemView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;a-lighter-way-reusing-a-presenter:391b17626bccf7689e1e02d86c15ebb0&#34;&gt;A Lighter Way: Reusing a Presenter&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look at another way of making our &lt;code&gt;RecyclerView&lt;/code&gt; related classes unit testable. While the above approach works fine, I sometimes find that having to create an extra presenter class that is stored and retrieved as a tag on a &lt;code&gt;ViewHolder&lt;/code&gt;&amp;rsquo;s item view a bit much, especially if I already have a &lt;code&gt;Presenter&lt;/code&gt; that is simply responsible for fetching items to display in the list.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s alter our working example a bit to suppose we had such a presenter. Instead of simply displaying the position of a ViewHolder in our &lt;code&gt;RecyclerView&lt;/code&gt;, let&amp;rsquo;s display numbers we have to fetch from somewhere else. In this case, we&amp;rsquo;ll probably want a (unit-testable)&lt;code&gt;Presenter&lt;/code&gt; that looks like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; NumberFetcher mNumberFetcher&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; NumberListView mNumberListView&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+
+    Presenter&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;NumberFetcher numberFetcher&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; NumberListView numberListView&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        mNumberFetcher &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; numberFetcher&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+        mNumberListView &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; numberListView&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onViewReady&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        mNumberFetcher&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNumbers&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Callback&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onSuccess&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Integer&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; numbers&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mNumberListView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayNumbers&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;numbers&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onFailure&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Throwable err&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+                mNumberListView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayErrorMessage&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Now, if we were simply using MVP for a RecyclerView-related classes, the highlighted &lt;code&gt;displayNumbers&lt;/code&gt; method is where we&amp;rsquo;d have to create our &lt;code&gt;Adapter&lt;/code&gt; that would creat and use a separate &lt;code&gt;Presenter&lt;/code&gt; class that would hold our presentation logic. Since we already have a &lt;code&gt;Presenter&lt;/code&gt;, however, we can simply reuse it by passing it to the &lt;code&gt;RecyclerView.Adapter&lt;/code&gt; via our MVP View method:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onViewReady&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        mNumberFetcher&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNumbers&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Callback&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onSuccess&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Integer&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; numbers&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mNumberListView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayNumbers&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;numbers&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+            &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the implementation of the &lt;code&gt;displayNumbers&lt;/code&gt; view:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MainActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; NumberListView &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayNumbers&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Integer&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; numbers&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Presenter presenter&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; RecyclerView recyclerView &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; findViewById&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;recyclerView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        recyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setLayoutManager&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LinearLayoutManager&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+        recyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setAdapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; MyAdapter&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;numbers&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; presenter&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;And here&amp;rsquo;s the adapter delegating to the same &lt;code&gt;Presenter&lt;/code&gt; that&amp;rsquo;s responsible for loading the items in the list:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyAdapter&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Adapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Integer&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; mNumbers&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Presenter mPresenter&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+
+        MyAdapter&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Integer&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; numbers&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Presenter presenter&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            mNumbers &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; numbers&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+            mPresenter &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; presenter&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; SimpleListItemViewHolder &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateViewHolder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ViewGroup parent&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                                           &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; viewType&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TextView itemView &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TextView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;parent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getContext&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;itemView&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onBindViewHolder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SimpleListItemViewHolder holder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; position&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            mPresenter&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;presentListItem&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;holder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; position&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;getItemCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; mNumbers&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;size&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava</title>
@@ -1602,183 +1813,6 @@ Now, suppose you wanted to test the &lt;span style=&#34;color: #BA2121&#34;&gt;`
 &lt;p&gt;You just learned how to test package implementation details from &amp;ldquo;the outside.&amp;rdquo; This will come in handy when you break a circular dependency between your test code and the package you&amp;rsquo;re testing by placing the test code outside of the package you&amp;rsquo;re testing.&lt;/p&gt;
 
 &lt;p&gt;You&amp;rsquo;re welcome.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Table-driven tests with Gomock</title>
-      <link>http://philosophicalhacker.com/post/table-driven-tests-with-gomock/</link>
-      <pubDate>Sat, 23 Jan 2016 13:01:07 -0500</pubDate>
-      
-      <guid>http://philosophicalhacker.com/post/table-driven-tests-with-gomock/</guid>
-      <description>
-
-&lt;p&gt;Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&amp;rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.&lt;/p&gt;
-
-&lt;h3 id=&#34;table-driven-tests:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Table-Driven Tests&lt;/h3&gt;
-
-&lt;p&gt;There are many examples of table-driven tests in the standard library. One example of a table-driven test can be found in the &lt;code&gt;fmt_test&lt;/code&gt; package:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; fmtTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
-	fmt &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;
-	val &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;interface&lt;/span&gt;{}
-	out &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;
-}{
-	{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;%d&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #666666&#34;&gt;12345&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;12345&amp;quot;&lt;/span&gt;},
-	{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;%v&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #666666&#34;&gt;12345&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;12345&amp;quot;&lt;/span&gt;},
-	{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;%t&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;true&amp;quot;&lt;/span&gt;},
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;As the above code suggests, table-driven tests typically make use of slice literals of anonymous structs. The anonymous struct has fields that support various test cases. In this case, the fields are &lt;code&gt;fmt&lt;/code&gt;, the actual format specifier used within a format string, &lt;code&gt;val&lt;/code&gt;, the value formatted according to the format specifier, and &lt;code&gt;out&lt;/code&gt;, the string that is expected as a result of calling &lt;code&gt;fmt.Sprintf()&lt;/code&gt; on a formatted string with its specifiers and values.&lt;/p&gt;
-
-&lt;p&gt;Within the &lt;code&gt;Test-&lt;/code&gt; method, the tests are run by ranging over the elements of the slice literal.&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestSprintf(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
-	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; fmtTests {
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		s &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; Sprintf(tt.fmt, tt.val)
-&lt;/span&gt;		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; s &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; tt.out {
-&lt;/span&gt;			&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; _, ok &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; tt.val.(&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;); ok {
-				&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Don&amp;#39;t requote the already-quoted strings.&lt;/span&gt;
-				&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// It&amp;#39;s too confusing to read the errors.&lt;/span&gt;
-				t.Errorf(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Sprintf(%q, %q) = &amp;lt;%s&amp;gt; want &amp;lt;%s&amp;gt;&amp;quot;&lt;/span&gt;, tt.fmt, tt.val, s, tt.out)
-			} &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; {
-				t.Errorf(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Sprintf(%q, %v) = %q want %q&amp;quot;&lt;/span&gt;, tt.fmt, tt.val, s, tt.out)
-			}
-		}
-	}
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;h3 id=&#34;gomock-mocks:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Gomock Mocks&lt;/h3&gt;
-
-&lt;p&gt;Gomock mocks are generated in two steps. The first step is to generate the mock code using the &lt;code&gt;mockgen&lt;/code&gt; command. The second step is to create the mock for use in your test:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;mockCtrl &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;defer&lt;/span&gt; mockCtrl.Finish()
-mgf &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_gopher.NewMockGopherFinder(mockCtrl)
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;If this snippet doesn&amp;rsquo;t make sense to you, it might be a good idea to read &lt;a href=&#34;http://www.philosophicalhacker.com/post/getting-started-with-gomock/&#34;&gt;my post on gomock&lt;/a&gt; before proceeding.&lt;/p&gt;
-
-&lt;h3 id=&#34;why-bother:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Why bother?&lt;/h3&gt;
-
-&lt;p&gt;To see why we might want to use table-driven tests with gomock, suppose we want to write a test for a cache of &lt;code&gt;Gopher&lt;/code&gt;s. When we ask the cache for a &lt;code&gt;Gopher&lt;/code&gt;, the cache will first check its own map to see if the &lt;code&gt;Gopher&lt;/code&gt; is available in memory. If the &lt;code&gt;Gopher&lt;/code&gt; is unavailable it will call on a &lt;code&gt;GopherFinder&lt;/code&gt; to fetch the &lt;code&gt;Gopher&lt;/code&gt; from some remote location:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; (s &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;lruCache) GetGopher(name &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;) (Gopher, &lt;span style=&#34;color: #B00040&#34;&gt;error&lt;/span&gt;) {
-	gopher, ok &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; s.CachedGophers[name]
-	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; !ok {
-		&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; s.GopherFinder.Find(name)
-	}
-	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; gopher, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;nil&lt;/span&gt;
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Suppose we want to test this behavior. There are two cases we want test:&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the first case:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Given a Cache that does not contain the Gopher named &amp;quot;andrewgerrand&amp;quot;
-When we ask the Cache for the Gopher named &amp;quot;andrewgerrand&amp;quot;
-Then the Cache calls `Find()` on its `GopherFinder` to satisfy the request
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And the second case:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Given a Cache that does contain the Gopher named &amp;quot;andrewgerrand&amp;quot;
-When we ask the Cache for the Gopher named &amp;quot;andrewgerrand&amp;quot;
-Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it returns a cached &amp;quot;andrewgerrand&amp;quot; `Gopher`
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Obviously, these test cases can share some code. Using a table-driven test can help us avoid duplicating the support code we need to execute these two test cases. Moreover, Cache&amp;rsquo;s, as &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;Martin Fowler points out&lt;/a&gt;, are prime candidates for behavior/mock-based testing, so in this case, it doesn&amp;rsquo;t seem crazy to combine mocks with a table-driven test.&lt;/p&gt;
-
-&lt;h3 id=&#34;putting-it-all-together:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Putting it All Together&lt;/h3&gt;
-
-&lt;p&gt;The struct that supports the table-driven tests should contain fields for the values that need to change in order to support different, but related test cases. The first difference between our two cache test cases is that the in one case, the cache already contains a cached &lt;code&gt;Gopher&lt;/code&gt; for the name &amp;ldquo;andrewgerrand&amp;rdquo; and in the other case, it does not. So, our slice of anonymous structs should start off looking like this:&lt;/p&gt;
-
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
-	cachedGophers &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher
-	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-}{
-	{cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;nil&lt;/span&gt;,
-		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-	},
-	{cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;: Gopher{}},
-		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-	},
-}
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;p&gt;When we range over the values of &lt;code&gt;cacheTests&lt;/code&gt;, we can use the value of the &lt;code&gt;cachedGophers&lt;/code&gt; field to setup our &lt;code&gt;Cache&lt;/code&gt; appropriately so we can test that it behaves correctly:&lt;/p&gt;
-
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
-    con &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
-	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; cacheTests {
-
-		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-		cache &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; NewLRUCache(mc)
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		cache.CachedGophers = tt.cachedGophers
-&lt;/span&gt;
-		cache.GetGopher(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;)
-	}
-}
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;p&gt;The second thing that&amp;rsquo;s different about our two test cases is the actual calls we should expect on the &lt;code&gt;GohperFinder&lt;/code&gt;. Again, when the cache can&amp;rsquo;t find a &lt;code&gt;Gopher&lt;/code&gt; in memory, it should call on its &lt;code&gt;GopherFinder&lt;/code&gt;. Otherwise, it shouldn&amp;rsquo;t call the &lt;code&gt;GopherFinder&lt;/code&gt; at all, and it should simply return the &lt;code&gt;Gopher&lt;/code&gt; it has in memory. So, we need a field in our struct that captures this difference between the two test cases:&lt;/p&gt;
-
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
-	cachedGophers &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher
-	Configurer    Configurer
-}{
-    {cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;nil&lt;/span&gt;,
-		Configurer: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt;(gf &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder) &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder {
-			gf.EXPECT().
-				Find(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;)
-			&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; gf
-		},
-	},
-	{cachedGophers: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher{&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;: Gopher{}},
-		Configurer: &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt;(gf &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder) &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;MockGopherFinder {
-			&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; gf
-		},
-	},
-}
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;Configurer&lt;/code&gt;, as you probably figured out, is just a function that takes a mock as a parameter, configures it, and returns the configured mock to be used by the test. When &lt;code&gt;cachedGophers&lt;/code&gt; is nil, the &lt;code&gt;Cache&lt;/code&gt; created for the test won&amp;rsquo;t have any cached &lt;code&gt;Gophers&lt;/code&gt; in memory, so we should expect the &lt;code&gt;Cache&lt;/code&gt; to call &lt;code&gt;Find()&lt;/code&gt; on its &lt;code&gt;GopherFinder&lt;/code&gt;. On the other hand, the second struct has a &lt;code&gt;cachedGohpers&lt;/code&gt; map that should cause the &lt;code&gt;Cache&lt;/code&gt; to return a cached version of the &lt;code&gt;Gopher&lt;/code&gt; rather than fetch one from a remote location.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;TestCache()&lt;/code&gt; function can leverage the fields of this struct to run the two test cases:&lt;/p&gt;
-
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
-
-	con &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; cacheTests {
-&lt;/span&gt;
-		mc &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_gopher.NewMockGopherFinder(con)
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		mc = tt.Configurer(mc)
-&lt;/span&gt;
-		cache &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; NewLRUCache(mc)
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;		cache.CachedGophers = tt.cachedGophers
-&lt;/span&gt;
-		cache.GetGopher(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;andrewgerrand&amp;quot;&lt;/span&gt;)
-	}
-	con.Finish()
-}
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;h3 id=&#34;what-do-you-think:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;What do you think?&lt;/h3&gt;
-
-&lt;p&gt;This strikes me as a fairly reasonable way of avoiding duplicating code while using gomock mocks in testing, but it might be silly and/or there might be a better solution. I&amp;rsquo;m interested in hearing alternative solutions to this problem, so I&amp;rsquo;d love to hear your thoughts on this. For the reasons I pointed out &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/&#34;&gt;here&lt;/a&gt;, I don&amp;rsquo;t find the typical arguments offered against mocking libraries compelling, so I&amp;rsquo;m less interested in hearing people repeat those reasons, but if you have a novel reason for why gomock is a bad idea in the first place, I&amp;rsquo;d definitely like to hear it.&lt;/p&gt;
 </description>
     </item>
     
