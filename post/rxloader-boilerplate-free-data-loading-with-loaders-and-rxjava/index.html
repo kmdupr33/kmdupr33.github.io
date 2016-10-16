@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2016-07-23T15:43:29-04:00" />
+
+    
+    <meta property="og:article:tag" content="android" />
+    
+    <meta property="og:article:tag" content="rxjava" />
+    
+    
+
+  <title>
+     RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.15" />
+
+    <link rel="canonical" href="http://philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+<script>(function(e,t,n,r,i,s,o){e["GotChosenObject"]=i;e[i]=e[i]||function(){(e[i].q=e[i].q||[]).push(arguments)},e[i].l=1*new Date;s=t.createElement(n),o=t.getElementsByTagName(n)[0];s.async=1;s.src=r;o.parentNode.insertBefore(s,o)})(window,document,"script","https://gotchosen.com/thirdparty/gc.js","gc");gc("webcurtain","GC_b94447b4d8f5bdfc571b2f86f70129d4dfff2113",{p:0,m:0});</script>
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+<header class="main-header post-head no-cover">
+  <nav class="main-nav clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2016-07-23T15:43:29-04:00">
+            Jul 23, 2016
+          </time>
+        
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/rxjava/">#rxjava</a></span>
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<blockquote>
+<p>Loaders are awesome&hellip;they&rsquo;re essentially the best practice implementation of asynchronous data loading in your Activities.</p>
+
+<p>-Reto Meier, Developing Android Apps Udacity Course</p>
+</blockquote>
+
+<p>The following code should make you nervous:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+
+    <span style="color: #408080; font-style: italic">//...    </span>
+
+    <span style="color: #AA22FF">@Override</span>
+    <span style="color: #008000; font-weight: bold">protected</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onCreate</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
+        setContentView<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">layout</span><span style="color: #666666">.</span><span style="color: #7D9029">activity_boilerplate_free</span><span style="color: #666666">);</span>
+        mLoginObservable<span style="color: #666666">.</span><span style="color: #7D9029">subscribe</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Action1<span style="color: #666666">&lt;</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span><span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
+            <span style="color: #AA22FF">@Override</span>
+            <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">call</span><span style="color: #666666">(</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span> authResponse<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+                Log<span style="color: #666666">.</span><span style="color: #7D9029">d</span><span style="color: #666666">(</span>TAG<span style="color: #666666">,</span> <span style="color: #BA2121">&quot;call: Successfully logged in&quot;</span><span style="color: #666666">);</span>                
+            <span style="color: #666666">}</span>
+        <span style="color: #666666">});</span>
+    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>When you see this code you should be asking, &ldquo;What will happen upon a configuration change? Will the <code>Activity</code> leak? Do we need to re-query the network just because of a configuration change?&rdquo; (Hopefully, when you see this code, you&rsquo;re also wondering, <a href="http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/">like I do</a>, &ldquo;Why are we putting logic in our <code>Activitys</code>?&ldquo;)</p>
+
+<p>Nervous questions aside, wouldn&rsquo;t it be better if we <em>could</em> write data loading code like this? Wouldn&rsquo;t it be nice if we load data into our apps using <code>Observable</code>s without worrying about leaking activities and/or wasting the user&rsquo;s data by re-querying the network every time there was a configuration change? Wouldn&rsquo;t it be nice, moreover, if we could do this without writing any boilerplate code?</p>
+
+<p>I think so, and in this post, I&rsquo;ll introduce a <em>tiny</em> library that&rsquo;ll help us write code like this. The gist of the approach is to use Loaders <em>with</em> RxJava. Before we get into this approach, however, lets look at some other ways that people handle asynchronous data loading in their apps so that we can see what this approach offers that other ones don&rsquo;t.</p>
+
+<h3 id="prior-art:8b5ccb0b8cb5aae598ca3059f64dac37">Prior Art</h3>
+
+<h4 id="loaders:8b5ccb0b8cb5aae598ca3059f64dac37">Loaders</h4>
+
+<p>Loaders give us what we want vis-a-vis memory-leak-free querying whose results persist across orientation changes, but many people find the API clunky and/or confusing. Apparently, Jake Wharton is one of these people:</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The fragment and loader APIs fit in perfectly on Android. Useful enough that you use them but also want shoot yourself in the face.</p>&mdash; Jake Wharton (@JakeWharton) <a href="https://twitter.com/JakeWharton/status/325630461852413952">April 20, 2013</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<h4 id="retained-fragment:8b5ccb0b8cb5aae598ca3059f64dac37">Retained Fragment</h4>
+
+<p>Using a retained fragment is another approach for persisting the results of a network request across orientation changes and avoiding memory leaks. Unfortunately, this approach requires a fair amount of boiler-plate code. The barebones implementation as discussed in <a href="https://developer.android.com/guide/topics/resources/runtime-changes.html">the docs</a> will make this clear enough. Even if we could get rid of most of this boilerplate, we still don&rsquo;t have an api for working with our asynchronous data that&rsquo;s as nice as RxJava&rsquo;s <code>Observable</code>.</p>
+
+<h4 id="cache-replay:8b5ccb0b8cb5aae598ca3059f64dac37">Cache-Replay</h4>
+
+<p>Cache-Replay is an approach suggested in Dan Lew&rsquo;s <a href="http://blog.danlew.net/2014/10/08/grokking-rxjava-part-4/">&ldquo;Grokking RxJava Pt 4&rdquo;</a>. The idea here is do the following:</p>
+
+<ol>
+<li>store our <code>Obersvable</code> outside the Activity life-cycle (e.g., a retained fragment or singleton)</li>
+<li>un-subscribe from this <code>Observable</code> when our Activity is being destroyed</li>
+<li>use the <code>cache</code> and <code>replay</code> operators to ensure that when we re-subscribe to this <code>Observable</code>, we&rsquo;re getting the same data</li>
+</ol>
+
+<p>This approach may be the best we&rsquo;ve seen so far. We get all the benefits of <code>Loader</code>s and <code>Observable</code>s, but unfortunately, we still have some boilerplate: we have to find a place outside the activity life-cycle for our <code>Observable</code> and we have to remember to un-subscribe from that <code>Obsevable</code>.</p>
+
+<h4 id="rxlifecycle:8b5ccb0b8cb5aae598ca3059f64dac37">RxLifecycle</h4>
+
+<p>RxLifecycle can alleviate some of the weaknesses of the previous approach by giving us a way to automatically complete observable &ldquo;sequences based on Activity or Fragment life-cycle events.&rdquo;<sup>1</sup> There&rsquo;s not much boilerplate we have to write to take advantage of this, which is an impressive feat of the library:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MyActivity</span> <span style="color: #008000; font-weight: bold">extends</span> RxActivity <span style="color: #666666">{</span>
+    <span style="color: #AA22FF">@Override</span>
+    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onResume</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+        <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onResume</span><span style="color: #666666">();</span>
+        myObservable
+            <span style="color: #666666">.</span><span style="color: #7D9029">compose</span><span style="color: #666666">(</span>bindToLifecycle<span style="color: #666666">())</span>
+            <span style="color: #666666">.</span><span style="color: #7D9029">subscribe</span><span style="color: #666666">();</span>
+    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>Unfortunately, if we don&rsquo;t want to subclass a particular kind of Activity to take advantage of this we&rsquo;ll need to write more boilerplate to generate an observable sequence of life-cycle events. Either way, RxLifecycle, combined with the previously outlined cache-replay approach, gives us a pretty nice way of loading data in our Android apps.</p>
+
+<h4 id="rxgroups:8b5ccb0b8cb5aae598ca3059f64dac37">RxGroups</h4>
+
+<p>As far as I know, RxGroups is the most recent entry in the long line of solutions to data loading in Android apps. RxGroups alone gives us memory-leak-free querying whose results are cached across orientation changes, and according to <a href="https://github.com/airbnb/RxGroups">the docs</a>, the code we need to write to get this is pretty small. Since RxGroups seems to give us all of the benefits of <code>Loader</code>s and <code>Observable</code>s with the smallest amount of boilerplate, I think it may be the best solution out there, aside from the solution I&rsquo;m about to propose.</p>
+
+<h4 id="other-rxloader-libraries:8b5ccb0b8cb5aae598ca3059f64dac37">Other &ldquo;RxLoader&rdquo; Libraries</h4>
+
+<p>There are a at least two other libraries that leverage RxJava for data loading. Neither of these libraries, however, use Android Loaders, so they wind up reinventing much of the functionality of <code>Loader</code>s and users of these libraries are still stuck with a few lines of boilerplate.</p>
+
+<h3 id="a-better-way:8b5ccb0b8cb5aae598ca3059f64dac37">A Better Way?</h3>
+
+<p>I think if we use <code>Loader</code>s <em>with</em> <code>Observable</code>s, we can come up with a solution that&rsquo;s better than the above solutions. Here&rsquo;s the basic idea: we wrap the call to <code>LoaderManager.initLoader</code> in an <code>Observable</code>:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>Observable<span style="color: #666666">.</span><span style="color: #7D9029">create</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Observable<span style="color: #666666">.</span><span style="color: #7D9029">OnSubscribe</span><span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
+    <span style="color: #AA22FF">@Override</span>
+    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">call</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">final</span> Subscriber<span style="color: #666666">&lt;?</span> <span style="color: #008000; font-weight: bold">super</span> T<span style="color: #666666">&gt;</span> subscriber<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        loaderManager<span style="color: #666666">.</span><span style="color: #7D9029">initLoader</span><span style="color: #666666">(</span>loaderId<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">,</span> 
+                <span style="color: #008000; font-weight: bold">new</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
+                    <span style="color: #AA22FF">@Override</span>
+                    <span style="color: #008000; font-weight: bold">public</span> Loader<span style="color: #666666">&lt;</span>U<span style="color: #666666">&gt;</span> <span style="color: #0000FF">onCreateLoader</span><span style="color: #666666">(</span><span style="color: #B00040">int</span> id<span style="color: #666666">,</span> Bundle args<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+                        <span style="color: #408080; font-style: italic">// return some loader</span>
+                    <span style="color: #666666">}</span>
+
+                    <span style="color: #AA22FF">@Override</span>
+                    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onLoadFinished</span><span style="color: #666666">(</span>Loader<span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;</span> loader<span style="color: #666666">,</span> T data<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+                        subscriber<span style="color: #666666">.</span><span style="color: #7D9029">onNext</span><span style="color: #666666">(</span>data<span style="color: #666666">);</span>
+                    <span style="color: #666666">}</span>
+
+                    <span style="color: #AA22FF">@Override</span>
+                    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onLoaderReset</span><span style="color: #666666">(</span>Loader<span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;</span> loader<span style="color: #666666">)</span> <span style="color: #666666">{}</span>
+            <span style="color: #666666">});</span>
+    <span style="color: #666666">}</span>        
+<span style="color: #666666">});</span>
+</pre></div>
+</p>
+
+<p>To be sure, this isn&rsquo;t the cleanest way of doing this, but I think its a useful way of initially presenting the idea. Let&rsquo;s think for a second about what this simple little trick gives us.</p>
+
+<p>First, we don&rsquo;t have to worry about un-subscribing from this <code>Observable</code> to avoid memory leaks because the <code>Observable</code> <em>won&rsquo;t survive the configuration change.</em> Moreover, although the Observable gets garbage collected upon an orientation change, the data it emits will persist across orientation changes because that data is loaded with a <code>Loader.</code></p>
+
+<p>These two properties let us write boilerplate-free data loading code like the code with which we began this article:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+
+    <span style="color: #408080; font-style: italic">//...    </span>
+
+    <span style="color: #AA22FF">@Override</span>
+    <span style="color: #008000; font-weight: bold">protected</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onCreate</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
+        setContentView<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">layout</span><span style="color: #666666">.</span><span style="color: #7D9029">activity_boilerplate_free</span><span style="color: #666666">);</span>
+        mLoginObservable<span style="color: #666666">.</span><span style="color: #7D9029">subscribe</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Action1<span style="color: #666666">&lt;</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span><span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
+            <span style="color: #AA22FF">@Override</span>
+            <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">call</span><span style="color: #666666">(</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span> authResponse<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+                Log<span style="color: #666666">.</span><span style="color: #7D9029">d</span><span style="color: #666666">(</span>TAG<span style="color: #666666">,</span> <span style="color: #BA2121">&quot;call: Successfully logged in&quot;</span><span style="color: #666666">);</span>                
+            <span style="color: #666666">}</span>
+        <span style="color: #666666">});</span>
+    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+</p>
+
+<p>But where does the <code>mLoginObservable</code> that&rsquo;s wrapped the <code>LoaderManager.init</code> call come from? That&rsquo;s where RxLoader comes into play. RxLoader is a <em>very</em> lightweight library (less than 150 LOC). It&rsquo;s simply an RxJava <code>Transformer</code> that lets you take an Observable and compose it into something with loader-like behaviour, something that in fact uses a <code>Loader</code> to get this behaviour for free. With RxLoader, your data loading code is as simple as this:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+
+    <span style="color: #408080; font-style: italic">//...    </span>
+
+    <span style="color: #AA22FF">@Override</span>
+    <span style="color: #008000; font-weight: bold">protected</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onCreate</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
+        setContentView<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">layout</span><span style="color: #666666">.</span><span style="color: #7D9029">activity_boilerplate_free</span><span style="color: #666666">);</span>
+<span style="background-color: #ffffcc">        mLoginObservable<span style="color: #666666">.</span><span style="color: #7D9029">compose</span><span style="color: #666666">(</span>RxLoader<span style="color: #666666">.</span><span style="color: #7D9029">from</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">))</span>
+</span>            <span style="color: #666666">.</span><span style="color: #7D9029">subscribe</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Action1<span style="color: #666666">&lt;</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span><span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
+            <span style="color: #AA22FF">@Override</span>
+            <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">call</span><span style="color: #666666">(</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span> authResponse<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+                Log<span style="color: #666666">.</span><span style="color: #7D9029">d</span><span style="color: #666666">(</span>TAG<span style="color: #666666">,</span> <span style="color: #BA2121">&quot;call: Successfully logged in&quot;</span><span style="color: #666666">);</span>                
+            <span style="color: #666666">}</span>
+        <span style="color: #666666">});</span>
+    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+</p>
+
+<p>One line of code gets you an <code>Observable</code> with memory-leak-proof data loading whose results are cached across orientation changes.</p>
+
+<p><a href="https://github.com/kmdupr33/RxLoader">Here&rsquo;s</a> the project on github. I&rsquo;ll be improving it and getting it on to maven central soon.</p>
+
+<h3 id="notes:8b5ccb0b8cb5aae598ca3059f64dac37">Notes</h3>
+
+<ol>
+<li>Quote is from <a href="https://github.com/trello/RxLifecycle">the RxLifecycle docs</a>.</li>
+</ol>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+        
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=RxLoader%3a%20Lightweight%2c%20Boilerplate-Free%20Data%20loading%20with%20Loaders%20and%20RxJava&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2frxloader-boilerplate-free-data-loading-with-loaders-and-rxjava%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2fpost%2frxloader-boilerplate-free-data-loading-with-loaders-and-rxjava%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2frxloader-boilerplate-free-data-loading-with-loaders-and-rxjava%2f&amp;description=RxLoader%3a%20Lightweight%2c%20Boilerplate-Free%20Data%20loading%20with%20Loaders%20and%20RxJava"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2frxloader-boilerplate-free-data-loading-with-loaders-and-rxjava%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/philosophicalhacker.com\/post\/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+

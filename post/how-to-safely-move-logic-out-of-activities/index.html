@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" How to Safely move Logic out of Activities &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2016-06-16T16:58:30-04:00" />
+
+    
+    <meta property="og:article:tag" content="android" />
+    
+    <meta property="og:article:tag" content="testing" />
+    
+    <meta property="og:article:tag" content="refactoring" />
+    
+    
+
+  <title>
+     How to Safely move Logic out of Activities &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.15" />
+
+    <link rel="canonical" href="http://philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+<script>(function(e,t,n,r,i,s,o){e["GotChosenObject"]=i;e[i]=e[i]||function(){(e[i].q=e[i].q||[]).push(arguments)},e[i].l=1*new Date;s=t.createElement(n),o=t.getElementsByTagName(n)[0];s.async=1;s.src=r;o.parentNode.insertBefore(s,o)})(window,document,"script","https://gotchosen.com/thirdparty/gc.js","gc");gc("webcurtain","GC_b94447b4d8f5bdfc571b2f86f70129d4dfff2113",{p:0,m:0});</script>
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+  
+  <header class="main-header post-head" style="background-image: url(http://philosophicalhacker.com/images/life-ring.jpg)">
+  
+  <nav class="main-nav overlay clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">How to Safely move Logic out of Activities</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2016-06-16T16:58:30-04:00">
+            Jun 16, 2016
+          </time>
+        
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/refactoring/">#refactoring</a></span>
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<p>In <a href="http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/">my last post</a>, I argued that we should stop putting our app logic in <code>Activity</code>s and <code>Fragment</code>s because it makes both unit testing <em>and</em> functional testing our apps more difficult. In this post, I&rsquo;ll try to suggest a method of safely removing app logic from our <code>Activity</code>s and <code>Fragment</code>s, drawing on a central idea discussed in Michael Feathers&rsquo; <em>Working Effectively with Legacy Code</em>: characterization tests.</p>
+
+<p>In the first section, I briefly introduce the idea of characterization tests. In the second section, I walk through some of the complications that arise when you&rsquo;re trying to write characterization tests for <code>Activity</code>/<code>Fragment</code>s. Source code examples are excerpts from <a href="https://github.com/kmdupr33/iosched/tree/refactor/characterization_tests">my fork of the Google IO app</a>.</p>
+
+<h3 id="brief-intro-characterization-tests:86a9346644eadbcb4b80de7e5ad9fee4">Brief Intro Characterization Tests</h3>
+
+<blockquote>
+<p>Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&hellip;Cover and Modify is a different way of making changes. The idea behind it is that it is possible to work with a safety net when we change software.</p>
+
+<p>Michael Feathers, <em>Working Effectively with Legacy Code</em>, pg. 32</p>
+</blockquote>
+
+<p>Characterization tests are tests that form the &ldquo;safety net&rdquo; that Feathers refers to in the above quotation. The purpose of characterization tests is, as the name implies, to <em>characterize</em> the <em>current behavior</em> of the system. These tests help us ensure that when we refactor our code, we are preserving the current behavior of the system. For every change we make, the result of running our characterization tests will tell us whether we&rsquo;ve accidentally changed the behavior of our app.</p>
+
+<p>Usually, writing a characterization tests is a pretty simple process. According to Feathers:</p>
+
+<blockquote>
+<ol>
+<li>Write tests for the area where you will make your changes. Write as many cases as you feel you need to understand the behavior of the code.</li>
+<li>After doing this, take a look at the specific things you are going to change, and attempt to write tests for those.</li>
+<li>If you are attempting to extract or move some functionality, write tests that verify the existence and connection of those behaviors on a case-by-case basis. Verify that you are exercising the code that you are going to move and that it is connected properly. Exercise conversions.</li>
+</ol>
+
+<p>Pg. 218</p>
+</blockquote>
+
+<p><img src="/images/net.jpg" alt="safety net" /></p>
+
+<blockquote>
+<p>Image Credit: Cea on <a href="https://www.flickr.com/photos/centralasian/3896333282/in/photolist-6WiJ93-i2ZU8-AL26v-NqLkJ-57Gmup-4QiXwQ-67j8Sw-fuf5d1-5DJrYY-9YjbZP-7UJ75S-piX5fr-jzCox-8s9BdN-uST4Hi-tw8VdM-5yxEvF-2QSfpF-onBRex-6Aj5cU-3Jyy7k-8YYKtq-8TRZ33-as2Fdq-rhXdJ8-oTXJh5-aNqeHH-hcEk7d-7ACDg-6EcoYB-mmgBPF-mz68zf-sFGHZq-6EhPsd-dor5Cp-6EcFhV-coe1tY-EDaP5-9Yn6dW-2zCxU-8YiQA1-7dQsZA-8Fq6BQ-n1F765-7dQssm-6wskCt-C44Dg-6EepXT-6EesLa-C4543">Flickr Creative Commons</a></p>
+</blockquote>
+
+<h3 id="characterization-tests-for-activities-and-fragments:86a9346644eadbcb4b80de7e5ad9fee4">Characterization Tests for Activities and Fragments</h3>
+
+<p>Unfortunately, writing characterization tests for <code>Activity</code>/<code>Fragment</code>s is not as simple as writing characterization tests in the general case. In fact, writing characterization tests for any object instantiated by the Android OS is not easy (think <code>Activity</code>, <code>Fragment</code>, <code>Service</code>, <code>BroadcastReceiver</code>, etc.). In this section, I explore two things that make writing characterization tests for <code>Activity</code>s and <code>Fragment</code>s challenging. I also suggest ways to work around these challenges.</p>
+
+<h4 id="law-of-demeter-violations:86a9346644eadbcb4b80de7e5ad9fee4">Law of Demeter Violations</h4>
+
+<p><code>Activity</code>s and <code>Fragment</code>s have dependencies. Some of those dependencies are only accessible if we violate the law of demeter. For example, the <code>PresenterFragmentImpl</code> needs to get a hold of a <code>ContentResolver</code>:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
+<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onAttach</span><span style="color: #666666">(</span>Activity activity<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+    <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onAttach</span><span style="color: #666666">(</span>activity<span style="color: #666666">);</span>
+
+    <span style="color: #408080; font-style: italic">// Register content observers with the content resolver.</span>
+    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>mContentObservers <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        Iterator<span style="color: #666666">&lt;</span>Map<span style="color: #666666">.</span><span style="color: #7D9029">Entry</span><span style="color: #666666">&lt;</span>Uri<span style="color: #666666">,</span> ThrottledContentObserver<span style="color: #666666">&gt;&gt;</span> observers <span style="color: #666666">=</span>
+                mContentObservers<span style="color: #666666">.</span><span style="color: #7D9029">entrySet</span><span style="color: #666666">().</span><span style="color: #7D9029">iterator</span><span style="color: #666666">();</span>
+        <span style="color: #008000; font-weight: bold">while</span> <span style="color: #666666">(</span>observers<span style="color: #666666">.</span><span style="color: #7D9029">hasNext</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
+            Map<span style="color: #666666">.</span><span style="color: #7D9029">Entry</span><span style="color: #666666">&lt;</span>Uri<span style="color: #666666">,</span> ThrottledContentObserver<span style="color: #666666">&gt;</span> entry <span style="color: #666666">=</span> observers<span style="color: #666666">.</span><span style="color: #7D9029">next</span><span style="color: #666666">();</span>
+<span style="background-color: #ffffcc">            activity<span style="color: #666666">.</span><span style="color: #7D9029">getContentResolver</span><span style="color: #666666">().</span><span style="color: #7D9029">registerContentObserver</span><span style="color: #666666">(</span>
+</span>                    entry<span style="color: #666666">.</span><span style="color: #7D9029">getKey</span><span style="color: #666666">(),</span> <span style="color: #008000; font-weight: bold">true</span><span style="color: #666666">,</span> entry<span style="color: #666666">.</span><span style="color: #7D9029">getValue</span><span style="color: #666666">());</span>
+        <span style="color: #666666">}</span>
+    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>Characterizing the behavior of this method is challenging because law of demeter violations force us to make our mocks return mocks so that we can verify the interactions with the <code>Fragment</code>&rsquo;s dependencies:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeOnAttach</span><span style="color: #666666">(</span>Actor actor<span style="color: #666666">,</span> Asserter asserter<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+    <span style="color: #408080; font-style: italic">// Arrange</span>
+    mPresenterFragSpy<span style="color: #666666">.</span><span style="color: #7D9029">configure</span><span style="color: #666666">(</span>mFragmentManager<span style="color: #666666">,</span> <span style="color: #666666">0,</span> mModel<span style="color: #666666">,</span>
+      <span style="color: #008000; font-weight: bold">new</span> QueryEnum<span style="color: #666666">[]{},</span> <span style="color: #008000; font-weight: bold">new</span> UserActionEnum<span style="color: #666666">[]{});</span>
+
+
+<span style="background-color: #ffffcc">    <span style="color: #008000; font-weight: bold">final</span> Activity activity <span style="color: #666666">=</span> mock<span style="color: #666666">(</span>Activity<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">);</span>
+</span><span style="background-color: #ffffcc">    <span style="color: #008000; font-weight: bold">final</span> ContentResolver contentResolver <span style="color: #666666">=</span> mock<span style="color: #666666">(</span>ContentResolver<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">);</span>
+</span><span style="background-color: #ffffcc">    when<span style="color: #666666">(</span>activity<span style="color: #666666">.</span><span style="color: #7D9029">getContentResolver</span><span style="color: #666666">()).</span><span style="color: #7D9029">thenReturn</span><span style="color: #666666">(</span>contentResolver<span style="color: #666666">);</span>
+</span>
+    <span style="color: #408080; font-style: italic">// Act</span>
+    actor<span style="color: #666666">.</span><span style="color: #7D9029">act</span><span style="color: #666666">(</span>activity<span style="color: #666666">);</span>
+
+    <span style="color: #408080; font-style: italic">// Assert</span>
+    asserter<span style="color: #666666">.</span><span style="color: #7D9029">doAssert</span><span style="color: #666666">(</span>contentResolver<span style="color: #666666">);</span>
+<span style="color: #666666">}</span>
+
+<span style="color: #AA22FF">@Test</span>
+<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeOnAttachIfRegisteredContentObservers</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
+    <span style="color: #408080; font-style: italic">//...</span>
+    characterizeOnAttach<span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Actor<span style="color: #666666">()</span> <span style="color: #666666">{</span>
+        <span style="color: #AA22FF">@Override</span>
+        <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">act</span><span style="color: #666666">(</span>Activity activity<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+            mPresenterFragSpy<span style="color: #666666">.</span><span style="color: #7D9029">registerContentObserverOnUri</span><span style="color: #666666">(</span>Uri<span style="color: #666666">.</span><span style="color: #7D9029">EMPTY</span><span style="color: #666666">,</span> queriesToRun<span style="color: #666666">);</span>
+            mPresenterFragSpy<span style="color: #666666">.</span><span style="color: #7D9029">onAttach</span><span style="color: #666666">(</span>activity<span style="color: #666666">);</span>
+        <span style="color: #666666">}</span>
+    <span style="color: #666666">},</span> <span style="color: #008000; font-weight: bold">new</span> Asserter<span style="color: #666666">()</span> <span style="color: #666666">{</span>
+        <span style="color: #AA22FF">@Override</span>
+        <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">doAssert</span><span style="color: #666666">(</span>ContentResolver contentResolver<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+            <span style="color: #408080; font-style: italic">// ...</span>
+<span style="background-color: #ffffcc">            verify<span style="color: #666666">(</span>contentResolver<span style="color: #666666">).</span><span style="color: #7D9029">registerContentObserver</span><span style="color: #666666">(</span>eq<span style="color: #666666">(</span>Uri<span style="color: #666666">.</span><span style="color: #7D9029">EMPTY</span><span style="color: #666666">),</span>
+</span><span style="background-color: #ffffcc">              eq<span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">true</span><span style="color: #666666">),</span> notNull<span style="color: #666666">(</span>ThrottledContentObserver<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">));</span>
+</span>        <span style="color: #666666">}</span>
+    <span style="color: #666666">});</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>Typically, we don&rsquo;t want to write tests with mocks returning mocks since this suggests that our design may smell. In this case, we are merely trying to characterize the already existing behavior of our <code>Activity</code> or <code>Fragment</code>. Once we refactor, we should have a design that doesn&rsquo;t require this, but in the mean-time, we need this characterization test to make sure that we are preserving app behavior during our refactor.</p>
+
+<h4 id="nearly-impossible-di:86a9346644eadbcb4b80de7e5ad9fee4">(Nearly) Impossible DI</h4>
+
+<p><code>Fragment</code>s and <code>Activity</code>s get their dependencies via an accessor method. <code>getLoaderManager</code>, <code>getContentResolver</code>, or <code>getFragmentManager</code> are a few examples of such accessor methods. Here&rsquo;s a method that uses one of these accessors:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 1 </span><span style="color: #AA22FF">@Override</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 2 </span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onActivityCreated</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 3 </span>    <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onActivityCreated</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 4 </span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 5 </span>    mLoaderIdlingResource <span style="color: #666666">=</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 6 </span>            <span style="color: #008000; font-weight: bold">new</span> LoaderIdlingResource<span style="color: #666666">(</span>getClass<span style="color: #666666">().</span><span style="color: #7D9029">getName</span><span style="color: #666666">()</span> <span style="color: #666666">+</span> <span style="color: #BA2121">&quot;/&quot;</span> <span style="color: #666666">+</span> getId<span style="color: #666666">(),</span> getLoaderManager<span style="color: #666666">());</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 7 </span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 8 </span>    <span style="color: #408080; font-style: italic">// Load data queries if any.</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 9 </span>    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>mInitialQueriesToLoad <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">null</span> <span style="color: #666666">&amp;&amp;</span> mInitialQueriesToLoad<span style="color: #666666">.</span><span style="color: #7D9029">length</span> <span style="color: #666666">&gt;</span> <span style="color: #666666">0)</span> <span style="color: #666666">{</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">10 </span><span style="background-color: #ffffcc">        LoaderManager manager <span style="color: #666666">=</span> getLoaderManager<span style="color: #666666">();</span>
+</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px">11 </span>        <span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span><span style="color: #B00040">int</span> i <span style="color: #666666">=</span> <span style="color: #666666">0;</span> i <span style="color: #666666">&lt;</span> mInitialQueriesToLoad<span style="color: #666666">.</span><span style="color: #7D9029">length</span><span style="color: #666666">;</span> i<span style="color: #666666">++)</span> <span style="color: #666666">{</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">12 </span><span style="background-color: #ffffcc">            manager<span style="color: #666666">.</span><span style="color: #7D9029">initLoader</span><span style="color: #666666">(</span>mInitialQueriesToLoad<span style="color: #666666">[</span>i<span style="color: #666666">].</span><span style="color: #7D9029">getId</span><span style="color: #666666">(),</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">);</span>
+</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px">13 </span>        <span style="color: #666666">}</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">14 </span>    <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">15 </span>        <span style="color: #408080; font-style: italic">// No data query to load, update the view.</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">16 </span>        mUpdatableView<span style="color: #666666">.</span><span style="color: #7D9029">displayData</span><span style="color: #666666">(</span>mModel<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">);</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">17 </span>    <span style="color: #666666">}</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">18 </span><span style="color: #666666">}</span>
+</pre></div>
+</p>
+
+<p>If we&rsquo;re characterizing a method like this one, we need to verify that the <code>Fragment</code> calls the correct methods on the dependencies returned by these accessor methods. Verifying the interaction of an object with its dependencies means that we need to be able to swap out those dependencies with mocks.</p>
+
+<p>One way of doing this would be to have a special subclass of the <code>Activity</code> or <code>Fragment</code> you&rsquo;d like to test. This sub-class could override the accessors to return mocks. Our characterization tests could then instantiate these special subclasses and use the mocks returned by the accessors to verify the interactions.</p>
+
+<p>This isn&rsquo;t a great solution. For reasons that I hope are clear, using this solution would force us to repeatedly subclass every <code>Activity</code> or <code>Fragment</code> in our app to return mock accessors.</p>
+
+<p>A better solution is to use mockito spies. Like mocks returning mocks, we typically don&rsquo;t use spies in our tests because it suggests a smelly design. However, in this case, spies help us write characterization tests without having make a non-trivial changes to the code we are trying to characterize or without having to repeatedly subclass all of our <code>Activity</code>s and <code>Fragment</code>s to return mocks. Here&rsquo;s an example of how spies help us do this:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
+<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeOnActivityCreatedIfInitialQueriesToLoad</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
+
+    <span style="color: #008000; font-weight: bold">final</span> ExploreModel<span style="color: #666666">.</span><span style="color: #7D9029">ExploreQueryEnum</span> sessions <span style="color: #666666">=</span> ExploreModel<span style="color: #666666">.</span><span style="color: #7D9029">ExploreQueryEnum</span><span style="color: #666666">.</span><span style="color: #7D9029">SESSIONS</span><span style="color: #666666">;</span>
+    mPresenterFragSpy<span style="color: #666666">.</span><span style="color: #7D9029">configure</span><span style="color: #666666">(</span>mFragmentManager<span style="color: #666666">,</span> <span style="color: #666666">0,</span> mModel<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">new</span> QueryEnum<span style="color: #666666">[]{</span>sessions<span style="color: #666666">},</span> <span style="color: #008000; font-weight: bold">new</span> UserActionEnum<span style="color: #666666">[]{});</span>
+
+<span style="background-color: #ffffcc">    <span style="color: #008000; font-weight: bold">final</span> LoaderManager loaderManager <span style="color: #666666">=</span> mock<span style="color: #666666">(</span>LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">);</span>
+</span><span style="background-color: #ffffcc">    when<span style="color: #666666">(</span>mPresenterFragSpy<span style="color: #666666">.</span><span style="color: #7D9029">getLoaderManager</span><span style="color: #666666">()).</span><span style="color: #7D9029">thenReturn</span><span style="color: #666666">(</span>loaderManager<span style="color: #666666">);</span>
+</span>
+    mPresenterFragSpy<span style="color: #666666">.</span><span style="color: #7D9029">onActivityCreated</span><span style="color: #666666">(</span>mock<span style="color: #666666">(</span>Bundle<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">));</span>
+
+    assertNotNull<span style="color: #666666">(</span>mPresenterFragSpy<span style="color: #666666">.</span><span style="color: #7D9029">getLoaderIdlingResource</span><span style="color: #666666">());</span>
+<span style="background-color: #ffffcc">    verify<span style="color: #666666">(</span>loaderManager<span style="color: #666666">).</span><span style="color: #7D9029">initLoader</span><span style="color: #666666">(</span>eq<span style="color: #666666">(</span>sessions<span style="color: #666666">.</span><span style="color: #7D9029">getId</span><span style="color: #666666">()),</span> isNull<span style="color: #666666">(</span>Bundle<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">),</span> notNull<span style="color: #666666">(</span>LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">));</span>
+</span><span style="color: #666666">}</span>
+</pre></div>
+</p>
+
+<p>Using a spy, we&rsquo;re able to stub out the <code>getLoaderManager</code> method to return a mock <code>LoaderManager</code>. We can then verify that <code>onActivityCreated</code> calls the right methods on the <code>LoaderManager</code>.</p>
+
+<h3 id="conclusion:86a9346644eadbcb4b80de7e5ad9fee4">Conclusion</h3>
+
+<p>Safely moving logic out of large <code>Activity</code>s and <code>Fragment</code>s can be a lot of work, but its less work than manually verifying that we haven&rsquo;t broken anything every time we make a change to the <code>Activity</code> or <code>Fragment</code> we are refactoring.</p>
+
+<p>Even if we recognize that writing these characterization tests is better than manual verification, writing them can be pretty soul-sucking. Keep in mind that we don&rsquo;t need to move all of the logic out at once, so we don&rsquo;t need to write all characterization tests at once.</p>
+
+<p>Instead, we can identify various responsibilities that are carried out by our <code>Activity</code>s and <code>Fragment</code>s and plan to extract classes to handle those responsibilities. Once we have a clear picture of the class we want to extract from the <code>Activity</code> or <code>Fragment</code>, we can write characterization tests that will serve as a safety net for that single extraction, rather than attempting to write characterization tests for all the non-trivial methods in the <code>Activity</code>/<code>Fragment</code> we are refactoring.</p>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+        
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=How%20to%20Safely%20move%20Logic%20out%20of%20Activities&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fhow-to-safely-move-logic-out-of-activities%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fhow-to-safely-move-logic-out-of-activities%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fhow-to-safely-move-logic-out-of-activities%2f&amp;description=How%20to%20Safely%20move%20Logic%20out%20of%20Activities"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fhow-to-safely-move-logic-out-of-activities%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/philosophicalhacker.com\/post\/how-to-safely-move-logic-out-of-activities\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+
