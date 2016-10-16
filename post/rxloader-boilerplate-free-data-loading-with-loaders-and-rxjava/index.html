@@ -158,7 +158,7 @@
 
 <p>The following code should make you nervous:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
 
     <span style="color: #408080; font-style: italic">//...    </span>
 
@@ -212,7 +212,7 @@
 
 <p>RxLifecycle can alleviate some of the weaknesses of the previous approach by giving us a way to automatically complete observable &ldquo;sequences based on Activity or Fragment life-cycle events.&rdquo;<sup>1</sup> There&rsquo;s not much boilerplate we have to write to take advantage of this, which is an impressive feat of the library:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MyActivity</span> <span style="color: #008000; font-weight: bold">extends</span> RxActivity <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MyActivity</span> <span style="color: #008000; font-weight: bold">extends</span> RxActivity <span style="color: #666666">{</span>
     <span style="color: #AA22FF">@Override</span>
     <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onResume</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
         <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onResume</span><span style="color: #666666">();</span>
@@ -238,7 +238,7 @@
 
 <p>I think if we use <code>Loader</code>s <em>with</em> <code>Observable</code>s, we can come up with a solution that&rsquo;s better than the above solutions. Here&rsquo;s the basic idea: we wrap the call to <code>LoaderManager.initLoader</code> in an <code>Observable</code>:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%">Observable<span style="color: #666666">.</span><span style="color: #7D9029">create</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Observable<span style="color: #666666">.</span><span style="color: #7D9029">OnSubscribe</span><span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>Observable<span style="color: #666666">.</span><span style="color: #7D9029">create</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Observable<span style="color: #666666">.</span><span style="color: #7D9029">OnSubscribe</span><span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
     <span style="color: #AA22FF">@Override</span>
     <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">call</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">final</span> Subscriber<span style="color: #666666">&lt;?</span> <span style="color: #008000; font-weight: bold">super</span> T<span style="color: #666666">&gt;</span> subscriber<span style="color: #666666">)</span> <span style="color: #666666">{</span>
         loaderManager<span style="color: #666666">.</span><span style="color: #7D9029">initLoader</span><span style="color: #666666">(</span>loaderId<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">,</span> 
@@ -267,7 +267,7 @@
 
 <p>These two properties let us write boilerplate-free data loading code like the code with which we began this article:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
 
     <span style="color: #408080; font-style: italic">//...    </span>
 
@@ -288,7 +288,7 @@
 
 <p>But where does the <code>mLoginObservable</code> that&rsquo;s wrapped the <code>LoaderManager.init</code> call come from? That&rsquo;s where RxLoader comes into play. RxLoader is a <em>very</em> lightweight library (less than 150 LOC). It&rsquo;s simply an RxJava <code>Transformer</code> that lets you take an Observable and compose it into something with loader-like behaviour, something that in fact uses a <code>Loader</code> to get this behaviour for free. With RxLoader, your data loading code is as simple as this:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
 
     <span style="color: #408080; font-style: italic">//...    </span>
 
@@ -324,15 +324,7 @@
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

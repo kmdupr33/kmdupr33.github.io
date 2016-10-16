@@ -158,7 +158,7 @@
 
 <p>Here&rsquo;s the code that creates this list:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MainActivity</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MainActivity</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
 
     <span style="color: #AA22FF">@Override</span>
     <span style="color: #008000; font-weight: bold">protected</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
@@ -193,7 +193,7 @@
 
 <p>One of the oft-cited benefits of using MVP in Android apps is that it enhances testability. So, a natural way of structuring our <code>RecyclerView</code> related classes so that we can enhance testability is to apply MVP to those classes. To do this, we make the <code>ViewHolder</code> sublcass implement an MVP <code>View</code>.</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">SimpleListItemViewHolder</span> <span style="color: #008000; font-weight: bold">extends</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">ViewHolder</span> <span style="color: #008000; font-weight: bold">implements</span> SimpleListItemView <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">SimpleListItemViewHolder</span> <span style="color: #008000; font-weight: bold">extends</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">ViewHolder</span> <span style="color: #008000; font-weight: bold">implements</span> SimpleListItemView <span style="color: #666666">{</span>
 
     SimpleListItemViewHolder<span style="color: #666666">(</span>View itemView<span style="color: #666666">)</span> <span style="color: #666666">{</span>
         <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">(</span>itemView<span style="color: #666666">);</span>
@@ -209,7 +209,7 @@
 
 <p>Next, we setup our RecyclerView.Adapter to create Presenters for each ViewHolder and we delegate the presentation logic to those presenters in <code>onBindViewHolder</code>:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MyAdapter</span> <span style="color: #008000; font-weight: bold">extends</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">Adapter</span><span style="color: #666666">&lt;</span>SimpleListItemViewHolder<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MyAdapter</span> <span style="color: #008000; font-weight: bold">extends</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">Adapter</span><span style="color: #666666">&lt;</span>SimpleListItemViewHolder<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
 
     <span style="color: #AA22FF">@Override</span>
     <span style="color: #008000; font-weight: bold">public</span> SimpleListItemViewHolder <span style="color: #0000FF">onCreateViewHolder</span><span style="color: #666666">(</span>ViewGroup parent<span style="color: #666666">,</span>
@@ -231,7 +231,7 @@
 
 <p>Notice here that we set the <code>Presenter</code> as a tag on the <code>ViewHolder</code>&rsquo;s itemView. When it&rsquo;s time to bind the ViewHolder, we can grab the <code>Presenter</code> from the tag delegate the presentation logic to it. Here&rsquo;s what the <code>Presenter</code> looks like:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
     <span style="color: #B00040">void</span> <span style="color: #0000FF">presentListItem</span><span style="color: #666666">(</span>SimpleListItemView view<span style="color: #666666">,</span> <span style="color: #B00040">int</span> position<span style="color: #666666">)</span> <span style="color: #666666">{</span>
         view<span style="color: #666666">.</span><span style="color: #7D9029">setText</span><span style="color: #666666">(</span>String<span style="color: #666666">.</span><span style="color: #7D9029">valueOf</span><span style="color: #666666">(</span>position<span style="color: #666666">));</span>
     <span style="color: #666666">}</span>
@@ -241,7 +241,7 @@
 
 <p>Because the logic we want to test now lives inside of the <code>Presenter</code>, a simple POJO, unit testing the presentation logic for our <code>RecyclerView</code>s becomes much easier. We simply instantiate a <code>Presenter</code>, call its main presentation method, and verify that it interacts properly with its MVP View.</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">PresenterTest</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">PresenterTest</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...</span>
     <span style="color: #AA22FF">@Test</span>
     <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">presentListItemShouldSetViewTextToPosition</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
@@ -261,7 +261,7 @@
 
 <p>Let&rsquo;s alter our working example a bit to suppose we had such a presenter. Instead of simply displaying the position of a ViewHolder in our <code>RecyclerView</code>, let&rsquo;s display numbers we have to fetch from somewhere else. In this case, we&rsquo;ll probably want a (unit-testable)<code>Presenter</code> that looks like this:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
     <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> NumberFetcher mNumberFetcher<span style="color: #666666">;</span>
     <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> NumberListView mNumberListView<span style="color: #666666">;</span>
 
@@ -290,7 +290,7 @@
 
 <p>Now, if we were simply using MVP for a RecyclerView-related classes, the highlighted <code>displayNumbers</code> method is where we&rsquo;d have to create our <code>Adapter</code> that would creat and use a separate <code>Presenter</code> class that would hold our presentation logic. Since we already have a <code>Presenter</code>, however, we can simply reuse it by passing it to the <code>RecyclerView.Adapter</code> via our MVP View method:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...</span>
     <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onViewReady</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
         mNumberFetcher<span style="color: #666666">.</span><span style="color: #7D9029">getNumbers</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Callback<span style="color: #666666">()</span> <span style="color: #666666">{</span>
@@ -307,7 +307,7 @@
 
 <p>Here&rsquo;s the implementation of the <code>displayNumbers</code> view:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MainActivity</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #008000; font-weight: bold">implements</span> NumberListView <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MainActivity</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #008000; font-weight: bold">implements</span> NumberListView <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...</span>
     <span style="color: #AA22FF">@Override</span>
     <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displayNumbers</span><span style="color: #666666">(</span>List<span style="color: #666666">&lt;</span>Integer<span style="color: #666666">&gt;</span> numbers<span style="color: #666666">,</span> Presenter presenter<span style="color: #666666">)</span> <span style="color: #666666">{</span>
@@ -321,7 +321,7 @@
 
 <p>And here&rsquo;s the adapter delegating to the same <code>Presenter</code> that&rsquo;s responsible for loading the items in the list:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MyAdapter</span> <span style="color: #008000; font-weight: bold">extends</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">Adapter</span><span style="color: #666666">&lt;</span>SimpleListItemViewHolder<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MyAdapter</span> <span style="color: #008000; font-weight: bold">extends</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">Adapter</span><span style="color: #666666">&lt;</span>SimpleListItemViewHolder<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
 
         <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> List<span style="color: #666666">&lt;</span>Integer<span style="color: #666666">&gt;</span> mNumbers<span style="color: #666666">;</span>
         <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> Presenter mPresenter<span style="color: #666666">;</span>
@@ -357,15 +357,7 @@
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

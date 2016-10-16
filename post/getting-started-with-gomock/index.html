@@ -154,7 +154,7 @@
 
 <p>Suppose you&rsquo;re writing a simple server that allows users to lookup go programmers (gophers) by name. The handler function for that server might look something like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> FindHandler(gf GopherFinder) http.HandlerFunc {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> FindHandler(gf GopherFinder) http.HandlerFunc {
 
 	<span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000; font-weight: bold">func</span>(w http.ResponseWriter, r <span style="color: #666666">*</span>http.Request) {
 
@@ -191,7 +191,7 @@ GopherFinder
 
 <p>Now that we&rsquo;ve generated the code to support our mock <code>GopherFinder</code>, we can create a mock for a test of the <code>FindHandler</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">package</span> philhackerblogcode_test
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">package</span> philhackerblogcode_test
 
 <span style="color: #008000; font-weight: bold">import</span> (
 	<span style="color: #408080; font-style: italic">//...</span>
@@ -236,7 +236,7 @@ GopherFinder
 
 <p>Fortunately, Gomock also allows us to do exactly this. It allows the mocks it generates to behave like stubs.<sup>2</sup> You can specify the return value that should be returned by using the <code>Return()</code> method on the result of calling <code>EXPECT()</code> and the method you are expecting:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> TestHandler(t <span style="color: #666666">*</span>testing.T) {
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestHandler(t <span style="color: #666666">*</span>testing.T) {
 	<span style="color: #408080; font-style: italic">//...</span>
 	mgf <span style="color: #666666">:=</span> mock_philhackerblogcode.NewMockGopherFinder(mockCtrl)
 <span style="background-color: #ffffcc">	mgf.EXPECT().
@@ -274,15 +274,7 @@ GopherFinder
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

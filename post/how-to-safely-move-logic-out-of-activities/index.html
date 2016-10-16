@@ -196,7 +196,7 @@
 
 <p><code>Activity</code>s and <code>Fragment</code>s have dependencies. Some of those dependencies are only accessible if we violate the law of demeter. For example, the <code>PresenterFragmentImpl</code> needs to get a hold of a <code>ContentResolver</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@Override</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onAttach</span><span style="color: #666666">(</span>Activity activity<span style="color: #666666">)</span> <span style="color: #666666">{</span>
     <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onAttach</span><span style="color: #666666">(</span>activity<span style="color: #666666">);</span>
 
@@ -216,7 +216,7 @@
 
 <p>Characterizing the behavior of this method is challenging because law of demeter violations force us to make our mocks return mocks so that we can verify the interactions with the <code>Fragment</code>&rsquo;s dependencies:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeOnAttach</span><span style="color: #666666">(</span>Actor actor<span style="color: #666666">,</span> Asserter asserter<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeOnAttach</span><span style="color: #666666">(</span>Actor actor<span style="color: #666666">,</span> Asserter asserter<span style="color: #666666">)</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">// Arrange</span>
     mPresenterFragSpy<span style="color: #666666">.</span><span style="color: #7D9029">configure</span><span style="color: #666666">(</span>mFragmentManager<span style="color: #666666">,</span> <span style="color: #666666">0,</span> mModel<span style="color: #666666">,</span>
       <span style="color: #008000; font-weight: bold">new</span> QueryEnum<span style="color: #666666">[]{},</span> <span style="color: #008000; font-weight: bold">new</span> UserActionEnum<span style="color: #666666">[]{});</span>
@@ -260,7 +260,7 @@
 
 <p><code>Fragment</code>s and <code>Activity</code>s get their dependencies via an accessor method. <code>getLoaderManager</code>, <code>getContentResolver</code>, or <code>getFragmentManager</code> are a few examples of such accessor methods. Here&rsquo;s a method that uses one of these accessors:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 1 </span><span style="color: #AA22FF">@Override</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 1 </span><span style="color: #AA22FF">@Override</span>
 <span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 2 </span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onActivityCreated</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
 <span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 3 </span>    <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onActivityCreated</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
 <span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 4 </span>
@@ -289,7 +289,7 @@
 
 <p>A better solution is to use mockito spies. Like mocks returning mocks, we typically don&rsquo;t use spies in our tests because it suggests a smelly design. However, in this case, spies help us write characterization tests without having make a non-trivial changes to the code we are trying to characterize or without having to repeatedly subclass all of our <code>Activity</code>s and <code>Fragment</code>s to return mocks. Here&rsquo;s an example of how spies help us do this:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@Test</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeOnActivityCreatedIfInitialQueriesToLoad</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
 
     <span style="color: #008000; font-weight: bold">final</span> ExploreModel<span style="color: #666666">.</span><span style="color: #7D9029">ExploreQueryEnum</span> sessions <span style="color: #666666">=</span> ExploreModel<span style="color: #666666">.</span><span style="color: #7D9029">ExploreQueryEnum</span><span style="color: #666666">.</span><span style="color: #7D9029">SESSIONS</span><span style="color: #666666">;</span>
@@ -322,15 +322,7 @@
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

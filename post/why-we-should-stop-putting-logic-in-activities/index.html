@@ -166,7 +166,7 @@
 
 <p>Let&rsquo;s look at an (abbreviated) snippet of code from the Google IO app:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">PresenterFragmentImpl</span> <span style="color: #008000; font-weight: bold">extends</span> Fragment
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">PresenterFragmentImpl</span> <span style="color: #008000; font-weight: bold">extends</span> Fragment
         <span style="color: #008000; font-weight: bold">implements</span> Presenter<span style="color: #666666">,</span> UpdatableView<span style="color: #666666">.</span><span style="color: #7D9029">UserActionListener</span><span style="color: #666666">,</span>
         LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
   <span style="color: #408080; font-style: italic">/**</span>
@@ -218,7 +218,7 @@
 
 <p>So, here we&rsquo;re mixing espresso test code with application code. The reason the test code is mixed with application code is so that the espresso tests will &ldquo;pause&rdquo; while the data is being loaded during the functional UI tests. We can see that the <code>LoaderIdlingResource</code> gets registered with the espresso tests here:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@RunWith</span><span style="color: #666666">(</span>AndroidJUnit4<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">)</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@RunWith</span><span style="color: #666666">(</span>AndroidJUnit4<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">)</span>
 <span style="color: #AA22FF">@LargeTest</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">VideoLibraryActivityTest</span> <span style="color: #666666">{</span>
   <span style="color: #408080; font-style: italic">//...</span>
@@ -236,7 +236,7 @@
 
 <p>Here&rsquo;s the gist of how we can start to salvage the situation. We need what <a href="https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052">Michael Feathers</a> calls a &ldquo;seam,&rdquo; a way to change the behavior of our <code>PresenterFragmentImpl</code> without having to edit the source of the <code>PresenterFragmentImpl</code> itself. When the <code>PresenterFragmentImpl</code> is run inside a test, we want the <code>PresenterFragmentImpl</code> to notify an espresso test when it&rsquo;s done loading it&rsquo;s data. Otherwise, we want the <code>PresenterFragmentImpl</code> to load data normally. To get this seam, we extract the Loader callback code into its own class and use an instance of this class as the <code>LoaderCallbacks</code> argument to the call to <code>initLoader</code>:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="background-color: #ffffcc"><span style="color: #008000; font-weight: bold">private</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> mLoaderCallbacks<span style="color: #666666">;</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #ffffcc"><span style="color: #008000; font-weight: bold">private</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> mLoaderCallbacks<span style="color: #666666">;</span>
 </span>
 <span style="color: #AA22FF">@Override</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onActivityCreated</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
@@ -263,7 +263,7 @@
 
 <p>Next, we provide an alternative implementation of <code>LoaderManager.LoaderCallbacks</code> that we&rsquo;ll use for our espresso tests. This implementation uses the decorator pattern, just like last time:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">EspressoNotifyingLoaderCallbacks</span> <span style="color: #008000; font-weight: bold">implements</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">EspressoNotifyingLoaderCallbacks</span> <span style="color: #008000; font-weight: bold">implements</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
 
     <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> LoaderIdlingResource mLoaderIdlingResource<span style="color: #666666">;</span>
     <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> loaderCallbacks<span style="color: #666666">;</span>
@@ -338,15 +338,7 @@
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

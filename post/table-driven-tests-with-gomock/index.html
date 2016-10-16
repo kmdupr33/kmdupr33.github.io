@@ -152,7 +152,7 @@
 
 <p>There are many examples of table-driven tests in the standard library. One example of a table-driven test can be found in the <code>fmt_test</code> package:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">var</span> fmtTests = []<span style="color: #008000; font-weight: bold">struct</span> {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">var</span> fmtTests = []<span style="color: #008000; font-weight: bold">struct</span> {
 	fmt <span style="color: #B00040">string</span>
 	val <span style="color: #008000; font-weight: bold">interface</span>{}
 	out <span style="color: #B00040">string</span>
@@ -169,7 +169,7 @@
 
 <p>Within the <code>Test-</code> method, the tests are run by ranging over the elements of the slice literal.</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> TestSprintf(t <span style="color: #666666">*</span>testing.T) {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestSprintf(t <span style="color: #666666">*</span>testing.T) {
 	<span style="color: #008000; font-weight: bold">for</span> _, tt <span style="color: #666666">:=</span> <span style="color: #008000; font-weight: bold">range</span> fmtTests {
 <span style="background-color: #ffffcc">		s <span style="color: #666666">:=</span> Sprintf(tt.fmt, tt.val)
 </span>		<span style="color: #408080; font-style: italic">//...</span>
@@ -191,7 +191,7 @@
 
 <p>Gomock mocks are generated in two steps. The first step is to generate the mock code using the <code>mockgen</code> command. The second step is to create the mock for use in your test:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%">mockCtrl <span style="color: #666666">:=</span> gomock.NewController(t)
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>mockCtrl <span style="color: #666666">:=</span> gomock.NewController(t)
 <span style="color: #008000; font-weight: bold">defer</span> mockCtrl.Finish()
 mgf <span style="color: #666666">:=</span> mock_gopher.NewMockGopherFinder(mockCtrl)
 </pre></div>
@@ -203,7 +203,7 @@ mgf <span style="color: #666666">:=</span> mock_gopher.NewMockGopherFinder(mockC
 
 <p>To see why we might want to use table-driven tests with gomock, suppose we want to write a test for a cache of <code>Gopher</code>s. When we ask the cache for a <code>Gopher</code>, the cache will first check its own map to see if the <code>Gopher</code> is available in memory. If the <code>Gopher</code> is unavailable it will call on a <code>GopherFinder</code> to fetch the <code>Gopher</code> from some remote location:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> (s <span style="color: #666666">*</span>lruCache) GetGopher(name <span style="color: #B00040">string</span>) (Gopher, <span style="color: #B00040">error</span>) {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> (s <span style="color: #666666">*</span>lruCache) GetGopher(name <span style="color: #B00040">string</span>) (Gopher, <span style="color: #B00040">error</span>) {
 	gopher, ok <span style="color: #666666">:=</span> s.CachedGophers[name]
 	<span style="color: #008000; font-weight: bold">if</span> !ok {
 		<span style="color: #008000; font-weight: bold">return</span> s.GopherFinder.Find(name)
@@ -235,7 +235,7 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 
 <p>The struct that supports the table-driven tests should contain fields for the values that need to change in order to support different, but related test cases. The first difference between our two cache test cases is that the in one case, the cache already contains a cached <code>Gopher</code> for the name &ldquo;andrewgerrand&rdquo; and in the other case, it does not. So, our slice of anonymous structs should start off looking like this:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">var</span> cacheTests = []<span style="color: #008000; font-weight: bold">struct</span> {
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">var</span> cacheTests = []<span style="color: #008000; font-weight: bold">struct</span> {
 	cachedGophers <span style="color: #008000; font-weight: bold">map</span>[<span style="color: #B00040">string</span>]Gopher
 	<span style="color: #408080; font-style: italic">//...</span>
 }{
@@ -251,7 +251,7 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 
 <p>When we range over the values of <code>cacheTests</code>, we can use the value of the <code>cachedGophers</code> field to setup our <code>Cache</code> appropriately so we can test that it behaves correctly:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> TestCache(t <span style="color: #666666">*</span>testing.T) {
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestCache(t <span style="color: #666666">*</span>testing.T) {
     con <span style="color: #666666">:=</span> gomock.NewController(t)
 	<span style="color: #008000; font-weight: bold">for</span> _, tt <span style="color: #666666">:=</span> <span style="color: #008000; font-weight: bold">range</span> cacheTests {
 
@@ -267,7 +267,7 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 
 <p>The second thing that&rsquo;s different about our two test cases is the actual calls we should expect on the <code>GohperFinder</code>. Again, when the cache can&rsquo;t find a <code>Gopher</code> in memory, it should call on its <code>GopherFinder</code>. Otherwise, it shouldn&rsquo;t call the <code>GopherFinder</code> at all, and it should simply return the <code>Gopher</code> it has in memory. So, we need a field in our struct that captures this difference between the two test cases:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">var</span> cacheTests = []<span style="color: #008000; font-weight: bold">struct</span> {
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">var</span> cacheTests = []<span style="color: #008000; font-weight: bold">struct</span> {
 	cachedGophers <span style="color: #008000; font-weight: bold">map</span>[<span style="color: #B00040">string</span>]Gopher
 	Configurer    Configurer
 }{
@@ -291,7 +291,7 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 
 <p>The <code>TestCache()</code> function can leverage the fields of this struct to run the two test cases:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> TestCache(t <span style="color: #666666">*</span>testing.T) {
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestCache(t <span style="color: #666666">*</span>testing.T) {
 
 	con <span style="color: #666666">:=</span> gomock.NewController(t)
 <span style="background-color: #ffffcc">	<span style="color: #008000; font-weight: bold">for</span> _, tt <span style="color: #666666">:=</span> <span style="color: #008000; font-weight: bold">range</span> cacheTests {
@@ -319,15 +319,7 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

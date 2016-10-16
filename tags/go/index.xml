@@ -35,7 +35,7 @@
 
 &lt;p&gt;In order to test the &lt;code&gt;isSpace()&lt;/code&gt; function from outside of the fmt package, the standard lib authors created a export_test.go file in the fmt package. This file simply exports the parts of the un-exported interface that they wanted to test:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//export_test.go&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//export_test.go&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;package&lt;/span&gt; fmt
 
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; IsSpace = isSpace
@@ -46,7 +46,7 @@
 
 &lt;p&gt;Sometimes, however, we want to test more than just an un-exported function from a package. Sometimes, we may want to test the methods of an un-exported struct. Say you&amp;rsquo;ve got a struct like &lt;code&gt;lruCache&lt;/code&gt;:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//cache.go&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//cache.go&lt;/span&gt;
 
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;type&lt;/span&gt; lruCache &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
 	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
@@ -64,7 +64,7 @@ Now, suppose you wanted to test the &lt;span style=&#34;color: #BA2121&#34;&gt;`
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//export_test.go&lt;/span&gt;
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//export_test.go&lt;/span&gt;
 
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;type&lt;/span&gt; LRUCache &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
 	lruCache
@@ -96,7 +96,7 @@ Now, suppose you wanted to test the &lt;span style=&#34;color: #BA2121&#34;&gt;`
 
 &lt;p&gt;There are many examples of table-driven tests in the standard library. One example of a table-driven test can be found in the &lt;code&gt;fmt_test&lt;/code&gt; package:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; fmtTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; fmtTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
 	fmt &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;
 	val &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;interface&lt;/span&gt;{}
 	out &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;
@@ -113,7 +113,7 @@ Now, suppose you wanted to test the &lt;span style=&#34;color: #BA2121&#34;&gt;`
 
 &lt;p&gt;Within the &lt;code&gt;Test-&lt;/code&gt; method, the tests are run by ranging over the elements of the slice literal.&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestSprintf(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestSprintf(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
 	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; fmtTests {
 &lt;span style=&#34;background-color: #ffffcc&#34;&gt;		s &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; Sprintf(tt.fmt, tt.val)
 &lt;/span&gt;		&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
@@ -135,7 +135,7 @@ Now, suppose you wanted to test the &lt;span style=&#34;color: #BA2121&#34;&gt;`
 
 &lt;p&gt;Gomock mocks are generated in two steps. The first step is to generate the mock code using the &lt;code&gt;mockgen&lt;/code&gt; command. The second step is to create the mock for use in your test:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;mockCtrl &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;mockCtrl &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;defer&lt;/span&gt; mockCtrl.Finish()
 mgf &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_gopher.NewMockGopherFinder(mockCtrl)
 &lt;/pre&gt;&lt;/div&gt;
@@ -147,7 +147,7 @@ mgf &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_gopher.NewMo
 
 &lt;p&gt;To see why we might want to use table-driven tests with gomock, suppose we want to write a test for a cache of &lt;code&gt;Gopher&lt;/code&gt;s. When we ask the cache for a &lt;code&gt;Gopher&lt;/code&gt;, the cache will first check its own map to see if the &lt;code&gt;Gopher&lt;/code&gt; is available in memory. If the &lt;code&gt;Gopher&lt;/code&gt; is unavailable it will call on a &lt;code&gt;GopherFinder&lt;/code&gt; to fetch the &lt;code&gt;Gopher&lt;/code&gt; from some remote location:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; (s &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;lruCache) GetGopher(name &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;) (Gopher, &lt;span style=&#34;color: #B00040&#34;&gt;error&lt;/span&gt;) {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; (s &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;lruCache) GetGopher(name &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;) (Gopher, &lt;span style=&#34;color: #B00040&#34;&gt;error&lt;/span&gt;) {
 	gopher, ok &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; s.CachedGophers[name]
 	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; !ok {
 		&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; s.GopherFinder.Find(name)
@@ -179,7 +179,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;The struct that supports the table-driven tests should contain fields for the values that need to change in order to support different, but related test cases. The first difference between our two cache test cases is that the in one case, the cache already contains a cached &lt;code&gt;Gopher&lt;/code&gt; for the name &amp;ldquo;andrewgerrand&amp;rdquo; and in the other case, it does not. So, our slice of anonymous structs should start off looking like this:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
 	cachedGophers &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher
 	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
 }{
@@ -195,7 +195,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;When we range over the values of &lt;code&gt;cacheTests&lt;/code&gt;, we can use the value of the &lt;code&gt;cachedGophers&lt;/code&gt; field to setup our &lt;code&gt;Cache&lt;/code&gt; appropriately so we can test that it behaves correctly:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
     con &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
 	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; cacheTests {
 
@@ -211,7 +211,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;The second thing that&amp;rsquo;s different about our two test cases is the actual calls we should expect on the &lt;code&gt;GohperFinder&lt;/code&gt;. Again, when the cache can&amp;rsquo;t find a &lt;code&gt;Gopher&lt;/code&gt; in memory, it should call on its &lt;code&gt;GopherFinder&lt;/code&gt;. Otherwise, it shouldn&amp;rsquo;t call the &lt;code&gt;GopherFinder&lt;/code&gt; at all, and it should simply return the &lt;code&gt;Gopher&lt;/code&gt; it has in memory. So, we need a field in our struct that captures this difference between the two test cases:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
 	cachedGophers &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher
 	Configurer    Configurer
 }{
@@ -235,7 +235,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;The &lt;code&gt;TestCache()&lt;/code&gt; function can leverage the fields of this struct to run the two test cases:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
 
 	con &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
 &lt;span style=&#34;background-color: #ffffcc&#34;&gt;	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; cacheTests {
@@ -297,7 +297,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;The &lt;code&gt;TestMain()&lt;/code&gt; function is a great way to perform the extra setup and teardown of your test database. When there&amp;rsquo;s a &lt;code&gt;TestMain()&lt;/code&gt; function in any of your test files, that function is called directly by &lt;code&gt;go test&lt;/code&gt;. The function can then perform any necessary setup, run the tests, and then teardown whatever was needed to support the tests:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestMain(m &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.M) {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestMain(m &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.M) {
     setupDatabase()
     result &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; m.Run()
     teardownDatabase()
@@ -312,7 +312,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;Fortunately, the testing package itself suggests a solution to this problem. The testing package actually has a function called &lt;code&gt;testing.Short()&lt;/code&gt;. This function returns true if the &lt;code&gt;-short&lt;/code&gt; flag has been passed into the &lt;code&gt;go test&lt;/code&gt; command. Tests can check the value of &lt;code&gt;Short()&lt;/code&gt; to determine whether they should execute code and/or tests that will take a long time. This flag could be leveraged to determine whether the tests should spin up external services for integration tests:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestMain(m &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.M) {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestMain(m &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.M) {
 &lt;span style=&#34;background-color: #ffffcc&#34;&gt;    flag.Parse()
 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; !testing.Short() {
 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        setupDatabase()    
@@ -328,7 +328,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;The actual integration tests can check the value of &lt;code&gt;testing.Short()&lt;/code&gt; to see if they should execute:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestDatabaseGet(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestDatabaseGet(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; testing.Short() {
         t.Skip()
     }
@@ -357,7 +357,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;Briefly, here&amp;rsquo;s how you could support that behavior in &lt;code&gt;TestMain()&lt;/code&gt;:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; (
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; (
     database = flag.Bool(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;database&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;run database integration tests&amp;quot;&lt;/span&gt;)    
     messageQueue = flag.Bool(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;messageQueue&amp;quot;&lt;/span&gt;, &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;run message queue integration tests&amp;quot;&lt;/span&gt;)
 )
@@ -419,7 +419,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;Suppose you&amp;rsquo;re writing a simple server that allows users to lookup go programmers (gophers) by name. The handler function for that server might look something like this:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; FindHandler(gf GopherFinder) http.HandlerFunc {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; FindHandler(gf GopherFinder) http.HandlerFunc {
 
 	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt;(w http.ResponseWriter, r &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;http.Request) {
 
@@ -456,7 +456,7 @@ GopherFinder
 
 &lt;p&gt;Now that we&amp;rsquo;ve generated the code to support our mock &lt;code&gt;GopherFinder&lt;/code&gt;, we can create a mock for a test of the &lt;code&gt;FindHandler&lt;/code&gt;:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;package&lt;/span&gt; philhackerblogcode_test
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;package&lt;/span&gt; philhackerblogcode_test
 
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;import&lt;/span&gt; (
 	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
@@ -501,7 +501,7 @@ GopherFinder
 
 &lt;p&gt;Fortunately, Gomock also allows us to do exactly this. It allows the mocks it generates to behave like stubs.&lt;sup&gt;2&lt;/sup&gt; You can specify the return value that should be returned by using the &lt;code&gt;Return()&lt;/code&gt; method on the result of calling &lt;code&gt;EXPECT()&lt;/code&gt; and the method you are expecting:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestHandler(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestHandler(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
 	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
 	mgf &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_philhackerblogcode.NewMockGopherFinder(mockCtrl)
 &lt;span style=&#34;background-color: #ffffcc&#34;&gt;	mgf.EXPECT().
@@ -571,7 +571,7 @@ GopherFinder
 
 &lt;p&gt;Here&amp;rsquo;s what a quick and dirty (hand-rolled) mock might look like in go:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;type&lt;/span&gt; mockEmailSender &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;type&lt;/span&gt; mockEmailSender &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
 	test        &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T
 	sendCalled  &lt;span style=&#34;color: #B00040&#34;&gt;bool&lt;/span&gt;
 	sendSubject &lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;

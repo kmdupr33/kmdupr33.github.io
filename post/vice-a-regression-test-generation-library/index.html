@@ -160,7 +160,7 @@
 
 <p>Suppose we have a simple class that reverses a string:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Reverser</span> <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Reverser</span> <span style="color: #666666">{</span>
     <span style="color: #008000; font-weight: bold">public</span> String <span style="color: #0000FF">reverse</span><span style="color: #666666">(</span>String string<span style="color: #666666">)</span> <span style="color: #666666">{</span>
         <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000; font-weight: bold">new</span> StringBuilder<span style="color: #666666">(</span>string<span style="color: #666666">).</span><span style="color: #7D9029">reverse</span><span style="color: #666666">().</span><span style="color: #7D9029">toString</span><span style="color: #666666">();</span>
     <span style="color: #666666">}</span>
@@ -170,7 +170,7 @@
 
 <p>Suppose further that we don&rsquo;t like the way <code>Reverser.reverse</code> is implemented. If we want to be sure that our modifications don&rsquo;t break anything, we would normally write a unit test for this method that looks like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">ReverserCharacterization</span> <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">ReverserCharacterization</span> <span style="color: #666666">{</span>
   <span style="color: #AA22FF">@Test</span>
   <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeReverse</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     Reverser reverser <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Reverser<span style="color: #666666">();</span>
@@ -185,7 +185,7 @@
 
 <p>First, we create a <code>ViceMaker</code> object:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@ViceFor</span><span style="color: #666666">(</span>Reverser<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">)</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@ViceFor</span><span style="color: #666666">(</span>Reverser<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">)</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">ViceMaker</span> <span style="color: #666666">{</span>
     <span style="color: #AA22FF">@Clamp</span>
     <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">clampReverse</span><span style="color: #666666">(</span>Reverser reverser<span style="color: #666666">)</span> <span style="color: #666666">{</span>
@@ -197,7 +197,7 @@
 
 <p>Next, we run <code>Vice.make</code>, passing in the class of our <code>ViceMaker</code> and the path where we want our generated tests to live:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">final</span> Vice vice <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Vice<span style="color: #666666">();</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">final</span> Vice vice <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Vice<span style="color: #666666">();</span>
 <span style="color: #008000; font-weight: bold">final</span> String pathToGeneratedCharacterizationTest
         <span style="color: #666666">=</span> <span style="color: #BA2121">&quot;/Users/mattdupree/Developer/Vice/src/test/java/&quot;</span><span style="color: #666666">;</span>
 <span style="color: #008000; font-weight: bold">final</span> Path testFilesPath <span style="color: #666666">=</span> Paths<span style="color: #666666">.</span><span style="color: #7D9029">get</span><span style="color: #666666">(</span>pathToGeneratedCharacterizationTest<span style="color: #666666">);</span>
@@ -207,7 +207,7 @@ vice<span style="color: #666666">.</span><span style="color: #7D9029">make</span
 
 <p>Once the above code is run, you&rsquo;ll have regression test generated with code that is identical the code we would have written:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">ReverserCharacterization</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">ReverserCharacterization</span> <span style="color: #666666">{</span>
   <span style="color: #AA22FF">@Test</span>
   <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeReverse</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     Reverser reverser <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Reverser<span style="color: #666666">();</span>
@@ -244,15 +244,7 @@ vice<span style="color: #666666">.</span><span style="color: #7D9029">make</span
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

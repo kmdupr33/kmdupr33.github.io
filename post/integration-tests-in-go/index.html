@@ -176,7 +176,7 @@
 
 <p>The <code>TestMain()</code> function is a great way to perform the extra setup and teardown of your test database. When there&rsquo;s a <code>TestMain()</code> function in any of your test files, that function is called directly by <code>go test</code>. The function can then perform any necessary setup, run the tests, and then teardown whatever was needed to support the tests:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> TestMain(m <span style="color: #666666">*</span>testing.M) {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestMain(m <span style="color: #666666">*</span>testing.M) {
     setupDatabase()
     result <span style="color: #666666">:=</span> m.Run()
     teardownDatabase()
@@ -191,7 +191,7 @@
 
 <p>Fortunately, the testing package itself suggests a solution to this problem. The testing package actually has a function called <code>testing.Short()</code>. This function returns true if the <code>-short</code> flag has been passed into the <code>go test</code> command. Tests can check the value of <code>Short()</code> to determine whether they should execute code and/or tests that will take a long time. This flag could be leveraged to determine whether the tests should spin up external services for integration tests:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> TestMain(m <span style="color: #666666">*</span>testing.M) {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestMain(m <span style="color: #666666">*</span>testing.M) {
 <span style="background-color: #ffffcc">    flag.Parse()
 </span><span style="background-color: #ffffcc">    <span style="color: #008000; font-weight: bold">if</span> !testing.Short() {
 </span><span style="background-color: #ffffcc">        setupDatabase()    
@@ -207,7 +207,7 @@
 
 <p>The actual integration tests can check the value of <code>testing.Short()</code> to see if they should execute:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">func</span> TestDatabaseGet(t <span style="color: #666666">*</span>testing.T) {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestDatabaseGet(t <span style="color: #666666">*</span>testing.T) {
     <span style="color: #008000; font-weight: bold">if</span> testing.Short() {
         t.Skip()
     }
@@ -236,7 +236,7 @@
 
 <p>Briefly, here&rsquo;s how you could support that behavior in <code>TestMain()</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">var</span> (
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">var</span> (
     database = flag.Bool(<span style="color: #BA2121">&quot;database&quot;</span>, <span style="color: #008000; font-weight: bold">false</span>, <span style="color: #BA2121">&quot;run database integration tests&quot;</span>)    
     messageQueue = flag.Bool(<span style="color: #BA2121">&quot;messageQueue&quot;</span>, <span style="color: #008000; font-weight: bold">false</span>, <span style="color: #BA2121">&quot;run message queue integration tests&quot;</span>)
 )
@@ -286,15 +286,7 @@
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

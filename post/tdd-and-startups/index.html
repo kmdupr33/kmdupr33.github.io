@@ -19,20 +19,26 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  	<meta property="og:title" content=" Developer Golf &middot;  Philosophical Hacker" />
+  	<meta property="og:title" content=" TDD and Startups &middot;  Philosophical Hacker" />
   	<meta property="og:site_name" content="Philosophical Hacker" />
-  	<meta property="og:url" content="http://philosophicalhacker.com/2015/06/07/developer-golf/" />
+  	<meta property="og:url" content="http://philosophicalhacker.com/post/tdd-and-startups/" />
 
     
   	<meta property="og:type" content="article" />
 
-    <meta property="og:article:published_time" content="2015-06-07T13:16:29Z" />
+    <meta property="og:article:published_time" content="2016-10-16T13:32:57-04:00" />
 
+    
+    <meta property="og:article:tag" content="testing" />
+    
+    <meta property="og:article:tag" content="tdd by example" />
+    
+    <meta property="og:article:tag" content="startups" />
     
     
 
   <title>
-     Developer Golf &middot;  Philosophical Hacker
+     TDD and Startups &middot;  Philosophical Hacker
   </title>
 
     <meta name="description" content="Articles on android development" />
@@ -56,7 +62,7 @@
     
     <meta name="generator" content="Hugo 0.15" />
 
-    <link rel="canonical" href="http://philosophicalhacker.com/2015/06/07/developer-golf/" />
+    <link rel="canonical" href="http://philosophicalhacker.com/post/tdd-and-startups/" />
     
   
     <script>
@@ -126,15 +132,21 @@
   <article class="post post">
 
     <header class="post-header">
-        <h1 class="post-title">Developer Golf</h1>
+        <h1 class="post-title">TDD and Startups</h1>
         <small></small>
 
         <section class="post-meta">
         
-          <time class="post-date" datetime="2015-06-07T13:16:29Z">
-            Jun 7, 2015
+          <time class="post-date" datetime="2016-10-16T13:32:57-04:00">
+            Oct 16, 2016
           </time>
         
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/tdd-by-example/">#tdd by example</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/startups/">#startups</a></span>
          
         </section>
     </header>
@@ -142,61 +154,33 @@
     <section class="post-content">
       
 
-<h2 id="developer-golf-http-www-philosophicalhacker-com-wp-content-uploads-2015-06-developer-golf-png-http-www-philosophicalhacker-com-wp-content-uploads-2015-06-developer-golf-png:eb9f68c5ab418835dc2b3f836f4898aa"><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/06/Developer-golf.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/06/Developer-golf.png" alt="Developer golf" /></a></h2>
-
-<h2 id="what-is-developer-golf:eb9f68c5ab418835dc2b3f836f4898aa">What is Developer Golf?</h2>
-
-<p>Developer golf is a fun way to measure developer performance. It turns our job into a game of producing the most lines of high quality (bug free) code.</p>
-
-<h2 id="how-do-you-play:eb9f68c5ab418835dc2b3f836f4898aa">How do you play?</h2>
-
-<p>You win developer golf in the same way that you win any golf game: by having the least amount of **strokes <strong>at the end of</strong> a course**.</p>
-
-<p>A <strong>stroke</strong> in developer golf is a bug that makes it past the developer, whether that bug is found by QA or by users (in production). Once the cause of the bug is found, <code>git-blame</code> can be used to determine which developer gains a stroke for the bug.</p>
-
-<p>A <strong>course </strong>in developer golf could be a sprint or a release. <strong>Par</strong> for the course is calculated by averaging out the ratio of story points to bugs for all previous sprints and/or releases and then dividing that number by the number of developers on a team. Here&rsquo;s an example:</p>
-
-<blockquote>Sprint 1: 140 story points/14 bugs
-
-Sprint 2: 160 story points/16 bugs
-
-Sprint 3: 130 story points/ 13 bugs
-
-Average story point to bug ratio: 10
-
-Number of devs on a team: 2
-
-Par for the next course: 5</blockquote>
-
-<p><strong>Mulligans</strong> can be earned by contributing significantly more code than your team members. Mulligans are earned prior to the start of a course. In order to determine how many mulligans a developer has:</p>
-
-<ol>
-<li><p>For every developer, calculate her average number of contributions (additions and deletions) per week.</p></li>
-
-<li><p>Calculate the standard deviation for weekly team member contributions.</p></li>
-
-<li><p>The number of mulligans a developer has earned is equal to the square of the number of standard deviations her average weekly contribution is above the average weekly contribution for all developers. (You can&rsquo;t have negative mulligans.)</p></li>
-</ol>
-
-<p>Here&rsquo;s an example:</p>
+<p>Beck introduces <em>TDD by Example</em> with a little story meant to show the business value of automated testing:</p>
 
 <blockquote>
-<p><strong>Average weekly contributions:</strong></p>
-
-<p>Bob: 1000 contributions</p>
-
-<p>Barbara: 2000 contributions</p>
-
-<p>Billy: 3000 contributions</p>
-
-<p><strong>Standard deviation: 1000</strong></p>
-
-<p>Billy gets a mulligan.</p>
+<p>Early one Friday, the boss came to Ward Cunningham to introduce him to Peter, a prospective customer for WyCash, the bond portfolio management system the company was selling. Peter said&hellip;&ldquo;I&rsquo;m starting a new bond fund, and my strategy requires that I handle bonds in different currencies.” The boss turned to Ward, “Well, can we do it?&rdquo;&hellip;The trick now was to make space for the new functionality without breaking anything that already worked. What would happen if Ward just ran the tests? After the addition of a few unimplemented operations to Currency, the bulk of the tests passed. By the end of the day, all of the tests were passing. Ward checked the code into the build and went to the boss. “We can do it,” he said confidently. Let&rsquo;s think a bit about this story. In two days, the potential market was multiplied several fold, multiplying the value of WyCash several fold. The ability to create so much business value so quickly was no accident, however.</p>
 </blockquote>
 
-<p><strong>Team play:</strong> You could introduce team play simply by treating teams as you would individuals.</p>
+<p>This little parable actually reminded me of the way that Steve Freeman and Nat Pryce talk about the business value of automated testing in <em>Growing Object Oriented Software Guided by Tests</em>:</p>
 
-<p>Happy golfing!</p>
+<blockquote>
+<p>We’ve found that we need two technical foundations if we want to grow a system reliably and to cope with the unanticipated changes that always happen. First, we need constant testing to catch regression errors, so we can add new features without breaking existing ones. For systems of any interesting size, frequent manual testing is just impractical&hellip;Second, we need to keep the code as simple as possible, so it’s easier to understand and modify&hellip;The test suites in the feedback loops protect us against our own mistakes as we improve (and therefore change) the code.</p>
+</blockquote>
+
+<p>I think these two snippets are making similar points: automated tests can create immense business value because it allows deep changes to be made to an existing system while preserving confidence that the system will continue working as expected. I think this ability is especially important for startups who are trying to find product-market fit or beat out a competitor.</p>
+
+<p>I sometimes suspect that Facebook&rsquo;s success over Friendster and MySpace is partially due to the fact that they had the automated tests in place to experiment a ton with the features of Facebook and that these experiments let them iterate faster (Zuckerberg actually talks about this in <a href="https://www.youtube.com/watch?v=Lb4IcGF5iTQ">his &ldquo;How to Build the Future&rdquo; episode</a>). Iterating faster, according to Eric Reis in <em>The Lean Startup</em>, isn&rsquo;t just the key to maximizing chances of building something people want. It&rsquo;s also a great way to gain a competitive edge:</p>
+
+<blockquote>
+<p>The reason to build a new team to pursue an idea is that you believe you can accelerate through the Build-Measure-Learn feedback loop faster than anyone else can. If that’s true, it makes no difference what the competition knows. If it’s not true, a startup has much bigger problems&hellip;</p>
+</blockquote>
+
+<p>I actually think this is one of the most under-rated arguments for investing in extensive automated testing. When considering whether to write tests, I suspect a lot of developers think, &ldquo;Well, I can get it working without tests, so why bother writing them?&rdquo; Unfortunately, this overlooks the key issue, which, if Beck, Freeman and Pryce, and Reis are right, is this: &ldquo;How can I structure my system so that I can make the biggest possible changes while maintaining confidence that the functionality is correct?&rdquo;<sup>1</sup> If TDD folks are right, moreover, the answer to this key question is of course to do TDD.</p>
+
+<h3 id="notes:758ef2c35412a7b4b3fc0c0663789a9e">Notes:</h3>
+
+<ol>
+<li>Of course, if you&rsquo;re not building a product whose features are likely to change, then this argument for testing doesn&rsquo;t apply.</li>
+</ol>
 
     </section>
 
@@ -225,19 +209,19 @@ Par for the next course: 5</blockquote>
     
 <section class="share">
   <h4>Share this post</h4>
-  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Developer%20Golf&amp;url=http%3a%2f%2fphilosophicalhacker.com%2f2015%2f06%2f07%2fdeveloper-golf%2f"
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=TDD%20and%20Startups&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2ftdd-and-startups%2f"
       onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
       <span class="hidden">Twitter</span>
   </a>
-  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2f2015%2f06%2f07%2fdeveloper-golf%2f"
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2fpost%2ftdd-and-startups%2f"
       onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
       <span class="hidden">Facebook</span>
   </a>
-  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2f2015%2f06%2f07%2fdeveloper-golf%2f&amp;description=Developer%20Golf"
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2ftdd-and-startups%2f&amp;description=TDD%20and%20Startups"
       onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
       <span class="hidden">Pinterest</span>
   </a>
-  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2f2015%2f06%2f07%2fdeveloper-golf%2f"
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2ftdd-and-startups%2f"
      onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
       <span class="hidden">Google+</span>
   </a>
@@ -250,7 +234,7 @@ Par for the next course: 5</blockquote>
 <div id="disqus_thread"></div>
 <script type="text/javascript">
   var disqus_shortname = 'philosophicalhacker';
-  var disqus_url = 'http:\/\/philosophicalhacker.com\/2015\/06\/07\/developer-golf\/';
+  var disqus_url = 'http:\/\/philosophicalhacker.com\/post\/tdd-and-startups\/';
   (function() {
     var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
     dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';

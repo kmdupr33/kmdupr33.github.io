@@ -158,7 +158,7 @@
 
 <p>Android architectures that rely on MVP are forced to use behavior-based verification in their unit tests. Behavior-based verification is about ensuring that the unit being tested is interacting properly with it&rsquo;s collaborators. For example, consider this test from <a href="https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#5">Google&rsquo;s testing code lab</a>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@Test</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">loadNotesFromRepositoryAndLoadIntoView</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
    <span style="color: #408080; font-style: italic">// Given an initialized NotesPresenter with initialized notes</span>
    <span style="color: #408080; font-style: italic">// When loading of Notes is requested</span>
@@ -205,7 +205,7 @@
 
 <p>Last time, I showed how we might implement this functionality according to the principles of React and Redux. Again those principles are that the content of a screen is a function of some view-state object and updates to the screen are a function of some view-state object and some action describing a user&rsquo;s interaction with the screen. Here&rsquo;s what our React/Redux-like code looked like:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="background-color: #ffffcc"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> Reducer reducer <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Reducer<span style="color: #666666">();</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #ffffcc"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> Reducer reducer <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Reducer<span style="color: #666666">();</span>
 </span><span style="color: #408080; font-style: italic">// The OnClickListener for the Switch widgets on the navigation filter.</span>
 <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
         <span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
@@ -237,7 +237,7 @@
 
 <p>Recall that the <code>reloadFragment</code> call uses the <code>mTagFilterHolder</code> as a view-state object to determine what get&rsquo;s rendered to the screen. Testing this <code>reduce</code> method doesn&rsquo;t require the use of mocks:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@Test</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">shouldToggleFilter</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//Arrange</span>
     ExploreSessionsActivity<span style="color: #666666">.</span><span style="color: #7D9029">Reducer</span> reducer <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> ExploreSessionsActivity<span style="color: #666666">.</span><span style="color: #7D9029">Reducer</span><span style="color: #666666">();</span>
@@ -268,15 +268,7 @@
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

@@ -164,7 +164,7 @@
 
 <p><a href="https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#0">The Android testing code lab</a> walks you through the process of creating tests for a Todo application. One of the features of the todo application is that it shows a list of todos. This feature is implemented by a <code>NotesPresenter</code> class (presenter as in &ldquo;<a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter">Model View Presenter</a>&rdquo;). While I was looking at the testing code lab on testing, I stumbled upon something disturbing within the <code>NotesPresenter</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@Override</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">loadNotes</span><span style="color: #666666">(</span><span style="color: #B00040">boolean</span> forceUpdate<span style="color: #666666">)</span> <span style="color: #666666">{</span>    
     <span style="color: #408080; font-style: italic">//...</span>
 
@@ -196,7 +196,7 @@
 
 <p>For example, suppose we have an espresso test that verifies that the todo notes are displayed after they are loaded and that the progressIndicator in the view is hidden after those notes are loaded:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@Test</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">showNotes</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
     onView<span style="color: #666666">(</span>withId<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">id</span><span style="color: #666666">.</span><span style="color: #7D9029">progressIndicator</span><span style="color: #666666">)).</span><span style="color: #7D9029">check</span><span style="color: #666666">(</span>matches<span style="color: #666666">(</span>not<span style="color: #666666">(</span>isDisplayed<span style="color: #666666">())));</span>
     onView<span style="color: #666666">(</span>withId<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">id</span><span style="color: #666666">.</span><span style="color: #7D9029">notes_list</span><span style="color: #666666">)).</span><span style="color: #7D9029">check</span><span style="color: #666666">(</span>matches<span style="color: #666666">(</span>isDisplayed<span style="color: #666666">()));</span>
@@ -208,7 +208,7 @@
 
 <p>Let&rsquo;s take a second look at the disturbing code:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@Override</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">loadNotes</span><span style="color: #666666">(</span><span style="color: #B00040">boolean</span> forceUpdate<span style="color: #666666">)</span> <span style="color: #666666">{</span>    
     <span style="color: #408080; font-style: italic">//...</span>
 
@@ -240,7 +240,7 @@
 
 <p>Instead of mixing responsibilities, register your <code>IdlingResource</code> in your tests-related code, where test-related responsibilities belong. One way to do this is the use dependency injection and decorators. The code lab project already has a limited dependency injection mechanism, so we can just use that. The project has a dependency injector that&rsquo;s specifically used for testing called <code>Injection.</code> All we need to do is decorate the <code>NotesRepository</code> that&rsquo;s injected by the <code>Injection</code> class, and we have what we need to avoid mixing responsibilities:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">static</span> NotesRepository <span style="color: #0000FF">provideNotesRepository</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">static</span> NotesRepository <span style="color: #0000FF">provideNotesRepository</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #008000; font-weight: bold">final</span> NotesRepository inMemoryRepoInstance
       <span style="color: #666666">=</span> NoteRepositories<span style="color: #666666">.</span><span style="color: #7D9029">getInMemoryRepoInstance</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> FakeNotesServiceApiImpl<span style="color: #666666">());</span>
     <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000; font-weight: bold">new</span> NotesRepository<span style="color: #666666">()</span> <span style="color: #666666">{</span>
@@ -264,7 +264,7 @@
 
 <p>The <code>NotesRepository</code> returned by this method gets injected into the <code>Presenter</code> here:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">NotesFragment</span> <span style="color: #008000; font-weight: bold">extends</span> Fragment <span style="color: #008000; font-weight: bold">implements</span> NotesContract<span style="color: #666666">.</span><span style="color: #7D9029">View</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">NotesFragment</span> <span style="color: #008000; font-weight: bold">extends</span> Fragment <span style="color: #008000; font-weight: bold">implements</span> NotesContract<span style="color: #666666">.</span><span style="color: #7D9029">View</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...</span>
     <span style="color: #AA22FF">@Override</span>
     <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span><span style="color: #AA22FF">@Nullable</span> Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
@@ -285,15 +285,7 @@
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

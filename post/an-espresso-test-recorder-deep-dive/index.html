@@ -158,7 +158,7 @@
 
 <p>Before I took a look at the source for the espresso recorder, I half expected to find some fancy bytecode manipulation of the sort we see for the <a href="https://android.googlesource.com/platform/tools/base/+/gradle_2.0.0/build-system/gradle-core/src/main/groovy/com/android/build/gradle/internal/transforms">proguard or jacoco transformers</a>. I was surprised to find that the espresso recorder actually relies heavily on breakpoints and the java debugger. To see this, let&rsquo;s start at the code that gets executed when you press the &ldquo;record espresso test button:&rdquo;</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">TestRecorderAction</span> <span style="color: #008000; font-weight: bold">extends</span> AnAction <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">TestRecorderAction</span> <span style="color: #008000; font-weight: bold">extends</span> AnAction <span style="color: #666666">{</span>
   <span style="color: #AA22FF">@Override</span>
   <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">actionPerformed</span><span style="color: #666666">(</span>AnActionEvent event<span style="color: #666666">)</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...    </span>
@@ -183,7 +183,7 @@
 
 <p>The <code>environment</code> variable here is just an <code>ExecutionEnvironment,</code> an object that uses an android studio run configuration to run the app. So, the code here is (roughly) using a run configuration to start the app and creating a <code>SessionInitializer</code> once the app process starts. Let&rsquo;s look at what the <code>SessionInitializer</code> does:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">SessionInitializer</span> <span style="color: #008000; font-weight: bold">implements</span> Runnable <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">SessionInitializer</span> <span style="color: #008000; font-weight: bold">implements</span> Runnable <span style="color: #666666">{</span>
   <span style="color: #008000; font-weight: bold">public</span> <span style="color: #0000FF">SessionInitializer</span><span style="color: #666666">(</span>AndroidFacet facet<span style="color: #666666">,</span> ExecutionEnvironment environment<span style="color: #666666">,</span> LaunchOptionState launchOptionState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...</span>
     myBreakpointDescriptors<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> BreakpointDescriptor<span style="color: #666666">(</span>VIEW_CLICK<span style="color: #666666">,</span>
@@ -219,7 +219,7 @@
 
 <p>Here they are just creating BreakpointDescriptor that will be used to create <em>method breakpoints</em> so that they can capture information about the parameters that are passed in to these methods. Here&rsquo;s where the method breakpints are created:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">private</span> Set<span style="color: #666666">&lt;</span>BreakpointCommand<span style="color: #666666">&gt;</span> <span style="color: #0000FF">scheduleBreakpointCommands</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> Set<span style="color: #666666">&lt;</span>BreakpointCommand<span style="color: #666666">&gt;</span> <span style="color: #0000FF">scheduleBreakpointCommands</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
   Set<span style="color: #666666">&lt;</span>BreakpointCommand<span style="color: #666666">&gt;</span> breakpointCommands <span style="color: #666666">=</span> Sets<span style="color: #666666">.</span><span style="color: #7D9029">newHashSet</span><span style="color: #666666">();</span>
   DebugProcessImpl debugProcess <span style="color: #666666">=</span> myDebuggerSession<span style="color: #666666">.</span><span style="color: #7D9029">getProcess</span><span style="color: #666666">();</span>
   <span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span>BreakpointDescriptor breakpointDescriptor <span style="color: #666666">:</span> myBreakpointDescriptors<span style="color: #666666">)</span> <span style="color: #666666">{</span>
@@ -235,7 +235,7 @@
 
 <p>These <code>BreakpointCommand</code>s are apparently nothing special. They are subclasses of <code>DebuggerCommandImpl</code>, a class that&rsquo;s a part of the IntelliJ source code. These breakpoint commands simply notify a <code>TestRecorderEventListener</code> with a <code>TestRecorderEvent</code> whenever a breakpoint is hit. The <code>TestRecorderEvent</code> contains the info needed to write out the espresso tests and this info is snagged from the (paused) Execution context when the debugger stops at a breakpoint. Here&rsquo;s a hint of how some of that works:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@Nullable</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Nullable</span>
 <span style="color: #008000; font-weight: bold">private</span> TestRecorderEvent <span style="color: #0000FF">prepareEvent</span><span style="color: #666666">(</span>EvaluationContextImpl evalContext<span style="color: #666666">,</span> NodeManagerImpl nodeManager<span style="color: #666666">)</span> <span style="color: #666666">{</span>
   TestRecorderEvent event <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> TestRecorderEvent<span style="color: #666666">(</span>myBreakpointDescriptor<span style="color: #666666">.</span><span style="color: #7D9029">eventType</span><span style="color: #666666">,</span> System<span style="color: #666666">.</span><span style="color: #7D9029">currentTimeMillis</span><span style="color: #666666">());</span>
 
@@ -258,7 +258,7 @@
 
 <p>Here&rsquo;s a nice lower-level method that gets close to the IntelliJ api for accessing the data from the paused execution context:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">private</span> Value <span style="color: #0000FF">evaluateExpression</span><span style="color: #666666">(</span>String expression<span style="color: #666666">,</span> EvaluationContextImpl evalContext<span style="color: #666666">,</span> NodeManagerImpl nodeManager<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> Value <span style="color: #0000FF">evaluateExpression</span><span style="color: #666666">(</span>String expression<span style="color: #666666">,</span> EvaluationContextImpl evalContext<span style="color: #666666">,</span> NodeManagerImpl nodeManager<span style="color: #666666">)</span> <span style="color: #666666">{</span>
   TextWithImports text <span style="color: #666666">=</span> TextWithImportsImpl<span style="color: #666666">.</span><span style="color: #7D9029">fromXExpression</span><span style="color: #666666">(</span>XExpressionImpl<span style="color: #666666">.</span><span style="color: #7D9029">fromText</span><span style="color: #666666">(</span>expression<span style="color: #666666">));</span>
   WatchItemDescriptor descriptor <span style="color: #666666">=</span> nodeManager<span style="color: #666666">.</span><span style="color: #7D9029">getWatchItemDescriptor</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">,</span> text<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">);</span>
   descriptor<span style="color: #666666">.</span><span style="color: #7D9029">setContext</span><span style="color: #666666">(</span>evalContext<span style="color: #666666">);</span>
@@ -271,7 +271,7 @@
 
 <p>Now, that we have some idea of how the information for writing the source files is collected, let&rsquo;s look at how Google uses that info to actually write out the espresso test files. Let&rsquo;s start at the code that gets called when you click the &ldquo;Complete Recording&rdquo; button:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%">myCompleteRecordingButton<span style="color: #666666">.</span><span style="color: #7D9029">addActionListener</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> ActionListener<span style="color: #666666">()</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>myCompleteRecordingButton<span style="color: #666666">.</span><span style="color: #7D9029">addActionListener</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> ActionListener<span style="color: #666666">()</span> <span style="color: #666666">{</span>
   <span style="color: #AA22FF">@Override</span>
   <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">actionPerformed</span><span style="color: #666666">(</span>ActionEvent e<span style="color: #666666">)</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...</span>
@@ -301,7 +301,7 @@
 
 <p>Looks like most of the work of generating the test code lives in this <code>TestCodeGenerator</code> class, so let&rsquo;s look at that:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">TestCodeGenerator</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">TestCodeGenerator</span> <span style="color: #666666">{</span>
   <span style="color: #408080; font-style: italic">//...</span>
   <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">generate</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...</span>
@@ -354,15 +354,7 @@
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

@@ -164,7 +164,7 @@
 
 <p>In order to test the <code>isSpace()</code> function from outside of the fmt package, the standard lib authors created a export_test.go file in the fmt package. This file simply exports the parts of the un-exported interface that they wanted to test:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #408080; font-style: italic">//export_test.go</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">//export_test.go</span>
 <span style="color: #008000; font-weight: bold">package</span> fmt
 
 <span style="color: #008000; font-weight: bold">var</span> IsSpace = isSpace
@@ -175,7 +175,7 @@
 
 <p>Sometimes, however, we want to test more than just an un-exported function from a package. Sometimes, we may want to test the methods of an un-exported struct. Say you&rsquo;ve got a struct like <code>lruCache</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #408080; font-style: italic">//cache.go</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">//cache.go</span>
 
 <span style="color: #008000; font-weight: bold">type</span> lruCache <span style="color: #008000; font-weight: bold">struct</span> {
 	<span style="color: #408080; font-style: italic">//...</span>
@@ -193,7 +193,7 @@ Now, suppose you wanted to test the <span style="color: #BA2121">`GetGopher()`</
 </pre></div>
 
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #408080; font-style: italic">//export_test.go</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">//export_test.go</span>
 
 <span style="color: #008000; font-weight: bold">type</span> LRUCache <span style="color: #008000; font-weight: bold">struct</span> {
 	lruCache
@@ -215,15 +215,7 @@ Now, suppose you wanted to test the <span style="color: #BA2121">`GetGopher()`</
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

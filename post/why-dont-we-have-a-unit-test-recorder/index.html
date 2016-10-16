@@ -172,7 +172,7 @@
 
 <p>Doing this on Android was trickier than I first imagined. I thought that I could just use Bytebuddy to rewrite providers to return recorders like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #AA22FF">@Override</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
 <span style="color: #008000; font-weight: bold">public</span> List<span style="color: #666666">&lt;</span>RecordingObject<span style="color: #666666">&gt;</span> <span style="color: #0000FF">rewrite</span><span style="color: #666666">(</span>Method providers<span style="color: #666666">,</span> <span style="color: #B00040">boolean</span> isAndroid<span style="color: #666666">)</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...</span>
     <span style="color: #008000; font-weight: bold">final</span> Map<span style="color: #666666">&lt;</span>Class<span style="color: #666666">&lt;?&gt;,</span> List<span style="color: #666666">&lt;</span>Provider<span style="color: #666666">&gt;&gt;</span> classesGroup
@@ -235,15 +235,7 @@
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">

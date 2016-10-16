@@ -267,6 +267,10 @@
     
         
     
+        
+    
+        
+    
 
     
         
@@ -290,6 +294,69 @@
 </nav>
 
     </div>
+
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/06/19/introduction-to-rxjava-for-android-pt-2/">Introduction to RxJava for Android (Pt. 2)</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p><p>I concluded my last post by summing up what we&rsquo;ve seen so far and what we still need to understand about RxJava:</p>
+
+<blockquote>We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that’s interested. We still don’t know, however, what it means for a data stream to be “functionally transformed” nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I’ll have to tackle in the second part of this written version of my upcoming RxJava talk.</blockquote>
+
+<p>In this post, I&rsquo;ll fill in the missing gaps in our understanding of my initial statement of what RxJava allows us to do.</p>
+ <a class="read-more" href="/2015/06/19/introduction-to-rxjava-for-android-pt-2/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        
+            
+        
+        on
+            
+                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="http://philosophicalhacker.com/tags/rxjava/">#rxjava</a>,
+            
+        
+        <time class="post-date" datetime="2015-06-19T12:19:14Z">
+            19 Jun 2015
+        </time>
+    </footer>
+</article>
+
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/06/16/introduction-to-rxjava-for-android-the-talk/">Introduction to RxJava for Android: The Talk</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Earlier today, I gave my Intro To RxJava talk. I&rsquo;m not thrilled at how clear I was at explaining certain aspects of RxJava, but here&rsquo;s the video nonetheless. My talk starts at 28:32. Hopefully, I&rsquo;ll do a better job when I finish the written version of this talk. If you want to hear a hilarious take down of the design of the new Pizza Hut app, check out Ian&rsquo;s talk that happens before mine. <a class="read-more" href="/2015/06/16/introduction-to-rxjava-for-android-the-talk/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        
+            
+        
+        on
+            
+                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="http://philosophicalhacker.com/tags/rxjava/">#rxjava</a>,
+            
+        
+        <time class="post-date" datetime="2015-06-17T01:48:45Z">
+            17 Jun 2015
+        </time>
+    </footer>
+</article>
 
     
         
@@ -557,78 +624,6 @@
         
         <time class="post-date" datetime="2015-05-08T11:46:13Z">
             8 May 2015
-        </time>
-    </footer>
-</article>
-
-    
-        
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">How to Make Our Android Apps Unit Testable (Pt. 1)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p><p>Unit testing Android apps is hard, and sometimes it can be impossible. For <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">the past two posts</a>, I’ve been explaining why android unit testing is so difficult. The main conclusion from <a href="http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">the last post</a> is that it is difficult/impossible to unit test our Android applications because of the way we are encouraged to structure them. Google seems to want us to put our business logic in app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s, etc.). This approach to writing Android applications is what I have been calling the “standard way.”</p>
-
-<p>In this post, I outline an alternative approach to structuring Android applications that will make it easier to unit test them. As I pointed out in <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">the introduction to this series</a>, the approach that I suggest is a generalization of the approach that Square uses to <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html">remove Fragments from their applications</a>. Since this approach is inspired by the folks at Square, I will call it “the square way.”</p>
-
-<p>The heart of the square way way is this: remove all business logic from app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s) and place that logic into “business objects,” POJO objects whose dependencies are injected, android-specific implementations of android-agnostic interfaces. If we follow the square way of developing our apps, we will be in a better position to unit test them. In this post, I explain how the square way would have us refactor non-UI app components like the <code>SessionCalendarService</code> I’ve been discussing for the past few posts.</p>
- <a class="read-more" href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        
-            
-        
-        on
-            
-                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="http://philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-01T11:30:24Z">
-            1 May 2015
-        </time>
-    </footer>
-</article>
-
-    
-        
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">Why Android Unit Testing Is So Hard (Pt. 2)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p><p><strong>Edit:</strong> In <a href="http://philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">the post that concludes this series</a>, I point out that making unit testable Android apps does not require us to remove compile-time dependencies on the Android SDK and that attempting to do so is impractical anyway. Ignore anything in this post that suggests otherwise.</p>
-
-<hr />
-
-<p>In my <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">last post</a>, I showed that even the (intelligent) engineers over at Google have written some Android code that is simply untestable. More specifically, I showed that there’s no way to unit test the <code>SessionDetailActivity</code>’s <code>onStop()</code> method. I also gave a specific diagnosis for the untestability of <code>onStop()</code>: we can’t complete the arrange- and assert-steps of a test against <code>onStop()</code> because there is no way to alter the pre-act-state, nor is there a way to access the post-act-state for a test of <code>onStop()</code>. I ended the last post by claiming that some properties of the Android SDK, along with the standard way we are encouraged to structure our android apps, encourage us to write code that is difficult/impossible to unit test and by promising that I’d elaborate more on that claim in this post.</p>
-
-<p>Before I do that, let me say again that showing that the difficulty of testing Android applications is caused by the standard structure of android apps is important for the overarching goal of this series of articles. This series is an attempt to argue that we should consider restructuring our applications so that they do not explicitly depend on the Android SDK and its an attempt to present a robust architecture that will enhance the testability of Android applications. You can read the introduction to this series <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">here</a>. With that said, I can move on to trying to demonstrate the central claim of this post.</p>
-
-<p>There’s a standard way of developing android applications. Sample code and open source code alike both place an app’s business logic within Android app component classes, namely, Activities, Services, and Fragments. Going forward, I’m going to refer to this practice as “the standard way.” Here’s the central claim of this post: As long as we follow the “standard way”, we’re going to write code that’s either difficult or impossible to unit test. In other words, the untestable code that I pointed out in my last article is not a fluke. The standard way prevents us from unit testing key pieces of our applications.</p>
- <a class="read-more" href="/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        
-            
-        
-        on
-            
-                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="http://philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-04-24T11:44:49Z">
-            24 Apr 2015
         </time>
     </footer>
 </article>

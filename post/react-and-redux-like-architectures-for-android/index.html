@@ -178,7 +178,7 @@
 
 <p>Notice that when we tap one of the filter items in the IO app, the list of sessions updates so that it incorporates that filter. Let&rsquo;s start with how this is currently implemented in the IO app:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #408080; font-style: italic">// The OnClickListener for the Switch widgets on the navigation filter.</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">// The OnClickListener for the Switch widgets on the navigation filter.</span>
 <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
         <span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #AA22FF">@Override</span>
@@ -199,7 +199,7 @@
 
 <p>Note here that <code>mTagFilterHolder</code> is a state object that&rsquo;s used to determine what should be shown in the list. We can see this more clearly if we look at <code>reloadFragment()</code>, which looks like this:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">reloadFragment</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">reloadFragment</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">// Build the tag URI</span>
     Uri uri <span style="color: #666666">=</span> mCurrentUri<span style="color: #666666">;</span>
 
@@ -235,7 +235,7 @@
 
 <p>The <code>OnClickListener</code> we saw above is almost a reducer in Redux&rsquo;s sense of the word because it updates the view by updating the view-state object and telling the fragment to re-render itself. Let&rsquo;s take a second look at that <code>OnClickListener</code> to remind ourselves of this:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #408080; font-style: italic">// The OnClickListener for the Switch widgets on the navigation filter.</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">// The OnClickListener for the Switch widgets on the navigation filter.</span>
 <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
         <span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #AA22FF">@Override</span>
@@ -256,7 +256,7 @@
 
 <p>This <code>ClickListener</code> isn&rsquo;t quite a reducer. Remember: reducers are functions of a view-state object and an object that describes a view-related action that just occurred. This <code>ClickListener</code>, however, is in a good position to call a reducer function:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
         <span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #AA22FF">@Override</span>
     <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onClick</span><span style="color: #666666">(</span>View v<span style="color: #666666">)</span> <span style="color: #666666">{</span>
@@ -292,15 +292,7 @@
   <footer class="post-footer">
 
 
-    
-
-    <section class="consulting">
-  <h2>I am available for consulting and/or freelance projects. Find out more <a href="http://philosophicalhacker.com/consulting.html">here.</a></h2>
-</section>
-
-    <section class="consulting">
-  <h2>I'm working on <a href="http://universityandroid.com">University Android</a>, a better way of learning Android Development.</h2>
-</section>
+        
 
     
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
