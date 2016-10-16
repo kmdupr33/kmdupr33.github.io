@@ -56,7 +56,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/2015/04/06/dont-call-it-mvp/" />
     
@@ -148,11 +148,11 @@
 
 <p>Lately there&rsquo;s been a lot of discussion about an alternative architectural pattern for Android development. The acronym that&rsquo;s being used to denote this alternative pattern is &rdquo;MVP.&rdquo; I think that &ldquo;MVP&rdquo; is an inaccurate and confusing designation for this pattern. In this post, I will say why I think &ldquo;MVP&rdquo; is a bad name for the pattern, and I&rsquo;ll suggest a different name for referring to it.</p>
 
-<h1 id="what-is-mvp:fc3765be4c525909ad78173b67c20ada">What is &rdquo;MVP?&rdquo;</h1>
+<h1 id="what-is-mvp">What is &rdquo;MVP?&rdquo;</h1>
 
 <p>There are plenty of blog posts out there that describe the &ldquo;MVP&rdquo; pattern, so I&rsquo;m not going to do that here. If you&rsquo;re not familiar with MVP, then I suggest checking out S<a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html">quare&rsquo;s tirade against fragments</a> or <a href="http://hannesdorfmann.com/android/mosby/">Hannes Dorfmann&rsquo;s post about his library that&rsquo;s supposed to help with implementing MVP</a>.</p>
 
-<h1 id="why-mvp-is-an-unhelpful-name:fc3765be4c525909ad78173b67c20ada">Why &ldquo;MVP&rdquo; is an Unhelpful Name</h1>
+<h1 id="why-mvp-is-an-unhelpful-name">Why &ldquo;MVP&rdquo; is an Unhelpful Name</h1>
 
 <p>The problem with the name &rdquo;MVP&rdquo; is that the <code>View</code>s in the MVP triad are actually quite different from the <code>View</code>s in Android SDK. They each have fundamentally different responsibilities, so we need a way to mark the difference between Android <code>View</code>s and MVP <code>View</code>s. Without clearly marking the difference between them, we make it more difficult to understand the &ldquo;MVP&rdquo; pattern and we run the risk of conflating the two object&rsquo;s responsibilities when we start trying to follow the MVP pattern.</p>
 
@@ -164,7 +164,7 @@
 
 <p>So, Android <code>View</code>s and MVP <code>View</code>s are fundamentally different, but both are present in any Android application that follows the &ldquo;MVP&rdquo; pattern. The name &ldquo;MVP&rdquo; obscures the difference between these two <code>View</code>s. That&rsquo;s why I think its unhelpful.</p>
 
-<h1 id="an-alternative-name:fc3765be4c525909ad78173b67c20ada">An Alternative Name</h1>
+<h1 id="an-alternative-name">An Alternative Name</h1>
 
 <p>Here&rsquo;s the new name I think we should use instead of &ldquo;MVP&rdquo;: MVVTP</p>
 
@@ -180,7 +180,7 @@
 
 <p>If we recall that MVP <code>View</code>s also forward UI events to their <code>Presenter</code>, we can see another reason why &ldquo;ViewTranslator&rdquo; is a better name for an MVP <code>View</code>. When an MVP <code>View</code> forwards a UI event to its <code>Presenter</code>, it is also translating that generic event into an application-specific one. It converts a generic <code>onClick()</code> event from a <code>TextView</code> to an application-specific <code>onRedditTitleClicked()</code> event.</p>
 
-<h1 id="conclusion:fc3765be4c525909ad78173b67c20ada">Conclusion</h1>
+<h1 id="conclusion">Conclusion</h1>
 
 <p>&ldquo;MVP&rdquo; is a bad name for the new architectural pattern that Android devs are talking about because it obscures the difference between MVP <code>View</code>s and Android <code>View</code>s. &ldquo;MVVTP,&rdquo; where VT stands for &ldquo;ViewTranslator&rdquo; is a better name for this pattern because it explicitly marks a difference between Android <code>View</code>s and <code>ViewTranslators</code>. Android <code>View</code>s know how to draw stuff, and they don&rsquo;t need any application-specific knowledge to do that. <code>ViewTranslators</code> translate application-specific requests from the <code>Presenter</code> into generic messages that Android <code>View</code>s can understand and they translate generic UI events from <code>View</code>s to application-specific events that the <code>Presenter</code>can act on.</p>
 

@@ -56,7 +56,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/post/getting-started-with-gomock/" />
     
@@ -144,11 +144,11 @@
     </header>
 
     <section class="post-content">
-      
+      <p>In <a href="http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing">my last post</a>, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&rsquo;s a brief tutorial on how to get started with gomock.</p>
 
-<p>In <a href="http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing">my last post</a>, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&rsquo;s a brief tutorial on how to get started with gomock.</p>
+<p></p>
 
-<h3 id="your-first-mock-utilizing-test:6cd9afeec5930d76953b73f2578dd3db">Your first mock-utilizing test</h3>
+<h3 id="your-first-mock-utilizing-test">Your first mock-utilizing test</h3>
 
 <p>To get started using gomock, first follow the installation instructions laid out in the gomock <a href="https://github.com/golang/mock">repo&rsquo;s readme</a>. Once you&rsquo;ve installed gomock, you can start generating mocks for your tests. Let&rsquo;s explore how gomock works with an example.</p>
 
@@ -222,7 +222,7 @@ GopherFinder
 
 <p>The highlighted line above is the call where you actually specify which methods the mock <code>GopherFinder</code> is expecting to receive during the test. Here we tell the mock that we&rsquo;re expecting a call to the <code>Find()</code> method with an argument of &ldquo;andrewgerrand.&rdquo;</p>
 
-<h1 id="handling-circular-dependencies:6cd9afeec5930d76953b73f2578dd3db">Handling Circular Dependencies</h1>
+<h1 id="handling-circular-dependencies">Handling Circular Dependencies</h1>
 
 <p>Notice that the package for the above snippet of code is <code>philhackerblogcode_test</code> instead of <code>philhackerblogcode</code>. Typically, tests are placed in the same package as the code that those tests exercise, but if you do this when using gomock you are probably going to introduce a circular dependency between the package you are testing and the package that contains the generated mock code.</p>
 
@@ -230,13 +230,13 @@ GopherFinder
 
 <p>The way to avoid this circular dependency is to place your tests in a package that&rsquo;s different from the package you are testing. Next, have your test code import both the package you&rsquo;d like to test and the mock package that the test depends upon. As Andrew Gerrand points out in his <a href="https://www.youtube.com/watch?v=ndmB0bj7eyw">testing techniques talk</a>, this is a standard way of avoiding circular circular dependencies while testing.</p>
 
-<h1 id="stubbing-with-gomock:6cd9afeec5930d76953b73f2578dd3db">Stubbing with gomock</h1>
+<h1 id="stubbing-with-gomock">Stubbing with gomock</h1>
 
 <p>The above test ensures that the <code>HandlerFunc</code> returned by <code>GetHandler</code> calls the <code>GopherFinder</code> with the appropriate arguments, but the <code>HandlerFunc</code> has more behavior that we can test. One of the things the <code>HandlerFunc</code> should do is respond with a 500 if the <code>GopherFinder</code> returns an error while finding a gopher. In order to test this additional behavior, we need to force the <code>GopherFinder</code> to return an error for the purposes of the test.</p>
 
 <p>Fortunately, Gomock also allows us to do exactly this. It allows the mocks it generates to behave like stubs.<sup>2</sup> You can specify the return value that should be returned by using the <code>Return()</code> method on the result of calling <code>EXPECT()</code> and the method you are expecting:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestHandler(t <span style="color: #666666">*</span>testing.T) {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestHandler(t <span style="color: #666666">*</span>testing.T) {
 	<span style="color: #408080; font-style: italic">//...</span>
 	mgf <span style="color: #666666">:=</span> mock_philhackerblogcode.NewMockGopherFinder(mockCtrl)
 <span style="background-color: #ffffcc">	mgf.EXPECT().
@@ -256,18 +256,17 @@ GopherFinder
 </span><span style="background-color: #ffffcc">	}
 </span>}
 </pre></div>
-</p>
+
 
 <p>Because we&rsquo;ve told the mock <code>GopherFinder</code> to return an error when its <code>Find()</code> method is called, we can test to see that the <code>HandlerFunc</code> actually writes out a 500 response code when the <code>GopherFinder</code> returns an error.</p>
 
-<h2 id="notes:6cd9afeec5930d76953b73f2578dd3db">Notes</h2>
+<h2 id="notes">Notes</h2>
 
 <ol>
 <li><p>The mockgen command can also be run in &ldquo;source mode.&rdquo; In source mode, you simply pass in the source file containing interfaces to be mocked as an argument. See <a href="https://github.com/golang/mock#running-mockgen">the docs</a> for more info.</p></li>
 
 <li><p>For more on the difference between mocks and stubs, see Martin Fowler&rsquo;s <a href="http://martinfowler.com/articles/mocksArentStubs.html">Mocks aren&rsquo;t Stubs</a></p></li>
 </ol>
-
     </section>
 
 

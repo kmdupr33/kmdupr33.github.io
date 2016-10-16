@@ -56,7 +56,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/post/why-dont-we-have-a-unit-test-recorder/" />
     
@@ -152,7 +152,7 @@
 
 <p>This past week, I&rsquo;ve been exploring potential ways creating a unit test recorder with special attention to implementing this functionality for Android development. In this post, I present an overall strategy for doing this and I present what I&rsquo;ve learned so far vis-a-vis practically implementing this strategy for Android development.</p>
 
-<h3 id="the-strategy:e62a285e1a5be9bf46dd3bef4e886e02">The Strategy</h3>
+<h3 id="the-strategy">The Strategy</h3>
 
 <p>Call the classes for which we want to generate tests &ldquo;target classes.&rdquo;</p>
 
@@ -166,9 +166,9 @@
 
 <p>If <em>all</em> the instances in an application are recorders, then generating unit tests should be fairly trivial. As I see it, the central problem of creating a a unit test recorder is figuring out how to rewrite providers so that they return recorders instead of ordinary instances.</p>
 
-<h3 id="learnings:e62a285e1a5be9bf46dd3bef4e886e02">Learnings</h3>
+<h3 id="learnings">Learnings</h3>
 
-<h4 id="bytebuddy-alone-won-t-work:e62a285e1a5be9bf46dd3bef4e886e02">Bytebuddy alone won&rsquo;t work</h4>
+<h4 id="bytebuddy-alone-won-t-work">Bytebuddy alone won&rsquo;t work</h4>
 
 <p>Doing this on Android was trickier than I first imagined. I thought that I could just use Bytebuddy to rewrite providers to return recorders like this:</p>
 
@@ -205,7 +205,7 @@
 
 <p>Since we can&rsquo;t redefine classes using Bytebuddy alone, this approach turns out to be a dead end.</p>
 
-<h4 id="some-alternative-implementation-approaches:e62a285e1a5be9bf46dd3bef4e886e02">Some alternative implementation approaches</h4>
+<h4 id="some-alternative-implementation-approaches">Some alternative implementation approaches</h4>
 
 <p>Dexmaker is a library that allows us to write dex files at runtime. I believe that dexmaker is used so that we can use mockito with Android, but I&rsquo;m not sure. If dexmaker is in fact used for this purpose, it could be a useful tool for creating a unit test recorder on Android.</p>
 
@@ -223,7 +223,7 @@
 
 <p>I&rsquo;ll be trying out these alternative approaches in the coming week. Hopefully, next time I&rsquo;ll have a working unit test recorder!</p>
 
-<h3 id="notes:e62a285e1a5be9bf46dd3bef4e886e02">Notes</h3>
+<h3 id="notes">Notes</h3>
 
 <ol>
 <li>In case its not obvious, this seems like an important question because unit-level tests can run much more quickly than functional UI tests, so they can actually serve as, to use Michael Feathers&rsquo; metaphor, a &ldquo;software vice&rdquo; when we&rsquo;re refactoring or adding features. Having to wait 5+ minutes to know if you&rsquo;re changes have broken anything is way too long for functional UI tests to be useful feedback while programming.</li>

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Sicp on Philosophical Hacker</title>
-    <link>http://philosophicalhacker.com/tags/sicp/</link>
-    <description>Recent content in Sicp on Philosophical Hacker</description>
+    <title>Philosophical Hacker</title>
+    <link>http://philosophicalhacker.com/tags/sicp/index.xml</link>
+    <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 29 Mar 2016 18:02:27 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/tags/sicp/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -19,7 +18,7 @@
 
 &lt;p&gt;Today was my first work day at &lt;a href=&#34;recurse.com&#34;&gt;the Recurse Center&lt;/a&gt;. Yesterday, I found out that there&amp;rsquo;s an &lt;a href=&#34;https://mitpress.mit.edu/sicp/full-text/book/book.html&#34;&gt;SICP&lt;/a&gt; study group. I&amp;rsquo;ve been wanting to study SICP for a while now, so naturally I joined. What follows are my thoughts and key take-aways from sections 1.1.1-1.1.7.&lt;/p&gt;
 
-&lt;h1 id=&#34;declarative-vs-procedural-knowledge:0f8c34f6c54fdc748cbbb725b29baac0&#34;&gt;Declarative vs. Procedural Knowledge&lt;/h1&gt;
+&lt;h1 id=&#34;declarative-vs-procedural-knowledge&#34;&gt;Declarative vs. Procedural Knowledge&lt;/h1&gt;
 
 &lt;p&gt;Abelson et al. open the book with a really interesting distinction between declarative and procedural knowledge. Moreover, they suggest that the most significant achievement of computer science is that it provides a way for us to study procedural knowledge.&lt;/p&gt;
 
@@ -45,7 +44,7 @@
 
 &lt;p&gt;Second, I think that this distinction means that some of our programming languages are misleading. Go, for example, uses the &lt;code&gt;func&lt;/code&gt; keyword to define a &amp;ldquo;function&amp;rdquo; in go. However, many of the functions we define in go are definitely not functions in the mathematical sense of the word, and as the above example points out, mathematical functions often fail to map neatly on to the stuff we put in our &lt;code&gt;func&lt;/code&gt; bodies.&lt;/p&gt;
 
-&lt;h1 id=&#34;a-definition-of-syntax:0f8c34f6c54fdc748cbbb725b29baac0&#34;&gt;A definition of syntax&lt;/h1&gt;
+&lt;h1 id=&#34;a-definition-of-syntax&#34;&gt;A definition of syntax&lt;/h1&gt;
 
 &lt;p&gt;The authors do a great job of explaining what it means for a language to have a syntax. Crucial to understanding &amp;ldquo;syntax&amp;rdquo; is the idea of an &amp;ldquo;expression.&amp;rdquo; An expression is something that can be evaluated. Each type of expression has an evaluation rule. For example, the expression &lt;code&gt;42&lt;/code&gt; evaluates to &lt;code&gt;42&lt;/code&gt; in Lisp. So, the evaluation rule for the type of expression exemplified by &lt;code&gt;42&lt;/code&gt; must be something like &amp;ldquo;simply return the expression as is.&amp;rdquo;&lt;/p&gt;
 
@@ -82,7 +81,7 @@ constitute the syntax of the programming language.&lt;/p&gt;
 
 &lt;p&gt;These two kinds of errors seem to cover the syntax errors I&amp;rsquo;ve run into. Maybe there are more.&lt;/p&gt;
 
-&lt;h1 id=&#34;code-is-data:0f8c34f6c54fdc748cbbb725b29baac0&#34;&gt;Code is data&lt;/h1&gt;
+&lt;h1 id=&#34;code-is-data&#34;&gt;Code is data&lt;/h1&gt;
 
 &lt;p&gt;Early on, the authors make a distinction between procedures and data:&lt;/p&gt;
 

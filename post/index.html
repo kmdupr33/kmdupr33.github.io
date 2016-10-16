@@ -52,7 +52,7 @@
         <link href="http://philosophicalhacker.com/post/index.xml" rel="alternate" type="application/rss+xml" title="Posts &middot; Philosophical Hacker" />
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/post/" />
     
@@ -141,10 +141,39 @@
 	   
 <article class="post post">
     <header class="post-header">
+        <h2 class="post-title"><a href="/post/the-goal-of-refactoring-during-tdd/">The goal of refactoring During TDD</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Red, green, refactor. That&rsquo;s the TDD flow. That much was obvious to me.
+However, refactoring is a pretty broad term. There are many reasons you may want to refactor code and as a result of this, I didn&rsquo;t really understand what exactly was supposed to happen during the refactor step of the TDD loop until I finished the first part of Kent Beck&rsquo;s TDD by Example.
+Actually, in the first description of TDD, Beck uses a more helpful description of the &ldquo;refactor step. <a class="read-more" href="/post/the-goal-of-refactoring-during-tdd/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        on
+            
+                <a href="http://philosophicalhacker.com/tags/testing/">#testing</a>,
+            
+                <a href="http://philosophicalhacker.com/tags/TDD/">#TDD</a>,
+            
+        
+        <time class="post-date" datetime="2016-10-16T16:35:28-04:00">
+            16 Oct 2016
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
         <h2 class="post-title"><a href="/post/tdd-and-startups/">TDD and Startups</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>Kent Beck introduces TDD by Example with a little story meant to show the business value of automated testing: Early one Friday, the boss came to Ward Cunningham to introduce him to Peter, a prospective customer for WyCash, the bond portfolio management system the company was selling. Peter said&hellip;&ldquo;I&rsquo;m starting a new bond fund, and my strategy requires that I handle bonds in different currencies.” The boss turned to Ward, “Well, can we do it?&rdquo;&hellip;The trick now was to make space for the new functionality without breaking anything that already worked. <a class="read-more" href="/post/tdd-and-startups/">&raquo;</a></p>
+        <p>Kent Beck introduces TDD by Example with a little story meant to show the business value of automated testing:
+ Early one Friday, the boss came to Ward Cunningham to introduce him to Peter, a prospective customer for WyCash, the bond portfolio management system the company was selling. Peter said&hellip;&ldquo;I&rsquo;m starting a new bond fund, and my strategy requires that I handle bonds in different currencies.” The boss turned to Ward, “Well, can we do it? <a class="read-more" href="/post/tdd-and-startups/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -196,7 +225,9 @@
         <h2 class="post-title"><a href="/post/on-selling-your-soul/">On Selling your Soul: Notes on Gregg Pollack&#39;s Founder&#39;s Talk</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>If you&rsquo;re going to be successful, Richard, you need to learn to be an asshole. Erlich Bachman, Silicon Valley For those of you who don&rsquo;t know, I was recently accepted into Starter Studio, an Orlando-based incubator to work on University Android, a codeacademy-like program for learning Android development. Every Monday night, Starter Studio brings in successful founders to talk about things they&rsquo;ve learned along the way to success. I&rsquo;ve decided that throughout my time at Starter Studio, I&rsquo;d like to note two big &ldquo;take aways&rdquo; from each founder&rsquo;s talk: one business-related and one personal. <a class="read-more" href="/post/on-selling-your-soul/">&raquo;</a></p>
+        <p>If you&rsquo;re going to be successful, Richard, you need to learn to be an asshole.
+Erlich Bachman, Silicon Valley
+ For those of you who don&rsquo;t know, I was recently accepted into Starter Studio, an Orlando-based incubator to work on University Android, a codeacademy-like program for learning Android development. Every Monday night, Starter Studio brings in successful founders to talk about things they&rsquo;ve learned along the way to success. <a class="read-more" href="/post/on-selling-your-soul/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -223,7 +254,8 @@
     </header>
     <section class="post-excerpt">
         <p><p>When building our Android apps, we can often wind up with a decent amount of code in our <code>RecyclerView.Adapter</code>s that we want to test. In this article, I briefly suggest two ways of structuring our <code>RecyclerView</code>-related classes so that we can accomplish this.</p>
- <a class="read-more" href="/post/unit-testable-recycler-views/">&raquo;</a></p>
+
+<p></p> <a class="read-more" href="/post/unit-testable-recycler-views/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -252,9 +284,9 @@
         <p><blockquote>
 <p>Loaders are awesome&hellip;they&rsquo;re essentially the best practice implementation of asynchronous data loading in your Activities.</p>
 
-<p>-Reto Meier, Developing Android Apps Udacity Course</p>
-</blockquote>
- <a class="read-more" href="/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/">&raquo;</a></p>
+<p>-Reto Meier, Developing Android Apps Udacity Course
+
+The following code should make you nervous:</p> <a class="read-more" href="/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -280,7 +312,8 @@
         <h2 class="post-title"><a href="/post/an-espresso-test-recorder-deep-dive/">An Espresso Test Recorder Deep Dive</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>I&rsquo;ve been working on a unit test recorder for Android. After struggling to find a way to implement the unit test recorder,1 I decided to take a look at how Google implements the espresso test recorder. This post presents what I found when I dug into the source code of the espresso test recorder. Collecting User Interaction Info Before I took a look at the source for the espresso recorder, I half expected to find some fancy bytecode manipulation of the sort we see for the proguard or jacoco transformers. <a class="read-more" href="/post/an-espresso-test-recorder-deep-dive/">&raquo;</a></p>
+        <p>I&rsquo;ve been working on a unit test recorder for Android. After struggling to find a way to implement the unit test recorder,1 I decided to take a look at how Google implements the espresso test recorder. This post presents what I found when I dug into the source code of the espresso test recorder.
+Collecting User Interaction Info Before I took a look at the source for the espresso recorder, I half expected to find some fancy bytecode manipulation of the sort we see for the proguard or jacoco transformers. <a class="read-more" href="/post/an-espresso-test-recorder-deep-dive/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -306,7 +339,8 @@
         <h2 class="post-title"><a href="/post/why-dont-we-have-a-unit-test-recorder/">Why don&#39;t we have a unit test recorder?</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>Last week, I introduced Vice, a proof of concept regression test generation library. Vice generates regression tests simply by exercising the code we want to test. This is neat, but there&rsquo;s already something else out there that does something like this, and ultimately, Vice as it stands doesn&rsquo;t answer a fundamental question I have about regression tests: if we can record functional UI tests using the espresso test recorder or apple&rsquo;s test recorder, why don&rsquo;t we have a unit test recorder?1 This past week, I&rsquo;ve been exploring potential ways creating a unit test recorder with special attention to implementing this functionality for Android development. <a class="read-more" href="/post/why-dont-we-have-a-unit-test-recorder/">&raquo;</a></p>
+        <p>Last week, I introduced Vice, a proof of concept regression test generation library. Vice generates regression tests simply by exercising the code we want to test.
+This is neat, but there&rsquo;s already something else out there that does something like this, and ultimately, Vice as it stands doesn&rsquo;t answer a fundamental question I have about regression tests: if we can record functional UI tests using the espresso test recorder or apple&rsquo;s test recorder, why don&rsquo;t we have a unit test recorder? <a class="read-more" href="/post/why-dont-we-have-a-unit-test-recorder/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -354,7 +388,8 @@
         <h2 class="post-title"><a href="/post/how-to-safely-move-logic-out-of-activities/">How to Safely move Logic out of Activities</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>In my last post, I argued that we should stop putting our app logic in Activitys and Fragments because it makes both unit testing and functional testing our apps more difficult. In this post, I&rsquo;ll try to suggest a method of safely removing app logic from our Activitys and Fragments, drawing on a central idea discussed in Michael Feathers&rsquo; Working Effectively with Legacy Code: characterization tests. In the first section, I briefly introduce the idea of characterization tests. <a class="read-more" href="/post/how-to-safely-move-logic-out-of-activities/">&raquo;</a></p>
+        <p>In my last post, I argued that we should stop putting our app logic in Activitys and Fragments because it makes both unit testing and functional testing our apps more difficult. In this post, I&rsquo;ll try to suggest a method of safely removing app logic from our Activitys and Fragments, drawing on a central idea discussed in Michael Feathers&rsquo; Working Effectively with Legacy Code: characterization tests.
+In the first section, I briefly introduce the idea of characterization tests. <a class="read-more" href="/post/how-to-safely-move-logic-out-of-activities/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -371,32 +406,6 @@
         
         <time class="post-date" datetime="2016-06-16T16:58:30-04:00">
             16 Jun 2016
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/post/why-we-should-stop-putting-logic-in-activities/">Why we Should Stop Putting Logic in Activities</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>A while back, I wrote a series of articles about why unit testing Android apps is so difficult and what we can do to make our apps more unit testable. The upshot of the those articles is that dependency injection makes it easier to unit test our Android apps and we can&rsquo;t get proper dependency injection just by using Dagger (or any other DI framework for that matter) to inject dependencies into our Activitys (or Fragments). <a class="read-more" href="/post/why-we-should-stop-putting-logic-in-activities/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        on
-            
-                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="http://philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2016-06-14T23:13:00-04:00">
-            14 Jun 2016
         </time>
     </footer>
 </article>

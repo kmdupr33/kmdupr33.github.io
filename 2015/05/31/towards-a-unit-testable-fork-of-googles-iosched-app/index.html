@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/" />
     
@@ -148,13 +148,13 @@
     </header>
 
     <section class="post-content">
-      
-
-<p>In my recent <a href="http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/">Against Android Unit Tests</a> series, I discussed the difficulties of unit testing android applications and proposed a different way of building applications that would enhance their unit testability. My proposal in that series was really largely a rough sketch of what it would take to make parts of Google&rsquo;s IOSched app unit testable.</p>
+      <p>In my recent <a href="http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/">Against Android Unit Tests</a> series, I discussed the difficulties of unit testing android applications and proposed a different way of building applications that would enhance their unit testability. My proposal in that series was really largely a rough sketch of what it would take to make parts of Google&rsquo;s IOSched app unit testable.</p>
 
 <p>More recently, I&rsquo;ve started to fill in the details of that proposal by forking the IOSched repo and refactoring it to make it unit testable. In the next few posts, I&rsquo;ll be discussing some of the challenges that arose when attempting to make the <code>SessionDetailActivity</code> unit testable within the IOSched app. In this post, I want to provide a broad overview of the challenges I&rsquo;ll be discussing.</p>
 
-<h2 id="unit-testing-dynamically-constructed-views:be0df47147e69281d62bde6a0150c690">Unit Testing Dynamically Constructed Views</h2>
+<p></p>
+
+<h2 id="unit-testing-dynamically-constructed-views">Unit Testing Dynamically Constructed Views</h2>
 
 <p>Some of the views within the <code>SessionDetailActivity</code> are built dynamically. The tags that appear below the session&rsquo;s description are a good example of this:</p>
 
@@ -162,15 +162,15 @@
 
 <p>It wasn&rsquo;t immediately obvious to me how to leverage the &ldquo;MVP&rdquo; pattern to maintain the class&rsquo;s unit testability in the face of dynamically built views. I&rsquo;ll discuss how I solved this problem in <a href="http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/">the first post of this series</a>.</p>
 
-<h2 id="circular-dependencies-between-viewtranslators-and-presenters:be0df47147e69281d62bde6a0150c690">Circular Dependencies between ViewTranslators and Presenters</h2>
+<h2 id="circular-dependencies-between-viewtranslators-and-presenters">Circular Dependencies between ViewTranslators and Presenters</h2>
 
 <p>&ldquo;ViewTranslator&rdquo; is just the name that I prefer for what is traditionally called the &ldquo;View&rdquo; within the MVP pattern. In <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html">Square&rsquo;s description of the MVP pattern</a>, we can see that there&rsquo;s a circular dependency between the ViewTranslator and Presenter. For reasons that will be clear after I&rsquo;ve discussed my solution to the problem of creating unit testable dynamically constructed views, this circular dependency is not ideal. In the second post, I&rsquo;ll discuss how I resolved this circular dependency.</p>
 
-<h2 id="static-methods:be0df47147e69281d62bde6a0150c690">Static Methods</h2>
+<h2 id="static-methods">Static Methods</h2>
 
 <p>As <a href="http://googletesting.blogspot.com/2008/12/static-methods-are-death-to-testability.html">Google&rsquo;s testing blog points out</a>, static methods spell trouble for your app&rsquo;s unit testability. Unfortunately, there are several static methods within <code>SessionDetailActivity</code> that needed to remove to make unit testing possible. In the third post, I discuss how I removed those static methods.</p>
 
-<h2 id="towards-a-unit-testable-fork-of-google-s-iosched-app:be0df47147e69281d62bde6a0150c690">Towards a Unit Testable Fork of Google&rsquo;s IOSched App</h2>
+<h2 id="towards-a-unit-testable-fork-of-google-s-iosched-app">Towards a Unit Testable Fork of Google&rsquo;s IOSched App</h2>
 
 <p>My hope is to eventually have <a href="https://github.com/kmdupr33/iosched">a fork of Google&rsquo;s IOSched app</a> that allows us to unit test all of its business logic. Making a non-trivial app like IOSched unit testable will tell us a lot about what it really takes to unit test Android apps. We might find out that unit testing Android apps is just too impractical. Either way, I look forward to exploring how we might pull this off.</p>
 
@@ -192,7 +192,6 @@
 </ul>
 
 <hr />
-
     </section>
 
 

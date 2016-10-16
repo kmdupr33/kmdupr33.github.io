@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/" />
     
@@ -164,7 +164,7 @@
 
 <p><img src="/images/lambda.png" alt="lambda symbol" /></p>
 
-<h1 id="the-principle-behind-react:e17f3de67d028efe7b502b7cdad57382">The Principle behind React</h1>
+<h1 id="the-principle-behind-react">The Principle behind React</h1>
 
 <p>React, as I see it, is about making what gets rendered to our screen a <em>function of some view-state object</em>. We do something like this every time we write a <code>RecyclerView</code> or <code>ListView</code>. The view-state object is usually some kind of collection (e.g., a <code>List</code> or <code>Array</code>). We pass that object to an <code>Adapter</code> which renders our view. Typically, what is rendered is just a function of the collection we pass to the adapter.</p>
 
@@ -199,7 +199,7 @@
 
 <p>Note here that <code>mTagFilterHolder</code> is a state object that&rsquo;s used to determine what should be shown in the list. We can see this more clearly if we look at <code>reloadFragment()</code>, which looks like this:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">reloadFragment</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">reloadFragment</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">// Build the tag URI</span>
     Uri uri <span style="color: #666666">=</span> mCurrentUri<span style="color: #666666">;</span>
 
@@ -225,11 +225,11 @@
     mFragment<span style="color: #666666">.</span><span style="color: #7D9029">reloadFromArguments</span><span style="color: #666666">(</span>intentToFragmentArguments<span style="color: #666666">(</span>intent<span style="color: #666666">));</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p><code>mTagFilterHolder</code> is being used to construct the URI that a <code>ContentProvider</code> will use to filter the results that get passed to a <code>ListView</code>. So, this implementation of the list filter is already well on its way to an implementation the follows principle behind React. That&rsquo;s because what&rsquo;s rendered is already partially <em>a function of some view-state object</em>. In this case, the view-state object is the <code>mTagFilterHolder</code>.</p>
 
-<h1 id="the-principle-behind-redux:e17f3de67d028efe7b502b7cdad57382">The Principle Behind Redux</h1>
+<h1 id="the-principle-behind-redux">The Principle Behind Redux</h1>
 
 <p>Redux, as I see it, as is about making any updates to our view <em>a function of the view-state object and an object that describes a view-related action that just occurred</em>. In Redux, these functions are called &ldquo;reducers,&rdquo; and they return a new view-state object that is used to render the view.</p>
 
@@ -256,7 +256,7 @@
 
 <p>This <code>ClickListener</code> isn&rsquo;t quite a reducer. Remember: reducers are functions of a view-state object and an object that describes a view-related action that just occurred. This <code>ClickListener</code>, however, is in a good position to call a reducer function:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
         <span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #AA22FF">@Override</span>
     <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onClick</span><span style="color: #666666">(</span>View v<span style="color: #666666">)</span> <span style="color: #666666">{</span>
@@ -278,11 +278,11 @@
   <span style="color: #008000; font-weight: bold">return</span> newTagFilterHolder<span style="color: #666666">;</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>The <code>reduce</code> method fits the Redux&rsquo;s definition of a reducer function. The <code>tagFilterHodler</code> parameter passed into <code>reduce</code> method is the current state and the <code>click</code> parameter is an object that describes a view-related action that just occurred. <code>reduce</code>, moreover, returns a new view-state that describes how the view should render.</p>
 
-<h1 id="conclusion:e17f3de67d028efe7b502b7cdad57382">Conclusion</h1>
+<h1 id="conclusion">Conclusion</h1>
 
 <p>That&rsquo;s all for now, but you can anticipate how this might make unit testing logic within the click listener easier. The <code>reduce</code> function works only with POJOs and we know that it&rsquo;s working properly when it returns an object that has the correct <em>state</em>. This allows us to use <a href="http://martinfowler.com/articles/mocksArentStubs.html">state-based verification</a> in our tests, and as we&rsquo;ll see next time, this can make our tests less brittle and more meaningful. I believe that writing our UI-related business logic in reducers <em>may</em> give us a better way of writing tests that writing that logic in <code>Presenters</code>. More on that next time.</p>
 

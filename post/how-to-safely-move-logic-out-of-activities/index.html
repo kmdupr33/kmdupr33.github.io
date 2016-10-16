@@ -60,7 +60,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/" />
     
@@ -160,7 +160,7 @@
 
 <p>In the first section, I briefly introduce the idea of characterization tests. In the second section, I walk through some of the complications that arise when you&rsquo;re trying to write characterization tests for <code>Activity</code>/<code>Fragment</code>s. Source code examples are excerpts from <a href="https://github.com/kmdupr33/iosched/tree/refactor/characterization_tests">my fork of the Google IO app</a>.</p>
 
-<h3 id="brief-intro-characterization-tests:86a9346644eadbcb4b80de7e5ad9fee4">Brief Intro Characterization Tests</h3>
+<h3 id="brief-intro-characterization-tests">Brief Intro Characterization Tests</h3>
 
 <blockquote>
 <p>Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&hellip;Cover and Modify is a different way of making changes. The idea behind it is that it is possible to work with a safety net when we change software.</p>
@@ -188,11 +188,11 @@
 <p>Image Credit: Cea on <a href="https://www.flickr.com/photos/centralasian/3896333282/in/photolist-6WiJ93-i2ZU8-AL26v-NqLkJ-57Gmup-4QiXwQ-67j8Sw-fuf5d1-5DJrYY-9YjbZP-7UJ75S-piX5fr-jzCox-8s9BdN-uST4Hi-tw8VdM-5yxEvF-2QSfpF-onBRex-6Aj5cU-3Jyy7k-8YYKtq-8TRZ33-as2Fdq-rhXdJ8-oTXJh5-aNqeHH-hcEk7d-7ACDg-6EcoYB-mmgBPF-mz68zf-sFGHZq-6EhPsd-dor5Cp-6EcFhV-coe1tY-EDaP5-9Yn6dW-2zCxU-8YiQA1-7dQsZA-8Fq6BQ-n1F765-7dQssm-6wskCt-C44Dg-6EepXT-6EesLa-C4543">Flickr Creative Commons</a></p>
 </blockquote>
 
-<h3 id="characterization-tests-for-activities-and-fragments:86a9346644eadbcb4b80de7e5ad9fee4">Characterization Tests for Activities and Fragments</h3>
+<h3 id="characterization-tests-for-activities-and-fragments">Characterization Tests for Activities and Fragments</h3>
 
 <p>Unfortunately, writing characterization tests for <code>Activity</code>/<code>Fragment</code>s is not as simple as writing characterization tests in the general case. In fact, writing characterization tests for any object instantiated by the Android OS is not easy (think <code>Activity</code>, <code>Fragment</code>, <code>Service</code>, <code>BroadcastReceiver</code>, etc.). In this section, I explore two things that make writing characterization tests for <code>Activity</code>s and <code>Fragment</code>s challenging. I also suggest ways to work around these challenges.</p>
 
-<h4 id="law-of-demeter-violations:86a9346644eadbcb4b80de7e5ad9fee4">Law of Demeter Violations</h4>
+<h4 id="law-of-demeter-violations">Law of Demeter Violations</h4>
 
 <p><code>Activity</code>s and <code>Fragment</code>s have dependencies. Some of those dependencies are only accessible if we violate the law of demeter. For example, the <code>PresenterFragmentImpl</code> needs to get a hold of a <code>ContentResolver</code>:</p>
 
@@ -256,11 +256,11 @@
 
 <p>Typically, we don&rsquo;t want to write tests with mocks returning mocks since this suggests that our design may smell. In this case, we are merely trying to characterize the already existing behavior of our <code>Activity</code> or <code>Fragment</code>. Once we refactor, we should have a design that doesn&rsquo;t require this, but in the mean-time, we need this characterization test to make sure that we are preserving app behavior during our refactor.</p>
 
-<h4 id="nearly-impossible-di:86a9346644eadbcb4b80de7e5ad9fee4">(Nearly) Impossible DI</h4>
+<h4 id="nearly-impossible-di">(Nearly) Impossible DI</h4>
 
 <p><code>Fragment</code>s and <code>Activity</code>s get their dependencies via an accessor method. <code>getLoaderManager</code>, <code>getContentResolver</code>, or <code>getFragmentManager</code> are a few examples of such accessor methods. Here&rsquo;s a method that uses one of these accessors:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 1 </span><span style="color: #AA22FF">@Override</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 1 </span><span style="color: #AA22FF">@Override</span>
 <span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 2 </span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onActivityCreated</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
 <span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 3 </span>    <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onActivityCreated</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
 <span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 4 </span>
@@ -279,7 +279,7 @@
 <span style="background-color: #f0f0f0; padding: 0 5px 0 5px">17 </span>    <span style="color: #666666">}</span>
 <span style="background-color: #f0f0f0; padding: 0 5px 0 5px">18 </span><span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>If we&rsquo;re characterizing a method like this one, we need to verify that the <code>Fragment</code> calls the correct methods on the dependencies returned by these accessor methods. Verifying the interaction of an object with its dependencies means that we need to be able to swap out those dependencies with mocks.</p>
 
@@ -289,7 +289,7 @@
 
 <p>A better solution is to use mockito spies. Like mocks returning mocks, we typically don&rsquo;t use spies in our tests because it suggests a smelly design. However, in this case, spies help us write characterization tests without having make a non-trivial changes to the code we are trying to characterize or without having to repeatedly subclass all of our <code>Activity</code>s and <code>Fragment</code>s to return mocks. Here&rsquo;s an example of how spies help us do this:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeOnActivityCreatedIfInitialQueriesToLoad</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
 
     <span style="color: #008000; font-weight: bold">final</span> ExploreModel<span style="color: #666666">.</span><span style="color: #7D9029">ExploreQueryEnum</span> sessions <span style="color: #666666">=</span> ExploreModel<span style="color: #666666">.</span><span style="color: #7D9029">ExploreQueryEnum</span><span style="color: #666666">.</span><span style="color: #7D9029">SESSIONS</span><span style="color: #666666">;</span>
@@ -304,11 +304,11 @@
 <span style="background-color: #ffffcc">    verify<span style="color: #666666">(</span>loaderManager<span style="color: #666666">).</span><span style="color: #7D9029">initLoader</span><span style="color: #666666">(</span>eq<span style="color: #666666">(</span>sessions<span style="color: #666666">.</span><span style="color: #7D9029">getId</span><span style="color: #666666">()),</span> isNull<span style="color: #666666">(</span>Bundle<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">),</span> notNull<span style="color: #666666">(</span>LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">));</span>
 </span><span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>Using a spy, we&rsquo;re able to stub out the <code>getLoaderManager</code> method to return a mock <code>LoaderManager</code>. We can then verify that <code>onActivityCreated</code> calls the right methods on the <code>LoaderManager</code>.</p>
 
-<h3 id="conclusion:86a9346644eadbcb4b80de7e5ad9fee4">Conclusion</h3>
+<h3 id="conclusion">Conclusion</h3>
 
 <p>Safely moving logic out of large <code>Activity</code>s and <code>Fragment</code>s can be a lot of work, but its less work than manually verifying that we haven&rsquo;t broken anything every time we make a change to the <code>Activity</code> or <code>Fragment</code> we are refactoring.</p>
 

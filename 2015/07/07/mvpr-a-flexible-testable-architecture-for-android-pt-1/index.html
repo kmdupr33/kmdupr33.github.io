@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/" />
     
@@ -148,9 +148,7 @@
     </header>
 
     <section class="post-content">
-      
-
-<blockquote>Thorough unit testing helps us improve the internal quality because, to be tested, a unit has to be structured to run outside the system in a test fixture. A unit test for an object needs to create the object, provide its dependencies, interact with it, and check that it behaved as expected. So, for a class to be easy to unit-test, the class must have explicit dependencies that can easily be substituted and clear responsibilities that can easily be invoked and verified. In software engineering terms, that means that the code must be loosely coupled and highly cohesive —in other words, well-designed.
+      <blockquote>Thorough unit testing helps us improve the internal quality because, to be tested, a unit has to be structured to run outside the system in a test fixture. A unit test for an object needs to create the object, provide its dependencies, interact with it, and check that it behaved as expected. So, for a class to be easy to unit-test, the class must have explicit dependencies that can easily be substituted and clear responsibilities that can easily be invoked and verified. In software engineering terms, that means that the code must be loosely coupled and highly cohesive —in other words, well-designed.
 
 Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_</blockquote>
 
@@ -178,9 +176,11 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_<
 
 <p>In this post, I will try to give some reasons why we might consider a new architecture for Android development in the first place.</p>
 
-<h2 id="why-a-new-architecture:25be7690f1d98142cd41730b0d055142">Why a New Architecture?</h2>
+<p></p>
 
-<h3 id="activities-fragments-presenters-can-become-bloated:25be7690f1d98142cd41730b0d055142">Activities/Fragments/Presenters can become Bloated</h3>
+<h2 id="why-a-new-architecture">Why a New Architecture?</h2>
+
+<h3 id="activities-fragments-presenters-can-become-bloated">Activities/Fragments/Presenters can become Bloated</h3>
 
 <p><code>Activities</code> and <code>Fragments</code> (I&rsquo;m just going say &ldquo;Activities&rdquo; from now on, but what I say applies equally to <code>Fragments</code>.) are egregious violators of the principle of single responsibility. At Droidcon Montreal, Richa Khandelwal <a href="https://speakerdeck.com/richk/clean-android-architecture">listed the responsibilities</a> that often wind up in an <code>Activity</code>:</p>
 
@@ -202,7 +202,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_<
 
 <p>The SessionDetailActivity in Google&rsquo;s IOSched app is actually a good example of how bloated an Activity can get even if its only concerned with the two responsibilities of binding data to views and responding to user input. ~70% of the 1000+ lines of SessionDetailActivity are only concerned with these two responsibilities, so even if we moved all other code out of the SessionDetailActivity, we&rsquo;d still have a class that&rsquo;s about 700 lines long. Don&rsquo;t believe me? Take a look at <a href="https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/SessionDetailActivity.java">the source code</a>. Presenters can become bloated for the same reason an Activity does: Presenters are typically responsible for binding data to a View and for responding to user input, so a Presenter would be just as long as an Activity that&rsquo;s slimmed down by removing all of its other extra responsibilities. </p>
 
-<h3 id="activities-fragments-presenters-often-have-a-circular-dependency-on-their-views:25be7690f1d98142cd41730b0d055142">Activities/Fragments/Presenters often have a Circular Dependency on their Views</h3>
+<h3 id="activities-fragments-presenters-often-have-a-circular-dependency-on-their-views">Activities/Fragments/Presenters often have a Circular Dependency on their Views</h3>
 
 <p>Activities typically fulfill their responsibilities of binding data to views and responding to user input by creating a circular dependency between themselves and the Views that make up their Content View (i.e., the view passed in to the setContentView() method). There&rsquo;s a piece of code in the same gist that I showed above that provides an example of this.</p>
 
@@ -234,7 +234,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_<
 
 We try to make sure that we always create a valid object…Partially creating an object and then finishing it off by setting its properties is brittle…</blockquote>
 
-<h2 id="conclusion:25be7690f1d98142cd41730b0d055142">Conclusion</h2>
+<h2 id="conclusion">Conclusion</h2>
 
 <p>Presenters and Activities violate the principle of single responsibility. They are often responsible for binding data to a View and for responding to user input/actions. This can cause both Activities and Presenters to become bloated.</p>
 
@@ -245,7 +245,6 @@ We try to make sure that we always create a valid object…Partially creating an
 <hr />
 
 <p>Below, Hannes Dorfmann has a great comment to this article. I&rsquo;ve responded to that <a href="http://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/">here</a>.</p>
-
     </section>
 
 

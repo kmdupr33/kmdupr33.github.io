@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/" />
     
@@ -148,9 +148,7 @@
     </header>
 
     <section class="post-content">
-      
-
-<p><strong>Edit:</strong> In <a href="http://philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">the post that concludes this series</a>, I point out that making unit testable Android apps does not require us to remove compile-time dependencies on the Android SDK and that attempting to do so is impractical anyway. Ignore anything in this post that suggests otherwise.</p>
+      <p><strong>Edit:</strong> In <a href="http://philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">the post that concludes this series</a>, I point out that making unit testable Android apps does not require us to remove compile-time dependencies on the Android SDK and that attempting to do so is impractical anyway. Ignore anything in this post that suggests otherwise.</p>
 
 <hr />
 
@@ -160,7 +158,9 @@
 
 <p>There’s a standard way of developing android applications. Sample code and open source code alike both place an app’s business logic within Android app component classes, namely, Activities, Services, and Fragments. Going forward, I’m going to refer to this practice as “the standard way.” Here’s the central claim of this post: As long as we follow the “standard way”, we’re going to write code that’s either difficult or impossible to unit test. In other words, the untestable code that I pointed out in my last article is not a fluke. The standard way prevents us from unit testing key pieces of our applications.</p>
 
-<h1 id="the-standard-way-makes-some-unit-tests-impossible:2b8d10b9cb0657a2cfe2d2be3f314595">The Standard Way Makes (some) Unit Tests Impossible</h1>
+<p></p>
+
+<h1 id="the-standard-way-makes-some-unit-tests-impossible">The Standard Way Makes (some) Unit Tests Impossible</h1>
 
 <p>To begin to see why the standard way leads to untestable app components, let’s briefly recall some of the points I made in my last post. Unit testing consists of three steps: arrange, act, and assert. In order to complete the arrange step of the process we need to be able to alter the pre-act-state of the code we’re testing, and accessing the post-act-state of our program is required to complete the assert-step of a test.</p>
 
@@ -186,7 +186,7 @@
 
 <p>So, if you put business logic into an Android class whose dependencies cannot be injected, then you’re going to wind up with some code that’s impossible to unit test. There are several examples of dependencies like this: An <code>Activity</code> and <code>Fragment</code>’s <code>FragmentManager</code> is one example. An <code>Activity</code> and <code>Fragment</code>’s <code>LoaderManager</code> is another example. Thus, the standard way of building android applications, insofar as that way instructs us to put our business logic in app component classes, encourages us to write untestable code.</p>
 
-<h1 id="the-standard-way-makes-unit-testing-difficult:2b8d10b9cb0657a2cfe2d2be3f314595">The Standard Way Makes Unit Testing Difficult</h1>
+<h1 id="the-standard-way-makes-unit-testing-difficult">The Standard Way Makes Unit Testing Difficult</h1>
 
 <p>In some cases, the standard way will only make it very difficult to unit test your code. If we return to the <code>onStop()</code> method within the <code>SessionDetailActivity</code> that we examined in the last article, we’ll see this:</p>
 
@@ -206,7 +206,7 @@
 
 <p>In order to make <code>onStop()</code> unit testable, the standard way forces us to make a counter-intuitive refactor and then choose between creating clever workarounds to its painful intent-based dependency injection mechanism or using a third-party dependency injection library. By making it difficult and counter-intuitive to write testable code, the standard way makes it more likely that we won’t make our code testable. This is what I mean when I say that the standard way discourages us from writing testable code.</p>
 
-<h1 id="conclusion:2b8d10b9cb0657a2cfe2d2be3f314595">Conclusion</h1>
+<h1 id="conclusion">Conclusion</h1>
 
 <p>Throughout this series, I’ve been saying that an examination of why Android unit testing is so difficult will help us see why its a good idea to restructure our applications so that they don’t explicitly depend on the Android SDK. Now we are finally at a point where we can start to see why it might be a good idea to get away from the Android SDK entirely.</p>
 
@@ -234,7 +234,6 @@
 <ol>
 <li>Of course, you could pass the <code>ServiceLauncher</code> in as a Serializable. This is not a particularly robust solution since it only works if you don’t care about the performance hit that results from using Serializable.</li>
 </ol>
-
     </section>
 
 

@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/" />
     
@@ -148,17 +148,17 @@
     </header>
 
     <section class="post-content">
-      
+      <p>In <a href="http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">my last post</a>, I introduced the “The Square Way” of structuring our android code. I said that The Square Way is a generalization of the approach that Square used to make the logic within their <code>Fragment</code>s unit testable. I also showed how The Square Way would have us rewrite the <code>SessionCalendarService</code> within Google’s IOSched app so that we could unit test the business logic within it. As we’ll see in this post, The Square Way also makes it easier/possible for us to unit test UI app component business logic.</p>
 
-<p>In <a href="http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">my last post</a>, I introduced the “The Square Way” of structuring our android code. I said that The Square Way is a generalization of the approach that Square used to make the logic within their <code>Fragment</code>s unit testable. I also showed how The Square Way would have us rewrite the <code>SessionCalendarService</code> within Google’s IOSched app so that we could unit test the business logic within it. As we’ll see in this post, The Square Way also makes it easier/possible for us to unit test UI app component business logic.</p>
+<p></p>
 
-<h1 id="this-article-has-dependencies:f90144975a120e4b94c67ad8628e0439">This Article has “Dependencies”</h1>
+<h1 id="this-article-has-dependencies">This Article has “Dependencies”</h1>
 
 <p>Applying The Square Way to UI app components classes like <code>Activity</code>s and <code>Fragment</code>s is a little more complicated than its corresponding application to non-ui components. The source of this additional complication relates to the importance of structuring our code so that we can alter pre-act-state and verify post-act-state for a unit test. If those terms sound hazy or completely unfamiliar, read <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">this post</a> before continuing. While you’re at it, make sure you understand what the <code>SessionDetailActivity</code> does. To see how The Square Way would be applied to UI app component classes, we are going to apply it to rewrite the <code>SessionDetailActivity</code> so that we could unit test the business logic within its <code>onStop()</code> method.</p>
 
 <p>Understanding how The Square Way is applied to UI app component classes will be easier if you have an understanding of MVP. However, since Square does a decent job of introducing this pattern in <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html">their post about fragments</a>, I won’t rehearse that introduction here. If you find yourself confused about how the View fits within MVP, read <a href="http://philosophicalhacker.com/2015/04/05/dont-call-it-mvp/">my post</a> that helps clarify the distinction between an Android View and a MVP View. I actually prefer to call the object that everyone calls a “View” a “ViewTranslator” instead because it makes clearer the distinction between an Android View and a “View” within MVP. Going forward, I will use “ViewTranslator” instead of “View” to refer to the object the Presenter uses to update the content on the app’s screen.</p>
 
-<h1 id="the-square-way-for-ui-app-component-classes:f90144975a120e4b94c67ad8628e0439">The Square Way for UI App Component Classes</h1>
+<h1 id="the-square-way-for-ui-app-component-classes">The Square Way for UI App Component Classes</h1>
 
 <p>Although applying The Square Way to UI app components classes can be more complicated, the basic strategy is the same: remove all business logic from app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s) and place that logic into what I have been calling “business objects,” POJO objects whose dependencies are injected, android-specific implementations of android-agnostic interfaces.</p>
 
@@ -212,7 +212,7 @@
 
 <p>With all of these pieces in place, we finally have everything we need to write a unit test against <code>onViewTranslatorStopped()</code>.</p>
 
-<h1 id="conclusion:f90144975a120e4b94c67ad8628e0439">Conclusion</h1>
+<h1 id="conclusion">Conclusion</h1>
 
 <p>If you felt like we had to do too much work in the arrange-step of this unit test, you’re probably right. Ultimately, I think that the <code>SessionDetailActivity</code>, a class that’s over 1000 lines long, does too much. Because of this, writing unit tests against it is more difficult than it has to be. Since the purpose of this post was just to show the heart of The Square Way, I didn’t discuss further techniques that could be used to facilitate unit testing.²</p>
 
@@ -235,13 +235,12 @@
 
 <hr />
 
-<h2 id="notes:f90144975a120e4b94c67ad8628e0439">Notes:</h2>
+<h2 id="notes">Notes:</h2>
 
 <ol>
 <li>Technically this interface isn’t android agnostic because its main method takes a Bundle as an argument. I suspect that this won’t pose a problem. A Bundle is trivial; it’s not something that we’d ever want to test. Mocking it, moreover, shouldn&rsquo;t be difficult.</li>
 <li>At Droidcon Montreal, Richa Khandelwal over at Coursera suggested <a href="https://speakerdeck.com/richk/clean-android-architecture">a cleaner, more testable architecture</a> that would probably make it even easier to write unit tests.</li>
 </ol>
-
     </section>
 
 

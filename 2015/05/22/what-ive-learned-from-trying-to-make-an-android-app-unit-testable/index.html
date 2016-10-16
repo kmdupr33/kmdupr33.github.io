@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/" />
     
@@ -148,9 +148,7 @@
     </header>
 
     <section class="post-content">
-      
-
-<p>For the past few posts, I&rsquo;ve introduced and showed how we would apply The Square Way of building Android applications. The primary motivation for The Square Way was to increase the unit testability of our applications. As I stated in the <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">introduction to this series</a>, most tests in Android are slow, instrumentation tests and/or tests that rely on third-party frameworks like Roboletric. The Square Way was supposed to help us write fast unit tests that didn&rsquo;t rely on any third-party frameworks.</p>
+      <p>For the past few posts, I&rsquo;ve introduced and showed how we would apply The Square Way of building Android applications. The primary motivation for The Square Way was to increase the unit testability of our applications. As I stated in the <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">introduction to this series</a>, most tests in Android are slow, instrumentation tests and/or tests that rely on third-party frameworks like Roboletric. The Square Way was supposed to help us write fast unit tests that didn&rsquo;t rely on any third-party frameworks.</p>
 
 <p>Now that we&rsquo;ve discussed <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">why unit testing in Android is so difficult</a> and seen how <a href="http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">The Square Way resolves those difficulties</a>, we are finally in a position to assess The Square Way as a whole as a method of creating unit testable Android applications. That assessment is the subject of this article. My assessment consists of the following three claims:</p>
 
@@ -162,7 +160,9 @@
 <li><p>Dependency Injection is really the main &ldquo;active ingredient&rdquo; that allows The Square Way enhance the unit testability of our applications.</p></li>
 </ol>
 
-<h2 id="removing-compile-time-dependency-on-the-android-sdk-is-neither-practical-nor-necessary:97c99105378a1df153e776c0f1ab1f1f">Removing Compile-Time Dependency on the Android SDK is neither practical nor necessary</h2>
+<p></p>
+
+<h2 id="removing-compile-time-dependency-on-the-android-sdk-is-neither-practical-nor-necessary">Removing Compile-Time Dependency on the Android SDK is neither practical nor necessary</h2>
 
 <p>The idea that started off this entire series was to make Android apps more unit testable by making our app stack look like this:</p>
 
@@ -184,7 +184,7 @@
 
 <p>In spite of this flawed aspect of The Square Way as I&rsquo;ve been defining up until now, much of what I&rsquo;ve said in the past few posts is still true and useful. Unit testing in Android is hard because the SDK gives us app component classes whose dependencies are not injected. The Square Way, insofar as it has us delegate business logic to POJOs whose dependencies have been injected, will make it easier/possible to unit test Android applications. Since &ldquo;The Square Way,&rdquo; minus its requirement to remove dependencies on the Android SDK, still provides a useful way of enhancing the Unit testability of our applications, I&rsquo;d like to <em>redefine The Square Way so that it no longer includes this requirement</em>. In other words, if I ever refer to The Square Way after this point, I will be referring to a method of structuring our Android applications that does not require us to remove all dependencies on the Android SDK.</p>
 
-<h2 id="tedious-boilerplate-is-the-only-thing-stopping-us-from-unit-testable-android-apps:97c99105378a1df153e776c0f1ab1f1f">Tedious Boilerplate is the Only Thing Stopping us From Unit Testable Android Apps</h2>
+<h2 id="tedious-boilerplate-is-the-only-thing-stopping-us-from-unit-testable-android-apps">Tedious Boilerplate is the Only Thing Stopping us From Unit Testable Android Apps</h2>
 
 <p>If we redefine The Square Way so that it does not require us to remove dependencies on the Android SDK, then there doesn&rsquo;t seem to be any serious disadvantages of adopting The Square Way. The POJO objects to which we are delegating business logic are referenced by app component classes, and because of this, they can have access to all of the callbacks and properties contained within those component classes. Therefore, simply moving business logic to POJO objects whose dependencies have been injected shouldn&rsquo;t preclude those objects from having the data they need to fulfill their responsibilities.</p>
 
@@ -198,7 +198,7 @@
 
 <p>This video demonstrates how to make use of the Extract Delegate option to do some of the refactoring necessary to make the SessionDetailActivity&rsquo;s onStop() method unit testable. I discuss why this kind of refactor is necessary <a href="http://philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/">in an earlier post</a>. Obviously, this mechanical option isn&rsquo;t going to cover all cases, and you may need to rework some methods to separate out the business logic from the statements that update an Activity&rsquo;s view, but the option is definitely helpful.</p>
 
-<h2 id="dependency-injection-is-the-active-ingredient-in-the-square-way:97c99105378a1df153e776c0f1ab1f1f">Dependency Injection is the Active Ingredient in The Square Way</h2>
+<h2 id="dependency-injection-is-the-active-ingredient-in-the-square-way">Dependency Injection is the Active Ingredient in The Square Way</h2>
 
 <p>##</p>
 
@@ -211,7 +211,7 @@
 
 <p>This is not as simple as using true dependency injection to get dependencies into the object we want to test. Fully explaining why Dagger alone isn&rsquo;t enough to make unit testing Android apps simple could easily be a blog post on its own, so for now, all I can do is point out that, if we follow <a href="http://martinfowler.com/articles/injection.html#InversionOfControl">Martin Fowler&rsquo;s definition of &ldquo;dependency injection&rdquo;</a> (and we should because he actually coined the term), Dagger is actually a Service Locator library and Google&rsquo;s own testing blog has an article on <a href="http://misko.hevery.com/code-reviewers-guide/flaw-brittle-global-state-singletons/">why Service Locators make unit testing difficult</a>.</p>
 
-<h2 id="conclusion:97c99105378a1df153e776c0f1ab1f1f">Conclusion</h2>
+<h2 id="conclusion">Conclusion</h2>
 
 <p>I think the Square Way is the way to go if we want to make our apps unit testable. Of course, I&rsquo;m open to other alternative proposals. I have not shown that all other ways of enhancing an app&rsquo;s testability are inferior to the Square Way.</p>
 
@@ -233,7 +233,6 @@
 </ul>
 
 <hr />
-
     </section>
 
 

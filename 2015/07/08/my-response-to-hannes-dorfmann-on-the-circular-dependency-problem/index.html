@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/" />
     
@@ -150,6 +150,8 @@
     <section class="post-content">
       <p>In <a href="http://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/">my last post</a>, I argued that there are two disadvantages to <code>Activities</code> and Presenters. The first disadvantage is that they are often bloated classes. The second disadvantage is that these classes often have a circular dependency between themselves and their Views. Yesterday, Hannes Dorfmann made a comment on my post that was so thoughtful and excellent that I think its worth dedicating an entire post to responding to it.</p>
 
+<p></p>
+
 <p>Specifically, Hannes&rsquo; comments challenge my claim that the circular dependency between Activities/Fragments/Presenters and their Views are a problem.</p>
 
 <blockquote>...Regarding circular dependencies: Imho I don’t think that circular dependencies are a bad thing as long as you program against an interface and not the implementation:
@@ -228,7 +230,6 @@ That’s open to dispute. [Is] a presenter...in an invalid state without a View
 <p>By now, you can probably guess what I would say to Hannes&rsquo; first argument: I would deny its first premise. I would say, in other words, that there&rsquo;s something fishy about the circular dependency between an <code>Activity</code> and its <code>Button</code> in the first place and I think there&rsquo;s something fishy about it, regardless of whether the <code>Button</code> programs against an interface. Whether the <code>Button</code> programs against an interface has nothing to do with the fact that, in the context of our application, it has a dependency on a click listener and that setting an <code>Activity</code> as a Button&rsquo;s click listener makes it more difficult for the button to have a different click listener, a difficulty we might want to avoid if we want to take full advantage of polymorphism in implementing ui-related business logic.</p>
 
 <p>Regardless of whether I&rsquo;m right or wrong to criticize the circular dependency between Activities/Presenters and their Views, I&rsquo;ve learned a lot by thinking about this and by engaging with Hannes in this discussion. So thanks, Hannes, and thanks to everyone who takes the time to make thoughtful comments on what I&rsquo;ve written. I owe you.</p>
-
     </section>
 
 

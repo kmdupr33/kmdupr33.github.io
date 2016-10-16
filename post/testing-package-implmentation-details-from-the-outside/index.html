@@ -56,7 +56,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/post/testing-package-implmentation-details-from-the-outside/" />
     
@@ -148,7 +148,7 @@
 
 <p>Sometimes you need to test a package&rsquo;s implementation from outside of the package containing the implementation you&rsquo;d like to test. This post briefly covers why this need arises and how we can meet  that need. Much of the information here is already covered in Andrew Gerrand&rsquo;s <a href="https://www.youtube.com/watch?v=ndmB0bj7eyw">testing techniques talk</a>, so if you&rsquo;ve watched that, you&rsquo;ll probably only think the last section of this post is interesting.</p>
 
-<h3 id="why:4ff68378a648ebf9e92d5638ee7e7264">Why?</h3>
+<h3 id="why">Why?</h3>
 
 <p>Like I just said, sometimes you need to test a package&rsquo;s implementation from outside of the package containing the implementation you&rsquo;d like to test. Typically, this situation happens because of circular dependency.</p>
 
@@ -160,7 +160,7 @@
 
 <p>Although the tests are outside of the package you are testing, you may still want to test the implementation details of that package. In other words, you may want to test parts of that package&rsquo;s un-exported interface. For example, the authors of the standard library wanted to test the <code>isSpace()</code> function from the fmt package.</p>
 
-<h3 id="how:4ff68378a648ebf9e92d5638ee7e7264">How</h3>
+<h3 id="how">How</h3>
 
 <p>In order to test the <code>isSpace()</code> function from outside of the fmt package, the standard lib authors created a export_test.go file in the fmt package. This file simply exports the parts of the un-exported interface that they wanted to test:</p>
 
@@ -193,17 +193,17 @@ Now, suppose you wanted to test the <span style="color: #BA2121">`GetGopher()`</
 </pre></div>
 
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">//export_test.go</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">//export_test.go</span>
 
 <span style="color: #008000; font-weight: bold">type</span> LRUCache <span style="color: #008000; font-weight: bold">struct</span> {
 	lruCache
 }
 </pre></div>
-</p>
+
 
 <p>Now, in order for this to work, the <code>GetGopher()</code> method has to be exported. This doesn&rsquo;t break encapsulation, however, because an exported method on an un-exported type will still be unaccessible to clients outside of the package.</p>
 
-<h3 id="conclusion:4ff68378a648ebf9e92d5638ee7e7264">Conclusion</h3>
+<h3 id="conclusion">Conclusion</h3>
 
 <p>You just learned how to test package implementation details from &ldquo;the outside.&rdquo; This will come in handy when you break a circular dependency between your test code and the package you&rsquo;re testing by placing the test code outside of the package you&rsquo;re testing.</p>
 

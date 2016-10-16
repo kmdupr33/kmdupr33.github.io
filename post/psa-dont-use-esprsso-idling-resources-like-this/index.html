@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/" />
     
@@ -190,25 +190,25 @@
 
 <p>This article is about why this code is disturbing and what we can do to fix it. Spoiler: it violates the principle of single responsibility and we can fix it using the dependency injection and decorator patterns.</p>
 
-<h1 id="disturbing:813c76fa4c1d10d216b03cc879b8cf73">Disturbing</h1>
+<h1 id="disturbing">Disturbing</h1>
 
 <p>The comments in the above code definitely help to point out why this is troubling, but if you&rsquo;re not familiar with <code>IdlingResource</code>, you may not immediately see why the problem with this code. <code>IdlingResource</code>s help you write robust functional UI tests with espresso. These tests are &ldquo;robust&rdquo; because you don&rsquo;t need to explicitly tell your tests to &ldquo;sleep&rdquo; for a <em>predetermined</em> amount of time while some asynchronous task completes. <code>IdlingResource</code>s is a way of telling espresso &ldquo;don&rsquo;t do any more assertions because the app is doing something that might affect whether your assertions are satisfied.&rdquo;</p>
 
 <p>For example, suppose we have an espresso test that verifies that the todo notes are displayed after they are loaded and that the progressIndicator in the view is hidden after those notes are loaded:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">showNotes</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
     onView<span style="color: #666666">(</span>withId<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">id</span><span style="color: #666666">.</span><span style="color: #7D9029">progressIndicator</span><span style="color: #666666">)).</span><span style="color: #7D9029">check</span><span style="color: #666666">(</span>matches<span style="color: #666666">(</span>not<span style="color: #666666">(</span>isDisplayed<span style="color: #666666">())));</span>
     onView<span style="color: #666666">(</span>withId<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">id</span><span style="color: #666666">.</span><span style="color: #7D9029">notes_list</span><span style="color: #666666">)).</span><span style="color: #7D9029">check</span><span style="color: #666666">(</span>matches<span style="color: #666666">(</span>isDisplayed<span style="color: #666666">()));</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>We don&rsquo;t want this code to immediately assert that the progressIndicator is invisible and the notes list are visible because it takes some time for the notes to load from the network. So, the previous code snippet with an <code>IdlingResource</code> would tell this test that it needs to wait until the notes are loaded from the network before performing this verification.</p>
 
 <p>Let&rsquo;s take a second look at the disturbing code:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">loadNotes</span><span style="color: #666666">(</span><span style="color: #B00040">boolean</span> forceUpdate<span style="color: #666666">)</span> <span style="color: #666666">{</span>    
     <span style="color: #408080; font-style: italic">//...</span>
 
@@ -230,17 +230,17 @@
     <span style="color: #666666">});</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>We can now quickly say what&rsquo;s disturbing about this: this presenter violates the principle of single responsibility. More than that: it violates the principle in a particularly egregious way: it mixes <em>application</em> responsibilities with <em>testing</em> responsibilities. This is silly. Don&rsquo;t do this. Violating the principle of single responsibility is a sure-fire way to create spaghetti code and spaghetti doesn&rsquo;t look as good in code as it does on a plate.</p>
 
 <p><img src="/images/spaghetti.jpeg" alt="spaghetti on a plate" /></p>
 
-<h1 id="fixit:813c76fa4c1d10d216b03cc879b8cf73">Fixit</h1>
+<h1 id="fixit">Fixit</h1>
 
 <p>Instead of mixing responsibilities, register your <code>IdlingResource</code> in your tests-related code, where test-related responsibilities belong. One way to do this is the use dependency injection and decorators. The code lab project already has a limited dependency injection mechanism, so we can just use that. The project has a dependency injector that&rsquo;s specifically used for testing called <code>Injection.</code> All we need to do is decorate the <code>NotesRepository</code> that&rsquo;s injected by the <code>Injection</code> class, and we have what we need to avoid mixing responsibilities:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">static</span> NotesRepository <span style="color: #0000FF">provideNotesRepository</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">static</span> NotesRepository <span style="color: #0000FF">provideNotesRepository</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #008000; font-weight: bold">final</span> NotesRepository inMemoryRepoInstance
       <span style="color: #666666">=</span> NoteRepositories<span style="color: #666666">.</span><span style="color: #7D9029">getInMemoryRepoInstance</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> FakeNotesServiceApiImpl<span style="color: #666666">());</span>
     <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000; font-weight: bold">new</span> NotesRepository<span style="color: #666666">()</span> <span style="color: #666666">{</span>
@@ -260,11 +260,11 @@
     <span style="color: #666666">};</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>The <code>NotesRepository</code> returned by this method gets injected into the <code>Presenter</code> here:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">NotesFragment</span> <span style="color: #008000; font-weight: bold">extends</span> Fragment <span style="color: #008000; font-weight: bold">implements</span> NotesContract<span style="color: #666666">.</span><span style="color: #7D9029">View</span> <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">NotesFragment</span> <span style="color: #008000; font-weight: bold">extends</span> Fragment <span style="color: #008000; font-weight: bold">implements</span> NotesContract<span style="color: #666666">.</span><span style="color: #7D9029">View</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...</span>
     <span style="color: #AA22FF">@Override</span>
     <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span><span style="color: #AA22FF">@Nullable</span> Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
@@ -275,7 +275,7 @@
 </span>    <span style="color: #666666">}</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>Voila. And now your espresso tests will wait until the notes have been loaded before asserting the view state and you&rsquo;ve avoided mixing testing responsibilities with your business logic. Bon Appetite.</p>
 

@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/post/an-espresso-test-recorder-deep-dive/" />
     
@@ -154,7 +154,7 @@
 
 <p>I&rsquo;ve been working on <a href="http://www.philosophicalhacker.com/post/why-dont-we-have-a-unit-test-recorder/">a unit test recorder</a> for Android. After struggling to find a way to implement the unit test recorder,<sup>1</sup> I decided to take a look at how Google implements the espresso test recorder. This post presents what I found when I dug into the source code of the espresso test recorder.</p>
 
-<h3 id="collecting-user-interaction-info:1493ec85bb1efc1b3440fa2d0a91873f">Collecting User Interaction Info</h3>
+<h3 id="collecting-user-interaction-info">Collecting User Interaction Info</h3>
 
 <p>Before I took a look at the source for the espresso recorder, I half expected to find some fancy bytecode manipulation of the sort we see for the <a href="https://android.googlesource.com/platform/tools/base/+/gradle_2.0.0/build-system/gradle-core/src/main/groovy/com/android/build/gradle/internal/transforms">proguard or jacoco transformers</a>. I was surprised to find that the espresso recorder actually relies heavily on breakpoints and the java debugger. To see this, let&rsquo;s start at the code that gets executed when you press the &ldquo;record espresso test button:&rdquo;</p>
 
@@ -235,7 +235,7 @@
 
 <p>These <code>BreakpointCommand</code>s are apparently nothing special. They are subclasses of <code>DebuggerCommandImpl</code>, a class that&rsquo;s a part of the IntelliJ source code. These breakpoint commands simply notify a <code>TestRecorderEventListener</code> with a <code>TestRecorderEvent</code> whenever a breakpoint is hit. The <code>TestRecorderEvent</code> contains the info needed to write out the espresso tests and this info is snagged from the (paused) Execution context when the debugger stops at a breakpoint. Here&rsquo;s a hint of how some of that works:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Nullable</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Nullable</span>
 <span style="color: #008000; font-weight: bold">private</span> TestRecorderEvent <span style="color: #0000FF">prepareEvent</span><span style="color: #666666">(</span>EvaluationContextImpl evalContext<span style="color: #666666">,</span> NodeManagerImpl nodeManager<span style="color: #666666">)</span> <span style="color: #666666">{</span>
   TestRecorderEvent event <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> TestRecorderEvent<span style="color: #666666">(</span>myBreakpointDescriptor<span style="color: #666666">.</span><span style="color: #7D9029">eventType</span><span style="color: #666666">,</span> System<span style="color: #666666">.</span><span style="color: #7D9029">currentTimeMillis</span><span style="color: #666666">());</span>
 
@@ -254,24 +254,24 @@
   <span style="color: #008000; font-weight: bold">return</span> event<span style="color: #666666">;</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>Here&rsquo;s a nice lower-level method that gets close to the IntelliJ api for accessing the data from the paused execution context:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> Value <span style="color: #0000FF">evaluateExpression</span><span style="color: #666666">(</span>String expression<span style="color: #666666">,</span> EvaluationContextImpl evalContext<span style="color: #666666">,</span> NodeManagerImpl nodeManager<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> Value <span style="color: #0000FF">evaluateExpression</span><span style="color: #666666">(</span>String expression<span style="color: #666666">,</span> EvaluationContextImpl evalContext<span style="color: #666666">,</span> NodeManagerImpl nodeManager<span style="color: #666666">)</span> <span style="color: #666666">{</span>
   TextWithImports text <span style="color: #666666">=</span> TextWithImportsImpl<span style="color: #666666">.</span><span style="color: #7D9029">fromXExpression</span><span style="color: #666666">(</span>XExpressionImpl<span style="color: #666666">.</span><span style="color: #7D9029">fromText</span><span style="color: #666666">(</span>expression<span style="color: #666666">));</span>
   WatchItemDescriptor descriptor <span style="color: #666666">=</span> nodeManager<span style="color: #666666">.</span><span style="color: #7D9029">getWatchItemDescriptor</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">,</span> text<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">);</span>
   descriptor<span style="color: #666666">.</span><span style="color: #7D9029">setContext</span><span style="color: #666666">(</span>evalContext<span style="color: #666666">);</span>
   <span style="color: #008000; font-weight: bold">return</span> descriptor<span style="color: #666666">.</span><span style="color: #7D9029">getEvaluateException</span><span style="color: #666666">()</span> <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">null</span> <span style="color: #666666">?</span> <span style="color: #008000; font-weight: bold">null</span> <span style="color: #666666">:</span> descriptor<span style="color: #666666">.</span><span style="color: #7D9029">getValue</span><span style="color: #666666">();</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
 
-<h3 id="writing-out-the-source-files:1493ec85bb1efc1b3440fa2d0a91873f">Writing out the Source Files</h3>
+
+<h3 id="writing-out-the-source-files">Writing out the Source Files</h3>
 
 <p>Now, that we have some idea of how the information for writing the source files is collected, let&rsquo;s look at how Google uses that info to actually write out the espresso test files. Let&rsquo;s start at the code that gets called when you click the &ldquo;Complete Recording&rdquo; button:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>myCompleteRecordingButton<span style="color: #666666">.</span><span style="color: #7D9029">addActionListener</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> ActionListener<span style="color: #666666">()</span> <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>myCompleteRecordingButton<span style="color: #666666">.</span><span style="color: #7D9029">addActionListener</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> ActionListener<span style="color: #666666">()</span> <span style="color: #666666">{</span>
   <span style="color: #AA22FF">@Override</span>
   <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">actionPerformed</span><span style="color: #666666">(</span>ActionEvent e<span style="color: #666666">)</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...</span>
@@ -297,11 +297,11 @@
   <span style="color: #666666">}</span>
 <span style="color: #666666">});</span>
 </pre></div>
-</p>
+
 
 <p>Looks like most of the work of generating the test code lives in this <code>TestCodeGenerator</code> class, so let&rsquo;s look at that:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">TestCodeGenerator</span> <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">TestCodeGenerator</span> <span style="color: #666666">{</span>
   <span style="color: #408080; font-style: italic">//...</span>
   <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">generate</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//...</span>
@@ -334,15 +334,15 @@
   <span style="color: #666666">}</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>Its interesting to see here that they are using <a href="http://velocity.apache.org/">Velocity</a>, a java templating library from apache. I&rsquo;d never heard of it before I stumbled upon the code here. I wonder why they didn&rsquo;t use <a href="https://github.com/square/javapoet">java poet</a> instead, a library from square that&rsquo;s especially designed for writing java class files. In any case, the actual construction of the source code file to be written happens in <code>createVelocityContext</code> if you&rsquo;re curious. I&rsquo;m not going to get into how that method works since that method is more about Velocity than it is about espresso test recording.</p>
 
-<h3 id="conclusion:1493ec85bb1efc1b3440fa2d0a91873f">Conclusion</h3>
+<h3 id="conclusion">Conclusion</h3>
 
 <p>Google&rsquo;s debugger/breakpoint based approach may actually work for the kind of unit test recorder I want to create. This approach would probably require me have the user select which classes they want to &ldquo;clamp&rdquo; down with Vice through a GUI of some sort, but that may be a nicer experience than using annotations or passing command line arguments anyway. I&rsquo;ll be exploring this approach in the coming weeks. Check back for updates.</p>
 
-<h3 id="notes:1493ec85bb1efc1b3440fa2d0a91873f">Notes</h3>
+<h3 id="notes">Notes</h3>
 
 <ol>
 <li>Using the Transform api from the Gradle plugin proved to be a dead end because I needed my Transform implementation to load classes that depend on the android SDK and depending on the Android SDK from a gradle build script is not well supported.</li>

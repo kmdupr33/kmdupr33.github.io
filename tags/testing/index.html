@@ -52,7 +52,7 @@
         <link href="http://philosophicalhacker.com/tags/testing/index.xml" rel="alternate" type="application/rss+xml" title="Testing &middot; Philosophical Hacker" />
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/tags/testing/" />
     
@@ -141,10 +141,39 @@
 	   
 <article class="post post">
     <header class="post-header">
+        <h2 class="post-title"><a href="/post/the-goal-of-refactoring-during-tdd/">The goal of refactoring During TDD</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Red, green, refactor. That&rsquo;s the TDD flow. That much was obvious to me.
+However, refactoring is a pretty broad term. There are many reasons you may want to refactor code and as a result of this, I didn&rsquo;t really understand what exactly was supposed to happen during the refactor step of the TDD loop until I finished the first part of Kent Beck&rsquo;s TDD by Example.
+Actually, in the first description of TDD, Beck uses a more helpful description of the &ldquo;refactor step. <a class="read-more" href="/post/the-goal-of-refactoring-during-tdd/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        on
+            
+                <a href="http://philosophicalhacker.com/tags/testing/">#testing</a>,
+            
+                <a href="http://philosophicalhacker.com/tags/TDD/">#TDD</a>,
+            
+        
+        <time class="post-date" datetime="2016-10-16T16:35:28-04:00">
+            16 Oct 2016
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
         <h2 class="post-title"><a href="/post/tdd-and-startups/">TDD and Startups</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>Kent Beck introduces TDD by Example with a little story meant to show the business value of automated testing: Early one Friday, the boss came to Ward Cunningham to introduce him to Peter, a prospective customer for WyCash, the bond portfolio management system the company was selling. Peter said&hellip;&ldquo;I&rsquo;m starting a new bond fund, and my strategy requires that I handle bonds in different currencies.” The boss turned to Ward, “Well, can we do it?&rdquo;&hellip;The trick now was to make space for the new functionality without breaking anything that already worked. <a class="read-more" href="/post/tdd-and-startups/">&raquo;</a></p>
+        <p>Kent Beck introduces TDD by Example with a little story meant to show the business value of automated testing:
+ Early one Friday, the boss came to Ward Cunningham to introduce him to Peter, a prospective customer for WyCash, the bond portfolio management system the company was selling. Peter said&hellip;&ldquo;I&rsquo;m starting a new bond fund, and my strategy requires that I handle bonds in different currencies.” The boss turned to Ward, “Well, can we do it? <a class="read-more" href="/post/tdd-and-startups/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -173,7 +202,8 @@
     </header>
     <section class="post-excerpt">
         <p><p>When building our Android apps, we can often wind up with a decent amount of code in our <code>RecyclerView.Adapter</code>s that we want to test. In this article, I briefly suggest two ways of structuring our <code>RecyclerView</code>-related classes so that we can accomplish this.</p>
- <a class="read-more" href="/post/unit-testable-recycler-views/">&raquo;</a></p>
+
+<p></p> <a class="read-more" href="/post/unit-testable-recycler-views/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -199,7 +229,8 @@
         <h2 class="post-title"><a href="/post/how-to-safely-move-logic-out-of-activities/">How to Safely move Logic out of Activities</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>In my last post, I argued that we should stop putting our app logic in Activitys and Fragments because it makes both unit testing and functional testing our apps more difficult. In this post, I&rsquo;ll try to suggest a method of safely removing app logic from our Activitys and Fragments, drawing on a central idea discussed in Michael Feathers&rsquo; Working Effectively with Legacy Code: characterization tests. In the first section, I briefly introduce the idea of characterization tests. <a class="read-more" href="/post/how-to-safely-move-logic-out-of-activities/">&raquo;</a></p>
+        <p>In my last post, I argued that we should stop putting our app logic in Activitys and Fragments because it makes both unit testing and functional testing our apps more difficult. In this post, I&rsquo;ll try to suggest a method of safely removing app logic from our Activitys and Fragments, drawing on a central idea discussed in Michael Feathers&rsquo; Working Effectively with Legacy Code: characterization tests.
+In the first section, I briefly introduce the idea of characterization tests. <a class="read-more" href="/post/how-to-safely-move-logic-out-of-activities/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -253,7 +284,8 @@
         <h2 class="post-title"><a href="/post/testing-strategies-with-a-react-redux-architecture/">Testing Strategies with a React/Redux Architecture</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>In my last post, I briefly introduced the principles behind React and Redux. I said that React is about making what gets rendered to the screen a function of some view-state object. I also said that Redux is about making updates to the screen a function of the current view-state object and an action describing a user&rsquo;s interaction with the view. In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis testing. <a class="read-more" href="/post/testing-strategies-with-a-react-redux-architecture/">&raquo;</a></p>
+        <p>In my last post, I briefly introduced the principles behind React and Redux. I said that React is about making what gets rendered to the screen a function of some view-state object. I also said that Redux is about making updates to the screen a function of the current view-state object and an action describing a user&rsquo;s interaction with the view.
+In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis testing. <a class="read-more" href="/post/testing-strategies-with-a-react-redux-architecture/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -279,7 +311,9 @@
         <h2 class="post-title"><a href="/post/react-and-redux-like-architectures-for-android/">How React-and-Redux-like Architectures for Android can make Testing Easier</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>I think there&rsquo;s a lot of value in seeing what else is happening, even if you&rsquo;re not a master of one of those other languages. As long as you&rsquo;re being exposed to it, you&rsquo;re opening your mind up to different ways of approaching problems and solving problems and different techniques. Jake Wharton, Fragmented, Episode 6, 27:45-28:20 React and Redux are libraries that have taken the web development world by storm. Touted benefits of these libraries include code that&rsquo;s &ldquo;easier to reason about,&rdquo; time traveling debugging, and hot reloading. <a class="read-more" href="/post/react-and-redux-like-architectures-for-android/">&raquo;</a></p>
+        <p>I think there&rsquo;s a lot of value in seeing what else is happening, even if you&rsquo;re not a master of one of those other languages. As long as you&rsquo;re being exposed to it, you&rsquo;re opening your mind up to different ways of approaching problems and solving problems and different techniques.
+Jake Wharton, Fragmented, Episode 6, 27:45-28:20
+ React and Redux are libraries that have taken the web development world by storm. <a class="read-more" href="/post/react-and-redux-like-architectures-for-android/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -305,7 +339,8 @@
         <h2 class="post-title"><a href="/post/psa-dont-use-esprsso-idling-resources-like-this/">PSA: Dont Use Espresso Idling Resources like Google does</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>Roman Nurik: &hellip;That&rsquo;s actually one of the harder things with writing good sample code. People are going to be copying and pasting the heck out of it so you can&rsquo;t take those shortcuts that you sometimes hopefully aren&rsquo;t taking. Chet Haase: I always take the shortcuts. That&rsquo;s one of the more interesting things that the developer relations group does in general&hellip;we will put together tests and sample code for the features that we work but we really don&rsquo;t have the time to dive in deeply and do it in a real context. <a class="read-more" href="/post/psa-dont-use-esprsso-idling-resources-like-this/">&raquo;</a></p>
+        <p>Roman Nurik: &hellip;That&rsquo;s actually one of the harder things with writing good sample code. People are going to be copying and pasting the heck out of it so you can&rsquo;t take those shortcuts that you sometimes hopefully aren&rsquo;t taking.
+Chet Haase: I always take the shortcuts. That&rsquo;s one of the more interesting things that the developer relations group does in general&hellip;we will put together tests and sample code for the features that we work but we really don&rsquo;t have the time to dive in deeply and do it in a real context. <a class="read-more" href="/post/psa-dont-use-esprsso-idling-resources-like-this/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -332,7 +367,8 @@
     </header>
     <section class="post-excerpt">
         <p><p>I&rsquo;m using TDD to write a HackerNews client for Android. This post (and the ones that will likely follow it) share a little bit about some of the techniques I used to follow a TDD-based work-flow for developing this application. It also discusses the architecture that arises when Android apps are built with testability in mind from the ground up.</p>
- <a class="read-more" href="/2015/07/17/making-a-tdd-based-hackernews-client-for-android/">&raquo;</a></p>
+
+<p></p> <a class="read-more" href="/2015/07/17/making-a-tdd-based-hackernews-client-for-android/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -378,8 +414,7 @@
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Please, for the sake of the kittens. <a href="http://t.co/xaj7pNDVfH">pic.twitter.com/xaj7pNDVfH</a></p>&mdash; Code Standards (@codestandards) <a href="https://twitter.com/codestandards/status/570224843536277504">February 24, 2015</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-<p>Instead, all I&rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps.</p>
- <a class="read-more" href="/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/">&raquo;</a></p>
+<p>Instead, all I&rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps. </p> <a class="read-more" href="/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/">&raquo;</a></p>
     </section>
     <footer class="post-meta">
         
@@ -397,45 +432,6 @@
         
         <time class="post-date" datetime="2015-07-14T18:35:40Z">
             14 Jul 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/">6 Things I wish I Knew before I Wrote my first Android App</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p><p>My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&rsquo;t even bother listing it on my resume&rsquo; anymore. That app wouldn&rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.</p>
-
-<p>Here&rsquo;s a list of things to keep in mind as you&rsquo;re writing your first Android apps. These lessons are derived from actual mistakes that I made in the source code of my first app, mistakes that I&rsquo;ll be showing below. Keeping these things in mind will help you write an app that you can be a little prouder of.</p>
-
-<p>Of course, if you&rsquo;re doing your job right as a student of Android development, you&rsquo;ll probably hate your app later regardless. As @codestandards says,</p>
-
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">If the code you wrote a year ago doesn&#39;t seem bad to you, you&#39;re probably not learning enough.</p>&mdash; Code Standards (@codestandards) <a href="https://twitter.com/codestandards/status/601373392059518976">May 21, 2015</a></blockquote>
-<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-<p>If you&rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&rsquo;ve never been guilty of making the mistakes I demo in those items.</p>
- <a class="read-more" href="/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        
-            
-        
-        on
-            
-                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="http://philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-07-09T21:07:51Z">
-            9 Jul 2015
         </time>
     </footer>
 </article>

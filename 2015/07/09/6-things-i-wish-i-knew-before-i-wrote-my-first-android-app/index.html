@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/" />
     
@@ -148,9 +148,7 @@
     </header>
 
     <section class="post-content">
-      
-
-<p>My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&rsquo;t even bother listing it on my resume&rsquo; anymore. That app wouldn&rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.</p>
+      <p>My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&rsquo;t even bother listing it on my resume&rsquo; anymore. That app wouldn&rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.</p>
 
 <p>Here&rsquo;s a list of things to keep in mind as you&rsquo;re writing your first Android apps. These lessons are derived from actual mistakes that I made in the source code of my first app, mistakes that I&rsquo;ll be showing below. Keeping these things in mind will help you write an app that you can be a little prouder of.</p>
 
@@ -159,9 +157,10 @@
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">If the code you wrote a year ago doesn&#39;t seem bad to you, you&#39;re probably not learning enough.</p>&mdash; Code Standards (@codestandards) <a href="https://twitter.com/codestandards/status/601373392059518976">May 21, 2015</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-<p>If you&rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&rsquo;ve never been guilty of making the mistakes I demo in those items.</p>
+<p>If you&rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&rsquo;ve never been guilty of making the mistakes I demo in those items.
+</p>
 
-<h2 id="1-don-t-have-static-references-to-contexts:252a31459148d28701172cdc4197120e">1. Don&rsquo;t have static references to Contexts</h2>
+<h2 id="1-don-t-have-static-references-to-contexts">1. Don&rsquo;t have static references to Contexts</h2>
 
 <script src="//gist.github.com/kmdupr33/e9af62a0ad04abbb0a7d.js"></script>
 
@@ -171,7 +170,7 @@
 
 <p>Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but <a href="http://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/">I wouldn&rsquo;t recommend that you do that either</a>. </p>
 
-<h2 id="2-beware-of-implicit-references-to-objects-whose-lifecycle-you-do-not-control:252a31459148d28701172cdc4197120e">2. Beware of &ldquo;implicit references&rdquo; to objects whose lifecycle you do not control</h2>
+<h2 id="2-beware-of-implicit-references-to-objects-whose-lifecycle-you-do-not-control">2. Beware of &ldquo;implicit references&rdquo; to objects whose lifecycle you do not control</h2>
 
 <script src="//gist.github.com/kmdupr33/494707e126e5fc7156ea.js"></script>
 
@@ -183,7 +182,7 @@
 
 <p>There&rsquo;s a great Google IO video <a href="https://www.youtube.com/watch?v=_CruQY55HOk">that explains why this sort of thing happens</a>.</p>
 
-<h2 id="3-make-android-studio-work-for-you:252a31459148d28701172cdc4197120e">3. Make Android Studio work for You</h2>
+<h2 id="3-make-android-studio-work-for-you">3. Make Android Studio work for You</h2>
 
 <script src="//gist.github.com/kmdupr33/f0e08822fe0d3b74973a.js"></script>
 
@@ -197,13 +196,13 @@
 
 <p>Android Studio can do a lot more than that too. <a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/">Learning shortcuts</a> and learning about <a href="https://www.jetbrains.com/idea/help/live-templates.html">live templates</a> are good places to start.</p>
 
-<h2 id="4-methods-should-do-one-thing:252a31459148d28701172cdc4197120e">4. Methods should do one thing</h2>
+<h2 id="4-methods-should-do-one-thing">4. Methods should do one thing</h2>
 
 <p>There&rsquo;s a method in one of the classes that I wrote that&rsquo;s over 100 lines long. Such methods are hard to read, modify, and reuse. Try to write methods that only do one thing. Typically, this means that you should be suspicious of methods that are over 20 lines long. Here you can recruit Android Studio to help you spot problematic methods:</p>
 
 <p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.25.00-PM.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.25.00-PM-1024x718.png" alt="Screen Shot 2015-07-09 at 4.25.00 PM" /></a></p>
 
-<h2 id="5-learn-from-other-people-who-are-smarter-and-more-experienced-than-you:252a31459148d28701172cdc4197120e">5. Learn from other people who are smarter and more experienced than you.</h2>
+<h2 id="5-learn-from-other-people-who-are-smarter-and-more-experienced-than-you">5. Learn from other people who are smarter and more experienced than you.</h2>
 
 <p>This might sound trivial, but its a mistake that I made when I wrote my first app.</p>
 
@@ -211,7 +210,7 @@
 
 <p>Read <a href="http://www.amazon.com/The-Pragmatic-Programmer-Journeyman-Master/dp/020161622X">Pragmatic Programmer</a>. Then read <a href="http://www.amazon.com/Effective-Java-Edition-Joshua-Bloch/dp/0321356683">Effective Java</a>. These two books will help you avoid making common mistakes that we make as novice developers. After you done with those books, keep looking for smart people to learn from.</p>
 
-<h2 id="6-use-libraries:252a31459148d28701172cdc4197120e">6. Use Libraries</h2>
+<h2 id="6-use-libraries">6. Use Libraries</h2>
 
 <p>When you&rsquo;re writing an app, you&rsquo;re probably going to encounter problems that smarter and more experienced people have already solved. Moreover, a lot of these solutions are available as open source libraries. Take advantage of them.</p>
 
@@ -225,10 +224,9 @@
 <li><p>Look for open source applications that solve problems similar to the ones that you are solving with your app. You might find one that uses a third-party library that you want to use or you might find that they&rsquo;ve used a standard java library that you were unaware of.</p></li>
 </ol>
 
-<h2 id="conclusion:252a31459148d28701172cdc4197120e">Conclusion</h2>
+<h2 id="conclusion">Conclusion</h2>
 
 <p>Writing good Android apps can be very difficult. Don&rsquo;t make it harder on yourself by repeating the mistakes I made. If you found a mistake in what I&rsquo;ve written, please let me know in the comments. (Misleading comments are worse than no comments at all.) If you think this&rsquo;ll be useful for a new developer, share it. Save them some headache.</p>
-
     </section>
 
 

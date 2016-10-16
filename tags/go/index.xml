@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Go on Philosophical Hacker</title>
-    <link>http://philosophicalhacker.com/tags/go/</link>
-    <description>Recent content in Go on Philosophical Hacker</description>
+    <title>Philosophical Hacker</title>
+    <link>http://philosophicalhacker.com/tags/go/index.xml</link>
+    <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 Feb 2016 21:30:42 -0500</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/tags/go/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -19,7 +18,7 @@
 
 &lt;p&gt;Sometimes you need to test a package&amp;rsquo;s implementation from outside of the package containing the implementation you&amp;rsquo;d like to test. This post briefly covers why this need arises and how we can meet  that need. Much of the information here is already covered in Andrew Gerrand&amp;rsquo;s &lt;a href=&#34;https://www.youtube.com/watch?v=ndmB0bj7eyw&#34;&gt;testing techniques talk&lt;/a&gt;, so if you&amp;rsquo;ve watched that, you&amp;rsquo;ll probably only think the last section of this post is interesting.&lt;/p&gt;
 
-&lt;h3 id=&#34;why:4ff68378a648ebf9e92d5638ee7e7264&#34;&gt;Why?&lt;/h3&gt;
+&lt;h3 id=&#34;why&#34;&gt;Why?&lt;/h3&gt;
 
 &lt;p&gt;Like I just said, sometimes you need to test a package&amp;rsquo;s implementation from outside of the package containing the implementation you&amp;rsquo;d like to test. Typically, this situation happens because of circular dependency.&lt;/p&gt;
 
@@ -31,7 +30,7 @@
 
 &lt;p&gt;Although the tests are outside of the package you are testing, you may still want to test the implementation details of that package. In other words, you may want to test parts of that package&amp;rsquo;s un-exported interface. For example, the authors of the standard library wanted to test the &lt;code&gt;isSpace()&lt;/code&gt; function from the fmt package.&lt;/p&gt;
 
-&lt;h3 id=&#34;how:4ff68378a648ebf9e92d5638ee7e7264&#34;&gt;How&lt;/h3&gt;
+&lt;h3 id=&#34;how&#34;&gt;How&lt;/h3&gt;
 
 &lt;p&gt;In order to test the &lt;code&gt;isSpace()&lt;/code&gt; function from outside of the fmt package, the standard lib authors created a export_test.go file in the fmt package. This file simply exports the parts of the un-exported interface that they wanted to test:&lt;/p&gt;
 
@@ -64,17 +63,17 @@ Now, suppose you wanted to test the &lt;span style=&#34;color: #BA2121&#34;&gt;`
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//export_test.go&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//export_test.go&lt;/span&gt;
 
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;type&lt;/span&gt; LRUCache &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
 	lruCache
 }
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Now, in order for this to work, the &lt;code&gt;GetGopher()&lt;/code&gt; method has to be exported. This doesn&amp;rsquo;t break encapsulation, however, because an exported method on an un-exported type will still be unaccessible to clients outside of the package.&lt;/p&gt;
 
-&lt;h3 id=&#34;conclusion:4ff68378a648ebf9e92d5638ee7e7264&#34;&gt;Conclusion&lt;/h3&gt;
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
 
 &lt;p&gt;You just learned how to test package implementation details from &amp;ldquo;the outside.&amp;rdquo; This will come in handy when you break a circular dependency between your test code and the package you&amp;rsquo;re testing by placing the test code outside of the package you&amp;rsquo;re testing.&lt;/p&gt;
 
@@ -92,7 +91,7 @@ Now, suppose you wanted to test the &lt;span style=&#34;color: #BA2121&#34;&gt;`
 
 &lt;p&gt;Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&amp;rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.&lt;/p&gt;
 
-&lt;h3 id=&#34;table-driven-tests:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Table-Driven Tests&lt;/h3&gt;
+&lt;h3 id=&#34;table-driven-tests&#34;&gt;Table-Driven Tests&lt;/h3&gt;
 
 &lt;p&gt;There are many examples of table-driven tests in the standard library. One example of a table-driven test can be found in the &lt;code&gt;fmt_test&lt;/code&gt; package:&lt;/p&gt;
 
@@ -131,7 +130,7 @@ Now, suppose you wanted to test the &lt;span style=&#34;color: #BA2121&#34;&gt;`
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;h3 id=&#34;gomock-mocks:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Gomock Mocks&lt;/h3&gt;
+&lt;h3 id=&#34;gomock-mocks&#34;&gt;Gomock Mocks&lt;/h3&gt;
 
 &lt;p&gt;Gomock mocks are generated in two steps. The first step is to generate the mock code using the &lt;code&gt;mockgen&lt;/code&gt; command. The second step is to create the mock for use in your test:&lt;/p&gt;
 
@@ -143,7 +142,7 @@ mgf &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_gopher.NewMo
 
 &lt;p&gt;If this snippet doesn&amp;rsquo;t make sense to you, it might be a good idea to read &lt;a href=&#34;http://www.philosophicalhacker.com/post/getting-started-with-gomock/&#34;&gt;my post on gomock&lt;/a&gt; before proceeding.&lt;/p&gt;
 
-&lt;h3 id=&#34;why-bother:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Why bother?&lt;/h3&gt;
+&lt;h3 id=&#34;why-bother&#34;&gt;Why bother?&lt;/h3&gt;
 
 &lt;p&gt;To see why we might want to use table-driven tests with gomock, suppose we want to write a test for a cache of &lt;code&gt;Gopher&lt;/code&gt;s. When we ask the cache for a &lt;code&gt;Gopher&lt;/code&gt;, the cache will first check its own map to see if the &lt;code&gt;Gopher&lt;/code&gt; is available in memory. If the &lt;code&gt;Gopher&lt;/code&gt; is unavailable it will call on a &lt;code&gt;GopherFinder&lt;/code&gt; to fetch the &lt;code&gt;Gopher&lt;/code&gt; from some remote location:&lt;/p&gt;
 
@@ -175,11 +174,11 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;Obviously, these test cases can share some code. Using a table-driven test can help us avoid duplicating the support code we need to execute these two test cases. Moreover, Cache&amp;rsquo;s, as &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;Martin Fowler points out&lt;/a&gt;, are prime candidates for behavior/mock-based testing, so in this case, it doesn&amp;rsquo;t seem crazy to combine mocks with a table-driven test.&lt;/p&gt;
 
-&lt;h3 id=&#34;putting-it-all-together:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;Putting it All Together&lt;/h3&gt;
+&lt;h3 id=&#34;putting-it-all-together&#34;&gt;Putting it All Together&lt;/h3&gt;
 
 &lt;p&gt;The struct that supports the table-driven tests should contain fields for the values that need to change in order to support different, but related test cases. The first difference between our two cache test cases is that the in one case, the cache already contains a cached &lt;code&gt;Gopher&lt;/code&gt; for the name &amp;ldquo;andrewgerrand&amp;rdquo; and in the other case, it does not. So, our slice of anonymous structs should start off looking like this:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
 	cachedGophers &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher
 	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
 }{
@@ -191,11 +190,11 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 	},
 }
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;When we range over the values of &lt;code&gt;cacheTests&lt;/code&gt;, we can use the value of the &lt;code&gt;cachedGophers&lt;/code&gt; field to setup our &lt;code&gt;Cache&lt;/code&gt; appropriately so we can test that it behaves correctly:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
     con &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
 	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; cacheTests {
 
@@ -207,11 +206,11 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 	}
 }
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;The second thing that&amp;rsquo;s different about our two test cases is the actual calls we should expect on the &lt;code&gt;GohperFinder&lt;/code&gt;. Again, when the cache can&amp;rsquo;t find a &lt;code&gt;Gopher&lt;/code&gt; in memory, it should call on its &lt;code&gt;GopherFinder&lt;/code&gt;. Otherwise, it shouldn&amp;rsquo;t call the &lt;code&gt;GopherFinder&lt;/code&gt; at all, and it should simply return the &lt;code&gt;Gopher&lt;/code&gt; it has in memory. So, we need a field in our struct that captures this difference between the two test cases:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;var&lt;/span&gt; cacheTests = []&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;struct&lt;/span&gt; {
 	cachedGophers &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color: #B00040&#34;&gt;string&lt;/span&gt;]Gopher
 	Configurer    Configurer
 }{
@@ -229,13 +228,13 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 	},
 }
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;The &lt;code&gt;Configurer&lt;/code&gt;, as you probably figured out, is just a function that takes a mock as a parameter, configures it, and returns the configured mock to be used by the test. When &lt;code&gt;cachedGophers&lt;/code&gt; is nil, the &lt;code&gt;Cache&lt;/code&gt; created for the test won&amp;rsquo;t have any cached &lt;code&gt;Gophers&lt;/code&gt; in memory, so we should expect the &lt;code&gt;Cache&lt;/code&gt; to call &lt;code&gt;Find()&lt;/code&gt; on its &lt;code&gt;GopherFinder&lt;/code&gt;. On the other hand, the second struct has a &lt;code&gt;cachedGohpers&lt;/code&gt; map that should cause the &lt;code&gt;Cache&lt;/code&gt; to return a cached version of the &lt;code&gt;Gopher&lt;/code&gt; rather than fetch one from a remote location.&lt;/p&gt;
 
 &lt;p&gt;The &lt;code&gt;TestCache()&lt;/code&gt; function can leverage the fields of this struct to run the two test cases:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestCache(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
 
 	con &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; gomock.NewController(t)
 &lt;span style=&#34;background-color: #ffffcc&#34;&gt;	&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; _, tt &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;range&lt;/span&gt; cacheTests {
@@ -251,9 +250,9 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 	con.Finish()
 }
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
 
-&lt;h3 id=&#34;what-do-you-think:66f5f9f3ad6818e7e7888e03cf1ad34c&#34;&gt;What do you think?&lt;/h3&gt;
+
+&lt;h3 id=&#34;what-do-you-think&#34;&gt;What do you think?&lt;/h3&gt;
 
 &lt;p&gt;This strikes me as a fairly reasonable way of avoiding duplicating code while using gomock mocks in testing, but it might be silly and/or there might be a better solution. I&amp;rsquo;m interested in hearing alternative solutions to this problem, so I&amp;rsquo;d love to hear your thoughts on this. For the reasons I pointed out &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/&#34;&gt;here&lt;/a&gt;, I don&amp;rsquo;t find the typical arguments offered against mocking libraries compelling, so I&amp;rsquo;m less interested in hearing people repeat those reasons, but if you have a novel reason for why gomock is a bad idea in the first place, I&amp;rsquo;d definitely like to hear it.&lt;/p&gt;
 </description>
@@ -269,7 +268,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;Although Go has support for testing built in to its toolchain, certain kinds of testing can be a bit tricky. For example, it may not be immediately obvious how you would go about writing and running &lt;em&gt;integration tests&lt;/em&gt; in go. This post contains info on how to write and run integration tests for your go code.&lt;/p&gt;
 
-&lt;h3 id=&#34;clarifying-terms:cee31ec0056c5269248fe8706a45b932&#34;&gt;Clarifying Terms&lt;/h3&gt;
+&lt;h3 id=&#34;clarifying-terms&#34;&gt;Clarifying Terms&lt;/h3&gt;
 
 &lt;p&gt;As &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/&#34;&gt;I&amp;rsquo;ve said before&lt;/a&gt;, many terms in software are vague or ambiguous. So, before I get into how to write and run integration tests, let&amp;rsquo;s make sure we&amp;rsquo;re referring to the same thing when we use the word &amp;ldquo;integration&amp;rdquo; test. Sometimes it seems like people use &amp;ldquo;integration test&amp;rdquo; and &amp;ldquo;acceptance test&amp;rdquo; interchangeably. I do think, however, that there&amp;rsquo;s a useful distinction to be made between these types of tests, a distinction that&amp;rsquo;s made nicely by Steve Freeman and Nat Pryce in the following quotations:&lt;/p&gt;
 
@@ -285,7 +284,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 &lt;p&gt;We use the term integration tests to refer to the tests that check how some of our code works with code from outside the team that we can’t change. It might be a public framework, such as a persistence mapper, or a library from another team within our organization. The distinction is that integration tests make sure that any abstractions we build over third-party code work as we expect.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;integration-testing-in-go:cee31ec0056c5269248fe8706a45b932&#34;&gt;Integration Testing in Go&lt;/h3&gt;
+&lt;h3 id=&#34;integration-testing-in-go&#34;&gt;Integration Testing in Go&lt;/h3&gt;
 
 &lt;p&gt;Now, that we&amp;rsquo;re clear on what we mean by the terms &amp;ldquo;acceptance&amp;rdquo; and &amp;ldquo;integration tests,&amp;rdquo; let&amp;rsquo;s briefly take a look at how we can write and run integration tests in go.&lt;/p&gt;
 
@@ -293,7 +292,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;Obviously, in order to perform this kind of integration testing, your go code needs to be able to communicate with the database. How can we ensure that there is a database available for our test code to talk to?&lt;/p&gt;
 
-&lt;h4 id=&#34;a-naive-solution:cee31ec0056c5269248fe8706a45b932&#34;&gt;A naive solution&lt;/h4&gt;
+&lt;h4 id=&#34;a-naive-solution&#34;&gt;A naive solution&lt;/h4&gt;
 
 &lt;p&gt;The &lt;code&gt;TestMain()&lt;/code&gt; function is a great way to perform the extra setup and teardown of your test database. When there&amp;rsquo;s a &lt;code&gt;TestMain()&lt;/code&gt; function in any of your test files, that function is called directly by &lt;code&gt;go test&lt;/code&gt;. The function can then perform any necessary setup, run the tests, and then teardown whatever was needed to support the tests:&lt;/p&gt;
 
@@ -308,7 +307,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;The problem with using &lt;code&gt;TestMain&lt;/code&gt; this way, however, is that integration tests are typically much slower than unit tests, so running our tests this way will make invocations of &lt;code&gt;go test&lt;/code&gt; take much longer. If we&amp;rsquo;re working on a part of the code that has nothing to do with integrating with 3rd party code, this can be pretty frustrating.&lt;/p&gt;
 
-&lt;h4 id=&#34;a-less-naive-solution:cee31ec0056c5269248fe8706a45b932&#34;&gt;A less naive solution&lt;/h4&gt;
+&lt;h4 id=&#34;a-less-naive-solution&#34;&gt;A less naive solution&lt;/h4&gt;
 
 &lt;p&gt;Fortunately, the testing package itself suggests a solution to this problem. The testing package actually has a function called &lt;code&gt;testing.Short()&lt;/code&gt;. This function returns true if the &lt;code&gt;-short&lt;/code&gt; flag has been passed into the &lt;code&gt;go test&lt;/code&gt; command. Tests can check the value of &lt;code&gt;Short()&lt;/code&gt; to determine whether they should execute code and/or tests that will take a long time. This flag could be leveraged to determine whether the tests should spin up external services for integration tests:&lt;/p&gt;
 
@@ -337,7 +336,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;h4 id=&#34;a-scalable-solution:cee31ec0056c5269248fe8706a45b932&#34;&gt;A scalable solution&lt;/h4&gt;
+&lt;h4 id=&#34;a-scalable-solution&#34;&gt;A scalable solution&lt;/h4&gt;
 
 &lt;p&gt;This solution is definitely better than just always setting up and tearing down a database in the &lt;code&gt;TestMain()&lt;/code&gt; function, but it has a few disadvantages:&lt;/p&gt;
 
@@ -384,7 +383,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;Of course, your database and message queue integration tests should also check for these flags and skip if they are not set to true.&lt;/p&gt;
 
-&lt;h3 id=&#34;conclusion:cee31ec0056c5269248fe8706a45b932&#34;&gt;Conclusion&lt;/h3&gt;
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
 
 &lt;p&gt;We&amp;rsquo;ve just seen three ways of writing and running integration tests in go.&lt;/p&gt;
 
@@ -394,7 +393,7 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
 
 &lt;p&gt;I believe that the last solution we explored is a very scalable way of handling integration testing in go. It gives us fine-grained control over which integration tests we want to run and doesn&amp;rsquo;t run any slow integration tests by default. This allows us to run our tests as quickly as possible. I also suspect that there&amp;rsquo;s another advantage to using custom flags for your integration testing: it makes acceptance testing easier, but this something that I&amp;rsquo;ll have to explore another time.&lt;/p&gt;
 
-&lt;h4 id=&#34;notes:cee31ec0056c5269248fe8706a45b932&#34;&gt;Notes:&lt;/h4&gt;
+&lt;h4 id=&#34;notes&#34;&gt;Notes:&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627&#34;&gt;Growing Object Oriented Software Guided by Tests&lt;/a&gt;, pg 40-41&lt;/li&gt;
@@ -409,11 +408,11 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
       <pubDate>Wed, 20 Jan 2016 10:43:26 -0500</pubDate>
       
       <guid>http://philosophicalhacker.com/post/getting-started-with-gomock/</guid>
-      <description>
+      <description>&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing&#34;&gt;my last post&lt;/a&gt;, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&amp;rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&amp;rsquo;s a brief tutorial on how to get started with gomock.&lt;/p&gt;
 
-&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing&#34;&gt;my last post&lt;/a&gt;, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&amp;rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&amp;rsquo;s a brief tutorial on how to get started with gomock.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;your-first-mock-utilizing-test:6cd9afeec5930d76953b73f2578dd3db&#34;&gt;Your first mock-utilizing test&lt;/h3&gt;
+&lt;h3 id=&#34;your-first-mock-utilizing-test&#34;&gt;Your first mock-utilizing test&lt;/h3&gt;
 
 &lt;p&gt;To get started using gomock, first follow the installation instructions laid out in the gomock &lt;a href=&#34;https://github.com/golang/mock&#34;&gt;repo&amp;rsquo;s readme&lt;/a&gt;. Once you&amp;rsquo;ve installed gomock, you can start generating mocks for your tests. Let&amp;rsquo;s explore how gomock works with an example.&lt;/p&gt;
 
@@ -487,7 +486,7 @@ GopherFinder
 
 &lt;p&gt;The highlighted line above is the call where you actually specify which methods the mock &lt;code&gt;GopherFinder&lt;/code&gt; is expecting to receive during the test. Here we tell the mock that we&amp;rsquo;re expecting a call to the &lt;code&gt;Find()&lt;/code&gt; method with an argument of &amp;ldquo;andrewgerrand.&amp;rdquo;&lt;/p&gt;
 
-&lt;h1 id=&#34;handling-circular-dependencies:6cd9afeec5930d76953b73f2578dd3db&#34;&gt;Handling Circular Dependencies&lt;/h1&gt;
+&lt;h1 id=&#34;handling-circular-dependencies&#34;&gt;Handling Circular Dependencies&lt;/h1&gt;
 
 &lt;p&gt;Notice that the package for the above snippet of code is &lt;code&gt;philhackerblogcode_test&lt;/code&gt; instead of &lt;code&gt;philhackerblogcode&lt;/code&gt;. Typically, tests are placed in the same package as the code that those tests exercise, but if you do this when using gomock you are probably going to introduce a circular dependency between the package you are testing and the package that contains the generated mock code.&lt;/p&gt;
 
@@ -495,13 +494,13 @@ GopherFinder
 
 &lt;p&gt;The way to avoid this circular dependency is to place your tests in a package that&amp;rsquo;s different from the package you are testing. Next, have your test code import both the package you&amp;rsquo;d like to test and the mock package that the test depends upon. As Andrew Gerrand points out in his &lt;a href=&#34;https://www.youtube.com/watch?v=ndmB0bj7eyw&#34;&gt;testing techniques talk&lt;/a&gt;, this is a standard way of avoiding circular circular dependencies while testing.&lt;/p&gt;
 
-&lt;h1 id=&#34;stubbing-with-gomock:6cd9afeec5930d76953b73f2578dd3db&#34;&gt;Stubbing with gomock&lt;/h1&gt;
+&lt;h1 id=&#34;stubbing-with-gomock&#34;&gt;Stubbing with gomock&lt;/h1&gt;
 
 &lt;p&gt;The above test ensures that the &lt;code&gt;HandlerFunc&lt;/code&gt; returned by &lt;code&gt;GetHandler&lt;/code&gt; calls the &lt;code&gt;GopherFinder&lt;/code&gt; with the appropriate arguments, but the &lt;code&gt;HandlerFunc&lt;/code&gt; has more behavior that we can test. One of the things the &lt;code&gt;HandlerFunc&lt;/code&gt; should do is respond with a 500 if the &lt;code&gt;GopherFinder&lt;/code&gt; returns an error while finding a gopher. In order to test this additional behavior, we need to force the &lt;code&gt;GopherFinder&lt;/code&gt; to return an error for the purposes of the test.&lt;/p&gt;
 
 &lt;p&gt;Fortunately, Gomock also allows us to do exactly this. It allows the mocks it generates to behave like stubs.&lt;sup&gt;2&lt;/sup&gt; You can specify the return value that should be returned by using the &lt;code&gt;Return()&lt;/code&gt; method on the result of calling &lt;code&gt;EXPECT()&lt;/code&gt; and the method you are expecting:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestHandler(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;func&lt;/span&gt; TestHandler(t &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt;testing.T) {
 	&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
 	mgf &lt;span style=&#34;color: #666666&#34;&gt;:=&lt;/span&gt; mock_philhackerblogcode.NewMockGopherFinder(mockCtrl)
 &lt;span style=&#34;background-color: #ffffcc&#34;&gt;	mgf.EXPECT().
@@ -521,18 +520,17 @@ GopherFinder
 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;	}
 &lt;/span&gt;}
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Because we&amp;rsquo;ve told the mock &lt;code&gt;GopherFinder&lt;/code&gt; to return an error when its &lt;code&gt;Find()&lt;/code&gt; method is called, we can test to see that the &lt;code&gt;HandlerFunc&lt;/code&gt; actually writes out a 500 response code when the &lt;code&gt;GopherFinder&lt;/code&gt; returns an error.&lt;/p&gt;
 
-&lt;h2 id=&#34;notes:6cd9afeec5930d76953b73f2578dd3db&#34;&gt;Notes&lt;/h2&gt;
+&lt;h2 id=&#34;notes&#34;&gt;Notes&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;The mockgen command can also be run in &amp;ldquo;source mode.&amp;rdquo; In source mode, you simply pass in the source file containing interfaces to be mocked as an argument. See &lt;a href=&#34;https://github.com/golang/mock#running-mockgen&#34;&gt;the docs&lt;/a&gt; for more info.&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;For more on the difference between mocks and stubs, see Martin Fowler&amp;rsquo;s &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;Mocks aren&amp;rsquo;t Stubs&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -541,9 +539,7 @@ GopherFinder
       <pubDate>Thu, 14 Jan 2016 02:20:53 +0000</pubDate>
       
       <guid>http://philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/</guid>
-      <description>
-
-&lt;p&gt;A few weeks ago, I started learning go. Since I&amp;rsquo;m a wannabe TDD-er, I took a look at some resources on testing go code. I stumbled upon &lt;a href=&#34;https://talks.golang.org/2014/testing.slide#1&#34;&gt;Andrew Gerrand&amp;rsquo;s excellent Testing Techniques talk&lt;/a&gt; in which he says this:&lt;/p&gt;
+      <description>&lt;p&gt;A few weeks ago, I started learning go. Since I&amp;rsquo;m a wannabe TDD-er, I took a look at some resources on testing go code. I stumbled upon &lt;a href=&#34;https://talks.golang.org/2014/testing.slide#1&#34;&gt;Andrew Gerrand&amp;rsquo;s excellent Testing Techniques talk&lt;/a&gt; in which he says this:&lt;/p&gt;
 
 &lt;blockquote&gt;Go eschews a lot of things, including mocks and fakes.&lt;/blockquote&gt;
 
@@ -561,7 +557,9 @@ GopherFinder
 &lt;li&gt;&lt;p&gt;If we are clear about our terms, the argument against using mocking libraries is not very compelling.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h1 id=&#34;vague-terms:ddbbd3dd2c8fffb08367af59a48776ea&#34;&gt;Vague Terms&lt;/h1&gt;
+&lt;p&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;vague-terms&#34;&gt;Vague Terms&lt;/h1&gt;
 
 &lt;p&gt;I think the terms &amp;ldquo;mock&amp;rdquo; and &amp;rdquo;fake,&amp;rdquo; like many terms in software, are vague. I think, moreover, that the vagueness of the terms makes the question of whether to use a mocking library more difficult and more apparently contentious than it actually is.&lt;/p&gt;
 
@@ -622,7 +620,7 @@ GopherFinder
 
 &lt;p&gt;This isn&amp;rsquo;t how tests with a ResponseRecorder work out of the box. In fact, the ResponseRecorder is basically a Recorder with some &amp;ldquo;getters&amp;rdquo; that allow us to perform state-based verification for our testing, a verification technique that, according to Martin Fowler, is a verification technique that&amp;rsquo;s used when you &lt;em&gt;aren&amp;rsquo;t&lt;/em&gt; working with a mock.&lt;/p&gt;
 
-&lt;h1 id=&#34;the-argument-against-gomock:ddbbd3dd2c8fffb08367af59a48776ea&#34;&gt;The Argument against Gomock&lt;/h1&gt;
+&lt;h1 id=&#34;the-argument-against-gomock&#34;&gt;The Argument against Gomock&lt;/h1&gt;
 
 &lt;p&gt;Regardless of whether there&amp;rsquo;s any confusion of terms in Gerrand&amp;rsquo;s remarks about mocking, if we&amp;rsquo;re clear about what we mean by mocks, I think we can see that his reasons against using a mocking library aren&amp;rsquo;t very compelling. Recall that his reason to write hand-written mocks is that they tend to be:&lt;/p&gt;
 
@@ -638,16 +636,15 @@ GopherFinder
 
 &lt;p&gt;The second question is easier for me to answer. Of all the test doubles, mocks are probably the most tedious to write. Its not implausible that increased readability might justify hand-rolling other kinds of test doubles, but mocks aren&amp;rsquo;t completely trivial to write, so I&amp;rsquo;d rather have a library that does that for me, &lt;em&gt;even if the library mocks are a little less readable.&lt;/em&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;conclusion:ddbbd3dd2c8fffb08367af59a48776ea&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
 
 &lt;p&gt;So, that&amp;rsquo;s where I stand for now. I think that if you&amp;rsquo;re going to use mocks for your tests, using a mocking library is probably a good idea. Moreover, I think that a part of the reason why it can be difficult to come to this conclusion is that we often aren&amp;rsquo;t very clear about how we use words like &amp;ldquo;mock&amp;rdquo; and &amp;ldquo;fake.&amp;rdquo;&lt;/p&gt;
 
-&lt;h2 id=&#34;notes:ddbbd3dd2c8fffb08367af59a48776ea&#34;&gt;Notes&lt;/h2&gt;
+&lt;h2 id=&#34;notes&#34;&gt;Notes&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Steve Freeman claims that Robert Martin conflates mocks with stubs in the comments of Robert Martin&amp;rsquo;s article.&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
   </channel>

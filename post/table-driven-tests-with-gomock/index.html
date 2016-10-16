@@ -56,7 +56,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/post/table-driven-tests-with-gomock/" />
     
@@ -148,7 +148,7 @@
 
 <p>Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.</p>
 
-<h3 id="table-driven-tests:66f5f9f3ad6818e7e7888e03cf1ad34c">Table-Driven Tests</h3>
+<h3 id="table-driven-tests">Table-Driven Tests</h3>
 
 <p>There are many examples of table-driven tests in the standard library. One example of a table-driven test can be found in the <code>fmt_test</code> package:</p>
 
@@ -187,7 +187,7 @@
 </pre></div>
 
 
-<h3 id="gomock-mocks:66f5f9f3ad6818e7e7888e03cf1ad34c">Gomock Mocks</h3>
+<h3 id="gomock-mocks">Gomock Mocks</h3>
 
 <p>Gomock mocks are generated in two steps. The first step is to generate the mock code using the <code>mockgen</code> command. The second step is to create the mock for use in your test:</p>
 
@@ -199,7 +199,7 @@ mgf <span style="color: #666666">:=</span> mock_gopher.NewMockGopherFinder(mockC
 
 <p>If this snippet doesn&rsquo;t make sense to you, it might be a good idea to read <a href="http://www.philosophicalhacker.com/post/getting-started-with-gomock/">my post on gomock</a> before proceeding.</p>
 
-<h3 id="why-bother:66f5f9f3ad6818e7e7888e03cf1ad34c">Why bother?</h3>
+<h3 id="why-bother">Why bother?</h3>
 
 <p>To see why we might want to use table-driven tests with gomock, suppose we want to write a test for a cache of <code>Gopher</code>s. When we ask the cache for a <code>Gopher</code>, the cache will first check its own map to see if the <code>Gopher</code> is available in memory. If the <code>Gopher</code> is unavailable it will call on a <code>GopherFinder</code> to fetch the <code>Gopher</code> from some remote location:</p>
 
@@ -231,11 +231,11 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 
 <p>Obviously, these test cases can share some code. Using a table-driven test can help us avoid duplicating the support code we need to execute these two test cases. Moreover, Cache&rsquo;s, as <a href="http://martinfowler.com/articles/mocksArentStubs.html">Martin Fowler points out</a>, are prime candidates for behavior/mock-based testing, so in this case, it doesn&rsquo;t seem crazy to combine mocks with a table-driven test.</p>
 
-<h3 id="putting-it-all-together:66f5f9f3ad6818e7e7888e03cf1ad34c">Putting it All Together</h3>
+<h3 id="putting-it-all-together">Putting it All Together</h3>
 
 <p>The struct that supports the table-driven tests should contain fields for the values that need to change in order to support different, but related test cases. The first difference between our two cache test cases is that the in one case, the cache already contains a cached <code>Gopher</code> for the name &ldquo;andrewgerrand&rdquo; and in the other case, it does not. So, our slice of anonymous structs should start off looking like this:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">var</span> cacheTests = []<span style="color: #008000; font-weight: bold">struct</span> {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">var</span> cacheTests = []<span style="color: #008000; font-weight: bold">struct</span> {
 	cachedGophers <span style="color: #008000; font-weight: bold">map</span>[<span style="color: #B00040">string</span>]Gopher
 	<span style="color: #408080; font-style: italic">//...</span>
 }{
@@ -247,11 +247,11 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 	},
 }
 </pre></div>
-</p>
+
 
 <p>When we range over the values of <code>cacheTests</code>, we can use the value of the <code>cachedGophers</code> field to setup our <code>Cache</code> appropriately so we can test that it behaves correctly:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestCache(t <span style="color: #666666">*</span>testing.T) {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestCache(t <span style="color: #666666">*</span>testing.T) {
     con <span style="color: #666666">:=</span> gomock.NewController(t)
 	<span style="color: #008000; font-weight: bold">for</span> _, tt <span style="color: #666666">:=</span> <span style="color: #008000; font-weight: bold">range</span> cacheTests {
 
@@ -263,11 +263,11 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 	}
 }
 </pre></div>
-</p>
+
 
 <p>The second thing that&rsquo;s different about our two test cases is the actual calls we should expect on the <code>GohperFinder</code>. Again, when the cache can&rsquo;t find a <code>Gopher</code> in memory, it should call on its <code>GopherFinder</code>. Otherwise, it shouldn&rsquo;t call the <code>GopherFinder</code> at all, and it should simply return the <code>Gopher</code> it has in memory. So, we need a field in our struct that captures this difference between the two test cases:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">var</span> cacheTests = []<span style="color: #008000; font-weight: bold">struct</span> {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">var</span> cacheTests = []<span style="color: #008000; font-weight: bold">struct</span> {
 	cachedGophers <span style="color: #008000; font-weight: bold">map</span>[<span style="color: #B00040">string</span>]Gopher
 	Configurer    Configurer
 }{
@@ -285,13 +285,13 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 	},
 }
 </pre></div>
-</p>
+
 
 <p>The <code>Configurer</code>, as you probably figured out, is just a function that takes a mock as a parameter, configures it, and returns the configured mock to be used by the test. When <code>cachedGophers</code> is nil, the <code>Cache</code> created for the test won&rsquo;t have any cached <code>Gophers</code> in memory, so we should expect the <code>Cache</code> to call <code>Find()</code> on its <code>GopherFinder</code>. On the other hand, the second struct has a <code>cachedGohpers</code> map that should cause the <code>Cache</code> to return a cached version of the <code>Gopher</code> rather than fetch one from a remote location.</p>
 
 <p>The <code>TestCache()</code> function can leverage the fields of this struct to run the two test cases:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestCache(t <span style="color: #666666">*</span>testing.T) {
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestCache(t <span style="color: #666666">*</span>testing.T) {
 
 	con <span style="color: #666666">:=</span> gomock.NewController(t)
 <span style="background-color: #ffffcc">	<span style="color: #008000; font-weight: bold">for</span> _, tt <span style="color: #666666">:=</span> <span style="color: #008000; font-weight: bold">range</span> cacheTests {
@@ -307,9 +307,9 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 	con.Finish()
 }
 </pre></div>
-</p>
 
-<h3 id="what-do-you-think:66f5f9f3ad6818e7e7888e03cf1ad34c">What do you think?</h3>
+
+<h3 id="what-do-you-think">What do you think?</h3>
 
 <p>This strikes me as a fairly reasonable way of avoiding duplicating code while using gomock mocks in testing, but it might be silly and/or there might be a better solution. I&rsquo;m interested in hearing alternative solutions to this problem, so I&rsquo;d love to hear your thoughts on this. For the reasons I pointed out <a href="http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/">here</a>, I don&rsquo;t find the typical arguments offered against mocking libraries compelling, so I&rsquo;m less interested in hearing people repeat those reasons, but if you have a novel reason for why gomock is a bad idea in the first place, I&rsquo;d definitely like to hear it.</p>
 

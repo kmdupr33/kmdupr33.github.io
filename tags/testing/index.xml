@@ -1,13 +1,86 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Testing on Philosophical Hacker</title>
-    <link>http://philosophicalhacker.com/tags/testing/</link>
-    <description>Recent content in Testing on Philosophical Hacker</description>
+    <title>Philosophical Hacker</title>
+    <link>http://philosophicalhacker.com/tags/testing/index.xml</link>
+    <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 16 Oct 2016 13:32:57 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/tags/testing/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>The goal of refactoring During TDD</title>
+      <link>http://philosophicalhacker.com/post/the-goal-of-refactoring-during-tdd/</link>
+      <pubDate>Sun, 16 Oct 2016 16:35:28 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/the-goal-of-refactoring-during-tdd/</guid>
+      <description>&lt;p&gt;Red, green, refactor. That&amp;rsquo;s the TDD flow. That much was obvious to me.&lt;/p&gt;
+
+&lt;p&gt;However, refactoring is a pretty broad term. There are many reasons you may want to refactor code and as a result of this, I didn&amp;rsquo;t really understand what exactly was supposed to happen during the refactor step of the TDD loop until I finished the first part of Kent Beck&amp;rsquo;s &lt;em&gt;TDD by Example.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Actually, in the first description of TDD, Beck uses a more helpful description of the &amp;ldquo;refactor step.&amp;rdquo; After getting our tests to pass, he says that we should &amp;ldquo;&lt;em&gt;refactor to remove duplication.&lt;/em&gt;&amp;rdquo; This is helpful, as it restricts the reasons we might refactor a piece of code while working. I&amp;rsquo;ve sometimes found myself deep down a rabbit-hole of refactoring. This restriction gives me a principled way of determining what I should refactoring.&lt;/p&gt;
+
+&lt;p&gt;(As a bit of an aside, it was interesting to see how Beck recommends that we write down the tasks that need to be accomplished in a kind of todo-list. I wonder if I could leverage the TODO feature in most ideas to create this kind of todo-list)&lt;/p&gt;
+
+&lt;p&gt;The reason duplication is targeted for elimination is because duplication is indicative of dependency between the code and the test, which means that you can&amp;rsquo;t change one without the other. This thwarts the TDD flow, which demands that after we get a test passing we, we want to write another test that &amp;ldquo;&amp;lsquo;makes sense&amp;rsquo; to us without having to change the code.&amp;rdquo; Beck makes this point even more explicit by saying this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;By eliminating duplication before we go on to the next test, we maximize our chance of being able to get the next test running with one and only one change.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;One thing that&amp;rsquo;s been really interesting about reading Beck&amp;rsquo;s take on TDD is that he really emphasizes how TDD enables us to make progress through &lt;em&gt;very&lt;/em&gt; small changes. More on that in a second.&lt;/p&gt;
+
+&lt;p&gt;Another interesting thing about Beck&amp;rsquo;s take on duplication is how he recommends we spot it:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Duplication most often takes the form of duplicate logic—the same expression appearing in multiple places in the code.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;When I first read this, I thought spotting duplication would merely involve looking for identical if-then statements, but Beck sees duplication in similar &lt;em&gt;expressions&lt;/em&gt;, even if those expressions aren&amp;rsquo;t expressed in code in identical ways:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Usually you see duplication between two pieces of code, but here the duplication is between the data in the test and the data in the code.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;We see this in his refactoring of the first test he writes. Here&amp;rsquo;s the test code:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;testMultiplication&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+   Dollar five&lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Dollar&lt;span style=&#34;color: #666666&#34;&gt;(5);&lt;/span&gt;
+   five&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;times&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(2);&lt;/span&gt;
+   assertEquals&lt;span style=&#34;color: #666666&#34;&gt;(10,&lt;/span&gt; five&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;amount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And the model code:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Dollar&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; amount &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;10;&lt;/span&gt;  
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;He reveals the duplication by pointing out that we set &lt;code&gt;amount&lt;/code&gt; equal to &lt;code&gt;10&lt;/code&gt; because we&amp;rsquo;ve multiplied &lt;code&gt;5&lt;/code&gt; by &lt;code&gt;2&lt;/code&gt; in our heads to get the test to pass quickly. If we write our assigmnet of &lt;code&gt;amount&lt;/code&gt; as &lt;code&gt;int amount = 5 * 2&lt;/code&gt;, we see that &lt;code&gt;5&lt;/code&gt; and &lt;code&gt;2&lt;/code&gt; appear in both the model code and in the test code. That&amp;rsquo;s duplication that&amp;rsquo;s got to go.&lt;/p&gt;
+
+&lt;p&gt;The step that Beck takes towards eliminating the duplication is small and it doesn&amp;rsquo;t even really eliminate the duplication:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Dollar&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;  
+  &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;times&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    amount &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;2;&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;He then says something interesting about TDD and the size of the step he took:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Do these steps seem too small to you? Remember, TDD is not about taking teeny-tiny steps, it&amp;rsquo;s about being able to take teeny-tiny steps. Would I code day-to-day with steps this small? No. But when things get the least bit weird, I&amp;rsquo;m glad I can&amp;hellip;If you can make steps too small, you can certainly make steps the right size. If you only take larger steps, you&amp;rsquo;ll never know if smaller steps are appropriate.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This is interesting, and it points to an issue related to getting stuck down a rabbit-hole of refactoring. I think a part of the reason this rabbit-hole happens, especially during Android development, is because we don&amp;rsquo;t have the tests in place to make very small steps. (Although, I wouldn&amp;rsquo;t be surprised if it happened more often in my case due to lack of discipline.) An inability to make small changes is a huge bummer because if something breaks, your search space for tracking down the bug is going to be large in proportion to the number of changes you&amp;rsquo;ve made.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>TDD and Startups</title>
@@ -47,7 +120,7 @@
 
 &lt;p&gt;This remark may in fact be consistent with the idea that there&amp;rsquo;s immense value in the flexible architectures that emerge as a result of TDD. Its hard to tell exactly what Beck is saying here. Beck&amp;rsquo;s intent aside, I think this passage should have made it clearer that there&amp;rsquo;s a lot of value in being able to change code confidently, and this may make TDD worth it even if we wind up writing more code when we factor in the code we need to write tests.&lt;/p&gt;
 
-&lt;h3 id=&#34;notes:758ef2c35412a7b4b3fc0c0663789a9e&#34;&gt;Notes:&lt;/h3&gt;
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Of course, if you&amp;rsquo;re not building a product whose features are likely to change, then this argument for testing doesn&amp;rsquo;t apply.&lt;/li&gt;
@@ -61,9 +134,9 @@
       <pubDate>Mon, 08 Aug 2016 08:34:46 -0400</pubDate>
       
       <guid>http://philosophicalhacker.com/post/unit-testable-recycler-views/</guid>
-      <description>
+      <description>&lt;p&gt;When building our Android apps, we can often wind up with a decent amount of code in our &lt;code&gt;RecyclerView.Adapter&lt;/code&gt;s that we want to test. In this article, I briefly suggest two ways of structuring our &lt;code&gt;RecyclerView&lt;/code&gt;-related classes so that we can accomplish this.&lt;/p&gt;
 
-&lt;p&gt;When building our Android apps, we can often wind up with a decent amount of code in our &lt;code&gt;RecyclerView.Adapter&lt;/code&gt;s that we want to test. In this article, I briefly suggest two ways of structuring our &lt;code&gt;RecyclerView&lt;/code&gt;-related classes so that we can accomplish this.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
 
 &lt;p&gt;First, let&amp;rsquo;s look at a simple list that&amp;rsquo;ll serve as a working example:&lt;/p&gt;
 
@@ -102,7 +175,7 @@
 
 &lt;p&gt;Now that we&amp;rsquo;ve introduced a working example, let&amp;rsquo;s look at two ways of making RecyclerView-related code unit testable.&lt;/p&gt;
 
-&lt;h3 id=&#34;an-obvious-way-mvp:391b17626bccf7689e1e02d86c15ebb0&#34;&gt;An Obvious Way: MVP&lt;/h3&gt;
+&lt;h3 id=&#34;an-obvious-way-mvp&#34;&gt;An Obvious Way: MVP&lt;/h3&gt;
 
 &lt;p&gt;One of the oft-cited benefits of using MVP in Android apps is that it enhances testability. So, a natural way of structuring our &lt;code&gt;RecyclerView&lt;/code&gt; related classes so that we can enhance testability is to apply MVP to those classes. To do this, we make the &lt;code&gt;ViewHolder&lt;/code&gt; sublcass implement an MVP &lt;code&gt;View&lt;/code&gt;.&lt;/p&gt;
 
@@ -122,7 +195,7 @@
 
 &lt;p&gt;Next, we setup our RecyclerView.Adapter to create Presenters for each ViewHolder and we delegate the presentation logic to those presenters in &lt;code&gt;onBindViewHolder&lt;/code&gt;:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyAdapter&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Adapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyAdapter&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Adapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; SimpleListItemViewHolder &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateViewHolder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ViewGroup parent&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
@@ -140,21 +213,21 @@
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Notice here that we set the &lt;code&gt;Presenter&lt;/code&gt; as a tag on the &lt;code&gt;ViewHolder&lt;/code&gt;&amp;rsquo;s itemView. When it&amp;rsquo;s time to bind the ViewHolder, we can grab the &lt;code&gt;Presenter&lt;/code&gt; from the tag delegate the presentation logic to it. Here&amp;rsquo;s what the &lt;code&gt;Presenter&lt;/code&gt; looks like:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;presentListItem&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SimpleListItemView view&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; position&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
         view&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;String&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;valueOf&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;position&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Because the logic we want to test now lives inside of the &lt;code&gt;Presenter&lt;/code&gt;, a simple POJO, unit testing the presentation logic for our &lt;code&gt;RecyclerView&lt;/code&gt;s becomes much easier. We simply instantiate a &lt;code&gt;Presenter&lt;/code&gt;, call its main presentation method, and verify that it interacts properly with its MVP View.&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PresenterTest&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PresenterTest&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;presentListItemShouldSetViewTextToPosition&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -166,15 +239,15 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
 
-&lt;h3 id=&#34;a-lighter-way-reusing-a-presenter:391b17626bccf7689e1e02d86c15ebb0&#34;&gt;A Lighter Way: Reusing a Presenter&lt;/h3&gt;
+
+&lt;h3 id=&#34;a-lighter-way-reusing-a-presenter&#34;&gt;A Lighter Way: Reusing a Presenter&lt;/h3&gt;
 
 &lt;p&gt;Let&amp;rsquo;s look at another way of making our &lt;code&gt;RecyclerView&lt;/code&gt; related classes unit testable. While the above approach works fine, I sometimes find that having to create an extra presenter class that is stored and retrieved as a tag on a &lt;code&gt;ViewHolder&lt;/code&gt;&amp;rsquo;s item view a bit much, especially if I already have a &lt;code&gt;Presenter&lt;/code&gt; that is simply responsible for fetching items to display in the list.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s alter our working example a bit to suppose we had such a presenter. Instead of simply displaying the position of a ViewHolder in our &lt;code&gt;RecyclerView&lt;/code&gt;, let&amp;rsquo;s display numbers we have to fetch from somewhere else. In this case, we&amp;rsquo;ll probably want a (unit-testable)&lt;code&gt;Presenter&lt;/code&gt; that looks like this:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; NumberFetcher mNumberFetcher&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; NumberListView mNumberListView&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
 
@@ -199,11 +272,11 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Now, if we were simply using MVP for a RecyclerView-related classes, the highlighted &lt;code&gt;displayNumbers&lt;/code&gt; method is where we&amp;rsquo;d have to create our &lt;code&gt;Adapter&lt;/code&gt; that would creat and use a separate &lt;code&gt;Presenter&lt;/code&gt; class that would hold our presentation logic. Since we already have a &lt;code&gt;Presenter&lt;/code&gt;, however, we can simply reuse it by passing it to the &lt;code&gt;RecyclerView.Adapter&lt;/code&gt; via our MVP View method:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onViewReady&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
         mNumberFetcher&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNumbers&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Callback&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -216,11 +289,11 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Here&amp;rsquo;s the implementation of the &lt;code&gt;displayNumbers&lt;/code&gt; view:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MainActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; NumberListView &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MainActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; NumberListView &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayNumbers&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Integer&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; numbers&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Presenter presenter&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -230,11 +303,11 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;And here&amp;rsquo;s the adapter delegating to the same &lt;code&gt;Presenter&lt;/code&gt; that&amp;rsquo;s responsible for loading the items in the list:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyAdapter&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Adapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyAdapter&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Adapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
         &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Integer&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; mNumbers&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
         &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Presenter mPresenter&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
@@ -261,9 +334,7 @@
             &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; mNumbers&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;size&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
         &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
-</description>
+&lt;/pre&gt;&lt;/div&gt;</description>
     </item>
     
     <item>
@@ -278,7 +349,7 @@
 
 &lt;p&gt;In the first section, I briefly introduce the idea of characterization tests. In the second section, I walk through some of the complications that arise when you&amp;rsquo;re trying to write characterization tests for &lt;code&gt;Activity&lt;/code&gt;/&lt;code&gt;Fragment&lt;/code&gt;s. Source code examples are excerpts from &lt;a href=&#34;https://github.com/kmdupr33/iosched/tree/refactor/characterization_tests&#34;&gt;my fork of the Google IO app&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h3 id=&#34;brief-intro-characterization-tests:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Brief Intro Characterization Tests&lt;/h3&gt;
+&lt;h3 id=&#34;brief-intro-characterization-tests&#34;&gt;Brief Intro Characterization Tests&lt;/h3&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&amp;hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&amp;hellip;Cover and Modify is a different way of making changes. The idea behind it is that it is possible to work with a safety net when we change software.&lt;/p&gt;
@@ -306,11 +377,11 @@
 &lt;p&gt;Image Credit: Cea on &lt;a href=&#34;https://www.flickr.com/photos/centralasian/3896333282/in/photolist-6WiJ93-i2ZU8-AL26v-NqLkJ-57Gmup-4QiXwQ-67j8Sw-fuf5d1-5DJrYY-9YjbZP-7UJ75S-piX5fr-jzCox-8s9BdN-uST4Hi-tw8VdM-5yxEvF-2QSfpF-onBRex-6Aj5cU-3Jyy7k-8YYKtq-8TRZ33-as2Fdq-rhXdJ8-oTXJh5-aNqeHH-hcEk7d-7ACDg-6EcoYB-mmgBPF-mz68zf-sFGHZq-6EhPsd-dor5Cp-6EcFhV-coe1tY-EDaP5-9Yn6dW-2zCxU-8YiQA1-7dQsZA-8Fq6BQ-n1F765-7dQssm-6wskCt-C44Dg-6EepXT-6EesLa-C4543&#34;&gt;Flickr Creative Commons&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;characterization-tests-for-activities-and-fragments:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Characterization Tests for Activities and Fragments&lt;/h3&gt;
+&lt;h3 id=&#34;characterization-tests-for-activities-and-fragments&#34;&gt;Characterization Tests for Activities and Fragments&lt;/h3&gt;
 
 &lt;p&gt;Unfortunately, writing characterization tests for &lt;code&gt;Activity&lt;/code&gt;/&lt;code&gt;Fragment&lt;/code&gt;s is not as simple as writing characterization tests in the general case. In fact, writing characterization tests for any object instantiated by the Android OS is not easy (think &lt;code&gt;Activity&lt;/code&gt;, &lt;code&gt;Fragment&lt;/code&gt;, &lt;code&gt;Service&lt;/code&gt;, &lt;code&gt;BroadcastReceiver&lt;/code&gt;, etc.). In this section, I explore two things that make writing characterization tests for &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s challenging. I also suggest ways to work around these challenges.&lt;/p&gt;
 
-&lt;h4 id=&#34;law-of-demeter-violations:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Law of Demeter Violations&lt;/h4&gt;
+&lt;h4 id=&#34;law-of-demeter-violations&#34;&gt;Law of Demeter Violations&lt;/h4&gt;
 
 &lt;p&gt;&lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s have dependencies. Some of those dependencies are only accessible if we violate the law of demeter. For example, the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; needs to get a hold of a &lt;code&gt;ContentResolver&lt;/code&gt;:&lt;/p&gt;
 
@@ -374,11 +445,11 @@
 
 &lt;p&gt;Typically, we don&amp;rsquo;t want to write tests with mocks returning mocks since this suggests that our design may smell. In this case, we are merely trying to characterize the already existing behavior of our &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt;. Once we refactor, we should have a design that doesn&amp;rsquo;t require this, but in the mean-time, we need this characterization test to make sure that we are preserving app behavior during our refactor.&lt;/p&gt;
 
-&lt;h4 id=&#34;nearly-impossible-di:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;(Nearly) Impossible DI&lt;/h4&gt;
+&lt;h4 id=&#34;nearly-impossible-di&#34;&gt;(Nearly) Impossible DI&lt;/h4&gt;
 
 &lt;p&gt;&lt;code&gt;Fragment&lt;/code&gt;s and &lt;code&gt;Activity&lt;/code&gt;s get their dependencies via an accessor method. &lt;code&gt;getLoaderManager&lt;/code&gt;, &lt;code&gt;getContentResolver&lt;/code&gt;, or &lt;code&gt;getFragmentManager&lt;/code&gt; are a few examples of such accessor methods. Here&amp;rsquo;s a method that uses one of these accessors:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 1 &lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 1 &lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
 &lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 2 &lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 &lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 3 &lt;/span&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
 &lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 4 &lt;/span&gt;
@@ -397,7 +468,7 @@
 &lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;17 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;18 &lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;If we&amp;rsquo;re characterizing a method like this one, we need to verify that the &lt;code&gt;Fragment&lt;/code&gt; calls the correct methods on the dependencies returned by these accessor methods. Verifying the interaction of an object with its dependencies means that we need to be able to swap out those dependencies with mocks.&lt;/p&gt;
 
@@ -407,7 +478,7 @@
 
 &lt;p&gt;A better solution is to use mockito spies. Like mocks returning mocks, we typically don&amp;rsquo;t use spies in our tests because it suggests a smelly design. However, in this case, spies help us write characterization tests without having make a non-trivial changes to the code we are trying to characterize or without having to repeatedly subclass all of our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s to return mocks. Here&amp;rsquo;s an example of how spies help us do this:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeOnActivityCreatedIfInitialQueriesToLoad&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; ExploreModel&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ExploreQueryEnum&lt;/span&gt; sessions &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; ExploreModel&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ExploreQueryEnum&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;SESSIONS&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
@@ -422,11 +493,11 @@
 &lt;span style=&#34;background-color: #ffffcc&#34;&gt;    verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderManager&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;eq&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;sessions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()),&lt;/span&gt; isNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;),&lt;/span&gt; notNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
 &lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Using a spy, we&amp;rsquo;re able to stub out the &lt;code&gt;getLoaderManager&lt;/code&gt; method to return a mock &lt;code&gt;LoaderManager&lt;/code&gt;. We can then verify that &lt;code&gt;onActivityCreated&lt;/code&gt; calls the right methods on the &lt;code&gt;LoaderManager&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h3 id=&#34;conclusion:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Conclusion&lt;/h3&gt;
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
 
 &lt;p&gt;Safely moving logic out of large &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s can be a lot of work, but its less work than manually verifying that we haven&amp;rsquo;t broken anything every time we make a change to the &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt; we are refactoring.&lt;/p&gt;
 
@@ -454,7 +525,7 @@
 
 &lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/coffee-art.jpg&#34; alt=&#34;coffee art&#34; /&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;why-functional-testing-with-espresso-is-hard:0b496944b3b139af6d5a15632b322c81&#34;&gt;Why Functional Testing (with Espresso) is Hard&lt;/h2&gt;
+&lt;h2 id=&#34;why-functional-testing-with-espresso-is-hard&#34;&gt;Why Functional Testing (with Espresso) is Hard&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s look at an (abbreviated) snippet of code from the Google IO app:&lt;/p&gt;
 
@@ -510,7 +581,7 @@
 
 &lt;p&gt;So, here we&amp;rsquo;re mixing espresso test code with application code. The reason the test code is mixed with application code is so that the espresso tests will &amp;ldquo;pause&amp;rdquo; while the data is being loaded during the functional UI tests. We can see that the &lt;code&gt;LoaderIdlingResource&lt;/code&gt; gets registered with the espresso tests here:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@RunWith&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AndroidJUnit4&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@RunWith&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AndroidJUnit4&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
 &lt;span style=&#34;color: #AA22FF&#34;&gt;@LargeTest&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;VideoLibraryActivityTest&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
@@ -522,13 +593,13 @@
   &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;As I said in &lt;a href=&#34;www.philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/&#34;&gt;my PSA&lt;/a&gt;, mixing testing code with app code is gross. Unfortunately, separating the testing and application concerns in this case is not as simple as it was last time. In fact, I can understand why the engineers at Google decided to mix application code with test code in this case: it&amp;rsquo;s because separating the Espresso code from the application code is a lot of work!&lt;/p&gt;
 
 &lt;p&gt;Here&amp;rsquo;s the gist of how we can start to salvage the situation. We need what &lt;a href=&#34;https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052&#34;&gt;Michael Feathers&lt;/a&gt; calls a &amp;ldquo;seam,&amp;rdquo; a way to change the behavior of our &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; without having to edit the source of the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; itself. When the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; is run inside a test, we want the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; to notify an espresso test when it&amp;rsquo;s done loading it&amp;rsquo;s data. Otherwise, we want the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; to load data normally. To get this seam, we extract the Loader callback code into its own class and use an instance of this class as the &lt;code&gt;LoaderCallbacks&lt;/code&gt; argument to the call to &lt;code&gt;initLoader&lt;/code&gt;:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; mLoaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; mLoaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
 &lt;/span&gt;
 &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -551,11 +622,11 @@
 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// We&amp;#39;ve just moved the callback code that was in the Fragment into this class.&lt;/span&gt;
 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Next, we provide an alternative implementation of &lt;code&gt;LoaderManager.LoaderCallbacks&lt;/code&gt; that we&amp;rsquo;ll use for our espresso tests. This implementation uses the decorator pattern, just like last time:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;EspressoNotifyingLoaderCallbacks&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;EspressoNotifyingLoaderCallbacks&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; LoaderIdlingResource mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
@@ -584,7 +655,7 @@
 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Now, here&amp;rsquo;s where things get tricky. We need to figure out a way to inject the right implementation of &lt;code&gt;LoaderCallbacks&lt;/code&gt; into our &lt;code&gt;PresenterFragmentImpl&lt;/code&gt;. When we&amp;rsquo;re testing, we want an instance of &lt;code&gt;EspressoNotifyingLoaderCallbacks&lt;/code&gt;. When we running a normal application, we want a &lt;code&gt;CursorLoaderCallbacks&lt;/code&gt;.&lt;/p&gt;
 
@@ -600,7 +671,7 @@
 
 &lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/architecture.jpg&#34; alt=&#34;building&#34; /&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;activities-weren-t-designed-for-app-logic:0b496944b3b139af6d5a15632b322c81&#34;&gt;Activities weren&amp;rsquo;t Designed for App Logic&lt;/h2&gt;
+&lt;h2 id=&#34;activities-weren-t-designed-for-app-logic&#34;&gt;Activities weren&amp;rsquo;t Designed for App Logic&lt;/h2&gt;
 
 &lt;p&gt;Diane Hackborn wrote an interesting post on Google Plus recently, and I think several of her comments suggest that &lt;code&gt;Activity&lt;/code&gt;&amp;rsquo;s were never really designed to be the home of our app-logic in the first place. Here&amp;rsquo;s one such comment:&lt;/p&gt;
 
@@ -638,7 +709,7 @@
 
 &lt;p&gt;In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis testing. More specifically, I suggest that a React/Redux-like architecture opens up a testing strategy that doesn&amp;rsquo;t suffer from the disadvantages of the testing strategy we use with the MVP architecture.&lt;/p&gt;
 
-&lt;h2 id=&#34;a-disadvantage-of-mvp:ccbda8f4effd5469f618aeed8eb34e5d&#34;&gt;A Disadvantage of MVP&lt;/h2&gt;
+&lt;h2 id=&#34;a-disadvantage-of-mvp&#34;&gt;A Disadvantage of MVP&lt;/h2&gt;
 
 &lt;p&gt;Android architectures that rely on MVP are forced to use behavior-based verification in their unit tests. Behavior-based verification is about ensuring that the unit being tested is interacting properly with it&amp;rsquo;s collaborators. For example, consider this test from &lt;a href=&#34;https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#5&#34;&gt;Google&amp;rsquo;s testing code lab&lt;/a&gt;:&lt;/p&gt;
 
@@ -677,19 +748,19 @@
 
 &lt;p&gt;Fowler also mentions some advantages of behavior-based verification. Ultimately, he doesn&amp;rsquo;t seem to have a strong opinion on which strategy should be used. I&amp;rsquo;m not going to try to settle that question here either. It might turn out that the benefits of mockist tests outweigh the costs. For the remainder of the article, I just want to focus on how a React/Redux architecture opens up the possibility of state-based verification for our UI-related unit tests.&lt;/p&gt;
 
-&lt;h2 id=&#34;state-based-verification-with-react-redux:ccbda8f4effd5469f618aeed8eb34e5d&#34;&gt;State-based Verification with React/Redux&lt;/h2&gt;
+&lt;h2 id=&#34;state-based-verification-with-react-redux&#34;&gt;State-based Verification with React/Redux&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s return the filtered list example we introduced in &lt;a href=&#34;http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/&#34;&gt;the last article&lt;/a&gt;. Again, here&amp;rsquo;s a video of the functionality we want to test:&lt;/p&gt;
 
-&lt;p&gt;
+
 &lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
   &lt;iframe src=&#34;//www.youtube.com/embed/qUYP1WNz50U&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
  &lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Last time, I showed how we might implement this functionality according to the principles of React and Redux. Again those principles are that the content of a screen is a function of some view-state object and updates to the screen are a function of some view-state object and some action describing a user&amp;rsquo;s interaction with the screen. Here&amp;rsquo;s what our React/Redux-like code looked like:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Reducer reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reducer&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Reducer reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reducer&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
 &lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
         &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -717,11 +788,11 @@
   &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Recall that the &lt;code&gt;reloadFragment&lt;/code&gt; call uses the &lt;code&gt;mTagFilterHolder&lt;/code&gt; as a view-state object to determine what get&amp;rsquo;s rendered to the screen. Testing this &lt;code&gt;reduce&lt;/code&gt; method doesn&amp;rsquo;t require the use of mocks:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;shouldToggleFilter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Arrange&lt;/span&gt;
     ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt; reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
@@ -738,11 +809,11 @@
     assertFalse&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;holder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;This shows that React/Redux-like architectures open up the possibility of using state-based verification in our UI unit test code. This opens up the possibility of unit tests that don&amp;rsquo;t suffer from the disadvantages pointed out by Martin Fowler.&lt;/p&gt;
 
-&lt;h2 id=&#34;conclusion:ccbda8f4effd5469f618aeed8eb34e5d&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;The fact that React/Redux-like architectures open up the possibility of alternative testing strategies is an additional reason that we should consider these architectures for Android Development. I think that by utilizing RxJava with a subset of the features provided by the Android data-binding library, the approach I&amp;rsquo;ve sketched here can scale to an architecture that allows for time-travel debugging, hotswap, and a more flexible testing strategy, but that&amp;rsquo;s something that I&amp;rsquo;ll have to explore another time.&lt;/p&gt;
 </description>
@@ -768,7 +839,7 @@
 
 &lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/lambda.png&#34; alt=&#34;lambda symbol&#34; /&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;the-principle-behind-react:e17f3de67d028efe7b502b7cdad57382&#34;&gt;The Principle behind React&lt;/h1&gt;
+&lt;h1 id=&#34;the-principle-behind-react&#34;&gt;The Principle behind React&lt;/h1&gt;
 
 &lt;p&gt;React, as I see it, is about making what gets rendered to our screen a &lt;em&gt;function of some view-state object&lt;/em&gt;. We do something like this every time we write a &lt;code&gt;RecyclerView&lt;/code&gt; or &lt;code&gt;ListView&lt;/code&gt;. The view-state object is usually some kind of collection (e.g., a &lt;code&gt;List&lt;/code&gt; or &lt;code&gt;Array&lt;/code&gt;). We pass that object to an &lt;code&gt;Adapter&lt;/code&gt; which renders our view. Typically, what is rendered is just a function of the collection we pass to the adapter.&lt;/p&gt;
 
@@ -803,7 +874,7 @@
 
 &lt;p&gt;Note here that &lt;code&gt;mTagFilterHolder&lt;/code&gt; is a state object that&amp;rsquo;s used to determine what should be shown in the list. We can see this more clearly if we look at &lt;code&gt;reloadFragment()&lt;/code&gt;, which looks like this:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;reloadFragment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;reloadFragment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Build the tag URI&lt;/span&gt;
     Uri uri &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mCurrentUri&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
 
@@ -829,11 +900,11 @@
     mFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reloadFromArguments&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intentToFragmentArguments&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intent&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;&lt;code&gt;mTagFilterHolder&lt;/code&gt; is being used to construct the URI that a &lt;code&gt;ContentProvider&lt;/code&gt; will use to filter the results that get passed to a &lt;code&gt;ListView&lt;/code&gt;. So, this implementation of the list filter is already well on its way to an implementation the follows principle behind React. That&amp;rsquo;s because what&amp;rsquo;s rendered is already partially &lt;em&gt;a function of some view-state object&lt;/em&gt;. In this case, the view-state object is the &lt;code&gt;mTagFilterHolder&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h1 id=&#34;the-principle-behind-redux:e17f3de67d028efe7b502b7cdad57382&#34;&gt;The Principle Behind Redux&lt;/h1&gt;
+&lt;h1 id=&#34;the-principle-behind-redux&#34;&gt;The Principle Behind Redux&lt;/h1&gt;
 
 &lt;p&gt;Redux, as I see it, as is about making any updates to our view &lt;em&gt;a function of the view-state object and an object that describes a view-related action that just occurred&lt;/em&gt;. In Redux, these functions are called &amp;ldquo;reducers,&amp;rdquo; and they return a new view-state object that is used to render the view.&lt;/p&gt;
 
@@ -860,7 +931,7 @@
 
 &lt;p&gt;This &lt;code&gt;ClickListener&lt;/code&gt; isn&amp;rsquo;t quite a reducer. Remember: reducers are functions of a view-state object and an object that describes a view-related action that just occurred. This &lt;code&gt;ClickListener&lt;/code&gt;, however, is in a good position to call a reducer function:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
         &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -882,11 +953,11 @@
   &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;The &lt;code&gt;reduce&lt;/code&gt; method fits the Redux&amp;rsquo;s definition of a reducer function. The &lt;code&gt;tagFilterHodler&lt;/code&gt; parameter passed into &lt;code&gt;reduce&lt;/code&gt; method is the current state and the &lt;code&gt;click&lt;/code&gt; parameter is an object that describes a view-related action that just occurred. &lt;code&gt;reduce&lt;/code&gt;, moreover, returns a new view-state that describes how the view should render.&lt;/p&gt;
 
-&lt;h1 id=&#34;conclusion:e17f3de67d028efe7b502b7cdad57382&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
 
 &lt;p&gt;That&amp;rsquo;s all for now, but you can anticipate how this might make unit testing logic within the click listener easier. The &lt;code&gt;reduce&lt;/code&gt; function works only with POJOs and we know that it&amp;rsquo;s working properly when it returns an object that has the correct &lt;em&gt;state&lt;/em&gt;. This allows us to use &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;state-based verification&lt;/a&gt; in our tests, and as we&amp;rsquo;ll see next time, this can make our tests less brittle and more meaningful. I believe that writing our UI-related business logic in reducers &lt;em&gt;may&lt;/em&gt; give us a better way of writing tests that writing that logic in &lt;code&gt;Presenters&lt;/code&gt;. More on that next time.&lt;/p&gt;
 </description>
@@ -938,25 +1009,25 @@
 
 &lt;p&gt;This article is about why this code is disturbing and what we can do to fix it. Spoiler: it violates the principle of single responsibility and we can fix it using the dependency injection and decorator patterns.&lt;/p&gt;
 
-&lt;h1 id=&#34;disturbing:813c76fa4c1d10d216b03cc879b8cf73&#34;&gt;Disturbing&lt;/h1&gt;
+&lt;h1 id=&#34;disturbing&#34;&gt;Disturbing&lt;/h1&gt;
 
 &lt;p&gt;The comments in the above code definitely help to point out why this is troubling, but if you&amp;rsquo;re not familiar with &lt;code&gt;IdlingResource&lt;/code&gt;, you may not immediately see why the problem with this code. &lt;code&gt;IdlingResource&lt;/code&gt;s help you write robust functional UI tests with espresso. These tests are &amp;ldquo;robust&amp;rdquo; because you don&amp;rsquo;t need to explicitly tell your tests to &amp;ldquo;sleep&amp;rdquo; for a &lt;em&gt;predetermined&lt;/em&gt; amount of time while some asynchronous task completes. &lt;code&gt;IdlingResource&lt;/code&gt;s is a way of telling espresso &amp;ldquo;don&amp;rsquo;t do any more assertions because the app is doing something that might affect whether your assertions are satisfied.&amp;rdquo;&lt;/p&gt;
 
 &lt;p&gt;For example, suppose we have an espresso test that verifies that the todo notes are displayed after they are loaded and that the progressIndicator in the view is hidden after those notes are loaded:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     onView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;withId&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;progressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;check&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;matches&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;not&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isDisplayed&lt;span style=&#34;color: #666666&#34;&gt;())));&lt;/span&gt;
     onView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;withId&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;notes_list&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;check&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;matches&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isDisplayed&lt;span style=&#34;color: #666666&#34;&gt;()));&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;We don&amp;rsquo;t want this code to immediately assert that the progressIndicator is invisible and the notes list are visible because it takes some time for the notes to load from the network. So, the previous code snippet with an &lt;code&gt;IdlingResource&lt;/code&gt; would tell this test that it needs to wait until the notes are loaded from the network before performing this verification.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s take a second look at the disturbing code:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; forceUpdate&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;    
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
 
@@ -978,17 +1049,17 @@
     &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;We can now quickly say what&amp;rsquo;s disturbing about this: this presenter violates the principle of single responsibility. More than that: it violates the principle in a particularly egregious way: it mixes &lt;em&gt;application&lt;/em&gt; responsibilities with &lt;em&gt;testing&lt;/em&gt; responsibilities. This is silly. Don&amp;rsquo;t do this. Violating the principle of single responsibility is a sure-fire way to create spaghetti code and spaghetti doesn&amp;rsquo;t look as good in code as it does on a plate.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/spaghetti.jpeg&#34; alt=&#34;spaghetti on a plate&#34; /&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;fixit:813c76fa4c1d10d216b03cc879b8cf73&#34;&gt;Fixit&lt;/h1&gt;
+&lt;h1 id=&#34;fixit&#34;&gt;Fixit&lt;/h1&gt;
 
 &lt;p&gt;Instead of mixing responsibilities, register your &lt;code&gt;IdlingResource&lt;/code&gt; in your tests-related code, where test-related responsibilities belong. One way to do this is the use dependency injection and decorators. The code lab project already has a limited dependency injection mechanism, so we can just use that. The project has a dependency injector that&amp;rsquo;s specifically used for testing called &lt;code&gt;Injection.&lt;/code&gt; All we need to do is decorate the &lt;code&gt;NotesRepository&lt;/code&gt; that&amp;rsquo;s injected by the &lt;code&gt;Injection&lt;/code&gt; class, and we have what we need to avoid mixing responsibilities:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; NotesRepository &lt;span style=&#34;color: #0000FF&#34;&gt;provideNotesRepository&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; NotesRepository &lt;span style=&#34;color: #0000FF&#34;&gt;provideNotesRepository&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; NotesRepository inMemoryRepoInstance
       &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; NoteRepositories&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getInMemoryRepoInstance&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; FakeNotesServiceApiImpl&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; NotesRepository&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -1008,11 +1079,11 @@
     &lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;The &lt;code&gt;NotesRepository&lt;/code&gt; returned by this method gets injected into the &lt;code&gt;Presenter&lt;/code&gt; here:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;NotesFragment&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; NotesContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;View&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;NotesFragment&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; NotesContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;View&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Nullable&lt;/span&gt; Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -1023,7 +1094,7 @@
 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Voila. And now your espresso tests will wait until the notes have been loaded before asserting the view state and you&amp;rsquo;ve avoided mixing testing responsibilities with your business logic. Bon Appetite.&lt;/p&gt;
 </description>
@@ -1035,11 +1106,11 @@
       <pubDate>Fri, 17 Jul 2015 11:53:55 +0000</pubDate>
       
       <guid>http://philosophicalhacker.com/2015/07/17/making-a-tdd-based-hackernews-client-for-android/</guid>
-      <description>
+      <description>&lt;p&gt;I&amp;rsquo;m using TDD to write a HackerNews client for Android. This post (and the ones that will likely follow it) share a little bit about some of the techniques I used to follow a TDD-based work-flow for developing this application. It also discusses the architecture that arises when Android apps are built with testability in mind from the ground up.&lt;/p&gt;
 
-&lt;p&gt;I&amp;rsquo;m using TDD to write a HackerNews client for Android. This post (and the ones that will likely follow it) share a little bit about some of the techniques I used to follow a TDD-based work-flow for developing this application. It also discusses the architecture that arises when Android apps are built with testability in mind from the ground up.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;testing-a-walking-skeleton:3782b8d1a760da7b5dd9b3f3d0554607&#34;&gt;Testing a Walking Skeleton&lt;/h2&gt;
+&lt;h2 id=&#34;testing-a-walking-skeleton&#34;&gt;Testing a Walking Skeleton&lt;/h2&gt;
 
 &lt;p&gt;The first step in kick-starting a TDD workflow, according to Steve Freeman and Nat Pryce in &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;, is to &amp;ldquo;test a walking skeleton.&amp;rdquo; A walking skeleton, as they define it, is this:&lt;/p&gt;
 
@@ -1051,7 +1122,7 @@ pg. 69-70&lt;/blockquote&gt;
 
 &lt;script src=&#34;//gist.github.com/kmdupr33/a25db0930e583db05535.js&#34;&gt;&lt;/script&gt;
 
-&lt;h3 id=&#34;how-i-got-consistent-test-data:3782b8d1a760da7b5dd9b3f3d0554607&#34;&gt;How I Got Consistent Test Data&lt;/h3&gt;
+&lt;h3 id=&#34;how-i-got-consistent-test-data&#34;&gt;How I Got Consistent Test Data&lt;/h3&gt;
 
 &lt;p&gt;Here&amp;rsquo;s a question that arose immediately when writing this test: How can we ensure that the MainActivity was fetching the same data for every test run so that the value 9897306 that we&amp;rsquo;re checking against is always appropriate. &lt;a href=&#34;https://www.google.com/webhp?sourceid=chrome-instant&amp;amp;ion=1&amp;amp;espv=2&amp;amp;ie=UTF-8#q=jake%20wharton%20dagger%20parley&#34;&gt;Jake Wharton&amp;rsquo;s discussion&lt;/a&gt; on Dagger modules that can override the dependencies that are injected into your Android objects came to mind here, so I decided to use this approach to ensure that the data the test uses is always the same.&lt;/p&gt;
 
@@ -1071,7 +1142,7 @@ pg. 69-70&lt;/blockquote&gt;
 
 &lt;p&gt;&lt;code&gt;TestLoaderModule&lt;/code&gt; is the module that provides the overridden dependency. It provides a HackerNewsRestAdapter that simply loads HackerNews data from memory instead of the server:&lt;/p&gt;
 
-&lt;h3 id=&#34;the-current-state-of-app-s-architecture:3782b8d1a760da7b5dd9b3f3d0554607&#34;&gt;The Current State of App&amp;rsquo;s Architecture&lt;/h3&gt;
+&lt;h3 id=&#34;the-current-state-of-app-s-architecture&#34;&gt;The Current State of App&amp;rsquo;s Architecture&lt;/h3&gt;
 
 &lt;p&gt;Let me point out a few things about the architecture needed to get this test to pass. First off, I want to say that this architecture is likely to change for the same reasons that Pryce and Freeman point out:&lt;/p&gt;
 
@@ -1103,10 +1174,9 @@ Pg. 90&lt;/blockquote&gt;
 
 &lt;p&gt;And here&amp;rsquo;s a relevant snippet of the Fragment that uses this class to load the HackerNews data:&lt;/p&gt;
 
-&lt;p&gt;&lt;script src=&#34;//gist.github.com/kmdupr33/fb1c638f2fdbe6a8bd68.js&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+&lt;script src=&#34;//gist.github.com/kmdupr33/fb1c638f2fdbe6a8bd68.js&#34;&gt;&lt;/script&gt;
 
-&lt;p&gt;If you want to have a closer look at what I&amp;rsquo;ve done, feel free to take a look at &lt;a href=&#34;https://github.com/kmdupr33/PhilHackerNews&#34;&gt;the repo for this project&lt;/a&gt;.&lt;/p&gt;
-</description>
+&lt;p&gt;If you want to have a closer look at what I&amp;rsquo;ve done, feel free to take a look at &lt;a href=&#34;https://github.com/kmdupr33/PhilHackerNews&#34;&gt;the repo for this project&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1115,9 +1185,7 @@ Pg. 90&lt;/blockquote&gt;
       <pubDate>Tue, 14 Jul 2015 18:35:40 +0000</pubDate>
       
       <guid>http://philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/</guid>
-      <description>
-
-&lt;p&gt;In my last post, I went over &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/&#34;&gt;6 things I wish I knew before I wrote my first Android app&lt;/a&gt;. One of the things I listed in that post was this:&lt;/p&gt;
+      <description>&lt;p&gt;In my last post, I went over &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/&#34;&gt;6 things I wish I knew before I wrote my first Android app&lt;/a&gt;. One of the things I listed in that post was this:&lt;/p&gt;
 
 &lt;blockquote&gt;
 &lt;ol&gt;
@@ -1134,9 +1202,9 @@ Pg. 90&lt;/blockquote&gt;
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Please, for the sake of the kittens. &lt;a href=&#34;http://t.co/xaj7pNDVfH&#34;&gt;pic.twitter.com/xaj7pNDVfH&lt;/a&gt;&lt;/p&gt;&amp;mdash; Code Standards (@codestandards) &lt;a href=&#34;https://twitter.com/codestandards/status/570224843536277504&#34;&gt;February 24, 2015&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
-&lt;p&gt;Instead, all I&amp;rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps.&lt;/p&gt;
+&lt;p&gt;Instead, all I&amp;rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps. &lt;/p&gt;
 
-&lt;h2 id=&#34;1-classes-methods-that-use-static-references-to-an-application-context-are-liars:6a3c9eb7cf87cbdba814526f02f72f7a&#34;&gt;1. Classes/Methods that use static references to an application Context are &amp;ldquo;Liars&amp;rdquo;&lt;/h2&gt;
+&lt;h2 id=&#34;1-classes-methods-that-use-static-references-to-an-application-context-are-liars&#34;&gt;1. Classes/Methods that use static references to an application Context are &amp;ldquo;Liars&amp;rdquo;&lt;/h2&gt;
 
 &lt;p&gt;This point is taken from &lt;a href=&#34;http://misko.hevery.com/code-reviewers-guide/flaw-brittle-global-state-singletons/&#34;&gt;Google&amp;rsquo;s Guide to Writing testable code&lt;/a&gt;. In that guide, they point out that&lt;/p&gt;
 
@@ -1156,7 +1224,7 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;With this signature you have a hint that maybe this method uses a &lt;code&gt;Toast&lt;/code&gt; to display the string. Because &lt;code&gt;Context&lt;/code&gt; is a god-object, knowing that a particular class or method depends on it doesn&amp;rsquo;t always shed much light on what that class/method does or how it does it, but a little help in understanding what a class/method does is better than no help. &lt;/p&gt;
 
-&lt;h2 id=&#34;2-classes-that-use-static-references-to-an-application-context-are-not-encapsulated:6a3c9eb7cf87cbdba814526f02f72f7a&#34;&gt;2. Classes that use static references to an application Context are not encapsulated.&lt;/h2&gt;
+&lt;h2 id=&#34;2-classes-that-use-static-references-to-an-application-context-are-not-encapsulated&#34;&gt;2. Classes that use static references to an application Context are not encapsulated.&lt;/h2&gt;
 
 &lt;p&gt;Encapsulation is one of those words that gets thrown around a lot without a precise definition. I&amp;rsquo;m not trying to add to that mess. When I say &amp;ldquo;encapsulation,&amp;rdquo; I mean what Steve Freeman and Nat Pryce mean in &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;:&lt;/p&gt;
 
@@ -1168,7 +1236,7 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;For the vast majority of cases, breaking encapsulation in this way probably wouldn&amp;rsquo;t be a problem. In fact, the only examples I can imagine in which this would be a problem seem rather contrived. Still, I think that, all other things being equal, we ought to prefer architectures that work in all cases over architectures that work 99% of the time. Again, you&amp;rsquo;re not killing a kitten if you use static references to application Contexts and break encapsulation, but you aren&amp;rsquo;t using the most robust architecture either.&lt;/p&gt;
 
-&lt;h2 id=&#34;3-classes-that-use-static-references-to-an-application-context-might-be-harder-to-unit-test:6a3c9eb7cf87cbdba814526f02f72f7a&#34;&gt;3. Classes that use static references to an application Context might be Harder to Unit Test&lt;/h2&gt;
+&lt;h2 id=&#34;3-classes-that-use-static-references-to-an-application-context-might-be-harder-to-unit-test&#34;&gt;3. Classes that use static references to an application Context might be Harder to Unit Test&lt;/h2&gt;
 
 &lt;p&gt;If one of your classes calls a method on an application Context and you would like to verify that that method has been called in a unit test, using an static reference will not make your life easy. As I&amp;rsquo;ve pointed out in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;this post&lt;/a&gt;, there are cases where you&amp;rsquo;ll probably want to do this. Suppose you&amp;rsquo;ve got an ServiceLauncher object that launches an Android Service. If you&amp;rsquo;ve used dependency injection to pass in the Context upon which the ServiceLauncher depends, unit testing is easy:&lt;/p&gt;
 
@@ -1176,7 +1244,7 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;If the ServiceLauncher used a static reference to an application Context, this class would more difficult to unit test. In this particular case, you could use the testing support library to verify that intents are sent with a UI test, but UI tests are slower than unit tests, and, in any case, there are methods on a Context that you might want to verify that don&amp;rsquo;t use intents, so injecting a Context into a target object will give you more flexibility when testing than using a globally accessible static reference, even if you leverage the testing support library to help you verify that certain intents were sent.&lt;/p&gt;
 
-&lt;h2 id=&#34;4-classes-that-use-static-references-to-an-application-context-might-be-more-likely-to-violate-the-law-of-demeter:6a3c9eb7cf87cbdba814526f02f72f7a&#34;&gt;4. Classes that use static references to an application Context might be more likely to violate the Law of Demeter&lt;/h2&gt;
+&lt;h2 id=&#34;4-classes-that-use-static-references-to-an-application-context-might-be-more-likely-to-violate-the-law-of-demeter&#34;&gt;4. Classes that use static references to an application Context might be more likely to violate the Law of Demeter&lt;/h2&gt;
 
 &lt;p&gt;We often use a Context to get a hold of some other object we need. A particular object might need a Resources, SharedPreferences, or a PackageManager to exercise its responsibility. When we have a globally accessible application Context, we might be tempted to get a hold of these objects by doing something like this:This violates &lt;a href=&#34;https://en.wikipedia.org/wiki/Law_of_Demeter&#34;&gt;the Law of Demeter&lt;/a&gt;. I was actually just complaining the other day about how law of demeter violations make apps harder to unit test:&lt;/p&gt;
 
@@ -1185,12 +1253,11 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;But even if you don&amp;rsquo;t care about unit testing, law of demeter violations are generally considered to be a code smell.&lt;/p&gt;
 
-&lt;h2 id=&#34;conclusion:6a3c9eb7cf87cbdba814526f02f72f7a&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;I don&amp;rsquo;t think I&amp;rsquo;ve said anything too controversial here. I see myself as simply applying general programming lessons learned from people who are smarter than me. Of course, as always, I&amp;rsquo;m open to being wrong about this.&lt;/p&gt;
 
-&lt;p&gt;If you are convinced that you should get rid of your static references to application Contexts, it really shouldn&amp;rsquo;t be too difficult for you to inject your classes and methods with the Context they need to do their job. You might even find that you have a bunch of law of demeter violations that you can clean up along the way. Android Studio&amp;rsquo;s intentions and refactoring capabilities make this kind of work trivial, even if it is a bit tedious.&lt;/p&gt;
-</description>
+&lt;p&gt;If you are convinced that you should get rid of your static references to application Contexts, it really shouldn&amp;rsquo;t be too difficult for you to inject your classes and methods with the Context they need to do their job. You might even find that you have a bunch of law of demeter violations that you can clean up along the way. Android Studio&amp;rsquo;s intentions and refactoring capabilities make this kind of work trivial, even if it is a bit tedious.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1199,9 +1266,7 @@ Accessing global state statically doesn’t clarify those shared dependencies to
       <pubDate>Thu, 09 Jul 2015 21:07:51 +0000</pubDate>
       
       <guid>http://philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/</guid>
-      <description>
-
-&lt;p&gt;My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&amp;rsquo;t even bother listing it on my resume&amp;rsquo; anymore. That app wouldn&amp;rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.&lt;/p&gt;
+      <description>&lt;p&gt;My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&amp;rsquo;t even bother listing it on my resume&amp;rsquo; anymore. That app wouldn&amp;rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.&lt;/p&gt;
 
 &lt;p&gt;Here&amp;rsquo;s a list of things to keep in mind as you&amp;rsquo;re writing your first Android apps. These lessons are derived from actual mistakes that I made in the source code of my first app, mistakes that I&amp;rsquo;ll be showing below. Keeping these things in mind will help you write an app that you can be a little prouder of.&lt;/p&gt;
 
@@ -1210,9 +1275,10 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;If the code you wrote a year ago doesn&amp;#39;t seem bad to you, you&amp;#39;re probably not learning enough.&lt;/p&gt;&amp;mdash; Code Standards (@codestandards) &lt;a href=&#34;https://twitter.com/codestandards/status/601373392059518976&#34;&gt;May 21, 2015&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
-&lt;p&gt;If you&amp;rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&amp;rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&amp;rsquo;ve never been guilty of making the mistakes I demo in those items.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&amp;rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&amp;rsquo;ve never been guilty of making the mistakes I demo in those items.
+&lt;/p&gt;
 
-&lt;h2 id=&#34;1-don-t-have-static-references-to-contexts:252a31459148d28701172cdc4197120e&#34;&gt;1. Don&amp;rsquo;t have static references to Contexts&lt;/h2&gt;
+&lt;h2 id=&#34;1-don-t-have-static-references-to-contexts&#34;&gt;1. Don&amp;rsquo;t have static references to Contexts&lt;/h2&gt;
 
 &lt;script src=&#34;//gist.github.com/kmdupr33/e9af62a0ad04abbb0a7d.js&#34;&gt;&lt;/script&gt;
 
@@ -1222,7 +1288,7 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/&#34;&gt;I wouldn&amp;rsquo;t recommend that you do that either&lt;/a&gt;. &lt;/p&gt;
 
-&lt;h2 id=&#34;2-beware-of-implicit-references-to-objects-whose-lifecycle-you-do-not-control:252a31459148d28701172cdc4197120e&#34;&gt;2. Beware of &amp;ldquo;implicit references&amp;rdquo; to objects whose lifecycle you do not control&lt;/h2&gt;
+&lt;h2 id=&#34;2-beware-of-implicit-references-to-objects-whose-lifecycle-you-do-not-control&#34;&gt;2. Beware of &amp;ldquo;implicit references&amp;rdquo; to objects whose lifecycle you do not control&lt;/h2&gt;
 
 &lt;script src=&#34;//gist.github.com/kmdupr33/494707e126e5fc7156ea.js&#34;&gt;&lt;/script&gt;
 
@@ -1234,7 +1300,7 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;There&amp;rsquo;s a great Google IO video &lt;a href=&#34;https://www.youtube.com/watch?v=_CruQY55HOk&#34;&gt;that explains why this sort of thing happens&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;3-make-android-studio-work-for-you:252a31459148d28701172cdc4197120e&#34;&gt;3. Make Android Studio work for You&lt;/h2&gt;
+&lt;h2 id=&#34;3-make-android-studio-work-for-you&#34;&gt;3. Make Android Studio work for You&lt;/h2&gt;
 
 &lt;script src=&#34;//gist.github.com/kmdupr33/f0e08822fe0d3b74973a.js&#34;&gt;&lt;/script&gt;
 
@@ -1248,13 +1314,13 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;Android Studio can do a lot more than that too. &lt;a href=&#34;http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/&#34;&gt;Learning shortcuts&lt;/a&gt; and learning about &lt;a href=&#34;https://www.jetbrains.com/idea/help/live-templates.html&#34;&gt;live templates&lt;/a&gt; are good places to start.&lt;/p&gt;
 
-&lt;h2 id=&#34;4-methods-should-do-one-thing:252a31459148d28701172cdc4197120e&#34;&gt;4. Methods should do one thing&lt;/h2&gt;
+&lt;h2 id=&#34;4-methods-should-do-one-thing&#34;&gt;4. Methods should do one thing&lt;/h2&gt;
 
 &lt;p&gt;There&amp;rsquo;s a method in one of the classes that I wrote that&amp;rsquo;s over 100 lines long. Such methods are hard to read, modify, and reuse. Try to write methods that only do one thing. Typically, this means that you should be suspicious of methods that are over 20 lines long. Here you can recruit Android Studio to help you spot problematic methods:&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.25.00-PM.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.25.00-PM-1024x718.png&#34; alt=&#34;Screen Shot 2015-07-09 at 4.25.00 PM&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;5-learn-from-other-people-who-are-smarter-and-more-experienced-than-you:252a31459148d28701172cdc4197120e&#34;&gt;5. Learn from other people who are smarter and more experienced than you.&lt;/h2&gt;
+&lt;h2 id=&#34;5-learn-from-other-people-who-are-smarter-and-more-experienced-than-you&#34;&gt;5. Learn from other people who are smarter and more experienced than you.&lt;/h2&gt;
 
 &lt;p&gt;This might sound trivial, but its a mistake that I made when I wrote my first app.&lt;/p&gt;
 
@@ -1262,7 +1328,7 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;Read &lt;a href=&#34;http://www.amazon.com/The-Pragmatic-Programmer-Journeyman-Master/dp/020161622X&#34;&gt;Pragmatic Programmer&lt;/a&gt;. Then read &lt;a href=&#34;http://www.amazon.com/Effective-Java-Edition-Joshua-Bloch/dp/0321356683&#34;&gt;Effective Java&lt;/a&gt;. These two books will help you avoid making common mistakes that we make as novice developers. After you done with those books, keep looking for smart people to learn from.&lt;/p&gt;
 
-&lt;h2 id=&#34;6-use-libraries:252a31459148d28701172cdc4197120e&#34;&gt;6. Use Libraries&lt;/h2&gt;
+&lt;h2 id=&#34;6-use-libraries&#34;&gt;6. Use Libraries&lt;/h2&gt;
 
 &lt;p&gt;When you&amp;rsquo;re writing an app, you&amp;rsquo;re probably going to encounter problems that smarter and more experienced people have already solved. Moreover, a lot of these solutions are available as open source libraries. Take advantage of them.&lt;/p&gt;
 
@@ -1276,10 +1342,9 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 &lt;li&gt;&lt;p&gt;Look for open source applications that solve problems similar to the ones that you are solving with your app. You might find one that uses a third-party library that you want to use or you might find that they&amp;rsquo;ve used a standard java library that you were unaware of.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;conclusion:252a31459148d28701172cdc4197120e&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
-&lt;p&gt;Writing good Android apps can be very difficult. Don&amp;rsquo;t make it harder on yourself by repeating the mistakes I made. If you found a mistake in what I&amp;rsquo;ve written, please let me know in the comments. (Misleading comments are worse than no comments at all.) If you think this&amp;rsquo;ll be useful for a new developer, share it. Save them some headache.&lt;/p&gt;
-</description>
+&lt;p&gt;Writing good Android apps can be very difficult. Don&amp;rsquo;t make it harder on yourself by repeating the mistakes I made. If you found a mistake in what I&amp;rsquo;ve written, please let me know in the comments. (Misleading comments are worse than no comments at all.) If you think this&amp;rsquo;ll be useful for a new developer, share it. Save them some headache.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1289,6 +1354,8 @@ Accessing global state statically doesn’t clarify those shared dependencies to
       
       <guid>http://philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/</guid>
       <description>&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/&#34;&gt;my last post&lt;/a&gt;, I argued that there are two disadvantages to &lt;code&gt;Activities&lt;/code&gt; and Presenters. The first disadvantage is that they are often bloated classes. The second disadvantage is that these classes often have a circular dependency between themselves and their Views. Yesterday, Hannes Dorfmann made a comment on my post that was so thoughtful and excellent that I think its worth dedicating an entire post to responding to it.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
 
 &lt;p&gt;Specifically, Hannes&amp;rsquo; comments challenge my claim that the circular dependency between Activities/Fragments/Presenters and their Views are a problem.&lt;/p&gt;
 
@@ -1367,8 +1434,7 @@ That’s open to dispute. [Is] a presenter...in an invalid state without a View
 
 &lt;p&gt;By now, you can probably guess what I would say to Hannes&amp;rsquo; first argument: I would deny its first premise. I would say, in other words, that there&amp;rsquo;s something fishy about the circular dependency between an &lt;code&gt;Activity&lt;/code&gt; and its &lt;code&gt;Button&lt;/code&gt; in the first place and I think there&amp;rsquo;s something fishy about it, regardless of whether the &lt;code&gt;Button&lt;/code&gt; programs against an interface. Whether the &lt;code&gt;Button&lt;/code&gt; programs against an interface has nothing to do with the fact that, in the context of our application, it has a dependency on a click listener and that setting an &lt;code&gt;Activity&lt;/code&gt; as a Button&amp;rsquo;s click listener makes it more difficult for the button to have a different click listener, a difficulty we might want to avoid if we want to take full advantage of polymorphism in implementing ui-related business logic.&lt;/p&gt;
 
-&lt;p&gt;Regardless of whether I&amp;rsquo;m right or wrong to criticize the circular dependency between Activities/Presenters and their Views, I&amp;rsquo;ve learned a lot by thinking about this and by engaging with Hannes in this discussion. So thanks, Hannes, and thanks to everyone who takes the time to make thoughtful comments on what I&amp;rsquo;ve written. I owe you.&lt;/p&gt;
-</description>
+&lt;p&gt;Regardless of whether I&amp;rsquo;m right or wrong to criticize the circular dependency between Activities/Presenters and their Views, I&amp;rsquo;ve learned a lot by thinking about this and by engaging with Hannes in this discussion. So thanks, Hannes, and thanks to everyone who takes the time to make thoughtful comments on what I&amp;rsquo;ve written. I owe you.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1377,9 +1443,7 @@ That’s open to dispute. [Is] a presenter...in an invalid state without a View
       <pubDate>Tue, 07 Jul 2015 18:29:16 +0000</pubDate>
       
       <guid>http://philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/</guid>
-      <description>
-
-&lt;blockquote&gt;Thorough unit testing helps us improve the internal quality because, to be tested, a unit has to be structured to run outside the system in a test fixture. A unit test for an object needs to create the object, provide its dependencies, interact with it, and check that it behaved as expected. So, for a class to be easy to unit-test, the class must have explicit dependencies that can easily be substituted and clear responsibilities that can easily be invoked and verified. In software engineering terms, that means that the code must be loosely coupled and highly cohesive —in other words, well-designed.
+      <description>&lt;blockquote&gt;Thorough unit testing helps us improve the internal quality because, to be tested, a unit has to be structured to run outside the system in a test fixture. A unit test for an object needs to create the object, provide its dependencies, interact with it, and check that it behaved as expected. So, for a class to be easy to unit-test, the class must have explicit dependencies that can easily be substituted and clear responsibilities that can easily be invoked and verified. In software engineering terms, that means that the code must be loosely coupled and highly cohesive —in other words, well-designed.
 
 Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&lt;/blockquote&gt;
 
@@ -1407,9 +1471,11 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&
 
 &lt;p&gt;In this post, I will try to give some reasons why we might consider a new architecture for Android development in the first place.&lt;/p&gt;
 
-&lt;h2 id=&#34;why-a-new-architecture:25be7690f1d98142cd41730b0d055142&#34;&gt;Why a New Architecture?&lt;/h2&gt;
+&lt;p&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;activities-fragments-presenters-can-become-bloated:25be7690f1d98142cd41730b0d055142&#34;&gt;Activities/Fragments/Presenters can become Bloated&lt;/h3&gt;
+&lt;h2 id=&#34;why-a-new-architecture&#34;&gt;Why a New Architecture?&lt;/h2&gt;
+
+&lt;h3 id=&#34;activities-fragments-presenters-can-become-bloated&#34;&gt;Activities/Fragments/Presenters can become Bloated&lt;/h3&gt;
 
 &lt;p&gt;&lt;code&gt;Activities&lt;/code&gt; and &lt;code&gt;Fragments&lt;/code&gt; (I&amp;rsquo;m just going say &amp;ldquo;Activities&amp;rdquo; from now on, but what I say applies equally to &lt;code&gt;Fragments&lt;/code&gt;.) are egregious violators of the principle of single responsibility. At Droidcon Montreal, Richa Khandelwal &lt;a href=&#34;https://speakerdeck.com/richk/clean-android-architecture&#34;&gt;listed the responsibilities&lt;/a&gt; that often wind up in an &lt;code&gt;Activity&lt;/code&gt;:&lt;/p&gt;
 
@@ -1431,7 +1497,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&
 
 &lt;p&gt;The SessionDetailActivity in Google&amp;rsquo;s IOSched app is actually a good example of how bloated an Activity can get even if its only concerned with the two responsibilities of binding data to views and responding to user input. ~70% of the 1000+ lines of SessionDetailActivity are only concerned with these two responsibilities, so even if we moved all other code out of the SessionDetailActivity, we&amp;rsquo;d still have a class that&amp;rsquo;s about 700 lines long. Don&amp;rsquo;t believe me? Take a look at &lt;a href=&#34;https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/SessionDetailActivity.java&#34;&gt;the source code&lt;/a&gt;. Presenters can become bloated for the same reason an Activity does: Presenters are typically responsible for binding data to a View and for responding to user input, so a Presenter would be just as long as an Activity that&amp;rsquo;s slimmed down by removing all of its other extra responsibilities. &lt;/p&gt;
 
-&lt;h3 id=&#34;activities-fragments-presenters-often-have-a-circular-dependency-on-their-views:25be7690f1d98142cd41730b0d055142&#34;&gt;Activities/Fragments/Presenters often have a Circular Dependency on their Views&lt;/h3&gt;
+&lt;h3 id=&#34;activities-fragments-presenters-often-have-a-circular-dependency-on-their-views&#34;&gt;Activities/Fragments/Presenters often have a Circular Dependency on their Views&lt;/h3&gt;
 
 &lt;p&gt;Activities typically fulfill their responsibilities of binding data to views and responding to user input by creating a circular dependency between themselves and the Views that make up their Content View (i.e., the view passed in to the setContentView() method). There&amp;rsquo;s a piece of code in the same gist that I showed above that provides an example of this.&lt;/p&gt;
 
@@ -1463,7 +1529,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&
 
 We try to make sure that we always create a valid object…Partially creating an object and then finishing it off by setting its properties is brittle…&lt;/blockquote&gt;
 
-&lt;h2 id=&#34;conclusion:25be7690f1d98142cd41730b0d055142&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;Presenters and Activities violate the principle of single responsibility. They are often responsible for binding data to a View and for responding to user input/actions. This can cause both Activities and Presenters to become bloated.&lt;/p&gt;
 
@@ -1473,8 +1539,7 @@ We try to make sure that we always create a valid object…Partially creating an
 
 &lt;hr /&gt;
 
-&lt;p&gt;Below, Hannes Dorfmann has a great comment to this article. I&amp;rsquo;ve responded to that &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-</description>
+&lt;p&gt;Below, Hannes Dorfmann has a great comment to this article. I&amp;rsquo;ve responded to that &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1483,13 +1548,13 @@ We try to make sure that we always create a valid object…Partially creating an
       <pubDate>Sat, 06 Jun 2015 11:08:03 +0000</pubDate>
       
       <guid>http://philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/</guid>
-      <description>
-
-&lt;p&gt;Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&amp;rsquo;ve fetched or in response to some input. The &lt;code&gt;SessionDetailActivity&lt;/code&gt; in Google&amp;rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the &lt;code&gt;SessionDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy.&lt;/p&gt;
+      <description>&lt;p&gt;Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&amp;rsquo;ve fetched or in response to some input. The &lt;code&gt;SessionDetailActivity&lt;/code&gt; in Google&amp;rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the &lt;code&gt;SessionDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34; alt=&#34;IO Testing Talk-04&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;In this screenshot, the &amp;ldquo;Distribute,&amp;rdquo; &amp;ldquo;Android,&amp;rdquo; and &amp;ldquo;Games&amp;rdquo; tags are added to the view hierarchy based on the tags associated with the &amp;rdquo;Going global with Google Play&amp;rdquo; IO session. In this post, I&amp;rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the &lt;code&gt;SesisonDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
 
 &lt;p&gt;As &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;I&amp;rsquo;ve stated elsewhere&lt;/a&gt;, dependency injection is key to making our apps unit testable. Because the MVP pattern allows us to inject dependencies into Presenters, objects which contain much of our app&amp;rsquo;s business logic, the pattern plays a key role in making our apps unit testable in general. Unsurprisingly, the pattern also plays a role in helping us write unit testable dynamically constructed views.&lt;/p&gt;
 
@@ -1519,7 +1584,7 @@ We try to make sure that we always create a valid object…Partially creating an
 
 &lt;p&gt;The SesionTagViewTranslator is even more trivial, so I won&amp;rsquo;t bother showing the code for that.&lt;/p&gt;
 
-&lt;h2 id=&#34;conclusion:de96b0d86be079e91b1b191cfad3b31b&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;To sum it all up: dynamically constructed views often have two different types of business logic: view-hierarchy-affecting business logic and view-property-affecting business logic. Making these views unit testable consists of two steps: First, place the view-hierarchy-affecting business logic in a top level presenter like the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;. Second have an MVP-View (like the &lt;code&gt;SessionDetailActivity&lt;/code&gt;) create View-Presenter pairs for each Android view that&amp;rsquo;s added to the view hierarchy.&lt;/p&gt;
 
@@ -1538,8 +1603,7 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;hr /&gt;
-</description>
+&lt;hr /&gt;</description>
     </item>
     
     <item>
@@ -1548,13 +1612,13 @@ We try to make sure that we always create a valid object…Partially creating an
       <pubDate>Sun, 31 May 2015 20:11:16 +0000</pubDate>
       
       <guid>http://philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/</guid>
-      <description>
-
-&lt;p&gt;In my recent &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Against Android Unit Tests&lt;/a&gt; series, I discussed the difficulties of unit testing android applications and proposed a different way of building applications that would enhance their unit testability. My proposal in that series was really largely a rough sketch of what it would take to make parts of Google&amp;rsquo;s IOSched app unit testable.&lt;/p&gt;
+      <description>&lt;p&gt;In my recent &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Against Android Unit Tests&lt;/a&gt; series, I discussed the difficulties of unit testing android applications and proposed a different way of building applications that would enhance their unit testability. My proposal in that series was really largely a rough sketch of what it would take to make parts of Google&amp;rsquo;s IOSched app unit testable.&lt;/p&gt;
 
 &lt;p&gt;More recently, I&amp;rsquo;ve started to fill in the details of that proposal by forking the IOSched repo and refactoring it to make it unit testable. In the next few posts, I&amp;rsquo;ll be discussing some of the challenges that arose when attempting to make the &lt;code&gt;SessionDetailActivity&lt;/code&gt; unit testable within the IOSched app. In this post, I want to provide a broad overview of the challenges I&amp;rsquo;ll be discussing.&lt;/p&gt;
 
-&lt;h2 id=&#34;unit-testing-dynamically-constructed-views:be0df47147e69281d62bde6a0150c690&#34;&gt;Unit Testing Dynamically Constructed Views&lt;/h2&gt;
+&lt;p&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;unit-testing-dynamically-constructed-views&#34;&gt;Unit Testing Dynamically Constructed Views&lt;/h2&gt;
 
 &lt;p&gt;Some of the views within the &lt;code&gt;SessionDetailActivity&lt;/code&gt; are built dynamically. The tags that appear below the session&amp;rsquo;s description are a good example of this:&lt;/p&gt;
 
@@ -1562,15 +1626,15 @@ We try to make sure that we always create a valid object…Partially creating an
 
 &lt;p&gt;It wasn&amp;rsquo;t immediately obvious to me how to leverage the &amp;ldquo;MVP&amp;rdquo; pattern to maintain the class&amp;rsquo;s unit testability in the face of dynamically built views. I&amp;rsquo;ll discuss how I solved this problem in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;the first post of this series&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;circular-dependencies-between-viewtranslators-and-presenters:be0df47147e69281d62bde6a0150c690&#34;&gt;Circular Dependencies between ViewTranslators and Presenters&lt;/h2&gt;
+&lt;h2 id=&#34;circular-dependencies-between-viewtranslators-and-presenters&#34;&gt;Circular Dependencies between ViewTranslators and Presenters&lt;/h2&gt;
 
 &lt;p&gt;&amp;ldquo;ViewTranslator&amp;rdquo; is just the name that I prefer for what is traditionally called the &amp;ldquo;View&amp;rdquo; within the MVP pattern. In &lt;a href=&#34;https://corner.squareup.com/2014/10/advocating-against-android-fragments.html&#34;&gt;Square&amp;rsquo;s description of the MVP pattern&lt;/a&gt;, we can see that there&amp;rsquo;s a circular dependency between the ViewTranslator and Presenter. For reasons that will be clear after I&amp;rsquo;ve discussed my solution to the problem of creating unit testable dynamically constructed views, this circular dependency is not ideal. In the second post, I&amp;rsquo;ll discuss how I resolved this circular dependency.&lt;/p&gt;
 
-&lt;h2 id=&#34;static-methods:be0df47147e69281d62bde6a0150c690&#34;&gt;Static Methods&lt;/h2&gt;
+&lt;h2 id=&#34;static-methods&#34;&gt;Static Methods&lt;/h2&gt;
 
 &lt;p&gt;As &lt;a href=&#34;http://googletesting.blogspot.com/2008/12/static-methods-are-death-to-testability.html&#34;&gt;Google&amp;rsquo;s testing blog points out&lt;/a&gt;, static methods spell trouble for your app&amp;rsquo;s unit testability. Unfortunately, there are several static methods within &lt;code&gt;SessionDetailActivity&lt;/code&gt; that needed to remove to make unit testing possible. In the third post, I discuss how I removed those static methods.&lt;/p&gt;
 
-&lt;h2 id=&#34;towards-a-unit-testable-fork-of-google-s-iosched-app:be0df47147e69281d62bde6a0150c690&#34;&gt;Towards a Unit Testable Fork of Google&amp;rsquo;s IOSched App&lt;/h2&gt;
+&lt;h2 id=&#34;towards-a-unit-testable-fork-of-google-s-iosched-app&#34;&gt;Towards a Unit Testable Fork of Google&amp;rsquo;s IOSched App&lt;/h2&gt;
 
 &lt;p&gt;My hope is to eventually have &lt;a href=&#34;https://github.com/kmdupr33/iosched&#34;&gt;a fork of Google&amp;rsquo;s IOSched app&lt;/a&gt; that allows us to unit test all of its business logic. Making a non-trivial app like IOSched unit testable will tell us a lot about what it really takes to unit test Android apps. We might find out that unit testing Android apps is just too impractical. Either way, I look forward to exploring how we might pull this off.&lt;/p&gt;
 
@@ -1591,111 +1655,7 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;hr /&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>An Introduction to Unit Testing on Android</title>
-      <link>http://philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/</link>
-      <pubDate>Fri, 29 May 2015 11:23:14 +0000</pubDate>
-      
-      <guid>http://philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/</guid>
-      <description>&lt;p&gt;Yesterday at IO Extended Orlando, I gave a talk on testing. What follows is a written version of the presentation I gave.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png&#34; alt=&#34;IO Testing Talk-01&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Android 1.2 introduced unit testing support. Now, we can run junit tests on the jvm while we&amp;rsquo;re developing our apps. During my talk, we&amp;rsquo;ll discuss the following questions:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Why should anyone care about this new feature?&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;What the heck is unit testing anyways?&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Briefly, I&amp;rsquo;ll also mention some of the challenges of writing unit tests for Android.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-02.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-02.png&#34; alt=&#34;IO Testing Talk-02&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Before we get into those questions, let me introduce myself. I&amp;rsquo;m Matt Dupree. I&amp;rsquo;m a wannabe philosophy professor turned wannabe tech entrepreneur, which is just a fancy way of saying that I studied philosophy as an undergrad and graduate student, decided I didn&amp;rsquo;t want to be poor, and become a software developer about 2 years ago. That&amp;rsquo;s a bit of an oversimplification, but you&amp;rsquo;re not here to hear about my career choices. In case you care to know more, you can check out &lt;a href=&#34;http://philosophicalhacker.com/2014/04/21/why-im-glad-my-dream-job-didnt-work-out/&#34;&gt;this post&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-03.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-03.png&#34; alt=&#34;IO Testing Talk-03&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Many of us don&amp;rsquo;t really do a lot of testing for Android. This is unfortunate because there are plenty of cases where writing tests can be very useful. Writing unit tests, moreover, can be particularly useful for getting targeted info on whether a certain class is working correctly. Here&amp;rsquo;s a little experiment designed to show the value of writing unit tests on Android.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34; alt=&#34;IO Testing Talk-04&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s say we were working on Google&amp;rsquo;s IO Sched app from last year. The above screenshot is a shot of the &lt;code&gt;SessionDetailActivity&lt;/code&gt;. This is where the user can view the details about a session and add that session to their IO schedule. The business logic for what happens when the user presses the plus button on the screen is as follows:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;If the user taps the plus button before the IO session has happened, the session is added to the user&amp;rsquo;s schedule and a notification is set to remind the user that the IO session is coming up.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;If the user taps the plus button after the IO session has happened, when the user returns to the screen, they will be presented with a card that asks them for feedback about the session.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;If the session has already been added to the user&amp;rsquo;s schedule, when they enter the session detail screen, they should see a &amp;ldquo;check&amp;rdquo; button instead of a &amp;ldquo;plus&amp;rdquo; button, and pressing this button should perform the reverse of one of the two above operations, depending on whether the check button is pressed before or after the IO session.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;You could test all of this business logic manually, but its must faster to write unit tests that verify that the &lt;code&gt;SessionDetailActivity&lt;/code&gt; does all of this correctly. Unit tests that verify this behavior will complete in seconds. Manual testing, on the other hand, takes over a minute to complete:&lt;/p&gt;
-
-&lt;p&gt;Now, at this point, some of you make the following argument:&lt;/p&gt;
-
-&lt;blockquote&gt;Because unit tests don&#39;t actually tell you anything about the overall behavior of the system, there will be bugs that will slip past a unit test. Thus, we should prefer manual testing (or perhaps automated functional UI tests) over unit testing.&lt;/blockquote&gt;
-
-&lt;p&gt;This is a tricky argument, but fortunately, I have a lot of experience with those.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-05.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-05.png&#34; alt=&#34;IO Testing Talk-05&#34; /&gt;&lt;/a&gt;Here&amp;rsquo;s my response to the above argument: Even if there are bugs that can slip past unit tests, we are better off, all other things being equal, if we have unit tests than if we didn&amp;rsquo;t have unit tests. To see this, let&amp;rsquo;s look at the three possible outcomes for unit testing the functionality I mentioned above.&lt;/p&gt;
-
-&lt;p&gt;In the first outcome (on the far left), our unit tests pass and our functional tests pass. Everything works great, so we can celebrate with &lt;a href=&#34;http://slime.clay.io/game/slime&#34;&gt;a game of slimeball&lt;/a&gt; or something.&lt;/p&gt;
-
-&lt;p&gt;In the second outcome, our unit tests fail. In that situation, we know exactly where the problem is, which makes debugging much easier.&lt;/p&gt;
-
-&lt;p&gt;In the final outcome (on the far right), our unit tests pass, but our functional tests fail. The above argument against unit testing focuses on this scenario, but even if we find ourselves in this scenario, we&amp;rsquo;re better off having unit tests because we have a good head start on where the problem lies: because our unit test passed, we know that the problem is not within the &lt;code&gt;SessionDetailActivity&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;So, in any possible scenario where we&amp;rsquo;ve run our unit and functional tests, we&amp;rsquo;re better off, all other things being equal, having our unit tests rather than not having them. Astute readers will point out that the &amp;ldquo;all other things being equal&amp;rdquo; clause of my claim is almost never satisfied when working on a project because of the time investment we make into writing unit tests. That&amp;rsquo;s true. Technically, I need to make a stronger claim about the general value of unit tests in order to completely convince you that they are worth the time investment (especially on Android), but I think I&amp;rsquo;ve said enough to show that its worth exploring whether unit tests would be useful for the project that you&amp;rsquo;re working on.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-06.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-06.png&#34; alt=&#34;IO Testing Talk-06&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;We just talked a lot about unit tests, but we never did ask a simple question: what exactly is a unit test? Some of us might have a clear definition of a unit test in our mind, but until recently, I was not one of those people. I actually think that there&amp;rsquo;s a good amount of confusion over what unit tests are, especially among android developers. The confusion on the definition of a unit test is, I think, a result of us being pretty vague when we use the term. We can see this if we look at two unit test cases mentioned on developer.android.com that are both called &amp;ldquo;unit tests,&amp;rdquo; but in fact have very different properties. The first snippet is found on &lt;a href=&#34;http://developer.android.com/training/activity-testing/activity-unit-testing.html&#34;&gt;the android page about unit testing activities&lt;/a&gt;:&lt;/p&gt;
-
-&lt;p&gt;This second snippet is found on the android page entitled &amp;rdquo;&lt;a href=&#34;http://developer.android.com/training/testing/unit-testing/local-unit-tests.html&#34;&gt;Building Effective Unit Tests&lt;/a&gt;&amp;ldquo;:&lt;/p&gt;
-
-&lt;p&gt;In spite of their differences, these two snippets are both called &amp;ldquo;unit tests.&amp;rdquo; I don&amp;rsquo;t mean to quibble over definitions, but our sloppiness with the word &amp;ldquo;unit test&amp;rdquo; is, I think, unhelpful. Here&amp;rsquo;s a more precise definition:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;A unit test is a test that can verify that &lt;strong&gt;all of the code&lt;/strong&gt; in exactly one &lt;strong&gt;non-trivial&lt;/strong&gt; class is working correctly. If this test fails, we know that the problem is located in that class being tested.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;On this definition, tests like &lt;code&gt;MyActivityUnitTestCase&lt;/code&gt; in the first snippet would not count as a unit tests because, as &lt;a href=&#34;http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;I&amp;rsquo;ve pointed out elsewhere&lt;/a&gt;, when testing activities, we often lack enough control over the pre-act state required to exercise different branches of the methods we want to test. Moreover, &lt;a href=&#34;http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;activities often contain dependencies that aren&amp;rsquo;t injected&lt;/a&gt;, so if a test fails, it may fail because of an error in the code of one of the non-mocked dependencies within the activity being tested.&lt;/p&gt;
-
-&lt;p&gt;I just talked about dependencies that have been &amp;ldquo;injected.&amp;ldquo; &amp;rdquo;Dependency injection&amp;rdquo; and its related phrases happens to be another term that has some sloppy usage. Here&amp;rsquo;s my understanding of dependency injection:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-07.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-07.png&#34; alt=&#34;IO Testing Talk-07&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This definition is a shortened version of the definition that Martin Fowler, the guy who coined the term &amp;ldquo;dependency injection,&amp;rdquo; offers in his &lt;a href=&#34;http://martinfowler.com/articles/injection.html&#34;&gt;article on dependency injection&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;If we accept my definition of &amp;ldquo;unit testing&amp;rdquo; and my interpretation of Martin Fowler&amp;rsquo;s definition of &amp;ldquo;dependency injection&amp;rdquo;, then we can say that &amp;ldquo;unit testing&amp;rdquo; Android component classes (e.g., Activities, Services, Fragments, etc.) turns out to be extremely difficult largely because there&amp;rsquo;s no way to have true dependency injection for our app component class, classes that typically hold much of the business logic that we want to test.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-08.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-08.png&#34; alt=&#34;IO Testing Talk-08&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;ve written extensively about this topic in my series entitled &amp;ldquo;&lt;a href=&#34;http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Against Android Unit Tests.&lt;/a&gt;&amp;rdquo; I&amp;rsquo;ve also made some suggestions on how we might write unit tests for android &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Against Android Unit Tests:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Why Android Unit Testing is so Hard: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;How to Make Our Android Apps Unit Testable: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/&#34;&gt;Quick Summary&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;Followup: Summary&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;Followup: Unit Testing Dynamically Constructed Views&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-</description>
+&lt;hr /&gt;</description>
     </item>
     
   </channel>

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Multiproject Setups on Philosophical Hacker</title>
-    <link>http://philosophicalhacker.com/tags/multiproject-setups/</link>
-    <description>Recent content in Multiproject Setups on Philosophical Hacker</description>
+    <title>Philosophical Hacker</title>
+    <link>http://philosophicalhacker.com/tags/multiproject-setups/index.xml</link>
+    <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 03 Oct 2014 03:02:54 +0000</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/tags/multiproject-setups/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -19,7 +18,7 @@
 
 &lt;p&gt;Google&amp;rsquo;s &lt;a href=&#34;http://tools.android.com/tech-docs/new-build-system/user-guide&#34;&gt;Gradle Plugin user guide recommends&lt;/a&gt; a method for configuring your gradle files to build multiple projects. That method has some shortcomings. In this post, I will briefly explain Google&amp;rsquo;s recommended configuration, note its shortcomings, and  recommend a different way to configure your gradle files to support multi-project setups in Android Studio.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-google-way:1e519e4bdb3f333975d3db6bac5795a8&#34;&gt;The Google Way&lt;/h2&gt;
+&lt;h2 id=&#34;the-google-way&#34;&gt;The Google Way&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2014/10/screen-shot-2014-10-02-at-9-31-31-pm.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2014/10/screen-shot-2014-10-02-at-9-31-31-pm.png?w=620&#34; alt=&#34;Screen Shot 2014-10-02 at 9.31.31 PM&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
@@ -33,7 +32,7 @@
 
 &lt;p&gt;As you can see, Google&amp;rsquo;s suggested configuration is simple, and its even simpler if you use the Android Studio UI to configure you gradle files for you. In spite of it&amp;rsquo;s simplicity, there are several reasons why we might want to avoid this configuration. I discuss those reasons in the next section.&lt;/p&gt;
 
-&lt;h2 id=&#34;some-unfortunate-features-of-the-google-way:1e519e4bdb3f333975d3db6bac5795a8&#34;&gt;Some Unfortunate Features of &amp;ldquo;The Google Way&amp;rdquo;&lt;/h2&gt;
+&lt;h2 id=&#34;some-unfortunate-features-of-the-google-way&#34;&gt;Some Unfortunate Features of &amp;ldquo;The Google Way&amp;rdquo;&lt;/h2&gt;
 
 &lt;p&gt;Both of the unfortunate features of the &amp;ldquo;Google way&amp;rdquo; of handling multi-project setups only arise if your working on several apps that depend on the same libraries. If you only ever work on one app and you know for sure you wont have multiple apps that depend on the same library, feel free to skip the rest of this post and continue blissfully using the simple configuration for multiple projects in Android Studio. If, on the other hand, you are working on several apps that depend on the same libraries, read on.&lt;/p&gt;
 
@@ -53,7 +52,7 @@
 
 &lt;p&gt;So, if you follow the Google way, you&amp;rsquo;re sort of¹ forced to have copies of your libraries for all of your apps that depend on those libraries and if you change those libraries often, then you might have to start using git submodules.²&lt;/p&gt;
 
-&lt;h2 id=&#34;a-different-way:1e519e4bdb3f333975d3db6bac5795a8&#34;&gt;A Different Way&lt;/h2&gt;
+&lt;h2 id=&#34;a-different-way&#34;&gt;A Different Way&lt;/h2&gt;
 
 &lt;p&gt;It turns out there&amp;rsquo;s a better way to manage multiple projects in Android Studio. The trick is to create separate Android Studio projects for your libraries and to tell gradle that the module for the library that your app depends on is located in the library&amp;rsquo;s project directory. If you wanted to use this method with the project structure I&amp;rsquo;ve described above, you would do the following:&lt;/p&gt;
 
@@ -83,7 +82,7 @@
 
 &lt;p&gt;If you&amp;rsquo;ve got any concerns with this setup or if you have a better alternative, I&amp;rsquo;d love to hear it!&lt;/p&gt;
 
-&lt;h2 id=&#34;notes:1e519e4bdb3f333975d3db6bac5795a8&#34;&gt;Notes:&lt;/h2&gt;
+&lt;h2 id=&#34;notes&#34;&gt;Notes:&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;I say &amp;ldquo;sort of&amp;rdquo; because you aren&amp;rsquo;t exactly stuck between the two options I&amp;rsquo;ve discussed here. You could also turn your libraries into maven artifacts and include them into your app that way. This method, however, does not allow you to work on your library code and app code simultaneously unless you run multiple instances of Android Studio. Aint nobody got the memory for that.&lt;/p&gt;&lt;/li&gt;

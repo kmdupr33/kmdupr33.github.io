@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/" />
     
@@ -148,15 +148,13 @@
     </header>
 
     <section class="post-content">
-      
-
-<blockquote>
+      <blockquote>
 <p>Loaders are awesome&hellip;they&rsquo;re essentially the best practice implementation of asynchronous data loading in your Activities.</p>
 
-<p>-Reto Meier, Developing Android Apps Udacity Course</p>
-</blockquote>
+<p>-Reto Meier, Developing Android Apps Udacity Course
 
-<p>The following code should make you nervous:</p>
+The following code should make you nervous:</p>
+</blockquote>
 
 <div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
 
@@ -183,20 +181,20 @@
 
 <p>I think so, and in this post, I&rsquo;ll introduce a <em>tiny</em> library that&rsquo;ll help us write code like this. The gist of the approach is to use Loaders <em>with</em> RxJava. Before we get into this approach, however, lets look at some other ways that people handle asynchronous data loading in their apps so that we can see what this approach offers that other ones don&rsquo;t.</p>
 
-<h3 id="prior-art:8b5ccb0b8cb5aae598ca3059f64dac37">Prior Art</h3>
+<h3 id="prior-art">Prior Art</h3>
 
-<h4 id="loaders:8b5ccb0b8cb5aae598ca3059f64dac37">Loaders</h4>
+<h4 id="loaders">Loaders</h4>
 
 <p>Loaders give us what we want vis-a-vis memory-leak-free querying whose results persist across orientation changes, but many people find the API clunky and/or confusing. Apparently, Jake Wharton is one of these people:</p>
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">The fragment and loader APIs fit in perfectly on Android. Useful enough that you use them but also want shoot yourself in the face.</p>&mdash; Jake Wharton (@JakeWharton) <a href="https://twitter.com/JakeWharton/status/325630461852413952">April 20, 2013</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-<h4 id="retained-fragment:8b5ccb0b8cb5aae598ca3059f64dac37">Retained Fragment</h4>
+<h4 id="retained-fragment">Retained Fragment</h4>
 
 <p>Using a retained fragment is another approach for persisting the results of a network request across orientation changes and avoiding memory leaks. Unfortunately, this approach requires a fair amount of boiler-plate code. The barebones implementation as discussed in <a href="https://developer.android.com/guide/topics/resources/runtime-changes.html">the docs</a> will make this clear enough. Even if we could get rid of most of this boilerplate, we still don&rsquo;t have an api for working with our asynchronous data that&rsquo;s as nice as RxJava&rsquo;s <code>Observable</code>.</p>
 
-<h4 id="cache-replay:8b5ccb0b8cb5aae598ca3059f64dac37">Cache-Replay</h4>
+<h4 id="cache-replay">Cache-Replay</h4>
 
 <p>Cache-Replay is an approach suggested in Dan Lew&rsquo;s <a href="http://blog.danlew.net/2014/10/08/grokking-rxjava-part-4/">&ldquo;Grokking RxJava Pt 4&rdquo;</a>. The idea here is do the following:</p>
 
@@ -208,7 +206,7 @@
 
 <p>This approach may be the best we&rsquo;ve seen so far. We get all the benefits of <code>Loader</code>s and <code>Observable</code>s, but unfortunately, we still have some boilerplate: we have to find a place outside the activity life-cycle for our <code>Observable</code> and we have to remember to un-subscribe from that <code>Obsevable</code>.</p>
 
-<h4 id="rxlifecycle:8b5ccb0b8cb5aae598ca3059f64dac37">RxLifecycle</h4>
+<h4 id="rxlifecycle">RxLifecycle</h4>
 
 <p>RxLifecycle can alleviate some of the weaknesses of the previous approach by giving us a way to automatically complete observable &ldquo;sequences based on Activity or Fragment life-cycle events.&rdquo;<sup>1</sup> There&rsquo;s not much boilerplate we have to write to take advantage of this, which is an impressive feat of the library:</p>
 
@@ -226,22 +224,22 @@
 
 <p>Unfortunately, if we don&rsquo;t want to subclass a particular kind of Activity to take advantage of this we&rsquo;ll need to write more boilerplate to generate an observable sequence of life-cycle events. Either way, RxLifecycle, combined with the previously outlined cache-replay approach, gives us a pretty nice way of loading data in our Android apps.</p>
 
-<h4 id="rxgroups:8b5ccb0b8cb5aae598ca3059f64dac37">RxGroups</h4>
+<h4 id="rxgroups">RxGroups</h4>
 
 <p>As far as I know, RxGroups is the most recent entry in the long line of solutions to data loading in Android apps. RxGroups alone gives us memory-leak-free querying whose results are cached across orientation changes, and according to <a href="https://github.com/airbnb/RxGroups">the docs</a>, the code we need to write to get this is pretty small. Since RxGroups seems to give us all of the benefits of <code>Loader</code>s and <code>Observable</code>s with the smallest amount of boilerplate, I think it may be the best solution out there, aside from the solution I&rsquo;m about to propose.</p>
 
-<h4 id="other-rxloader-libraries:8b5ccb0b8cb5aae598ca3059f64dac37">Other &ldquo;RxLoader&rdquo; Libraries</h4>
+<h4 id="other-rxloader-libraries">Other &ldquo;RxLoader&rdquo; Libraries</h4>
 
 <p>There are a at least two other libraries that leverage RxJava for data loading. Neither of these libraries, however, use Android Loaders, so they wind up reinventing much of the functionality of <code>Loader</code>s and users of these libraries are still stuck with a few lines of boilerplate.</p>
 
-<h3 id="a-better-way:8b5ccb0b8cb5aae598ca3059f64dac37">A Better Way?</h3>
+<h3 id="a-better-way">A Better Way?</h3>
 
 <p>I think if we use <code>Loader</code>s <em>with</em> <code>Observable</code>s, we can come up with a solution that&rsquo;s better than the above solutions. Here&rsquo;s the basic idea: we wrap the call to <code>LoaderManager.initLoader</code> in an <code>Observable</code>:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>Observable<span style="color: #666666">.</span><span style="color: #7D9029">create</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Observable<span style="color: #666666">.</span><span style="color: #7D9029">OnSubscribe</span><span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>Observable<span style="color: #666666">.</span><span style="color: #7D9029">create</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Observable<span style="color: #666666">.</span><span style="color: #7D9029">OnSubscribe</span><span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
     <span style="color: #AA22FF">@Override</span>
     <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">call</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">final</span> Subscriber<span style="color: #666666">&lt;?</span> <span style="color: #008000; font-weight: bold">super</span> T<span style="color: #666666">&gt;</span> subscriber<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        loaderManager<span style="color: #666666">.</span><span style="color: #7D9029">initLoader</span><span style="color: #666666">(</span>loaderId<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">,</span> 
+        loaderManager<span style="color: #666666">.</span><span style="color: #7D9029">initLoader</span><span style="color: #666666">(</span>loaderId<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">,</span>
                 <span style="color: #008000; font-weight: bold">new</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
                     <span style="color: #AA22FF">@Override</span>
                     <span style="color: #008000; font-weight: bold">public</span> Loader<span style="color: #666666">&lt;</span>U<span style="color: #666666">&gt;</span> <span style="color: #0000FF">onCreateLoader</span><span style="color: #666666">(</span><span style="color: #B00040">int</span> id<span style="color: #666666">,</span> Bundle args<span style="color: #666666">)</span> <span style="color: #666666">{</span>
@@ -259,7 +257,7 @@
     <span style="color: #666666">}</span>        
 <span style="color: #666666">});</span>
 </pre></div>
-</p>
+
 
 <p>To be sure, this isn&rsquo;t the cleanest way of doing this, but I think its a useful way of initially presenting the idea. Let&rsquo;s think for a second about what this simple little trick gives us.</p>
 
@@ -267,7 +265,7 @@
 
 <p>These two properties let us write boilerplate-free data loading code like the code with which we began this article:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
 
     <span style="color: #408080; font-style: italic">//...    </span>
 
@@ -284,11 +282,11 @@
     <span style="color: #666666">}</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>But where does the <code>mLoginObservable</code> that&rsquo;s wrapped the <code>LoaderManager.init</code> call come from? That&rsquo;s where RxLoader comes into play. RxLoader is a <em>very</em> lightweight library (less than 150 LOC). It&rsquo;s simply an RxJava <code>Transformer</code> that lets you take an Observable and compose it into something with loader-like behaviour, something that in fact uses a <code>Loader</code> to get this behaviour for free. With RxLoader, your data loading code is as simple as this:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
 
     <span style="color: #408080; font-style: italic">//...    </span>
 
@@ -306,18 +304,17 @@
     <span style="color: #666666">}</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>One line of code gets you an <code>Observable</code> with memory-leak-proof data loading whose results are cached across orientation changes.</p>
 
 <p><a href="https://github.com/kmdupr33/RxLoader">Here&rsquo;s</a> the project on github. I&rsquo;ll be improving it and getting it on to maven central soon.</p>
 
-<h3 id="notes:8b5ccb0b8cb5aae598ca3059f64dac37">Notes</h3>
+<h3 id="notes">Notes</h3>
 
 <ol>
 <li>Quote is from <a href="https://github.com/trello/RxLifecycle">the RxLifecycle docs</a>.</li>
 </ol>
-
     </section>
 
 

@@ -58,7 +58,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/" />
     
@@ -154,7 +154,7 @@
 
 <p>In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis testing. More specifically, I suggest that a React/Redux-like architecture opens up a testing strategy that doesn&rsquo;t suffer from the disadvantages of the testing strategy we use with the MVP architecture.</p>
 
-<h2 id="a-disadvantage-of-mvp:ccbda8f4effd5469f618aeed8eb34e5d">A Disadvantage of MVP</h2>
+<h2 id="a-disadvantage-of-mvp">A Disadvantage of MVP</h2>
 
 <p>Android architectures that rely on MVP are forced to use behavior-based verification in their unit tests. Behavior-based verification is about ensuring that the unit being tested is interacting properly with it&rsquo;s collaborators. For example, consider this test from <a href="https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#5">Google&rsquo;s testing code lab</a>:</p>
 
@@ -193,19 +193,19 @@
 
 <p>Fowler also mentions some advantages of behavior-based verification. Ultimately, he doesn&rsquo;t seem to have a strong opinion on which strategy should be used. I&rsquo;m not going to try to settle that question here either. It might turn out that the benefits of mockist tests outweigh the costs. For the remainder of the article, I just want to focus on how a React/Redux architecture opens up the possibility of state-based verification for our UI-related unit tests.</p>
 
-<h2 id="state-based-verification-with-react-redux:ccbda8f4effd5469f618aeed8eb34e5d">State-based Verification with React/Redux</h2>
+<h2 id="state-based-verification-with-react-redux">State-based Verification with React/Redux</h2>
 
 <p>Let&rsquo;s return the filtered list example we introduced in <a href="/post/react-and-redux-like-architectures-for-android/">the last article</a>. Again, here&rsquo;s a video of the functionality we want to test:</p>
 
-<p>
+
 <div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
   <iframe src="//www.youtube.com/embed/qUYP1WNz50U" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
  </div>
-</p>
+
 
 <p>Last time, I showed how we might implement this functionality according to the principles of React and Redux. Again those principles are that the content of a screen is a function of some view-state object and updates to the screen are a function of some view-state object and some action describing a user&rsquo;s interaction with the screen. Here&rsquo;s what our React/Redux-like code looked like:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #ffffcc"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> Reducer reducer <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Reducer<span style="color: #666666">();</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #ffffcc"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> Reducer reducer <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Reducer<span style="color: #666666">();</span>
 </span><span style="color: #408080; font-style: italic">// The OnClickListener for the Switch widgets on the navigation filter.</span>
 <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
         <span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
@@ -233,11 +233,11 @@
   <span style="color: #666666">}</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>Recall that the <code>reloadFragment</code> call uses the <code>mTagFilterHolder</code> as a view-state object to determine what get&rsquo;s rendered to the screen. Testing this <code>reduce</code> method doesn&rsquo;t require the use of mocks:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
 <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">shouldToggleFilter</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
     <span style="color: #408080; font-style: italic">//Arrange</span>
     ExploreSessionsActivity<span style="color: #666666">.</span><span style="color: #7D9029">Reducer</span> reducer <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> ExploreSessionsActivity<span style="color: #666666">.</span><span style="color: #7D9029">Reducer</span><span style="color: #666666">();</span>
@@ -254,11 +254,11 @@
     assertFalse<span style="color: #666666">(</span>holder<span style="color: #666666">.</span><span style="color: #7D9029">contains</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;AudienceGrowth&quot;</span><span style="color: #666666">));</span>
 <span style="color: #666666">}</span>
 </pre></div>
-</p>
+
 
 <p>This shows that React/Redux-like architectures open up the possibility of using state-based verification in our UI unit test code. This opens up the possibility of unit tests that don&rsquo;t suffer from the disadvantages pointed out by Martin Fowler.</p>
 
-<h2 id="conclusion:ccbda8f4effd5469f618aeed8eb34e5d">Conclusion</h2>
+<h2 id="conclusion">Conclusion</h2>
 
 <p>The fact that React/Redux-like architectures open up the possibility of alternative testing strategies is an additional reason that we should consider these architectures for Android Development. I think that by utilizing RxJava with a subset of the features provided by the Android data-binding library, the approach I&rsquo;ve sketched here can scale to an architecture that allows for time-travel debugging, hotswap, and a more flexible testing strategy, but that&rsquo;s something that I&rsquo;ll have to explore another time.</p>
 

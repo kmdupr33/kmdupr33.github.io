@@ -60,7 +60,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.15" />
+    <meta name="generator" content="Hugo 0.17" />
 
     <link rel="canonical" href="http://philosophicalhacker.com/2014/10/03/an-alternative-multiproject-setup-for-android-studio/" />
     
@@ -156,7 +156,7 @@
 
 <p>Google&rsquo;s <a href="http://tools.android.com/tech-docs/new-build-system/user-guide">Gradle Plugin user guide recommends</a> a method for configuring your gradle files to build multiple projects. That method has some shortcomings. In this post, I will briefly explain Google&rsquo;s recommended configuration, note its shortcomings, and  recommend a different way to configure your gradle files to support multi-project setups in Android Studio.</p>
 
-<h2 id="the-google-way:1e519e4bdb3f333975d3db6bac5795a8">The Google Way</h2>
+<h2 id="the-google-way">The Google Way</h2>
 
 <p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2014/10/screen-shot-2014-10-02-at-9-31-31-pm.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2014/10/screen-shot-2014-10-02-at-9-31-31-pm.png?w=620" alt="Screen Shot 2014-10-02 at 9.31.31 PM" /></a></p>
 
@@ -170,7 +170,7 @@
 
 <p>As you can see, Google&rsquo;s suggested configuration is simple, and its even simpler if you use the Android Studio UI to configure you gradle files for you. In spite of it&rsquo;s simplicity, there are several reasons why we might want to avoid this configuration. I discuss those reasons in the next section.</p>
 
-<h2 id="some-unfortunate-features-of-the-google-way:1e519e4bdb3f333975d3db6bac5795a8">Some Unfortunate Features of &ldquo;The Google Way&rdquo;</h2>
+<h2 id="some-unfortunate-features-of-the-google-way">Some Unfortunate Features of &ldquo;The Google Way&rdquo;</h2>
 
 <p>Both of the unfortunate features of the &ldquo;Google way&rdquo; of handling multi-project setups only arise if your working on several apps that depend on the same libraries. If you only ever work on one app and you know for sure you wont have multiple apps that depend on the same library, feel free to skip the rest of this post and continue blissfully using the simple configuration for multiple projects in Android Studio. If, on the other hand, you are working on several apps that depend on the same libraries, read on.</p>
 
@@ -190,7 +190,7 @@
 
 <p>So, if you follow the Google way, you&rsquo;re sort of¹ forced to have copies of your libraries for all of your apps that depend on those libraries and if you change those libraries often, then you might have to start using git submodules.²</p>
 
-<h2 id="a-different-way:1e519e4bdb3f333975d3db6bac5795a8">A Different Way</h2>
+<h2 id="a-different-way">A Different Way</h2>
 
 <p>It turns out there&rsquo;s a better way to manage multiple projects in Android Studio. The trick is to create separate Android Studio projects for your libraries and to tell gradle that the module for the library that your app depends on is located in the library&rsquo;s project directory. If you wanted to use this method with the project structure I&rsquo;ve described above, you would do the following:</p>
 
@@ -220,7 +220,7 @@
 
 <p>If you&rsquo;ve got any concerns with this setup or if you have a better alternative, I&rsquo;d love to hear it!</p>
 
-<h2 id="notes:1e519e4bdb3f333975d3db6bac5795a8">Notes:</h2>
+<h2 id="notes">Notes:</h2>
 
 <ol>
 <li><p>I say &ldquo;sort of&rdquo; because you aren&rsquo;t exactly stuck between the two options I&rsquo;ve discussed here. You could also turn your libraries into maven artifacts and include them into your app that way. This method, however, does not allow you to work on your library code and app code simultaneously unless you run multiple instances of Android Studio. Aint nobody got the memory for that.</p></li>

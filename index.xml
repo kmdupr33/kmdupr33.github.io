@@ -2,12 +2,86 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Philosophical Hacker</title>
-    <link>http://philosophicalhacker.com/</link>
+    <link>http://philosophicalhacker.com/index.xml</link>
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 16 Oct 2016 13:32:57 -0400</lastBuildDate>
+    <lastBuildDate>Sun, 16 Oct 2016 16:35:28 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>The goal of refactoring During TDD</title>
+      <link>http://philosophicalhacker.com/post/the-goal-of-refactoring-during-tdd/</link>
+      <pubDate>Sun, 16 Oct 2016 16:35:28 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/the-goal-of-refactoring-during-tdd/</guid>
+      <description>&lt;p&gt;Red, green, refactor. That&amp;rsquo;s the TDD flow. That much was obvious to me.&lt;/p&gt;
+
+&lt;p&gt;However, refactoring is a pretty broad term. There are many reasons you may want to refactor code and as a result of this, I didn&amp;rsquo;t really understand what exactly was supposed to happen during the refactor step of the TDD loop until I finished the first part of Kent Beck&amp;rsquo;s &lt;em&gt;TDD by Example.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Actually, in the first description of TDD, Beck uses a more helpful description of the &amp;ldquo;refactor step.&amp;rdquo; After getting our tests to pass, he says that we should &amp;ldquo;&lt;em&gt;refactor to remove duplication.&lt;/em&gt;&amp;rdquo; This is helpful, as it restricts the reasons we might refactor a piece of code while working. I&amp;rsquo;ve sometimes found myself deep down a rabbit-hole of refactoring. This restriction gives me a principled way of determining what I should refactoring.&lt;/p&gt;
+
+&lt;p&gt;(As a bit of an aside, it was interesting to see how Beck recommends that we write down the tasks that need to be accomplished in a kind of todo-list. I wonder if I could leverage the TODO feature in most ideas to create this kind of todo-list)&lt;/p&gt;
+
+&lt;p&gt;The reason duplication is targeted for elimination is because duplication is indicative of dependency between the code and the test, which means that you can&amp;rsquo;t change one without the other. This thwarts the TDD flow, which demands that after we get a test passing we, we want to write another test that &amp;ldquo;&amp;lsquo;makes sense&amp;rsquo; to us without having to change the code.&amp;rdquo; Beck makes this point even more explicit by saying this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;By eliminating duplication before we go on to the next test, we maximize our chance of being able to get the next test running with one and only one change.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;One thing that&amp;rsquo;s been really interesting about reading Beck&amp;rsquo;s take on TDD is that he really emphasizes how TDD enables us to make progress through &lt;em&gt;very&lt;/em&gt; small changes. More on that in a second.&lt;/p&gt;
+
+&lt;p&gt;Another interesting thing about Beck&amp;rsquo;s take on duplication is how he recommends we spot it:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Duplication most often takes the form of duplicate logic—the same expression appearing in multiple places in the code.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;When I first read this, I thought spotting duplication would merely involve looking for identical if-then statements, but Beck sees duplication in similar &lt;em&gt;expressions&lt;/em&gt;, even if those expressions aren&amp;rsquo;t expressed in code in identical ways:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Usually you see duplication between two pieces of code, but here the duplication is between the data in the test and the data in the code.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;We see this in his refactoring of the first test he writes. Here&amp;rsquo;s the test code:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;testMultiplication&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+   Dollar five&lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Dollar&lt;span style=&#34;color: #666666&#34;&gt;(5);&lt;/span&gt;
+   five&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;times&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(2);&lt;/span&gt;
+   assertEquals&lt;span style=&#34;color: #666666&#34;&gt;(10,&lt;/span&gt; five&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;amount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And the model code:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Dollar&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; amount &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;10;&lt;/span&gt;  
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;He reveals the duplication by pointing out that we set &lt;code&gt;amount&lt;/code&gt; equal to &lt;code&gt;10&lt;/code&gt; because we&amp;rsquo;ve multiplied &lt;code&gt;5&lt;/code&gt; by &lt;code&gt;2&lt;/code&gt; in our heads to get the test to pass quickly. If we write our assigmnet of &lt;code&gt;amount&lt;/code&gt; as &lt;code&gt;int amount = 5 * 2&lt;/code&gt;, we see that &lt;code&gt;5&lt;/code&gt; and &lt;code&gt;2&lt;/code&gt; appear in both the model code and in the test code. That&amp;rsquo;s duplication that&amp;rsquo;s got to go.&lt;/p&gt;
+
+&lt;p&gt;The step that Beck takes towards eliminating the duplication is small and it doesn&amp;rsquo;t even really eliminate the duplication:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Dollar&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;  
+  &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;times&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    amount &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;2;&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;He then says something interesting about TDD and the size of the step he took:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Do these steps seem too small to you? Remember, TDD is not about taking teeny-tiny steps, it&amp;rsquo;s about being able to take teeny-tiny steps. Would I code day-to-day with steps this small? No. But when things get the least bit weird, I&amp;rsquo;m glad I can&amp;hellip;If you can make steps too small, you can certainly make steps the right size. If you only take larger steps, you&amp;rsquo;ll never know if smaller steps are appropriate.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This is interesting, and it points to an issue related to getting stuck down a rabbit-hole of refactoring. I think a part of the reason this rabbit-hole happens, especially during Android development, is because we don&amp;rsquo;t have the tests in place to make very small steps. (Although, I wouldn&amp;rsquo;t be surprised if it happened more often in my case due to lack of discipline.) An inability to make small changes is a huge bummer because if something breaks, your search space for tracking down the bug is going to be large in proportion to the number of changes you&amp;rsquo;ve made.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>TDD and Startups</title>
@@ -47,7 +121,7 @@
 
 &lt;p&gt;This remark may in fact be consistent with the idea that there&amp;rsquo;s immense value in the flexible architectures that emerge as a result of TDD. Its hard to tell exactly what Beck is saying here. Beck&amp;rsquo;s intent aside, I think this passage should have made it clearer that there&amp;rsquo;s a lot of value in being able to change code confidently, and this may make TDD worth it even if we wind up writing more code when we factor in the code we need to write tests.&lt;/p&gt;
 
-&lt;h3 id=&#34;notes:758ef2c35412a7b4b3fc0c0663789a9e&#34;&gt;Notes:&lt;/h3&gt;
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Of course, if you&amp;rsquo;re not building a product whose features are likely to change, then this argument for testing doesn&amp;rsquo;t apply.&lt;/li&gt;
@@ -65,19 +139,19 @@
 
 &lt;p&gt;According to Eric Reis, MVPs allow us to test our business&amp;rsquo; most important &amp;ldquo;hypotheses.&amp;rdquo; This is supposed to help us &amp;ldquo;fail faster,&amp;rdquo; but I&amp;rsquo;m finding that there are real differences in how much effort we have to put into our MVPs before we can validate our business hypotheses. In other words, some MVPs are more capital intensive than others. This is a big deal because you often can&amp;rsquo;t get favorable investment terms until you&amp;rsquo;ve shown that you&amp;rsquo;ve got product-market fit. You can&amp;rsquo;t do that without an MVP, and if you&amp;rsquo;re MVP is too difficult to build without capital, then you&amp;rsquo;re business will need exactly what it can&amp;rsquo;t have (under favorable terms): capital to create an MVP and validate its fundamental hypotheses.&lt;/p&gt;
 
-&lt;h3 id=&#34;expensive-solutions:39d2dcac40972781c1846ab6d4d8e099&#34;&gt;Expensive Solutions&lt;/h3&gt;
+&lt;h3 id=&#34;expensive-solutions&#34;&gt;Expensive Solutions&lt;/h3&gt;
 
 &lt;p&gt;Talking to customers before building anything is probably a great idea. Customer interviews probably yield tons of insight on how to build something people want. That said, I suspect that customer interviews aren&amp;rsquo;t enough. These interviews can give us great insight vis-a-vis the particular problems are customers are facing. They can also give us a clue as to what the solution to these problems should look like, but until we&amp;rsquo;ve got a prototyped solution &lt;em&gt;to sell them&lt;/em&gt;, we won&amp;rsquo;t know if we&amp;rsquo;ve actually created a solution that&amp;rsquo;s good enough for them to pay for.&lt;/p&gt;
 
 &lt;p&gt;Some MVPs are easier to build than others, and some MVPs are so difficult to build that its not feasible to build them without capital, capital that you can&amp;rsquo;t get (under favorable terms) because you haven&amp;rsquo;t shown that you&amp;rsquo;ve got product-market fit.&lt;/p&gt;
 
-&lt;h3 id=&#34;high-customer-acquisition-costs:39d2dcac40972781c1846ab6d4d8e099&#34;&gt;High Customer Acquisition Costs&lt;/h3&gt;
+&lt;h3 id=&#34;high-customer-acquisition-costs&#34;&gt;High Customer Acquisition Costs&lt;/h3&gt;
 
 &lt;p&gt;Even if you&amp;rsquo;ve built an MVP, you still have to be able to verify that people are willing to pay for your solution &lt;em&gt;at a price that&amp;rsquo;s high enough for you to offset the cost of acquiring those customers in the first place&lt;/em&gt;. The difficulty of verifying this varies from MVP to MVP, and customer acquisition costs can be prohibitive, even if we&amp;rsquo;re just trying to validate our business assumptions with an MVP.&lt;/p&gt;
 
 &lt;p&gt;It&amp;rsquo;s much easier for me to get my SnapChatGramBook app in front of 100 dousche-bag teenagers than it is to get my military simulator in front of 20 procurement folks at various defense companies. More generally, if you&amp;rsquo;ve got to charge a lot for your product, it&amp;rsquo;s going to take more money to get people to pay for it, and again, the costs may be prohibitive.&lt;/p&gt;
 
-&lt;h3 id=&#34;conclusion:39d2dcac40972781c1846ab6d4d8e099&#34;&gt;Conclusion&lt;/h3&gt;
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
 
 &lt;p&gt;In some ways, it feels like the lean startup movement has been a barrier to me realizing this. We&amp;rsquo;re taught that the &amp;ldquo;holy grail&amp;rdquo; of a startup&amp;rsquo;s journey is product-market fit and so we focus much of our thinking on finding that fit. I&amp;rsquo;m finding, however, that there really is important prior question to the question &amp;ldquo;Am I building something people want?&amp;rdquo; That question is &amp;ldquo;Do I have enough capital to find out whether I can build a viable business building something people want?&amp;rdquo;&lt;/p&gt;
 </description>
@@ -101,7 +175,7 @@
 
 &lt;p&gt;Yesterday, Gregg Pollack, the founder of CodeSchool spoke. At the end of his talk, he invited us to connect with him on linkedin, and before moving on, he paused, smirked, and let us in on the &amp;ldquo;dark side&amp;rdquo; on his seemingly arbitrary linkedin invitation: he told us all that he wanted us to connect with him on linkedin so that he could add our emails to his mailing list for his new startup he&amp;rsquo;s working on. I think this little exchange pretty well characterizes the two things I took away from his talk: 1) a startup is a hustle; you have to be focused on sales and marketing, but 2) you don&amp;rsquo;t have to be a complete asshole about it.&lt;/p&gt;
 
-&lt;h3 id=&#34;the-hustle:b5c2cee95431bb73459a003ab83affd0&#34;&gt;The Hustle&lt;/h3&gt;
+&lt;h3 id=&#34;the-hustle&#34;&gt;The Hustle&lt;/h3&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;If you take away one thing from this talk, know that 50% of building a startup is sales and marketing.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
@@ -115,7 +189,7 @@
 
 &lt;p&gt;Going forward, I&amp;rsquo;m going to try to spend more time hustling.&lt;/p&gt;
 
-&lt;h3 id=&#34;the-asshole:b5c2cee95431bb73459a003ab83affd0&#34;&gt;The Asshole&lt;/h3&gt;
+&lt;h3 id=&#34;the-asshole&#34;&gt;The Asshole&lt;/h3&gt;
 
 &lt;p&gt;At one point during the talk, Gregg said something shocking:&lt;/p&gt;
 
@@ -129,7 +203,7 @@
 
 &lt;p&gt;Going forward, I&amp;rsquo;m going to be more optimistic and intentional about finding ways of selling my soul without selling my soul and becoming an asshole (See what I did there? Sure. The word play is cheesy and a bit forced, but how else was I supposed to make the point of this post work with my &amp;ldquo;click-bait&amp;rdquo; title ;) ).&lt;/p&gt;
 
-&lt;h3 id=&#34;notes:b5c2cee95431bb73459a003ab83affd0&#34;&gt;Notes&lt;/h3&gt;
+&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;I&amp;rsquo;m paraphrasing.&lt;/li&gt;
@@ -144,9 +218,9 @@
       <pubDate>Mon, 08 Aug 2016 08:34:46 -0400</pubDate>
       
       <guid>http://philosophicalhacker.com/post/unit-testable-recycler-views/</guid>
-      <description>
+      <description>&lt;p&gt;When building our Android apps, we can often wind up with a decent amount of code in our &lt;code&gt;RecyclerView.Adapter&lt;/code&gt;s that we want to test. In this article, I briefly suggest two ways of structuring our &lt;code&gt;RecyclerView&lt;/code&gt;-related classes so that we can accomplish this.&lt;/p&gt;
 
-&lt;p&gt;When building our Android apps, we can often wind up with a decent amount of code in our &lt;code&gt;RecyclerView.Adapter&lt;/code&gt;s that we want to test. In this article, I briefly suggest two ways of structuring our &lt;code&gt;RecyclerView&lt;/code&gt;-related classes so that we can accomplish this.&lt;/p&gt;
+&lt;p&gt;&lt;/p&gt;
 
 &lt;p&gt;First, let&amp;rsquo;s look at a simple list that&amp;rsquo;ll serve as a working example:&lt;/p&gt;
 
@@ -185,7 +259,7 @@
 
 &lt;p&gt;Now that we&amp;rsquo;ve introduced a working example, let&amp;rsquo;s look at two ways of making RecyclerView-related code unit testable.&lt;/p&gt;
 
-&lt;h3 id=&#34;an-obvious-way-mvp:391b17626bccf7689e1e02d86c15ebb0&#34;&gt;An Obvious Way: MVP&lt;/h3&gt;
+&lt;h3 id=&#34;an-obvious-way-mvp&#34;&gt;An Obvious Way: MVP&lt;/h3&gt;
 
 &lt;p&gt;One of the oft-cited benefits of using MVP in Android apps is that it enhances testability. So, a natural way of structuring our &lt;code&gt;RecyclerView&lt;/code&gt; related classes so that we can enhance testability is to apply MVP to those classes. To do this, we make the &lt;code&gt;ViewHolder&lt;/code&gt; sublcass implement an MVP &lt;code&gt;View&lt;/code&gt;.&lt;/p&gt;
 
@@ -205,7 +279,7 @@
 
 &lt;p&gt;Next, we setup our RecyclerView.Adapter to create Presenters for each ViewHolder and we delegate the presentation logic to those presenters in &lt;code&gt;onBindViewHolder&lt;/code&gt;:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyAdapter&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Adapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyAdapter&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Adapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; SimpleListItemViewHolder &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateViewHolder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ViewGroup parent&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
@@ -223,21 +297,21 @@
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Notice here that we set the &lt;code&gt;Presenter&lt;/code&gt; as a tag on the &lt;code&gt;ViewHolder&lt;/code&gt;&amp;rsquo;s itemView. When it&amp;rsquo;s time to bind the ViewHolder, we can grab the &lt;code&gt;Presenter&lt;/code&gt; from the tag delegate the presentation logic to it. Here&amp;rsquo;s what the &lt;code&gt;Presenter&lt;/code&gt; looks like:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;presentListItem&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SimpleListItemView view&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; position&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
         view&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;String&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;valueOf&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;position&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Because the logic we want to test now lives inside of the &lt;code&gt;Presenter&lt;/code&gt;, a simple POJO, unit testing the presentation logic for our &lt;code&gt;RecyclerView&lt;/code&gt;s becomes much easier. We simply instantiate a &lt;code&gt;Presenter&lt;/code&gt;, call its main presentation method, and verify that it interacts properly with its MVP View.&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PresenterTest&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PresenterTest&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;presentListItemShouldSetViewTextToPosition&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -249,15 +323,15 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
 
-&lt;h3 id=&#34;a-lighter-way-reusing-a-presenter:391b17626bccf7689e1e02d86c15ebb0&#34;&gt;A Lighter Way: Reusing a Presenter&lt;/h3&gt;
+
+&lt;h3 id=&#34;a-lighter-way-reusing-a-presenter&#34;&gt;A Lighter Way: Reusing a Presenter&lt;/h3&gt;
 
 &lt;p&gt;Let&amp;rsquo;s look at another way of making our &lt;code&gt;RecyclerView&lt;/code&gt; related classes unit testable. While the above approach works fine, I sometimes find that having to create an extra presenter class that is stored and retrieved as a tag on a &lt;code&gt;ViewHolder&lt;/code&gt;&amp;rsquo;s item view a bit much, especially if I already have a &lt;code&gt;Presenter&lt;/code&gt; that is simply responsible for fetching items to display in the list.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s alter our working example a bit to suppose we had such a presenter. Instead of simply displaying the position of a ViewHolder in our &lt;code&gt;RecyclerView&lt;/code&gt;, let&amp;rsquo;s display numbers we have to fetch from somewhere else. In this case, we&amp;rsquo;ll probably want a (unit-testable)&lt;code&gt;Presenter&lt;/code&gt; that looks like this:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; NumberFetcher mNumberFetcher&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; NumberListView mNumberListView&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
 
@@ -282,11 +356,11 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Now, if we were simply using MVP for a RecyclerView-related classes, the highlighted &lt;code&gt;displayNumbers&lt;/code&gt; method is where we&amp;rsquo;d have to create our &lt;code&gt;Adapter&lt;/code&gt; that would creat and use a separate &lt;code&gt;Presenter&lt;/code&gt; class that would hold our presentation logic. Since we already have a &lt;code&gt;Presenter&lt;/code&gt;, however, we can simply reuse it by passing it to the &lt;code&gt;RecyclerView.Adapter&lt;/code&gt; via our MVP View method:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onViewReady&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
         mNumberFetcher&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNumbers&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Callback&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -299,11 +373,11 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Here&amp;rsquo;s the implementation of the &lt;code&gt;displayNumbers&lt;/code&gt; view:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MainActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; NumberListView &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MainActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; NumberListView &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayNumbers&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Integer&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; numbers&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Presenter presenter&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -313,11 +387,11 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;And here&amp;rsquo;s the adapter delegating to the same &lt;code&gt;Presenter&lt;/code&gt; that&amp;rsquo;s responsible for loading the items in the list:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyAdapter&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Adapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyAdapter&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RecyclerView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Adapter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;SimpleListItemViewHolder&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
         &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Integer&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; mNumbers&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
         &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Presenter mPresenter&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
@@ -344,9 +418,7 @@
             &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; mNumbers&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;size&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
         &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
-</description>
+&lt;/pre&gt;&lt;/div&gt;</description>
     </item>
     
     <item>
@@ -355,15 +427,13 @@
       <pubDate>Sat, 23 Jul 2016 15:43:29 -0400</pubDate>
       
       <guid>http://philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</guid>
-      <description>
-
-&lt;blockquote&gt;
+      <description>&lt;blockquote&gt;
 &lt;p&gt;Loaders are awesome&amp;hellip;they&amp;rsquo;re essentially the best practice implementation of asynchronous data loading in your Activities.&lt;/p&gt;
 
-&lt;p&gt;-Reto Meier, Developing Android Apps Udacity Course&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;-Reto Meier, Developing Android Apps Udacity Course
 
-&lt;p&gt;The following code should make you nervous:&lt;/p&gt;
+The following code should make you nervous:&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
@@ -390,20 +460,20 @@
 
 &lt;p&gt;I think so, and in this post, I&amp;rsquo;ll introduce a &lt;em&gt;tiny&lt;/em&gt; library that&amp;rsquo;ll help us write code like this. The gist of the approach is to use Loaders &lt;em&gt;with&lt;/em&gt; RxJava. Before we get into this approach, however, lets look at some other ways that people handle asynchronous data loading in their apps so that we can see what this approach offers that other ones don&amp;rsquo;t.&lt;/p&gt;
 
-&lt;h3 id=&#34;prior-art:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Prior Art&lt;/h3&gt;
+&lt;h3 id=&#34;prior-art&#34;&gt;Prior Art&lt;/h3&gt;
 
-&lt;h4 id=&#34;loaders:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Loaders&lt;/h4&gt;
+&lt;h4 id=&#34;loaders&#34;&gt;Loaders&lt;/h4&gt;
 
 &lt;p&gt;Loaders give us what we want vis-a-vis memory-leak-free querying whose results persist across orientation changes, but many people find the API clunky and/or confusing. Apparently, Jake Wharton is one of these people:&lt;/p&gt;
 
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;The fragment and loader APIs fit in perfectly on Android. Useful enough that you use them but also want shoot yourself in the face.&lt;/p&gt;&amp;mdash; Jake Wharton (@JakeWharton) &lt;a href=&#34;https://twitter.com/JakeWharton/status/325630461852413952&#34;&gt;April 20, 2013&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
-&lt;h4 id=&#34;retained-fragment:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Retained Fragment&lt;/h4&gt;
+&lt;h4 id=&#34;retained-fragment&#34;&gt;Retained Fragment&lt;/h4&gt;
 
 &lt;p&gt;Using a retained fragment is another approach for persisting the results of a network request across orientation changes and avoiding memory leaks. Unfortunately, this approach requires a fair amount of boiler-plate code. The barebones implementation as discussed in &lt;a href=&#34;https://developer.android.com/guide/topics/resources/runtime-changes.html&#34;&gt;the docs&lt;/a&gt; will make this clear enough. Even if we could get rid of most of this boilerplate, we still don&amp;rsquo;t have an api for working with our asynchronous data that&amp;rsquo;s as nice as RxJava&amp;rsquo;s &lt;code&gt;Observable&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h4 id=&#34;cache-replay:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Cache-Replay&lt;/h4&gt;
+&lt;h4 id=&#34;cache-replay&#34;&gt;Cache-Replay&lt;/h4&gt;
 
 &lt;p&gt;Cache-Replay is an approach suggested in Dan Lew&amp;rsquo;s &lt;a href=&#34;http://blog.danlew.net/2014/10/08/grokking-rxjava-part-4/&#34;&gt;&amp;ldquo;Grokking RxJava Pt 4&amp;rdquo;&lt;/a&gt;. The idea here is do the following:&lt;/p&gt;
 
@@ -415,7 +485,7 @@
 
 &lt;p&gt;This approach may be the best we&amp;rsquo;ve seen so far. We get all the benefits of &lt;code&gt;Loader&lt;/code&gt;s and &lt;code&gt;Observable&lt;/code&gt;s, but unfortunately, we still have some boilerplate: we have to find a place outside the activity life-cycle for our &lt;code&gt;Observable&lt;/code&gt; and we have to remember to un-subscribe from that &lt;code&gt;Obsevable&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h4 id=&#34;rxlifecycle:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;RxLifecycle&lt;/h4&gt;
+&lt;h4 id=&#34;rxlifecycle&#34;&gt;RxLifecycle&lt;/h4&gt;
 
 &lt;p&gt;RxLifecycle can alleviate some of the weaknesses of the previous approach by giving us a way to automatically complete observable &amp;ldquo;sequences based on Activity or Fragment life-cycle events.&amp;rdquo;&lt;sup&gt;1&lt;/sup&gt; There&amp;rsquo;s not much boilerplate we have to write to take advantage of this, which is an impressive feat of the library:&lt;/p&gt;
 
@@ -433,22 +503,22 @@
 
 &lt;p&gt;Unfortunately, if we don&amp;rsquo;t want to subclass a particular kind of Activity to take advantage of this we&amp;rsquo;ll need to write more boilerplate to generate an observable sequence of life-cycle events. Either way, RxLifecycle, combined with the previously outlined cache-replay approach, gives us a pretty nice way of loading data in our Android apps.&lt;/p&gt;
 
-&lt;h4 id=&#34;rxgroups:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;RxGroups&lt;/h4&gt;
+&lt;h4 id=&#34;rxgroups&#34;&gt;RxGroups&lt;/h4&gt;
 
 &lt;p&gt;As far as I know, RxGroups is the most recent entry in the long line of solutions to data loading in Android apps. RxGroups alone gives us memory-leak-free querying whose results are cached across orientation changes, and according to &lt;a href=&#34;https://github.com/airbnb/RxGroups&#34;&gt;the docs&lt;/a&gt;, the code we need to write to get this is pretty small. Since RxGroups seems to give us all of the benefits of &lt;code&gt;Loader&lt;/code&gt;s and &lt;code&gt;Observable&lt;/code&gt;s with the smallest amount of boilerplate, I think it may be the best solution out there, aside from the solution I&amp;rsquo;m about to propose.&lt;/p&gt;
 
-&lt;h4 id=&#34;other-rxloader-libraries:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Other &amp;ldquo;RxLoader&amp;rdquo; Libraries&lt;/h4&gt;
+&lt;h4 id=&#34;other-rxloader-libraries&#34;&gt;Other &amp;ldquo;RxLoader&amp;rdquo; Libraries&lt;/h4&gt;
 
 &lt;p&gt;There are a at least two other libraries that leverage RxJava for data loading. Neither of these libraries, however, use Android Loaders, so they wind up reinventing much of the functionality of &lt;code&gt;Loader&lt;/code&gt;s and users of these libraries are still stuck with a few lines of boilerplate.&lt;/p&gt;
 
-&lt;h3 id=&#34;a-better-way:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;A Better Way?&lt;/h3&gt;
+&lt;h3 id=&#34;a-better-way&#34;&gt;A Better Way?&lt;/h3&gt;
 
 &lt;p&gt;I think if we use &lt;code&gt;Loader&lt;/code&gt;s &lt;em&gt;with&lt;/em&gt; &lt;code&gt;Observable&lt;/code&gt;s, we can come up with a solution that&amp;rsquo;s better than the above solutions. Here&amp;rsquo;s the basic idea: we wrap the call to &lt;code&gt;LoaderManager.initLoader&lt;/code&gt; in an &lt;code&gt;Observable&lt;/code&gt;:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;create&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnSubscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;create&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnSubscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Subscriber&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt; T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; subscriber&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        loaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderId&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; 
+        loaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderId&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
                 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
                     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
                     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;U&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -466,7 +536,7 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;        
 &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;To be sure, this isn&amp;rsquo;t the cleanest way of doing this, but I think its a useful way of initially presenting the idea. Let&amp;rsquo;s think for a second about what this simple little trick gives us.&lt;/p&gt;
 
@@ -474,7 +544,7 @@
 
 &lt;p&gt;These two properties let us write boilerplate-free data loading code like the code with which we began this article:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
 
@@ -491,11 +561,11 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;But where does the &lt;code&gt;mLoginObservable&lt;/code&gt; that&amp;rsquo;s wrapped the &lt;code&gt;LoaderManager.init&lt;/code&gt; call come from? That&amp;rsquo;s where RxLoader comes into play. RxLoader is a &lt;em&gt;very&lt;/em&gt; lightweight library (less than 150 LOC). It&amp;rsquo;s simply an RxJava &lt;code&gt;Transformer&lt;/code&gt; that lets you take an Observable and compose it into something with loader-like behaviour, something that in fact uses a &lt;code&gt;Loader&lt;/code&gt; to get this behaviour for free. With RxLoader, your data loading code is as simple as this:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
 
@@ -513,18 +583,17 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;One line of code gets you an &lt;code&gt;Observable&lt;/code&gt; with memory-leak-proof data loading whose results are cached across orientation changes.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/kmdupr33/RxLoader&#34;&gt;Here&amp;rsquo;s&lt;/a&gt; the project on github. I&amp;rsquo;ll be improving it and getting it on to maven central soon.&lt;/p&gt;
 
-&lt;h3 id=&#34;notes:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Notes&lt;/h3&gt;
+&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Quote is from &lt;a href=&#34;https://github.com/trello/RxLifecycle&#34;&gt;the RxLifecycle docs&lt;/a&gt;.&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -537,7 +606,7 @@
 
 &lt;p&gt;I&amp;rsquo;ve been working on &lt;a href=&#34;http://www.philosophicalhacker.com/post/why-dont-we-have-a-unit-test-recorder/&#34;&gt;a unit test recorder&lt;/a&gt; for Android. After struggling to find a way to implement the unit test recorder,&lt;sup&gt;1&lt;/sup&gt; I decided to take a look at how Google implements the espresso test recorder. This post presents what I found when I dug into the source code of the espresso test recorder.&lt;/p&gt;
 
-&lt;h3 id=&#34;collecting-user-interaction-info:1493ec85bb1efc1b3440fa2d0a91873f&#34;&gt;Collecting User Interaction Info&lt;/h3&gt;
+&lt;h3 id=&#34;collecting-user-interaction-info&#34;&gt;Collecting User Interaction Info&lt;/h3&gt;
 
 &lt;p&gt;Before I took a look at the source for the espresso recorder, I half expected to find some fancy bytecode manipulation of the sort we see for the &lt;a href=&#34;https://android.googlesource.com/platform/tools/base/+/gradle_2.0.0/build-system/gradle-core/src/main/groovy/com/android/build/gradle/internal/transforms&#34;&gt;proguard or jacoco transformers&lt;/a&gt;. I was surprised to find that the espresso recorder actually relies heavily on breakpoints and the java debugger. To see this, let&amp;rsquo;s start at the code that gets executed when you press the &amp;ldquo;record espresso test button:&amp;rdquo;&lt;/p&gt;
 
@@ -618,7 +687,7 @@
 
 &lt;p&gt;These &lt;code&gt;BreakpointCommand&lt;/code&gt;s are apparently nothing special. They are subclasses of &lt;code&gt;DebuggerCommandImpl&lt;/code&gt;, a class that&amp;rsquo;s a part of the IntelliJ source code. These breakpoint commands simply notify a &lt;code&gt;TestRecorderEventListener&lt;/code&gt; with a &lt;code&gt;TestRecorderEvent&lt;/code&gt; whenever a breakpoint is hit. The &lt;code&gt;TestRecorderEvent&lt;/code&gt; contains the info needed to write out the espresso tests and this info is snagged from the (paused) Execution context when the debugger stops at a breakpoint. Here&amp;rsquo;s a hint of how some of that works:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Nullable&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Nullable&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; TestRecorderEvent &lt;span style=&#34;color: #0000FF&#34;&gt;prepareEvent&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;EvaluationContextImpl evalContext&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; NodeManagerImpl nodeManager&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
   TestRecorderEvent event &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TestRecorderEvent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;myBreakpointDescriptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;eventType&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; System&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;currentTimeMillis&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
 
@@ -637,24 +706,24 @@
   &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; event&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Here&amp;rsquo;s a nice lower-level method that gets close to the IntelliJ api for accessing the data from the paused execution context:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; Value &lt;span style=&#34;color: #0000FF&#34;&gt;evaluateExpression&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;String expression&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; EvaluationContextImpl evalContext&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; NodeManagerImpl nodeManager&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; Value &lt;span style=&#34;color: #0000FF&#34;&gt;evaluateExpression&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;String expression&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; EvaluationContextImpl evalContext&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; NodeManagerImpl nodeManager&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
   TextWithImports text &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; TextWithImportsImpl&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;fromXExpression&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;XExpressionImpl&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;fromText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;expression&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
   WatchItemDescriptor descriptor &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; nodeManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getWatchItemDescriptor&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; text&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
   descriptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setContext&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;evalContext&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
   &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; descriptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getEvaluateException&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;?&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; descriptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getValue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
 
-&lt;h3 id=&#34;writing-out-the-source-files:1493ec85bb1efc1b3440fa2d0a91873f&#34;&gt;Writing out the Source Files&lt;/h3&gt;
+
+&lt;h3 id=&#34;writing-out-the-source-files&#34;&gt;Writing out the Source Files&lt;/h3&gt;
 
 &lt;p&gt;Now, that we have some idea of how the information for writing the source files is collected, let&amp;rsquo;s look at how Google uses that info to actually write out the espresso test files. Let&amp;rsquo;s start at the code that gets called when you click the &amp;ldquo;Complete Recording&amp;rdquo; button:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;myCompleteRecordingButton&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addActionListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ActionListener&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;myCompleteRecordingButton&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addActionListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ActionListener&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
   &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
   &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;actionPerformed&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ActionEvent e&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
@@ -680,11 +749,11 @@
   &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Looks like most of the work of generating the test code lives in this &lt;code&gt;TestCodeGenerator&lt;/code&gt; class, so let&amp;rsquo;s look at that:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;TestCodeGenerator&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;TestCodeGenerator&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
   &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;generate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
@@ -717,15 +786,15 @@
   &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Its interesting to see here that they are using &lt;a href=&#34;http://velocity.apache.org/&#34;&gt;Velocity&lt;/a&gt;, a java templating library from apache. I&amp;rsquo;d never heard of it before I stumbled upon the code here. I wonder why they didn&amp;rsquo;t use &lt;a href=&#34;https://github.com/square/javapoet&#34;&gt;java poet&lt;/a&gt; instead, a library from square that&amp;rsquo;s especially designed for writing java class files. In any case, the actual construction of the source code file to be written happens in &lt;code&gt;createVelocityContext&lt;/code&gt; if you&amp;rsquo;re curious. I&amp;rsquo;m not going to get into how that method works since that method is more about Velocity than it is about espresso test recording.&lt;/p&gt;
 
-&lt;h3 id=&#34;conclusion:1493ec85bb1efc1b3440fa2d0a91873f&#34;&gt;Conclusion&lt;/h3&gt;
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
 
 &lt;p&gt;Google&amp;rsquo;s debugger/breakpoint based approach may actually work for the kind of unit test recorder I want to create. This approach would probably require me have the user select which classes they want to &amp;ldquo;clamp&amp;rdquo; down with Vice through a GUI of some sort, but that may be a nicer experience than using annotations or passing command line arguments anyway. I&amp;rsquo;ll be exploring this approach in the coming weeks. Check back for updates.&lt;/p&gt;
 
-&lt;h3 id=&#34;notes:1493ec85bb1efc1b3440fa2d0a91873f&#34;&gt;Notes&lt;/h3&gt;
+&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Using the Transform api from the Gradle plugin proved to be a dead end because I needed my Transform implementation to load classes that depend on the android SDK and depending on the Android SDK from a gradle build script is not well supported.&lt;/li&gt;
@@ -747,7 +816,7 @@
 
 &lt;p&gt;This past week, I&amp;rsquo;ve been exploring potential ways creating a unit test recorder with special attention to implementing this functionality for Android development. In this post, I present an overall strategy for doing this and I present what I&amp;rsquo;ve learned so far vis-a-vis practically implementing this strategy for Android development.&lt;/p&gt;
 
-&lt;h3 id=&#34;the-strategy:e62a285e1a5be9bf46dd3bef4e886e02&#34;&gt;The Strategy&lt;/h3&gt;
+&lt;h3 id=&#34;the-strategy&#34;&gt;The Strategy&lt;/h3&gt;
 
 &lt;p&gt;Call the classes for which we want to generate tests &amp;ldquo;target classes.&amp;rdquo;&lt;/p&gt;
 
@@ -761,9 +830,9 @@
 
 &lt;p&gt;If &lt;em&gt;all&lt;/em&gt; the instances in an application are recorders, then generating unit tests should be fairly trivial. As I see it, the central problem of creating a a unit test recorder is figuring out how to rewrite providers so that they return recorders instead of ordinary instances.&lt;/p&gt;
 
-&lt;h3 id=&#34;learnings:e62a285e1a5be9bf46dd3bef4e886e02&#34;&gt;Learnings&lt;/h3&gt;
+&lt;h3 id=&#34;learnings&#34;&gt;Learnings&lt;/h3&gt;
 
-&lt;h4 id=&#34;bytebuddy-alone-won-t-work:e62a285e1a5be9bf46dd3bef4e886e02&#34;&gt;Bytebuddy alone won&amp;rsquo;t work&lt;/h4&gt;
+&lt;h4 id=&#34;bytebuddy-alone-won-t-work&#34;&gt;Bytebuddy alone won&amp;rsquo;t work&lt;/h4&gt;
 
 &lt;p&gt;Doing this on Android was trickier than I first imagined. I thought that I could just use Bytebuddy to rewrite providers to return recorders like this:&lt;/p&gt;
 
@@ -800,7 +869,7 @@
 
 &lt;p&gt;Since we can&amp;rsquo;t redefine classes using Bytebuddy alone, this approach turns out to be a dead end.&lt;/p&gt;
 
-&lt;h4 id=&#34;some-alternative-implementation-approaches:e62a285e1a5be9bf46dd3bef4e886e02&#34;&gt;Some alternative implementation approaches&lt;/h4&gt;
+&lt;h4 id=&#34;some-alternative-implementation-approaches&#34;&gt;Some alternative implementation approaches&lt;/h4&gt;
 
 &lt;p&gt;Dexmaker is a library that allows us to write dex files at runtime. I believe that dexmaker is used so that we can use mockito with Android, but I&amp;rsquo;m not sure. If dexmaker is in fact used for this purpose, it could be a useful tool for creating a unit test recorder on Android.&lt;/p&gt;
 
@@ -818,7 +887,7 @@
 
 &lt;p&gt;I&amp;rsquo;ll be trying out these alternative approaches in the coming week. Hopefully, next time I&amp;rsquo;ll have a working unit test recorder!&lt;/p&gt;
 
-&lt;h3 id=&#34;notes:e62a285e1a5be9bf46dd3bef4e886e02&#34;&gt;Notes&lt;/h3&gt;
+&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;In case its not obvious, this seems like an important question because unit-level tests can run much more quickly than functional UI tests, so they can actually serve as, to use Michael Feathers&amp;rsquo; metaphor, a &amp;ldquo;software vice&amp;rdquo; when we&amp;rsquo;re refactoring or adding features. Having to wait 5+ minutes to know if you&amp;rsquo;re changes have broken anything is way too long for functional UI tests to be useful feedback while programming.&lt;/li&gt;
@@ -844,7 +913,7 @@
 
 &lt;p&gt;With Vice, we can simply exercise the code we want regression tests for, and Vice will generate our unit-level regression tests for us. This post sketches how my current proof of concept of this library and suggests some ways I plan to expand the library, with special attention to how this library might aid in generating regression tests for Android applications. You can find the source code &lt;a href=&#34;https://github.com/kmdupr33/Vice&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h3 id=&#34;a-trivial-proof-of-concept:e80b726be6592e9b4fd9f6556e16b7ec&#34;&gt;A Trivial Proof of Concept&lt;/h3&gt;
+&lt;h3 id=&#34;a-trivial-proof-of-concept&#34;&gt;A Trivial Proof of Concept&lt;/h3&gt;
 
 &lt;p&gt;Suppose we have a simple class that reverses a string:&lt;/p&gt;
 
@@ -885,17 +954,17 @@
 
 &lt;p&gt;Next, we run &lt;code&gt;Vice.make&lt;/code&gt;, passing in the class of our &lt;code&gt;ViceMaker&lt;/code&gt; and the path where we want our generated tests to live:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Vice vice &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Vice&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Vice vice &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Vice&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String pathToGeneratedCharacterizationTest
         &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;/Users/mattdupree/Developer/Vice/src/test/java/&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Path testFilesPath &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; Paths&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;get&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;pathToGeneratedCharacterizationTest&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
 vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;make&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;testFilesPath&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; ViceMaker&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;  
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Once the above code is run, you&amp;rsquo;ll have regression test generated with code that is identical the code we would have written:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;ReverserCharacterization&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;ReverserCharacterization&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
   &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
   &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeReverse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     Reverser reverser &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reverser&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
@@ -904,23 +973,23 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
   &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Once this code is generated, you can ensure that your refactoring doesn&amp;rsquo;t break &lt;code&gt;Reverser&lt;/code&gt; simply by running your tests.&lt;/p&gt;
 
 &lt;p&gt;In order to accomplish this, I&amp;rsquo;m using reflection and &lt;a href=&#34;http://bytebuddy.net/#/&#34;&gt;bytebuddy&lt;/a&gt;, a library that lets us rewrite java classes at runtime. With these two tools I&amp;rsquo;m rewriting the classes we want to generate regressions tests for so that every method on that class records its method invocations. This &amp;ldquo;recording&amp;rdquo; captures what method was called, the arguments that were passed in, and the return value of the method. Once I have this information, I use &lt;a href=&#34;https://github.com/square/javapoet&#34;&gt;javapoet&lt;/a&gt; to write out java test files.&lt;/p&gt;
 
-&lt;h3 id=&#34;limitations-and-future-directions:e80b726be6592e9b4fd9f6556e16b7ec&#34;&gt;Limitations and Future Directions&lt;/h3&gt;
+&lt;h3 id=&#34;limitations-and-future-directions&#34;&gt;Limitations and Future Directions&lt;/h3&gt;
 
-&lt;h4 id=&#34;supporting-void-methods:e80b726be6592e9b4fd9f6556e16b7ec&#34;&gt;Supporting Void Methods&lt;/h4&gt;
+&lt;h4 id=&#34;supporting-void-methods&#34;&gt;Supporting Void Methods&lt;/h4&gt;
 
 &lt;p&gt;Currently, my proof of concept only supports adding tests for methods with return values. However, I&amp;rsquo;d like to expand it to test methods that don&amp;rsquo;t return anything. Void methods are typically tested by examining the way in which those methods interact with their dependencies. Using bytebuddy, I can rewrite the dependencies of the methods we want to test so that they record their interactions. Once I have this information, I can generate mockito-powered tests that verify that the method interacts with its dependencies correctly.&lt;/p&gt;
 
-&lt;h4 id=&#34;supporting-complex-method-parameters:e80b726be6592e9b4fd9f6556e16b7ec&#34;&gt;Supporting Complex Method Parameters&lt;/h4&gt;
+&lt;h4 id=&#34;supporting-complex-method-parameters&#34;&gt;Supporting Complex Method Parameters&lt;/h4&gt;
 
 &lt;p&gt;As I said earlier, bytebuddy let&amp;rsquo;s me rewrite the target classes so that they record the parameters that are passed into their methods. However, this is not enough. The tests that are generated will need to know how to construct complex method parameters so that methods can be invoked. To support this, the &lt;code&gt;ViceMaker&lt;/code&gt; object can contain annotated methods that provide the dependencies of the methods whose interactions we want to record.&lt;/p&gt;
 
-&lt;h4 id=&#34;supporting-android-test-recording:e80b726be6592e9b4fd9f6556e16b7ec&#34;&gt;Supporting Android Test Recording&lt;/h4&gt;
+&lt;h4 id=&#34;supporting-android-test-recording&#34;&gt;Supporting Android Test Recording&lt;/h4&gt;
 
 &lt;p&gt;In the next release of Android Studio, we&amp;rsquo;ll be able to record espresso tests. These tests are great, but they can be slow and flaky, so they need to be augmented with unit tests.&lt;/p&gt;
 
@@ -940,7 +1009,7 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;In the first section, I briefly introduce the idea of characterization tests. In the second section, I walk through some of the complications that arise when you&amp;rsquo;re trying to write characterization tests for &lt;code&gt;Activity&lt;/code&gt;/&lt;code&gt;Fragment&lt;/code&gt;s. Source code examples are excerpts from &lt;a href=&#34;https://github.com/kmdupr33/iosched/tree/refactor/characterization_tests&#34;&gt;my fork of the Google IO app&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h3 id=&#34;brief-intro-characterization-tests:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Brief Intro Characterization Tests&lt;/h3&gt;
+&lt;h3 id=&#34;brief-intro-characterization-tests&#34;&gt;Brief Intro Characterization Tests&lt;/h3&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&amp;hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&amp;hellip;Cover and Modify is a different way of making changes. The idea behind it is that it is possible to work with a safety net when we change software.&lt;/p&gt;
@@ -968,11 +1037,11 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 &lt;p&gt;Image Credit: Cea on &lt;a href=&#34;https://www.flickr.com/photos/centralasian/3896333282/in/photolist-6WiJ93-i2ZU8-AL26v-NqLkJ-57Gmup-4QiXwQ-67j8Sw-fuf5d1-5DJrYY-9YjbZP-7UJ75S-piX5fr-jzCox-8s9BdN-uST4Hi-tw8VdM-5yxEvF-2QSfpF-onBRex-6Aj5cU-3Jyy7k-8YYKtq-8TRZ33-as2Fdq-rhXdJ8-oTXJh5-aNqeHH-hcEk7d-7ACDg-6EcoYB-mmgBPF-mz68zf-sFGHZq-6EhPsd-dor5Cp-6EcFhV-coe1tY-EDaP5-9Yn6dW-2zCxU-8YiQA1-7dQsZA-8Fq6BQ-n1F765-7dQssm-6wskCt-C44Dg-6EepXT-6EesLa-C4543&#34;&gt;Flickr Creative Commons&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;characterization-tests-for-activities-and-fragments:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Characterization Tests for Activities and Fragments&lt;/h3&gt;
+&lt;h3 id=&#34;characterization-tests-for-activities-and-fragments&#34;&gt;Characterization Tests for Activities and Fragments&lt;/h3&gt;
 
 &lt;p&gt;Unfortunately, writing characterization tests for &lt;code&gt;Activity&lt;/code&gt;/&lt;code&gt;Fragment&lt;/code&gt;s is not as simple as writing characterization tests in the general case. In fact, writing characterization tests for any object instantiated by the Android OS is not easy (think &lt;code&gt;Activity&lt;/code&gt;, &lt;code&gt;Fragment&lt;/code&gt;, &lt;code&gt;Service&lt;/code&gt;, &lt;code&gt;BroadcastReceiver&lt;/code&gt;, etc.). In this section, I explore two things that make writing characterization tests for &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s challenging. I also suggest ways to work around these challenges.&lt;/p&gt;
 
-&lt;h4 id=&#34;law-of-demeter-violations:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Law of Demeter Violations&lt;/h4&gt;
+&lt;h4 id=&#34;law-of-demeter-violations&#34;&gt;Law of Demeter Violations&lt;/h4&gt;
 
 &lt;p&gt;&lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s have dependencies. Some of those dependencies are only accessible if we violate the law of demeter. For example, the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; needs to get a hold of a &lt;code&gt;ContentResolver&lt;/code&gt;:&lt;/p&gt;
 
@@ -1036,11 +1105,11 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;Typically, we don&amp;rsquo;t want to write tests with mocks returning mocks since this suggests that our design may smell. In this case, we are merely trying to characterize the already existing behavior of our &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt;. Once we refactor, we should have a design that doesn&amp;rsquo;t require this, but in the mean-time, we need this characterization test to make sure that we are preserving app behavior during our refactor.&lt;/p&gt;
 
-&lt;h4 id=&#34;nearly-impossible-di:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;(Nearly) Impossible DI&lt;/h4&gt;
+&lt;h4 id=&#34;nearly-impossible-di&#34;&gt;(Nearly) Impossible DI&lt;/h4&gt;
 
 &lt;p&gt;&lt;code&gt;Fragment&lt;/code&gt;s and &lt;code&gt;Activity&lt;/code&gt;s get their dependencies via an accessor method. &lt;code&gt;getLoaderManager&lt;/code&gt;, &lt;code&gt;getContentResolver&lt;/code&gt;, or &lt;code&gt;getFragmentManager&lt;/code&gt; are a few examples of such accessor methods. Here&amp;rsquo;s a method that uses one of these accessors:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 1 &lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 1 &lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
 &lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 2 &lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 &lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 3 &lt;/span&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
 &lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 4 &lt;/span&gt;
@@ -1059,7 +1128,7 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 &lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;17 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;18 &lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;If we&amp;rsquo;re characterizing a method like this one, we need to verify that the &lt;code&gt;Fragment&lt;/code&gt; calls the correct methods on the dependencies returned by these accessor methods. Verifying the interaction of an object with its dependencies means that we need to be able to swap out those dependencies with mocks.&lt;/p&gt;
 
@@ -1069,7 +1138,7 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;A better solution is to use mockito spies. Like mocks returning mocks, we typically don&amp;rsquo;t use spies in our tests because it suggests a smelly design. However, in this case, spies help us write characterization tests without having make a non-trivial changes to the code we are trying to characterize or without having to repeatedly subclass all of our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s to return mocks. Here&amp;rsquo;s an example of how spies help us do this:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeOnActivityCreatedIfInitialQueriesToLoad&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; ExploreModel&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ExploreQueryEnum&lt;/span&gt; sessions &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; ExploreModel&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ExploreQueryEnum&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;SESSIONS&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
@@ -1084,11 +1153,11 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 &lt;span style=&#34;background-color: #ffffcc&#34;&gt;    verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderManager&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;eq&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;sessions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()),&lt;/span&gt; isNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;),&lt;/span&gt; notNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
 &lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Using a spy, we&amp;rsquo;re able to stub out the &lt;code&gt;getLoaderManager&lt;/code&gt; method to return a mock &lt;code&gt;LoaderManager&lt;/code&gt;. We can then verify that &lt;code&gt;onActivityCreated&lt;/code&gt; calls the right methods on the &lt;code&gt;LoaderManager&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h3 id=&#34;conclusion:86a9346644eadbcb4b80de7e5ad9fee4&#34;&gt;Conclusion&lt;/h3&gt;
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
 
 &lt;p&gt;Safely moving logic out of large &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s can be a lot of work, but its less work than manually verifying that we haven&amp;rsquo;t broken anything every time we make a change to the &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt; we are refactoring.&lt;/p&gt;
 
@@ -1116,7 +1185,7 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/coffee-art.jpg&#34; alt=&#34;coffee art&#34; /&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;why-functional-testing-with-espresso-is-hard:0b496944b3b139af6d5a15632b322c81&#34;&gt;Why Functional Testing (with Espresso) is Hard&lt;/h2&gt;
+&lt;h2 id=&#34;why-functional-testing-with-espresso-is-hard&#34;&gt;Why Functional Testing (with Espresso) is Hard&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s look at an (abbreviated) snippet of code from the Google IO app:&lt;/p&gt;
 
@@ -1172,7 +1241,7 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;So, here we&amp;rsquo;re mixing espresso test code with application code. The reason the test code is mixed with application code is so that the espresso tests will &amp;ldquo;pause&amp;rdquo; while the data is being loaded during the functional UI tests. We can see that the &lt;code&gt;LoaderIdlingResource&lt;/code&gt; gets registered with the espresso tests here:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@RunWith&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AndroidJUnit4&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@RunWith&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AndroidJUnit4&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
 &lt;span style=&#34;color: #AA22FF&#34;&gt;@LargeTest&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;VideoLibraryActivityTest&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
@@ -1184,13 +1253,13 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
   &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;As I said in &lt;a href=&#34;www.philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/&#34;&gt;my PSA&lt;/a&gt;, mixing testing code with app code is gross. Unfortunately, separating the testing and application concerns in this case is not as simple as it was last time. In fact, I can understand why the engineers at Google decided to mix application code with test code in this case: it&amp;rsquo;s because separating the Espresso code from the application code is a lot of work!&lt;/p&gt;
 
 &lt;p&gt;Here&amp;rsquo;s the gist of how we can start to salvage the situation. We need what &lt;a href=&#34;https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052&#34;&gt;Michael Feathers&lt;/a&gt; calls a &amp;ldquo;seam,&amp;rdquo; a way to change the behavior of our &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; without having to edit the source of the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; itself. When the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; is run inside a test, we want the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; to notify an espresso test when it&amp;rsquo;s done loading it&amp;rsquo;s data. Otherwise, we want the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; to load data normally. To get this seam, we extract the Loader callback code into its own class and use an instance of this class as the &lt;code&gt;LoaderCallbacks&lt;/code&gt; argument to the call to &lt;code&gt;initLoader&lt;/code&gt;:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; mLoaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; mLoaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
 &lt;/span&gt;
 &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -1213,11 +1282,11 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// We&amp;#39;ve just moved the callback code that was in the Fragment into this class.&lt;/span&gt;
 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Next, we provide an alternative implementation of &lt;code&gt;LoaderManager.LoaderCallbacks&lt;/code&gt; that we&amp;rsquo;ll use for our espresso tests. This implementation uses the decorator pattern, just like last time:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;EspressoNotifyingLoaderCallbacks&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;EspressoNotifyingLoaderCallbacks&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; LoaderIdlingResource mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
@@ -1246,7 +1315,7 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Now, here&amp;rsquo;s where things get tricky. We need to figure out a way to inject the right implementation of &lt;code&gt;LoaderCallbacks&lt;/code&gt; into our &lt;code&gt;PresenterFragmentImpl&lt;/code&gt;. When we&amp;rsquo;re testing, we want an instance of &lt;code&gt;EspressoNotifyingLoaderCallbacks&lt;/code&gt;. When we running a normal application, we want a &lt;code&gt;CursorLoaderCallbacks&lt;/code&gt;.&lt;/p&gt;
 
@@ -1262,7 +1331,7 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/architecture.jpg&#34; alt=&#34;building&#34; /&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;activities-weren-t-designed-for-app-logic:0b496944b3b139af6d5a15632b322c81&#34;&gt;Activities weren&amp;rsquo;t Designed for App Logic&lt;/h2&gt;
+&lt;h2 id=&#34;activities-weren-t-designed-for-app-logic&#34;&gt;Activities weren&amp;rsquo;t Designed for App Logic&lt;/h2&gt;
 
 &lt;p&gt;Diane Hackborn wrote an interesting post on Google Plus recently, and I think several of her comments suggest that &lt;code&gt;Activity&lt;/code&gt;&amp;rsquo;s were never really designed to be the home of our app-logic in the first place. Here&amp;rsquo;s one such comment:&lt;/p&gt;
 
@@ -1310,7 +1379,7 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis testing. More specifically, I suggest that a React/Redux-like architecture opens up a testing strategy that doesn&amp;rsquo;t suffer from the disadvantages of the testing strategy we use with the MVP architecture.&lt;/p&gt;
 
-&lt;h2 id=&#34;a-disadvantage-of-mvp:ccbda8f4effd5469f618aeed8eb34e5d&#34;&gt;A Disadvantage of MVP&lt;/h2&gt;
+&lt;h2 id=&#34;a-disadvantage-of-mvp&#34;&gt;A Disadvantage of MVP&lt;/h2&gt;
 
 &lt;p&gt;Android architectures that rely on MVP are forced to use behavior-based verification in their unit tests. Behavior-based verification is about ensuring that the unit being tested is interacting properly with it&amp;rsquo;s collaborators. For example, consider this test from &lt;a href=&#34;https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#5&#34;&gt;Google&amp;rsquo;s testing code lab&lt;/a&gt;:&lt;/p&gt;
 
@@ -1349,19 +1418,19 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;Fowler also mentions some advantages of behavior-based verification. Ultimately, he doesn&amp;rsquo;t seem to have a strong opinion on which strategy should be used. I&amp;rsquo;m not going to try to settle that question here either. It might turn out that the benefits of mockist tests outweigh the costs. For the remainder of the article, I just want to focus on how a React/Redux architecture opens up the possibility of state-based verification for our UI-related unit tests.&lt;/p&gt;
 
-&lt;h2 id=&#34;state-based-verification-with-react-redux:ccbda8f4effd5469f618aeed8eb34e5d&#34;&gt;State-based Verification with React/Redux&lt;/h2&gt;
+&lt;h2 id=&#34;state-based-verification-with-react-redux&#34;&gt;State-based Verification with React/Redux&lt;/h2&gt;
 
 &lt;p&gt;Let&amp;rsquo;s return the filtered list example we introduced in &lt;a href=&#34;http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/&#34;&gt;the last article&lt;/a&gt;. Again, here&amp;rsquo;s a video of the functionality we want to test:&lt;/p&gt;
 
-&lt;p&gt;
+
 &lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
   &lt;iframe src=&#34;//www.youtube.com/embed/qUYP1WNz50U&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
  &lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Last time, I showed how we might implement this functionality according to the principles of React and Redux. Again those principles are that the content of a screen is a function of some view-state object and updates to the screen are a function of some view-state object and some action describing a user&amp;rsquo;s interaction with the screen. Here&amp;rsquo;s what our React/Redux-like code looked like:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Reducer reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reducer&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Reducer reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reducer&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
 &lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
         &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -1389,11 +1458,11 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
   &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Recall that the &lt;code&gt;reloadFragment&lt;/code&gt; call uses the &lt;code&gt;mTagFilterHolder&lt;/code&gt; as a view-state object to determine what get&amp;rsquo;s rendered to the screen. Testing this &lt;code&gt;reduce&lt;/code&gt; method doesn&amp;rsquo;t require the use of mocks:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;shouldToggleFilter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Arrange&lt;/span&gt;
     ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt; reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
@@ -1410,11 +1479,11 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
     assertFalse&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;holder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;This shows that React/Redux-like architectures open up the possibility of using state-based verification in our UI unit test code. This opens up the possibility of unit tests that don&amp;rsquo;t suffer from the disadvantages pointed out by Martin Fowler.&lt;/p&gt;
 
-&lt;h2 id=&#34;conclusion:ccbda8f4effd5469f618aeed8eb34e5d&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;The fact that React/Redux-like architectures open up the possibility of alternative testing strategies is an additional reason that we should consider these architectures for Android Development. I think that by utilizing RxJava with a subset of the features provided by the Android data-binding library, the approach I&amp;rsquo;ve sketched here can scale to an architecture that allows for time-travel debugging, hotswap, and a more flexible testing strategy, but that&amp;rsquo;s something that I&amp;rsquo;ll have to explore another time.&lt;/p&gt;
 </description>
@@ -1440,7 +1509,7 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/lambda.png&#34; alt=&#34;lambda symbol&#34; /&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;the-principle-behind-react:e17f3de67d028efe7b502b7cdad57382&#34;&gt;The Principle behind React&lt;/h1&gt;
+&lt;h1 id=&#34;the-principle-behind-react&#34;&gt;The Principle behind React&lt;/h1&gt;
 
 &lt;p&gt;React, as I see it, is about making what gets rendered to our screen a &lt;em&gt;function of some view-state object&lt;/em&gt;. We do something like this every time we write a &lt;code&gt;RecyclerView&lt;/code&gt; or &lt;code&gt;ListView&lt;/code&gt;. The view-state object is usually some kind of collection (e.g., a &lt;code&gt;List&lt;/code&gt; or &lt;code&gt;Array&lt;/code&gt;). We pass that object to an &lt;code&gt;Adapter&lt;/code&gt; which renders our view. Typically, what is rendered is just a function of the collection we pass to the adapter.&lt;/p&gt;
 
@@ -1475,7 +1544,7 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;Note here that &lt;code&gt;mTagFilterHolder&lt;/code&gt; is a state object that&amp;rsquo;s used to determine what should be shown in the list. We can see this more clearly if we look at &lt;code&gt;reloadFragment()&lt;/code&gt;, which looks like this:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;reloadFragment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;reloadFragment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Build the tag URI&lt;/span&gt;
     Uri uri &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mCurrentUri&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
 
@@ -1501,11 +1570,11 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
     mFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reloadFromArguments&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intentToFragmentArguments&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intent&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;&lt;code&gt;mTagFilterHolder&lt;/code&gt; is being used to construct the URI that a &lt;code&gt;ContentProvider&lt;/code&gt; will use to filter the results that get passed to a &lt;code&gt;ListView&lt;/code&gt;. So, this implementation of the list filter is already well on its way to an implementation the follows principle behind React. That&amp;rsquo;s because what&amp;rsquo;s rendered is already partially &lt;em&gt;a function of some view-state object&lt;/em&gt;. In this case, the view-state object is the &lt;code&gt;mTagFilterHolder&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h1 id=&#34;the-principle-behind-redux:e17f3de67d028efe7b502b7cdad57382&#34;&gt;The Principle Behind Redux&lt;/h1&gt;
+&lt;h1 id=&#34;the-principle-behind-redux&#34;&gt;The Principle Behind Redux&lt;/h1&gt;
 
 &lt;p&gt;Redux, as I see it, as is about making any updates to our view &lt;em&gt;a function of the view-state object and an object that describes a view-related action that just occurred&lt;/em&gt;. In Redux, these functions are called &amp;ldquo;reducers,&amp;rdquo; and they return a new view-state object that is used to render the view.&lt;/p&gt;
 
@@ -1532,7 +1601,7 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;This &lt;code&gt;ClickListener&lt;/code&gt; isn&amp;rsquo;t quite a reducer. Remember: reducers are functions of a view-state object and an object that describes a view-related action that just occurred. This &lt;code&gt;ClickListener&lt;/code&gt;, however, is in a good position to call a reducer function:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
         &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -1554,11 +1623,11 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
   &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;The &lt;code&gt;reduce&lt;/code&gt; method fits the Redux&amp;rsquo;s definition of a reducer function. The &lt;code&gt;tagFilterHodler&lt;/code&gt; parameter passed into &lt;code&gt;reduce&lt;/code&gt; method is the current state and the &lt;code&gt;click&lt;/code&gt; parameter is an object that describes a view-related action that just occurred. &lt;code&gt;reduce&lt;/code&gt;, moreover, returns a new view-state that describes how the view should render.&lt;/p&gt;
 
-&lt;h1 id=&#34;conclusion:e17f3de67d028efe7b502b7cdad57382&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
 
 &lt;p&gt;That&amp;rsquo;s all for now, but you can anticipate how this might make unit testing logic within the click listener easier. The &lt;code&gt;reduce&lt;/code&gt; function works only with POJOs and we know that it&amp;rsquo;s working properly when it returns an object that has the correct &lt;em&gt;state&lt;/em&gt;. This allows us to use &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;state-based verification&lt;/a&gt; in our tests, and as we&amp;rsquo;ll see next time, this can make our tests less brittle and more meaningful. I believe that writing our UI-related business logic in reducers &lt;em&gt;may&lt;/em&gt; give us a better way of writing tests that writing that logic in &lt;code&gt;Presenters&lt;/code&gt;. More on that next time.&lt;/p&gt;
 </description>
@@ -1610,25 +1679,25 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 
 &lt;p&gt;This article is about why this code is disturbing and what we can do to fix it. Spoiler: it violates the principle of single responsibility and we can fix it using the dependency injection and decorator patterns.&lt;/p&gt;
 
-&lt;h1 id=&#34;disturbing:813c76fa4c1d10d216b03cc879b8cf73&#34;&gt;Disturbing&lt;/h1&gt;
+&lt;h1 id=&#34;disturbing&#34;&gt;Disturbing&lt;/h1&gt;
 
 &lt;p&gt;The comments in the above code definitely help to point out why this is troubling, but if you&amp;rsquo;re not familiar with &lt;code&gt;IdlingResource&lt;/code&gt;, you may not immediately see why the problem with this code. &lt;code&gt;IdlingResource&lt;/code&gt;s help you write robust functional UI tests with espresso. These tests are &amp;ldquo;robust&amp;rdquo; because you don&amp;rsquo;t need to explicitly tell your tests to &amp;ldquo;sleep&amp;rdquo; for a &lt;em&gt;predetermined&lt;/em&gt; amount of time while some asynchronous task completes. &lt;code&gt;IdlingResource&lt;/code&gt;s is a way of telling espresso &amp;ldquo;don&amp;rsquo;t do any more assertions because the app is doing something that might affect whether your assertions are satisfied.&amp;rdquo;&lt;/p&gt;
 
 &lt;p&gt;For example, suppose we have an espresso test that verifies that the todo notes are displayed after they are loaded and that the progressIndicator in the view is hidden after those notes are loaded:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     onView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;withId&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;progressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;check&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;matches&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;not&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isDisplayed&lt;span style=&#34;color: #666666&#34;&gt;())));&lt;/span&gt;
     onView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;withId&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;notes_list&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;check&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;matches&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isDisplayed&lt;span style=&#34;color: #666666&#34;&gt;()));&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;We don&amp;rsquo;t want this code to immediately assert that the progressIndicator is invisible and the notes list are visible because it takes some time for the notes to load from the network. So, the previous code snippet with an &lt;code&gt;IdlingResource&lt;/code&gt; would tell this test that it needs to wait until the notes are loaded from the network before performing this verification.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s take a second look at the disturbing code:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; forceUpdate&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;    
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
 
@@ -1650,17 +1719,17 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
     &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;We can now quickly say what&amp;rsquo;s disturbing about this: this presenter violates the principle of single responsibility. More than that: it violates the principle in a particularly egregious way: it mixes &lt;em&gt;application&lt;/em&gt; responsibilities with &lt;em&gt;testing&lt;/em&gt; responsibilities. This is silly. Don&amp;rsquo;t do this. Violating the principle of single responsibility is a sure-fire way to create spaghetti code and spaghetti doesn&amp;rsquo;t look as good in code as it does on a plate.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/spaghetti.jpeg&#34; alt=&#34;spaghetti on a plate&#34; /&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;fixit:813c76fa4c1d10d216b03cc879b8cf73&#34;&gt;Fixit&lt;/h1&gt;
+&lt;h1 id=&#34;fixit&#34;&gt;Fixit&lt;/h1&gt;
 
 &lt;p&gt;Instead of mixing responsibilities, register your &lt;code&gt;IdlingResource&lt;/code&gt; in your tests-related code, where test-related responsibilities belong. One way to do this is the use dependency injection and decorators. The code lab project already has a limited dependency injection mechanism, so we can just use that. The project has a dependency injector that&amp;rsquo;s specifically used for testing called &lt;code&gt;Injection.&lt;/code&gt; All we need to do is decorate the &lt;code&gt;NotesRepository&lt;/code&gt; that&amp;rsquo;s injected by the &lt;code&gt;Injection&lt;/code&gt; class, and we have what we need to avoid mixing responsibilities:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; NotesRepository &lt;span style=&#34;color: #0000FF&#34;&gt;provideNotesRepository&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; NotesRepository &lt;span style=&#34;color: #0000FF&#34;&gt;provideNotesRepository&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; NotesRepository inMemoryRepoInstance
       &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; NoteRepositories&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getInMemoryRepoInstance&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; FakeNotesServiceApiImpl&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; NotesRepository&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -1680,11 +1749,11 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
     &lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;The &lt;code&gt;NotesRepository&lt;/code&gt; returned by this method gets injected into the &lt;code&gt;Presenter&lt;/code&gt; here:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;NotesFragment&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; NotesContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;View&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;NotesFragment&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; NotesContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;View&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Nullable&lt;/span&gt; Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -1695,39 +1764,9 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Voila. And now your espresso tests will wait until the notes have been loaded before asserting the view state and you&amp;rsquo;ve avoided mixing testing responsibilities with your business logic. Bon Appetite.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Process vs. Procedure Recursion</title>
-      <link>http://philosophicalhacker.com/post/process-vs-procedure-recursion/</link>
-      <pubDate>Wed, 06 Apr 2016 07:58:01 -0400</pubDate>
-      
-      <guid>http://philosophicalhacker.com/post/process-vs-procedure-recursion/</guid>
-      <description>&lt;p&gt;Just because a procedure is recursive, doesn&amp;rsquo;t mean the process that it generates is recursive. A procedure is recursive when that procedure refers to itself in order to evaluate.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;(defn factorial [x]
-  (letfn [(fact-iter [product counter max-count]
-    (if (&amp;gt; counter max-count)
-      product
-      (fact-iter (* counter product)
-                 (inc counter)
-                 max-count))
-    )]
-    (fact-iter 1 1 n))  
-  )
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;fact-iter&lt;/code&gt;, in the above code, is a recursive procedure, but the process it generates is not recursive. A recursive process is characterized by a &amp;ldquo;chain of deferred operations.&amp;rdquo; The process generated by &lt;code&gt;fact-iter&lt;/code&gt;, however, has no such chain of deferred operations. Rather, it is an iterative process, a process whose state is captured with variables, along with rules that describe how to move from one state to the next.&lt;/p&gt;
-
-&lt;p&gt;Iterative processes generated by recursive procedures are possible in Lisp because Lisp implements tail-recursion. Because of this, Lisp does not need special looping constructs.&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;From pgs. 42-43&lt;/p&gt;
-&lt;/blockquote&gt;
 </description>
     </item>
     

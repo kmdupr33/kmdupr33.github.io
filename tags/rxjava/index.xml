@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Rxjava on Philosophical Hacker</title>
-    <link>http://philosophicalhacker.com/tags/rxjava/</link>
-    <description>Recent content in Rxjava on Philosophical Hacker</description>
+    <title>Philosophical Hacker</title>
+    <link>http://philosophicalhacker.com/tags/rxjava/index.xml</link>
+    <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 23 Jul 2016 15:43:29 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/tags/rxjava/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -15,15 +14,13 @@
       <pubDate>Sat, 23 Jul 2016 15:43:29 -0400</pubDate>
       
       <guid>http://philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</guid>
-      <description>
-
-&lt;blockquote&gt;
+      <description>&lt;blockquote&gt;
 &lt;p&gt;Loaders are awesome&amp;hellip;they&amp;rsquo;re essentially the best practice implementation of asynchronous data loading in your Activities.&lt;/p&gt;
 
-&lt;p&gt;-Reto Meier, Developing Android Apps Udacity Course&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;-Reto Meier, Developing Android Apps Udacity Course
 
-&lt;p&gt;The following code should make you nervous:&lt;/p&gt;
+The following code should make you nervous:&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
@@ -50,20 +47,20 @@
 
 &lt;p&gt;I think so, and in this post, I&amp;rsquo;ll introduce a &lt;em&gt;tiny&lt;/em&gt; library that&amp;rsquo;ll help us write code like this. The gist of the approach is to use Loaders &lt;em&gt;with&lt;/em&gt; RxJava. Before we get into this approach, however, lets look at some other ways that people handle asynchronous data loading in their apps so that we can see what this approach offers that other ones don&amp;rsquo;t.&lt;/p&gt;
 
-&lt;h3 id=&#34;prior-art:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Prior Art&lt;/h3&gt;
+&lt;h3 id=&#34;prior-art&#34;&gt;Prior Art&lt;/h3&gt;
 
-&lt;h4 id=&#34;loaders:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Loaders&lt;/h4&gt;
+&lt;h4 id=&#34;loaders&#34;&gt;Loaders&lt;/h4&gt;
 
 &lt;p&gt;Loaders give us what we want vis-a-vis memory-leak-free querying whose results persist across orientation changes, but many people find the API clunky and/or confusing. Apparently, Jake Wharton is one of these people:&lt;/p&gt;
 
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;The fragment and loader APIs fit in perfectly on Android. Useful enough that you use them but also want shoot yourself in the face.&lt;/p&gt;&amp;mdash; Jake Wharton (@JakeWharton) &lt;a href=&#34;https://twitter.com/JakeWharton/status/325630461852413952&#34;&gt;April 20, 2013&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
-&lt;h4 id=&#34;retained-fragment:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Retained Fragment&lt;/h4&gt;
+&lt;h4 id=&#34;retained-fragment&#34;&gt;Retained Fragment&lt;/h4&gt;
 
 &lt;p&gt;Using a retained fragment is another approach for persisting the results of a network request across orientation changes and avoiding memory leaks. Unfortunately, this approach requires a fair amount of boiler-plate code. The barebones implementation as discussed in &lt;a href=&#34;https://developer.android.com/guide/topics/resources/runtime-changes.html&#34;&gt;the docs&lt;/a&gt; will make this clear enough. Even if we could get rid of most of this boilerplate, we still don&amp;rsquo;t have an api for working with our asynchronous data that&amp;rsquo;s as nice as RxJava&amp;rsquo;s &lt;code&gt;Observable&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h4 id=&#34;cache-replay:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Cache-Replay&lt;/h4&gt;
+&lt;h4 id=&#34;cache-replay&#34;&gt;Cache-Replay&lt;/h4&gt;
 
 &lt;p&gt;Cache-Replay is an approach suggested in Dan Lew&amp;rsquo;s &lt;a href=&#34;http://blog.danlew.net/2014/10/08/grokking-rxjava-part-4/&#34;&gt;&amp;ldquo;Grokking RxJava Pt 4&amp;rdquo;&lt;/a&gt;. The idea here is do the following:&lt;/p&gt;
 
@@ -75,7 +72,7 @@
 
 &lt;p&gt;This approach may be the best we&amp;rsquo;ve seen so far. We get all the benefits of &lt;code&gt;Loader&lt;/code&gt;s and &lt;code&gt;Observable&lt;/code&gt;s, but unfortunately, we still have some boilerplate: we have to find a place outside the activity life-cycle for our &lt;code&gt;Observable&lt;/code&gt; and we have to remember to un-subscribe from that &lt;code&gt;Obsevable&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h4 id=&#34;rxlifecycle:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;RxLifecycle&lt;/h4&gt;
+&lt;h4 id=&#34;rxlifecycle&#34;&gt;RxLifecycle&lt;/h4&gt;
 
 &lt;p&gt;RxLifecycle can alleviate some of the weaknesses of the previous approach by giving us a way to automatically complete observable &amp;ldquo;sequences based on Activity or Fragment life-cycle events.&amp;rdquo;&lt;sup&gt;1&lt;/sup&gt; There&amp;rsquo;s not much boilerplate we have to write to take advantage of this, which is an impressive feat of the library:&lt;/p&gt;
 
@@ -93,22 +90,22 @@
 
 &lt;p&gt;Unfortunately, if we don&amp;rsquo;t want to subclass a particular kind of Activity to take advantage of this we&amp;rsquo;ll need to write more boilerplate to generate an observable sequence of life-cycle events. Either way, RxLifecycle, combined with the previously outlined cache-replay approach, gives us a pretty nice way of loading data in our Android apps.&lt;/p&gt;
 
-&lt;h4 id=&#34;rxgroups:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;RxGroups&lt;/h4&gt;
+&lt;h4 id=&#34;rxgroups&#34;&gt;RxGroups&lt;/h4&gt;
 
 &lt;p&gt;As far as I know, RxGroups is the most recent entry in the long line of solutions to data loading in Android apps. RxGroups alone gives us memory-leak-free querying whose results are cached across orientation changes, and according to &lt;a href=&#34;https://github.com/airbnb/RxGroups&#34;&gt;the docs&lt;/a&gt;, the code we need to write to get this is pretty small. Since RxGroups seems to give us all of the benefits of &lt;code&gt;Loader&lt;/code&gt;s and &lt;code&gt;Observable&lt;/code&gt;s with the smallest amount of boilerplate, I think it may be the best solution out there, aside from the solution I&amp;rsquo;m about to propose.&lt;/p&gt;
 
-&lt;h4 id=&#34;other-rxloader-libraries:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Other &amp;ldquo;RxLoader&amp;rdquo; Libraries&lt;/h4&gt;
+&lt;h4 id=&#34;other-rxloader-libraries&#34;&gt;Other &amp;ldquo;RxLoader&amp;rdquo; Libraries&lt;/h4&gt;
 
 &lt;p&gt;There are a at least two other libraries that leverage RxJava for data loading. Neither of these libraries, however, use Android Loaders, so they wind up reinventing much of the functionality of &lt;code&gt;Loader&lt;/code&gt;s and users of these libraries are still stuck with a few lines of boilerplate.&lt;/p&gt;
 
-&lt;h3 id=&#34;a-better-way:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;A Better Way?&lt;/h3&gt;
+&lt;h3 id=&#34;a-better-way&#34;&gt;A Better Way?&lt;/h3&gt;
 
 &lt;p&gt;I think if we use &lt;code&gt;Loader&lt;/code&gt;s &lt;em&gt;with&lt;/em&gt; &lt;code&gt;Observable&lt;/code&gt;s, we can come up with a solution that&amp;rsquo;s better than the above solutions. Here&amp;rsquo;s the basic idea: we wrap the call to &lt;code&gt;LoaderManager.initLoader&lt;/code&gt; in an &lt;code&gt;Observable&lt;/code&gt;:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;create&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnSubscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;create&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnSubscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Subscriber&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt; T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; subscriber&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        loaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderId&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; 
+        loaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderId&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
                 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
                     &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
                     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;U&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
@@ -126,7 +123,7 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;        
 &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;To be sure, this isn&amp;rsquo;t the cleanest way of doing this, but I think its a useful way of initially presenting the idea. Let&amp;rsquo;s think for a second about what this simple little trick gives us.&lt;/p&gt;
 
@@ -134,7 +131,7 @@
 
 &lt;p&gt;These two properties let us write boilerplate-free data loading code like the code with which we began this article:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
 
@@ -151,11 +148,11 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;But where does the &lt;code&gt;mLoginObservable&lt;/code&gt; that&amp;rsquo;s wrapped the &lt;code&gt;LoaderManager.init&lt;/code&gt; call come from? That&amp;rsquo;s where RxLoader comes into play. RxLoader is a &lt;em&gt;very&lt;/em&gt; lightweight library (less than 150 LOC). It&amp;rsquo;s simply an RxJava &lt;code&gt;Transformer&lt;/code&gt; that lets you take an Observable and compose it into something with loader-like behaviour, something that in fact uses a &lt;code&gt;Loader&lt;/code&gt; to get this behaviour for free. With RxLoader, your data loading code is as simple as this:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
     &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
 
@@ -173,18 +170,17 @@
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;One line of code gets you an &lt;code&gt;Observable&lt;/code&gt; with memory-leak-proof data loading whose results are cached across orientation changes.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/kmdupr33/RxLoader&#34;&gt;Here&amp;rsquo;s&lt;/a&gt; the project on github. I&amp;rsquo;ll be improving it and getting it on to maven central soon.&lt;/p&gt;
 
-&lt;h3 id=&#34;notes:8b5ccb0b8cb5aae598ca3059f64dac37&#34;&gt;Notes&lt;/h3&gt;
+&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Quote is from &lt;a href=&#34;https://github.com/trello/RxLifecycle&#34;&gt;the RxLifecycle docs&lt;/a&gt;.&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -198,6 +194,8 @@
 &lt;blockquote&gt;We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that’s interested. We still don’t know, however, what it means for a data stream to be “functionally transformed” nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I’ll have to tackle in the second part of this written version of my upcoming RxJava talk.&lt;/blockquote&gt;
 
 &lt;p&gt;In this post, I&amp;rsquo;ll fill in the missing gaps in our understanding of my initial statement of what RxJava allows us to do.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
 
 &lt;p&gt;Recall that that initial statement was this:&lt;/p&gt;
 
@@ -288,8 +286,7 @@
 
 &lt;p&gt;The &lt;code&gt;map()&lt;/code&gt; operators transform the data emitted by their source &lt;code&gt;Observable&lt;/code&gt;. The first &lt;code&gt;map()&lt;/code&gt; operator converts the query string into an intent created from that query string. The second &lt;code&gt;map()&lt;/code&gt; operator converts that intent into a &lt;code&gt;Bundle&lt;/code&gt; that can be used by the &lt;code&gt;SessionsFragment&lt;/code&gt; to load the appropriate sessions (based on the original query string).&lt;/p&gt;
 
-&lt;p&gt;If I&amp;rsquo;ve done my job right, hopefully now you know what RxJava is and why its awesome! Feel free to point out anything that was unclear or inaccurate.&lt;/p&gt;
-</description>
+&lt;p&gt;If I&amp;rsquo;ve done my job right, hopefully now you know what RxJava is and why its awesome! Feel free to point out anything that was unclear or inaccurate.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -317,6 +314,8 @@
       <description>&lt;p&gt;I&amp;rsquo;m taking a brief break from talking about testing. I&amp;rsquo;ll resume my discussion of how &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;I&amp;rsquo;m making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt; after I&amp;rsquo;ve posted the content from &lt;a href=&#34;http://www.meetup.com/University-Android/events/222048562/&#34;&gt;my upcoming talk on RxJava&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt; &lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg&#34; alt=&#34;rxjava_prezi_rxjava_def&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
 
 &lt;p&gt;RxJava is a library that let&amp;rsquo;s you represent anything as an asynchronous data-stream that can be created on any thread, functionally transformed, and consumed by everyone on any thread.&lt;/p&gt;
 
@@ -393,8 +392,7 @@
 
 &lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg&#34; alt=&#34;rxjava_prezi_rxjava_def&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that&amp;rsquo;s interested. We still don&amp;rsquo;t know, however, what it means for a data stream to be &amp;ldquo;functionally transformed&amp;rdquo; nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I&amp;rsquo;ll have to tackle in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/19/introduction-to-rxjava-for-android-pt-2/&#34;&gt;the second part&lt;/a&gt; of this written version of &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/16/introduction-to-rxjava-for-android-the-talk/&#34;&gt;my upcoming RxJava talk&lt;/a&gt;.&lt;/p&gt;
-</description>
+&lt;p&gt;We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that&amp;rsquo;s interested. We still don&amp;rsquo;t know, however, what it means for a data stream to be &amp;ldquo;functionally transformed&amp;rdquo; nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I&amp;rsquo;ll have to tackle in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/19/introduction-to-rxjava-for-android-pt-2/&#34;&gt;the second part&lt;/a&gt; of this written version of &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/16/introduction-to-rxjava-for-android-the-talk/&#34;&gt;my upcoming RxJava talk&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
