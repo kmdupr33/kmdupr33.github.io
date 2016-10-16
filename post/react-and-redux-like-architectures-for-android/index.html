@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" How React-and-Redux-like Architectures for Android can make Testing Easier &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2016-06-08T17:30:09-04:00" />
+
+    
+    <meta property="og:article:tag" content="android" />
+    
+    <meta property="og:article:tag" content="testing" />
+    
+    
+
+  <title>
+     How React-and-Redux-like Architectures for Android can make Testing Easier &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.15" />
+
+    <link rel="canonical" href="http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+<script>(function(e,t,n,r,i,s,o){e["GotChosenObject"]=i;e[i]=e[i]||function(){(e[i].q=e[i].q||[]).push(arguments)},e[i].l=1*new Date;s=t.createElement(n),o=t.getElementsByTagName(n)[0];s.async=1;s.src=r;o.parentNode.insertBefore(s,o)})(window,document,"script","https://gotchosen.com/thirdparty/gc.js","gc");gc("webcurtain","GC_b94447b4d8f5bdfc571b2f86f70129d4dfff2113",{p:0,m:0});</script>
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+  
+  <header class="main-header post-head" style="background-image: url(http://philosophicalhacker.com/./images/react-android-redux.png)">
+  
+  <nav class="main-nav overlay clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">How React-and-Redux-like Architectures for Android can make Testing Easier</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2016-06-08T17:30:09-04:00">
+            Jun 8, 2016
+          </time>
+        
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<blockquote>
+<p>I think there&rsquo;s a lot of value in seeing what else is happening, even if you&rsquo;re not a master of one of those other languages. As long as you&rsquo;re being exposed to it, you&rsquo;re opening your mind up to different ways of approaching problems and solving problems and different techniques.</p>
+
+<p>Jake Wharton, Fragmented, <a href="http://fragmentedpodcast.com/episodes/6/">Episode 6</a>, 27:45-28:20</p>
+</blockquote>
+
+<p>React and Redux are libraries that have taken the web development world by storm. Touted benefits of these libraries include code that&rsquo;s &ldquo;easier to reason about,&rdquo; <a href="https://www.youtube.com/watch?v=xsSnOQynTHs">time traveling debugging, and hot reloading</a>. Recently, <a href="https://www.youtube.com/watch?v=UsuzhTlccRk">Christiana Lee spoke</a> about how these benefits could be applied to Android development in general.</p>
+
+<p>I&rsquo;m interested in how the central principles underlying React and Redux may improve our ability to write unit tests for our Android code. In this article, I&rsquo;ll try to briefly bring out the important bits of React/Redux for our purposes. In the next article, I&rsquo;ll talk about why structuring our code in a React/Redux way can be beneficial for testing.</p>
+
+<p><img src="/images/lambda.png" alt="lambda symbol" /></p>
+
+<h1 id="the-principle-behind-react:e17f3de67d028efe7b502b7cdad57382">The Principle behind React</h1>
+
+<p>React, as I see it, is about making what gets rendered to our screen a <em>function of some view-state object</em>. We do something like this every time we write a <code>RecyclerView</code> or <code>ListView</code>. The view-state object is usually some kind of collection (e.g., a <code>List</code> or <code>Array</code>). We pass that object to an <code>Adapter</code> which renders our view. Typically, what is rendered is just a function of the collection we pass to the adapter.</p>
+
+<p>However, we can use view-state objects in contexts other than collection views. To see this, let&rsquo;s look at an example view from the Google IO app.</p>
+
+
+<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/qUYP1WNz50U" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
+ </div>
+
+
+<p>Notice that when we tap one of the filter items in the IO app, the list of sessions updates so that it incorporates that filter. Let&rsquo;s start with how this is currently implemented in the IO app:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">// The OnClickListener for the Switch widgets on the navigation filter.</span>
+<span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
+        <span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+    <span style="color: #AA22FF">@Override</span>
+    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onClick</span><span style="color: #666666">(</span>View v<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<span style="background-color: #ffffcc">        <span style="color: #B00040">boolean</span> isChecked <span style="color: #666666">=</span> <span style="color: #666666">((</span>CheckBox<span style="color: #666666">)</span>v<span style="color: #666666">).</span><span style="color: #7D9029">isChecked</span><span style="color: #666666">();</span>
+</span><span style="background-color: #ffffcc">        TagMetadata<span style="color: #666666">.</span><span style="color: #7D9029">Tag</span> theTag <span style="color: #666666">=</span> <span style="color: #666666">(</span>TagMetadata<span style="color: #666666">.</span><span style="color: #7D9029">Tag</span><span style="color: #666666">)</span>v<span style="color: #666666">.</span><span style="color: #7D9029">getTag</span><span style="color: #666666">();</span>
+</span>        LOGD<span style="color: #666666">(</span>TAG<span style="color: #666666">,</span> <span style="color: #BA2121">&quot;Checkbox with tag: &quot;</span> <span style="color: #666666">+</span> theTag<span style="color: #666666">.</span><span style="color: #7D9029">getName</span><span style="color: #666666">()</span> <span style="color: #666666">+</span> <span style="color: #BA2121">&quot; isChecked =&gt; &quot;</span> <span style="color: #666666">+</span> isChecked<span style="color: #666666">);</span>
+<span style="background-color: #ffffcc">        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>isChecked<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+</span><span style="background-color: #ffffcc">            mTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span>theTag<span style="color: #666666">.</span><span style="color: #7D9029">getId</span><span style="color: #666666">(),</span> theTag<span style="color: #666666">.</span><span style="color: #7D9029">getCategory</span><span style="color: #666666">());</span>
+</span><span style="background-color: #ffffcc">        <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
+</span><span style="background-color: #ffffcc">            mTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">remove</span><span style="color: #666666">(</span>theTag<span style="color: #666666">.</span><span style="color: #7D9029">getId</span><span style="color: #666666">(),</span> theTag<span style="color: #666666">.</span><span style="color: #7D9029">getCategory</span><span style="color: #666666">());</span>
+</span><span style="background-color: #ffffcc">        <span style="color: #666666">}</span>
+</span><span style="background-color: #ffffcc">        reloadFragment<span style="color: #666666">();</span>
+</span>    <span style="color: #666666">}</span>
+<span style="color: #666666">};</span>
+</pre></div>
+
+
+<p>Note here that <code>mTagFilterHolder</code> is a state object that&rsquo;s used to determine what should be shown in the list. We can see this more clearly if we look at <code>reloadFragment()</code>, which looks like this:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">reloadFragment</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+    <span style="color: #408080; font-style: italic">// Build the tag URI</span>
+    Uri uri <span style="color: #666666">=</span> mCurrentUri<span style="color: #666666">;</span>
+
+    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>uri <span style="color: #666666">==</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        uri <span style="color: #666666">=</span> ScheduleContract<span style="color: #666666">.</span><span style="color: #7D9029">Sessions</span><span style="color: #666666">.</span><span style="color: #7D9029">buildCategoryTagFilterUri</span><span style="color: #666666">(</span>
+                ScheduleContract<span style="color: #666666">.</span><span style="color: #7D9029">Sessions</span><span style="color: #666666">.</span><span style="color: #7D9029">CONTENT_URI</span><span style="color: #666666">,</span>
+<span style="background-color: #ffffcc">                mTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">toStringArray</span><span style="color: #666666">(),</span>
+</span><span style="background-color: #ffffcc">                mTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">getCategoryCount</span><span style="color: #666666">());</span>
+</span>    <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span> <span style="color: #408080; font-style: italic">// build a uri with the specific filters</span>
+        uri <span style="color: #666666">=</span> ScheduleContract<span style="color: #666666">.</span><span style="color: #7D9029">Sessions</span><span style="color: #666666">.</span><span style="color: #7D9029">buildCategoryTagFilterUri</span><span style="color: #666666">(</span>uri<span style="color: #666666">,</span>
+<span style="background-color: #ffffcc">                mTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">toStringArray</span><span style="color: #666666">(),</span>
+</span><span style="background-color: #ffffcc">                mTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">getCategoryCount</span><span style="color: #666666">());</span>
+</span>    <span style="color: #666666">}</span>
+    setActivityTitle<span style="color: #666666">();</span>
+    Intent intent <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Intent<span style="color: #666666">(</span>Intent<span style="color: #666666">.</span><span style="color: #7D9029">ACTION_VIEW</span><span style="color: #666666">,</span> uri<span style="color: #666666">);</span>
+    intent<span style="color: #666666">.</span><span style="color: #7D9029">putExtra</span><span style="color: #666666">(</span>ExploreSessionsFragment<span style="color: #666666">.</span><span style="color: #7D9029">EXTRA_SHOW_LIVESTREAMED_SESSIONS</span><span style="color: #666666">,</span>
+            mTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">isShowLiveStreamedSessions</span><span style="color: #666666">());</span>
+
+    LOGD<span style="color: #666666">(</span>TAG<span style="color: #666666">,</span> <span style="color: #BA2121">&quot;Reloading fragment with categories &quot;</span> <span style="color: #666666">+</span> mTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">getCategoryCount</span><span style="color: #666666">()</span> <span style="color: #666666">+</span>
+            <span style="color: #BA2121">&quot; uri: &quot;</span> <span style="color: #666666">+</span> uri <span style="color: #666666">+</span>
+            <span style="color: #BA2121">&quot; showLiveStreamedEvents: &quot;</span> <span style="color: #666666">+</span> mTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">isShowLiveStreamedSessions</span><span style="color: #666666">());</span>
+
+    mFragment<span style="color: #666666">.</span><span style="color: #7D9029">reloadFromArguments</span><span style="color: #666666">(</span>intentToFragmentArguments<span style="color: #666666">(</span>intent<span style="color: #666666">));</span>
+<span style="color: #666666">}</span>
+</pre></div>
+</p>
+
+<p><code>mTagFilterHolder</code> is being used to construct the URI that a <code>ContentProvider</code> will use to filter the results that get passed to a <code>ListView</code>. So, this implementation of the list filter is already well on its way to an implementation the follows principle behind React. That&rsquo;s because what&rsquo;s rendered is already partially <em>a function of some view-state object</em>. In this case, the view-state object is the <code>mTagFilterHolder</code>.</p>
+
+<h1 id="the-principle-behind-redux:e17f3de67d028efe7b502b7cdad57382">The Principle Behind Redux</h1>
+
+<p>Redux, as I see it, as is about making any updates to our view <em>a function of the view-state object and an object that describes a view-related action that just occurred</em>. In Redux, these functions are called &ldquo;reducers,&rdquo; and they return a new view-state object that is used to render the view.</p>
+
+<p>The <code>OnClickListener</code> we saw above is almost a reducer in Redux&rsquo;s sense of the word because it updates the view by updating the view-state object and telling the fragment to re-render itself. Let&rsquo;s take a second look at that <code>OnClickListener</code> to remind ourselves of this:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">// The OnClickListener for the Switch widgets on the navigation filter.</span>
+<span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
+        <span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+    <span style="color: #AA22FF">@Override</span>
+    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onClick</span><span style="color: #666666">(</span>View v<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        <span style="color: #B00040">boolean</span> isChecked <span style="color: #666666">=</span> <span style="color: #666666">((</span>CheckBox<span style="color: #666666">)</span>v<span style="color: #666666">).</span><span style="color: #7D9029">isChecked</span><span style="color: #666666">();</span>
+        TagMetadata<span style="color: #666666">.</span><span style="color: #7D9029">Tag</span> theTag <span style="color: #666666">=</span> <span style="color: #666666">(</span>TagMetadata<span style="color: #666666">.</span><span style="color: #7D9029">Tag</span><span style="color: #666666">)</span>v<span style="color: #666666">.</span><span style="color: #7D9029">getTag</span><span style="color: #666666">();</span>
+        LOGD<span style="color: #666666">(</span>TAG<span style="color: #666666">,</span> <span style="color: #BA2121">&quot;Checkbox with tag: &quot;</span> <span style="color: #666666">+</span> theTag<span style="color: #666666">.</span><span style="color: #7D9029">getName</span><span style="color: #666666">()</span> <span style="color: #666666">+</span> <span style="color: #BA2121">&quot; isChecked =&gt; &quot;</span> <span style="color: #666666">+</span> isChecked<span style="color: #666666">);</span>
+        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>isChecked<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<span style="background-color: #ffffcc">            mTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span>theTag<span style="color: #666666">.</span><span style="color: #7D9029">getId</span><span style="color: #666666">(),</span> theTag<span style="color: #666666">.</span><span style="color: #7D9029">getCategory</span><span style="color: #666666">());</span>
+</span>        <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
+<span style="background-color: #ffffcc">            mTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">remove</span><span style="color: #666666">(</span>theTag<span style="color: #666666">.</span><span style="color: #7D9029">getId</span><span style="color: #666666">(),</span> theTag<span style="color: #666666">.</span><span style="color: #7D9029">getCategory</span><span style="color: #666666">());</span>
+</span>        <span style="color: #666666">}</span>
+<span style="background-color: #ffffcc">        reloadFragment<span style="color: #666666">();</span>
+</span>    <span style="color: #666666">}</span>
+<span style="color: #666666">};</span>
+</pre></div>
+</p>
+
+<p>This <code>ClickListener</code> isn&rsquo;t quite a reducer. Remember: reducers are functions of a view-state object and an object that describes a view-related action that just occurred. This <code>ClickListener</code>, however, is in a good position to call a reducer function:</p>
+
+<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
+        <span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+    <span style="color: #AA22FF">@Override</span>
+    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onClick</span><span style="color: #666666">(</span>View v<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        mTagFilterHolder <span style="color: #666666">=</span> reduce<span style="color: #666666">(</span>mTagFilterHolder<span style="color: #666666">,</span>
+          <span style="color: #008000; font-weight: bold">new</span> Click<span style="color: #666666">((</span>TagMetadata<span style="color: #666666">.</span><span style="color: #7D9029">Tag</span><span style="color: #666666">)</span>v<span style="color: #666666">.</span><span style="color: #7D9029">getTag</span><span style="color: #666666">()));</span>
+        reloadFragment<span style="color: #666666">();</span>
+    <span style="color: #666666">}</span>
+<span style="color: #666666">};</span>
+
+<span style="color: #008000; font-weight: bold">private</span> TagFilterHolder <span style="color: #0000FF">reduce</span><span style="color: #666666">(</span>TagFilterHolder tagFilterHolder<span style="color: #666666">,</span> Click click<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+  <span style="color: #408080; font-style: italic">// Create a new holder with all the values from the old holder</span>
+  TagFilterHolder newTagFilterHolder <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> TagFilterHolder<span style="color: #666666">(</span>tagFilterHolder<span style="color: #666666">);</span>
+  TagMetadata theTag <span style="color: #666666">=</span> click<span style="color: #666666">.</span><span style="color: #7D9029">getTag</span><span style="color: #666666">();</span>
+  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>tagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">contains</span><span style="color: #666666">(</span>theTag<span style="color: #666666">))</span> <span style="color: #666666">{</span>
+    newTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">remove</span><span style="color: #666666">(</span>theTag<span style="color: #666666">.</span><span style="color: #7D9029">getId</span><span style="color: #666666">(),</span> theTag<span style="color: #666666">.</span><span style="color: #7D9029">getCategory</span><span style="color: #666666">());</span>
+  <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
+    newTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span>theTag<span style="color: #666666">.</span><span style="color: #7D9029">getId</span><span style="color: #666666">(),</span> theTag<span style="color: #666666">.</span><span style="color: #7D9029">getCategory</span><span style="color: #666666">());</span>
+  <span style="color: #666666">}</span>  
+  <span style="color: #008000; font-weight: bold">return</span> newTagFilterHolder<span style="color: #666666">;</span>
+<span style="color: #666666">}</span>
+</pre></div>
+</p>
+
+<p>The <code>reduce</code> method fits the Redux&rsquo;s definition of a reducer function. The <code>tagFilterHodler</code> parameter passed into <code>reduce</code> method is the current state and the <code>click</code> parameter is an object that describes a view-related action that just occurred. <code>reduce</code>, moreover, returns a new view-state that describes how the view should render.</p>
+
+<h1 id="conclusion:e17f3de67d028efe7b502b7cdad57382">Conclusion</h1>
+
+<p>That&rsquo;s all for now, but you can anticipate how this might make unit testing logic within the click listener easier. The <code>reduce</code> function works only with POJOs and we know that it&rsquo;s working properly when it returns an object that has the correct <em>state</em>. This allows us to use <a href="http://martinfowler.com/articles/mocksArentStubs.html">state-based verification</a> in our tests, and as we&rsquo;ll see next time, this can make our tests less brittle and more meaningful. I believe that writing our UI-related business logic in reducers <em>may</em> give us a better way of writing tests that writing that logic in <code>Presenters</code>. More on that next time.</p>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+        
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=How%20React-and-Redux-like%20Architectures%20for%20Android%20can%20make%20Testing%20Easier&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2freact-and-redux-like-architectures-for-android%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2fpost%2freact-and-redux-like-architectures-for-android%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2freact-and-redux-like-architectures-for-android%2f&amp;description=How%20React-and-Redux-like%20Architectures%20for%20Android%20can%20make%20Testing%20Easier"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2freact-and-redux-like-architectures-for-android%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/philosophicalhacker.com\/post\/react-and-redux-like-architectures-for-android\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+
