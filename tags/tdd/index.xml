@@ -9,6 +9,26 @@
     <atom:link href="http://philosophicalhacker.com/tags/tdd/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>3 Ways of &#39;Getting to Green&#39;</title>
+      <link>http://philosophicalhacker.com/post/3-ways-of-getting-to-green/</link>
+      <pubDate>Sun, 16 Oct 2016 22:38:44 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/3-ways-of-getting-to-green/</guid>
+      <description>&lt;p&gt;A part of the TDD work flow is getting a failing test to pass as quickly as possible. This makes sense if we think about how &lt;a href=&#34;http://www.philosophicalhacker.com/post/the-goal-of-refactoring-during-tdd/&#34;&gt;TDD is supposed to help us take smaller steps when we&amp;rsquo;re writing programs&lt;/a&gt;. Beck goes over three ways of getting a test to pass quickly in the fist part of &lt;em&gt;TDD By Example&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;The first method is to fake it. Just hard code whatever values you need to to get the tests to pass.&lt;/p&gt;
+
+&lt;p&gt;The second method is try for the simplest possible implementation.&lt;/p&gt;
+
+&lt;p&gt;The third method is something Beck calls &amp;ldquo;triangulation&amp;rdquo;, and its only used if you&amp;rsquo;re not sure how to proceed. When you triangulate on an implementation, you start by writing a second test. This second test will force you to generalize the hard-coded implementation you wrote to get your test to pass. Writing this second test, moreover, is supposed to help you think through how to generalize your implementation:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip;Triangulation provides a chance to think about the problem from a slightly different direction. What axes of variability are you trying to support in your design? Make some of them vary, and the answer [i.e., the general implementation] may become clearer.&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
       <title>The goal of refactoring During TDD</title>
       <link>http://philosophicalhacker.com/post/the-goal-of-refactoring-during-tdd/</link>
       <pubDate>Sun, 16 Oct 2016 16:35:28 -0400</pubDate>
