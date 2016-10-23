@@ -6,8 +6,117 @@
     <description>Recent content in Post-rsses on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 16 Oct 2016 22:38:44 -0400</lastBuildDate>
+    <lastBuildDate>Sun, 23 Oct 2016 17:27:45 -0400</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Using Git Submodules Effectively</title>
+      <link>http://philosophicalhacker.com/post/using-git-submodules-effectively/</link>
+      <pubDate>Sun, 23 Oct 2016 17:27:45 -0400</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/using-git-submodules-effectively/</guid>
+      <description>
+
+&lt;p&gt;I used to think git submodules were categorically evil. This was naive, as most choices in software development are about tradeoffs. A part of the reason I had this simplistic view was because of &lt;a href=&#34;https://codingkilledthecat.wordpress.com/2012/04/28/why-your-company-shouldnt-use-git-submodules/&#34;&gt;an article&lt;/a&gt; called &amp;ldquo;Why your Company Shouldn&amp;rsquo;t use Git Submodules.&amp;rdquo; I took a second look at this article recently and I read the docs on git submodules. What follows are some more nuanced thoughts on how and when git submodules can be used effectively.&lt;/p&gt;
+
+&lt;h3 id=&#34;what-are-submodules-even-for&#34;&gt;What are Submodules even for?&lt;/h3&gt;
+
+&lt;p&gt;The docs actually provide a very helpful example to answer this question:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Suppose you’re developing a web site and creating Atom feeds. Instead of writing your own Atom-generating code, you decide to use a library. You’re likely to have to either include this code from a shared library like a CPAN install or Ruby gem, or copy the source code into your own project tree. The issue with including the library is that it’s difficult to customize the library in any way and often more difficult to deploy it, because you need to make sure every client has that library available. The issue with vendoring the code into your own project is that any custom changes you make are difficult to merge when upstream changes become available.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Interestingly, this is very different from what we might call the &amp;ldquo;naive perceived purpose&amp;rdquo; of git submodules, which is well captured by the opening paragraph of the aforementioned article arguing against git submodules:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;It is not uncommon at all when working on any kind of larger-scale project with Git to find yourself wanting to share code between multiple different repositories – whether it be some core system among multiple different products built on top of that system, or perhaps a shared utility library between projects.&lt;/p&gt;
+
+&lt;p&gt;At first glance, Git submodules seem to be the perfect answer for this&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I used to think submodules were designed for the purpose of sharing code. As the above example from the docs suggest, that&amp;rsquo;s not entirely true. Its more accurate to say that git submodules are useful when you want to share code &lt;em&gt;that you also need change along with the consumer of that code.&lt;/em&gt; If you&amp;rsquo;re not trying to change the shared code along with the consumer of that code, there are better options for sharing your code. The docs even seem to admit this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;It’s quite likely that if you’re using submodules, you’re doing so because you really want to work on the code in the submodule at the same time as you’re working on the code in the main project (or across several submodules). Otherwise you would probably instead be using a simpler dependency management system (such as Maven or Rubygems).&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;So, if you&amp;rsquo;re using git submodules merely as a way of sharing code, that&amp;rsquo;s probably misguided, as it&amp;rsquo;s a use case that git submodules weren&amp;rsquo;t designed to handle. There&amp;rsquo;s additional complexity that comes along with using git submodules, and this complexity isn&amp;rsquo;t worth it if there are simpler ways of sharing code. This additional complexity &lt;em&gt;may&lt;/em&gt; be worth it if you&amp;rsquo;re trying to work on shared code and project code simultaneously and if there are methods of managing this complexity in a way that a) keeps us moving quickly and b) helps us avoids costly mistakes. The next section is about some of the complexities of git submodules and the techniques the git folks recommend for managing these complexities.&lt;/p&gt;
+
+&lt;h3 id=&#34;managing-git-submodule-complexity&#34;&gt;Managing git submodule complexity&lt;/h3&gt;
+
+&lt;h4 id=&#34;working-around-init-and-update&#34;&gt;Working around init and update&lt;/h4&gt;
+
+&lt;p&gt;The first thing that&amp;rsquo;s annoying about git submodules, in my opinion, is that when you check out a project, you can&amp;rsquo;t get it to build without initializing and updating your submodules. This isn&amp;rsquo;t a problem if you know that you&amp;rsquo;ve got submodules, but its a little annoying and surprising to see a build error when you don&amp;rsquo;t realize that the project has submodules.&lt;/p&gt;
+
+&lt;p&gt;A remedy here is to use the &lt;code&gt;--recursive&lt;/code&gt; flag on the &lt;code&gt;git clone&lt;/code&gt; command. This is probably something that I should just always do from now on. I&amp;rsquo;ll make a bash function to support this. I&amp;rsquo;ve already &lt;code&gt;git status&lt;/code&gt; and &lt;code&gt;git push&lt;/code&gt; aliased to &lt;code&gt;gs&lt;/code&gt; and &lt;code&gt;gp&lt;/code&gt; respectively, so &lt;code&gt;gc&lt;/code&gt; is a good name for this function:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;function&lt;/span&gt; gc &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+   git clone --recursive &lt;span style=&#34;color: #19177C&#34;&gt;$1&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4 id=&#34;pushing-changes&#34;&gt;Pushing changes&lt;/h4&gt;
+
+&lt;p&gt;Pushing changes with submodules can be a bit of a pain if you manually go into a subdirectory and push from there. Fortunately, there are commands for this and we can even create git aliases to make using these commands easy. Here&amp;rsquo;s the command:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git push --recurse-submodules&lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;on-demand
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As the option suggests, this command recursively pushes the submodules along with the changes in the parent project. I could create an alias for this command with the following command:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git config alias.spush &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;push --recurse-submodules=on-demand&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;But like I said, I&amp;rsquo;ve already got &lt;code&gt;gp&lt;/code&gt; aliased as &lt;code&gt;git push&lt;/code&gt;, so I can just update that alias:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000&#34;&gt;alias&lt;/span&gt; &lt;span style=&#34;color: #19177C&#34;&gt;gp&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;git push --recurse-submodules=on-demand&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4 id=&#34;getting-updates&#34;&gt;Getting updates&lt;/h4&gt;
+
+&lt;p&gt;The last thing that&amp;rsquo;s a little annoying about git submodules is updating them when there are changes upstream. Turns out that there&amp;rsquo;s a command that eases this process too:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git submodule update --remote --merge
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Gonna alias that one too:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000&#34;&gt;alias&lt;/span&gt; &lt;span style=&#34;color: #19177C&#34;&gt;gu&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;git submodule update --remote --merge&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;--merge&lt;/code&gt; flag, of course, is actually supposed to &lt;em&gt;safely&lt;/em&gt; merge in the upstream changes. This is a bit misleading because, as article against git modules points out, if you aren&amp;rsquo;t careful, you can blow away your changes in a git submodule by running this command. To avoid this, you actually need to make sure the git submodule has a branch checked out.&lt;/p&gt;
+
+&lt;p&gt;One way of doing this easily is to use the git submodule &lt;code&gt;foreach&lt;/code&gt; subcommand:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git submodule foreach &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;git checkout -b featureA&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If we create a bash function that we use for checking out new branches, we can, with a single command, checkout a new branch in the parent repo in in the submodules:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;function&lt;/span&gt; gcb &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  git checkout -b &lt;span style=&#34;color: #19177C&#34;&gt;$1&lt;/span&gt;
+  git submodule foreach &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;git checkout -b&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #19177C&#34;&gt;$1&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If we&amp;rsquo;re using gitflow, we won&amp;rsquo;t be making any changes outside of a feature branch anyway, so if we&amp;rsquo;re using a function like the above one, we shouldn&amp;rsquo;t ever run into a situation where we&amp;rsquo;ve blown away changes we&amp;rsquo;ve made in our submodule.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Sometimes all of this feels a bit wonky to me. I think it feels this way because git modules are still fundamentally weird. In an ideal world, we&amp;rsquo;d develop our shared code in separate repositories and we&amp;rsquo;d test that shared code with automated tests instead of testing it by running the project that consumes that shared library.&lt;/p&gt;
+
+&lt;p&gt;However, sometimes we need to take out a tech loan. Sometimes we need to live with a wonky submodule setup for a bit. Fortunately, git provides us the tools needed to handle the additional complexity that comes along with using git submodules, and if we want to be able to work on a project and its shared code simultaneously, git submodules are appropriate. If we&amp;rsquo;re just trying to share code, we should use simpler dependency management solutions.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>3 Ways of &#39;Getting to Green&#39;</title>
@@ -1506,150 +1615,6 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;The fact that React/Redux-like architectures open up the possibility of alternative testing strategies is an additional reason that we should consider these architectures for Android Development. I think that by utilizing RxJava with a subset of the features provided by the Android data-binding library, the approach I&amp;rsquo;ve sketched here can scale to an architecture that allows for time-travel debugging, hotswap, and a more flexible testing strategy, but that&amp;rsquo;s something that I&amp;rsquo;ll have to explore another time.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>How React-and-Redux-like Architectures for Android can make Testing Easier</title>
-      <link>http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/</link>
-      <pubDate>Wed, 08 Jun 2016 17:30:09 -0400</pubDate>
-      
-      <guid>http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/</guid>
-      <description>
-
-&lt;blockquote&gt;
-&lt;p&gt;I think there&amp;rsquo;s a lot of value in seeing what else is happening, even if you&amp;rsquo;re not a master of one of those other languages. As long as you&amp;rsquo;re being exposed to it, you&amp;rsquo;re opening your mind up to different ways of approaching problems and solving problems and different techniques.&lt;/p&gt;
-
-&lt;p&gt;Jake Wharton, Fragmented, &lt;a href=&#34;http://fragmentedpodcast.com/episodes/6/&#34;&gt;Episode 6&lt;/a&gt;, 27:45-28:20&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;React and Redux are libraries that have taken the web development world by storm. Touted benefits of these libraries include code that&amp;rsquo;s &amp;ldquo;easier to reason about,&amp;rdquo; &lt;a href=&#34;https://www.youtube.com/watch?v=xsSnOQynTHs&#34;&gt;time traveling debugging, and hot reloading&lt;/a&gt;. Recently, &lt;a href=&#34;https://www.youtube.com/watch?v=UsuzhTlccRk&#34;&gt;Christiana Lee spoke&lt;/a&gt; about how these benefits could be applied to Android development in general.&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;m interested in how the central principles underlying React and Redux may improve our ability to write unit tests for our Android code. In this article, I&amp;rsquo;ll try to briefly bring out the important bits of React/Redux for our purposes. In the next article, I&amp;rsquo;ll talk about why structuring our code in a React/Redux way can be beneficial for testing.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/lambda.png&#34; alt=&#34;lambda symbol&#34; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;the-principle-behind-react&#34;&gt;The Principle behind React&lt;/h1&gt;
-
-&lt;p&gt;React, as I see it, is about making what gets rendered to our screen a &lt;em&gt;function of some view-state object&lt;/em&gt;. We do something like this every time we write a &lt;code&gt;RecyclerView&lt;/code&gt; or &lt;code&gt;ListView&lt;/code&gt;. The view-state object is usually some kind of collection (e.g., a &lt;code&gt;List&lt;/code&gt; or &lt;code&gt;Array&lt;/code&gt;). We pass that object to an &lt;code&gt;Adapter&lt;/code&gt; which renders our view. Typically, what is rendered is just a function of the collection we pass to the adapter.&lt;/p&gt;
-
-&lt;p&gt;However, we can use view-state objects in contexts other than collection views. To see this, let&amp;rsquo;s look at an example view from the Google IO app.&lt;/p&gt;
-
-
-&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
-  &lt;iframe src=&#34;//www.youtube.com/embed/qUYP1WNz50U&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
- &lt;/div&gt;
-
-
-&lt;p&gt;Notice that when we tap one of the filter items in the IO app, the list of sessions updates so that it incorporates that filter. Let&amp;rsquo;s start with how this is currently implemented in the IO app:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; isChecked &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;CheckBox&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isChecked&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;        LOGD&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Checkbox with tag: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; isChecked =&amp;gt; &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; isChecked&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isChecked&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Note here that &lt;code&gt;mTagFilterHolder&lt;/code&gt; is a state object that&amp;rsquo;s used to determine what should be shown in the list. We can see this more clearly if we look at &lt;code&gt;reloadFragment()&lt;/code&gt;, which looks like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;reloadFragment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Build the tag URI&lt;/span&gt;
-    Uri uri &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mCurrentUri&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;uri &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        uri &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; ScheduleContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Sessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;buildCategoryTagFilterUri&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
-                ScheduleContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Sessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CONTENT_URI&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;toStringArray&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategoryCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// build a uri with the specific filters&lt;/span&gt;
-        uri &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; ScheduleContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Sessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;buildCategoryTagFilterUri&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;uri&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;toStringArray&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategoryCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    setActivityTitle&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    Intent intent &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Intent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Intent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ACTION_VIEW&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; uri&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    intent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;putExtra&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ExploreSessionsFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;EXTRA_SHOW_LIVESTREAMED_SESSIONS&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isShowLiveStreamedSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-
-    LOGD&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Reloading fragment with categories &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategoryCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt;
-            &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; uri: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; uri &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt;
-            &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; showLiveStreamedEvents: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isShowLiveStreamedSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-
-    mFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reloadFromArguments&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intentToFragmentArguments&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intent&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;&lt;code&gt;mTagFilterHolder&lt;/code&gt; is being used to construct the URI that a &lt;code&gt;ContentProvider&lt;/code&gt; will use to filter the results that get passed to a &lt;code&gt;ListView&lt;/code&gt;. So, this implementation of the list filter is already well on its way to an implementation the follows principle behind React. That&amp;rsquo;s because what&amp;rsquo;s rendered is already partially &lt;em&gt;a function of some view-state object&lt;/em&gt;. In this case, the view-state object is the &lt;code&gt;mTagFilterHolder&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h1 id=&#34;the-principle-behind-redux&#34;&gt;The Principle Behind Redux&lt;/h1&gt;
-
-&lt;p&gt;Redux, as I see it, as is about making any updates to our view &lt;em&gt;a function of the view-state object and an object that describes a view-related action that just occurred&lt;/em&gt;. In Redux, these functions are called &amp;ldquo;reducers,&amp;rdquo; and they return a new view-state object that is used to render the view.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;OnClickListener&lt;/code&gt; we saw above is almost a reducer in Redux&amp;rsquo;s sense of the word because it updates the view by updating the view-state object and telling the fragment to re-render itself. Let&amp;rsquo;s take a second look at that &lt;code&gt;OnClickListener&lt;/code&gt; to remind ourselves of this:&lt;/p&gt;
-
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; isChecked &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;CheckBox&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isChecked&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-        TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-        LOGD&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Checkbox with tag: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; isChecked =&amp;gt; &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; isChecked&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isChecked&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;p&gt;This &lt;code&gt;ClickListener&lt;/code&gt; isn&amp;rsquo;t quite a reducer. Remember: reducers are functions of a view-state object and an object that describes a view-related action that just occurred. This &lt;code&gt;ClickListener&lt;/code&gt;, however, is in a good position to call a reducer function:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        mTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reduce&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-          &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Click&lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()));&lt;/span&gt;
-        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
-
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; TagFilterHolder &lt;span style=&#34;color: #0000FF&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagFilterHolder tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Click click&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Create a new holder with all the values from the old holder&lt;/span&gt;
-  TagFilterHolder newTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-  TagMetadata theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; click&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;  
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The &lt;code&gt;reduce&lt;/code&gt; method fits the Redux&amp;rsquo;s definition of a reducer function. The &lt;code&gt;tagFilterHodler&lt;/code&gt; parameter passed into &lt;code&gt;reduce&lt;/code&gt; method is the current state and the &lt;code&gt;click&lt;/code&gt; parameter is an object that describes a view-related action that just occurred. &lt;code&gt;reduce&lt;/code&gt;, moreover, returns a new view-state that describes how the view should render.&lt;/p&gt;
-
-&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;That&amp;rsquo;s all for now, but you can anticipate how this might make unit testing logic within the click listener easier. The &lt;code&gt;reduce&lt;/code&gt; function works only with POJOs and we know that it&amp;rsquo;s working properly when it returns an object that has the correct &lt;em&gt;state&lt;/em&gt;. This allows us to use &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;state-based verification&lt;/a&gt; in our tests, and as we&amp;rsquo;ll see next time, this can make our tests less brittle and more meaningful. I believe that writing our UI-related business logic in reducers &lt;em&gt;may&lt;/em&gt; give us a better way of writing tests that writing that logic in &lt;code&gt;Presenters&lt;/code&gt;. More on that next time.&lt;/p&gt;
 </description>
     </item>
     

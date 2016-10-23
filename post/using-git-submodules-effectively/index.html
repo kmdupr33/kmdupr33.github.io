@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" Using Git Submodules Effectively &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://philosophicalhacker.com/post/using-git-submodules-effectively/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2016-10-23T17:27:45-04:00" />
+
+    
+    <meta property="og:article:tag" content="git" />
+    
+    
+
+  <title>
+     Using Git Submodules Effectively &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.17" />
+
+    <link rel="canonical" href="http://philosophicalhacker.com/post/using-git-submodules-effectively/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+<script>(function(e,t,n,r,i,s,o){e["GotChosenObject"]=i;e[i]=e[i]||function(){(e[i].q=e[i].q||[]).push(arguments)},e[i].l=1*new Date;s=t.createElement(n),o=t.getElementsByTagName(n)[0];s.async=1;s.src=r;o.parentNode.insertBefore(s,o)})(window,document,"script","https://gotchosen.com/thirdparty/gc.js","gc");gc("webcurtain","GC_b94447b4d8f5bdfc571b2f86f70129d4dfff2113",{p:0,m:0});</script>
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+<header class="main-header post-head no-cover">
+  <nav class="main-nav clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">Using Git Submodules Effectively</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2016-10-23T17:27:45-04:00">
+            Oct 23, 2016
+          </time>
+        
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/git/">#git</a></span>
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<p>I used to think git submodules were categorically evil. This was naive, as most choices in software development are about tradeoffs. A part of the reason I had this simplistic view was because of <a href="https://codingkilledthecat.wordpress.com/2012/04/28/why-your-company-shouldnt-use-git-submodules/">an article</a> called &ldquo;Why your Company Shouldn&rsquo;t use Git Submodules.&rdquo; I took a second look at this article recently and I read the docs on git submodules. What follows are some more nuanced thoughts on how and when git submodules can be used effectively.</p>
+
+<h3 id="what-are-submodules-even-for">What are Submodules even for?</h3>
+
+<p>The docs actually provide a very helpful example to answer this question:</p>
+
+<blockquote>
+<p>Suppose you’re developing a web site and creating Atom feeds. Instead of writing your own Atom-generating code, you decide to use a library. You’re likely to have to either include this code from a shared library like a CPAN install or Ruby gem, or copy the source code into your own project tree. The issue with including the library is that it’s difficult to customize the library in any way and often more difficult to deploy it, because you need to make sure every client has that library available. The issue with vendoring the code into your own project is that any custom changes you make are difficult to merge when upstream changes become available.</p>
+</blockquote>
+
+<p>Interestingly, this is very different from what we might call the &ldquo;naive perceived purpose&rdquo; of git submodules, which is well captured by the opening paragraph of the aforementioned article arguing against git submodules:</p>
+
+<blockquote>
+<p>It is not uncommon at all when working on any kind of larger-scale project with Git to find yourself wanting to share code between multiple different repositories – whether it be some core system among multiple different products built on top of that system, or perhaps a shared utility library between projects.</p>
+
+<p>At first glance, Git submodules seem to be the perfect answer for this</p>
+</blockquote>
+
+<p>I used to think submodules were designed for the purpose of sharing code. As the above example from the docs suggest, that&rsquo;s not entirely true. Its more accurate to say that git submodules are useful when you want to share code <em>that you also need change along with the consumer of that code.</em> If you&rsquo;re not trying to change the shared code along with the consumer of that code, there are better options for sharing your code. The docs even seem to admit this:</p>
+
+<blockquote>
+<p>It’s quite likely that if you’re using submodules, you’re doing so because you really want to work on the code in the submodule at the same time as you’re working on the code in the main project (or across several submodules). Otherwise you would probably instead be using a simpler dependency management system (such as Maven or Rubygems).</p>
+</blockquote>
+
+<p>So, if you&rsquo;re using git submodules merely as a way of sharing code, that&rsquo;s probably misguided, as it&rsquo;s a use case that git submodules weren&rsquo;t designed to handle. There&rsquo;s additional complexity that comes along with using git submodules, and this complexity isn&rsquo;t worth it if there are simpler ways of sharing code. This additional complexity <em>may</em> be worth it if you&rsquo;re trying to work on shared code and project code simultaneously and if there are methods of managing this complexity in a way that a) keeps us moving quickly and b) helps us avoids costly mistakes. The next section is about some of the complexities of git submodules and the techniques the git folks recommend for managing these complexities.</p>
+
+<h3 id="managing-git-submodule-complexity">Managing git submodule complexity</h3>
+
+<h4 id="working-around-init-and-update">Working around init and update</h4>
+
+<p>The first thing that&rsquo;s annoying about git submodules, in my opinion, is that when you check out a project, you can&rsquo;t get it to build without initializing and updating your submodules. This isn&rsquo;t a problem if you know that you&rsquo;ve got submodules, but its a little annoying and surprising to see a build error when you don&rsquo;t realize that the project has submodules.</p>
+
+<p>A remedy here is to use the <code>--recursive</code> flag on the <code>git clone</code> command. This is probably something that I should just always do from now on. I&rsquo;ll make a bash function to support this. I&rsquo;ve already <code>git status</code> and <code>git push</code> aliased to <code>gs</code> and <code>gp</code> respectively, so <code>gc</code> is a good name for this function:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">function</span> gc <span style="color: #666666">{</span>
+   git clone --recursive <span style="color: #19177C">$1</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<h4 id="pushing-changes">Pushing changes</h4>
+
+<p>Pushing changes with submodules can be a bit of a pain if you manually go into a subdirectory and push from there. Fortunately, there are commands for this and we can even create git aliases to make using these commands easy. Here&rsquo;s the command:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>git push --recurse-submodules<span style="color: #666666">=</span>on-demand
+</pre></div>
+
+
+<p>As the option suggests, this command recursively pushes the submodules along with the changes in the parent project. I could create an alias for this command with the following command:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>git config alias.spush <span style="color: #BA2121">&#39;push --recurse-submodules=on-demand&#39;</span>
+</pre></div>
+
+
+<p>But like I said, I&rsquo;ve already got <code>gp</code> aliased as <code>git push</code>, so I can just update that alias:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000">alias</span> <span style="color: #19177C">gp</span><span style="color: #666666">=</span><span style="color: #BA2121">&#39;git push --recurse-submodules=on-demand&#39;</span>
+</pre></div>
+
+
+<h4 id="getting-updates">Getting updates</h4>
+
+<p>The last thing that&rsquo;s a little annoying about git submodules is updating them when there are changes upstream. Turns out that there&rsquo;s a command that eases this process too:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>git submodule update --remote --merge
+</pre></div>
+
+
+<p>Gonna alias that one too:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000">alias</span> <span style="color: #19177C">gu</span><span style="color: #666666">=</span><span style="color: #BA2121">&#39;git submodule update --remote --merge&#39;</span>
+</pre></div>
+
+
+<p>The <code>--merge</code> flag, of course, is actually supposed to <em>safely</em> merge in the upstream changes. This is a bit misleading because, as article against git modules points out, if you aren&rsquo;t careful, you can blow away your changes in a git submodule by running this command. To avoid this, you actually need to make sure the git submodule has a branch checked out.</p>
+
+<p>One way of doing this easily is to use the git submodule <code>foreach</code> subcommand:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>git submodule foreach <span style="color: #BA2121">&#39;git checkout -b featureA&#39;</span>
+</pre></div>
+
+
+<p>If we create a bash function that we use for checking out new branches, we can, with a single command, checkout a new branch in the parent repo in in the submodules:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">function</span> gcb <span style="color: #666666">{</span>
+  git checkout -b <span style="color: #19177C">$1</span>
+  git submodule foreach <span style="color: #BA2121">&#39;git checkout -b&#39;</span><span style="color: #19177C">$1</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>If we&rsquo;re using gitflow, we won&rsquo;t be making any changes outside of a feature branch anyway, so if we&rsquo;re using a function like the above one, we shouldn&rsquo;t ever run into a situation where we&rsquo;ve blown away changes we&rsquo;ve made in our submodule.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>Sometimes all of this feels a bit wonky to me. I think it feels this way because git modules are still fundamentally weird. In an ideal world, we&rsquo;d develop our shared code in separate repositories and we&rsquo;d test that shared code with automated tests instead of testing it by running the project that consumes that shared library.</p>
+
+<p>However, sometimes we need to take out a tech loan. Sometimes we need to live with a wonky submodule setup for a bit. Fortunately, git provides us the tools needed to handle the additional complexity that comes along with using git submodules, and if we want to be able to work on a project and its shared code simultaneously, git submodules are appropriate. If we&rsquo;re just trying to share code, we should use simpler dependency management solutions.</p>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+        
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Using%20Git%20Submodules%20Effectively&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fusing-git-submodules-effectively%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fusing-git-submodules-effectively%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fusing-git-submodules-effectively%2f&amp;description=Using%20Git%20Submodules%20Effectively"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fusing-git-submodules-effectively%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/philosophicalhacker.com\/post\/using-git-submodules-effectively\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+
