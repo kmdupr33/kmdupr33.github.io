@@ -6,8 +6,90 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 23 Oct 2016 17:27:45 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 07 Nov 2016 07:36:45 -0500</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Why we Should Probably Write More Tests for Our Android Apps</title>
+      <link>http://philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/</link>
+      <pubDate>Mon, 07 Nov 2016 07:36:45 -0500</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/</guid>
+      <description>
+
+&lt;p&gt;This past weekend, I had the privilege of speaking about writing testable Android apps &lt;a href=&#34;https://devfestflorida.org/speakers/12/&#34;&gt;at Florida DevFest&lt;/a&gt;. This post is a written version of one of the major points I made in my presentation.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start off with two descriptions of attitudes towards testing. The first comes from Kaushik Goupal (he&amp;rsquo;s describing an attitude, not endorsing it):&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Testing seems to be like going to gym. Everyone feels like &amp;ldquo;yeah. I should be testing. I should be going to the gym everyday.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;Koushik Goupal, Fragmented Episode 1 12:01&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The second comes from &lt;em&gt;Pragmatic Programmer&lt;/em&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Your signature should come to be recognized as an indicator of quality. People should see your name on a piece of code and expect it to be solid, well written, tested, and documented. A really professional job. Written by a real professional. A Pragmatic Programmer.&lt;/p&gt;
+
+&lt;p&gt;Andrew Hunt and Dave Thomas, Pragmatic Programmer&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Which attitude is right? Is automated testing a nice-to-have or is it an integral part of a software engineer&amp;rsquo;s work. I think that its the latter. Here&amp;rsquo;s why.&lt;/p&gt;
+
+&lt;h3 id=&#34;for-most-of-us-good-code-is-changeable-code&#34;&gt;For most of us, Good Code is Changeable Code&lt;/h3&gt;
+
+&lt;p&gt;Dan North, the &amp;ldquo;BDD&amp;rdquo; creator and core contributor of rspec, has an interesting perspective on what we&amp;rsquo;re doing as software engineers. He says,&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;goal of software delivery is to minimise the lead time to business impact. Everything else is detail.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This view is a bit too strong in my opinion, but it does get one thing right: good code is changeable code. Suppose you ship an app that is performant and beautiful and that many of your users love it. Your boss says, &amp;ldquo;this is great, but lets add a feature and change this other behavior.&amp;rdquo; If you&amp;rsquo;re response is, &amp;ldquo;Well, the code is spaghetti. Its hard to understand and I&amp;rsquo;m not confident that I won&amp;rsquo;t break things when I make changes,&amp;rdquo; you&amp;rsquo;re boss is going to be disappointed.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;For most of us, I don&amp;rsquo;t think that claim will seem controversial. If you&amp;rsquo;re working on a pet project or a prototype that isn&amp;rsquo;t going to need to survive multiple iterations, I&amp;rsquo;m not really including you in the &amp;ldquo;us&amp;rdquo; here.&lt;/p&gt;
+
+&lt;h3 id=&#34;for-most-of-us-changeable-code-is-tested-code&#34;&gt;For most of us, Changeable Code is Tested Code&lt;/h3&gt;
+
+&lt;p&gt;Say you agree that good code is changeable code. What does that have to do with tests? Well, for most of us, tests are the only practical way of minimizing the time it takes to change our software.&lt;/p&gt;
+
+&lt;p&gt;When I say &amp;ldquo;us&amp;rdquo; here, I&amp;rsquo;m talking about professional software engineers of average intelligence who are working on fairly large projects. I&amp;rsquo;m not that smart, so I make mistakes when I write code, especially if the codebase I&amp;rsquo;m working on is large. If you&amp;rsquo;re much smarter than me and/or you&amp;rsquo;re working on a smaller project, this argument doesn&amp;rsquo;t really apply.&lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s two reasons why changeable code is tested code.&lt;/p&gt;
+
+&lt;p&gt;First, writing unit tests for your code actually helps you write better code. I think this is an under-appreciated benefit of writing unit tests for your code. Steve Freeman and Nat Pryce have a nice way of explaining why this is true:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;for a class to be easy to unit-test, the class must…be loosely coupled and highly cohesive —in other words, well-designed.&lt;/p&gt;
+
+&lt;p&gt;Steve Freeman and Nat Pryce, Growing Object Oriented Software Guided by Tests&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I think its uncontroversial that loose coupling and high cohesion are properties that make it easier to change code.&lt;/p&gt;
+
+&lt;p&gt;Second, writing tests (unit or otherwise) allow us to make changes without having to worry that we&amp;rsquo;ve broken something. Mark Zuckerberg painted a really powerful picture of this in his recent &amp;ldquo;How to build the Future Interview:&amp;rdquo;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;We invest in this huge testing framework…engineers here have the power to try out an idea and ship it to maybe 10,000 people or 100,000 people.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Imagine that. Engineers can build a feature and ship it with confidence.&lt;sup&gt;2&lt;/sup&gt; That&amp;rsquo;s possible because of automated testing.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;If good code is changeable code and if changeable code is tested code, then we should probably write more automated tests for our Android apps. Automated tests aren&amp;rsquo;t a nice to have. They&amp;rsquo;re integral to writing good apps.&lt;/p&gt;
+
+&lt;p&gt;One quick caveat: A lot of folks seem to think that there&amp;rsquo;s less reason to write tests when you&amp;rsquo;re working with a startup because you&amp;rsquo;re trying to move quickly. I can imagine extreme circumstances where that might make sense, but once you get the hang of writing tests and writing testable software, writing tests don&amp;rsquo;t take that long. Because of this, I think that refraining from writing tests as a startup can often be an exercise in short-term thinking. In fact, I &lt;a href=&#34;http://www.philosophicalhacker.com/post/tdd-and-startups/&#34;&gt;think the argument for automated testing in a startup&lt;/a&gt; is even more compelling than it is for developers working on an established product.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;I actually suspect that the business value of writing well-architected, readable code ultimately reduces to the value of being able to change code in response to users needs, but that point isn&amp;rsquo;t essential to the argument I&amp;rsquo;m making.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;The context of this quote actually has more to do with a/b testing that regression testing, but regression testing plays a big role in Facebook&amp;rsquo;s ability to move quickly. Facebook has invested heavily in automated testing by, for example, employing Kent Beck, the guy who popularized TDD.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Using Git Submodules Effectively</title>
@@ -1493,128 +1575,6 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
       
       <guid>http://philosophicalhacker.com/post/a-new-way-of-learning-android-development/</guid>
       <description>&lt;p&gt;I&amp;rsquo;m working on &lt;a href=&#34;http://universityandroid.com&#34;&gt;a new way of learning android development&lt;/a&gt;. I call it &amp;ldquo;University Android.&amp;rdquo; The first lesson is available now. Check it out.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Testing Strategies with a React/Redux Architecture</title>
-      <link>http://philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/</link>
-      <pubDate>Thu, 09 Jun 2016 15:22:47 -0400</pubDate>
-      
-      <guid>http://philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/</guid>
-      <description>
-
-&lt;p&gt;In &lt;a href=&#34;http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/&#34;&gt;my last post&lt;/a&gt;, I briefly introduced the principles behind React and Redux. I said that React is about making what gets rendered to the screen a function of some view-state object. I also said that Redux is about making updates to the screen a function of the current view-state object and an action describing a user&amp;rsquo;s interaction with the view.&lt;/p&gt;
-
-&lt;p&gt;In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis testing. More specifically, I suggest that a React/Redux-like architecture opens up a testing strategy that doesn&amp;rsquo;t suffer from the disadvantages of the testing strategy we use with the MVP architecture.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-disadvantage-of-mvp&#34;&gt;A Disadvantage of MVP&lt;/h2&gt;
-
-&lt;p&gt;Android architectures that rely on MVP are forced to use behavior-based verification in their unit tests. Behavior-based verification is about ensuring that the unit being tested is interacting properly with it&amp;rsquo;s collaborators. For example, consider this test from &lt;a href=&#34;https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#5&#34;&gt;Google&amp;rsquo;s testing code lab&lt;/a&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadNotesFromRepositoryAndLoadIntoView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Given an initialized NotesPresenter with initialized notes&lt;/span&gt;
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// When loading of Notes is requested&lt;/span&gt;
-   mNotesPresenter&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;loadNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Callback is captured and invoked with stubbed notes&lt;/span&gt;
-   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesRepository&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mLoadNotesCallbackCaptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;capture&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-   mLoadNotesCallbackCaptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getValue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;NOTES&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Then progress indicator is hidden and notes are shown in UI&lt;/span&gt;
-   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setProgressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;NOTES&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The test ensures that the &lt;code&gt;mNotesPresenter&lt;/code&gt;&amp;rsquo;s &lt;code&gt;loadNotes&lt;/code&gt; works properly by verifying that it&amp;rsquo;s called &lt;code&gt;setProgressIndicator&lt;/code&gt; and &lt;code&gt;showNotes&lt;/code&gt; on that &lt;code&gt;mNotesPresenter&lt;/code&gt;&amp;rsquo;s &lt;code&gt;View&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Behavior-based based verification and mocks can be useful, but there are some costs with using this method of verification for our tests. Martin Fowler summarizes these costs well in his essay &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;&amp;ldquo;Mocks aren&amp;rsquo;t Stubs&amp;rdquo;&lt;/a&gt;. In this essay he talks about the costs of &amp;ldquo;mockist tests,&amp;rdquo; tests that uses mocks and behavior-based verification. Here are some relevant excerpts:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;When you write a mockist test, you are testing the outbound calls of the SUT [System Under Test] to ensure it talks properly to its suppliers. A classic test only cares about the final state - not how that state was derived. Mockist tests are thus more coupled to the implementation of a method. Changing the nature of calls to collaborators usually cause a mockist test to break&amp;hellip;implementation changes are much more likely to break tests than with classic testing.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Here&amp;rsquo;s another disadvantage he points out:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Mockist testers do talk more about avoiding &amp;lsquo;train wrecks&amp;rsquo; - method chains of style of getThis().getThat().getTheOther(). Avoiding method chains is also known as following the Law of Demeter. While method chains are a smell, the opposite problem of middle men objects bloated with forwarding methods is also a smell. (I&amp;rsquo;ve always felt I&amp;rsquo;d be more comfortable with the Law of Demeter if it were called the Suggestion of Demeter.)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;If we&amp;rsquo;re sympathetic with Fowler here and we think that middle men objects bloated with forwarding methods is just as much a smell as law of demeter violations, then we might regret the fact that effective use of mocks require that we follow the law of demeter &amp;ldquo;to the T.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Fowler also mentions some advantages of behavior-based verification. Ultimately, he doesn&amp;rsquo;t seem to have a strong opinion on which strategy should be used. I&amp;rsquo;m not going to try to settle that question here either. It might turn out that the benefits of mockist tests outweigh the costs. For the remainder of the article, I just want to focus on how a React/Redux architecture opens up the possibility of state-based verification for our UI-related unit tests.&lt;/p&gt;
-
-&lt;h2 id=&#34;state-based-verification-with-react-redux&#34;&gt;State-based Verification with React/Redux&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s return the filtered list example we introduced in &lt;a href=&#34;http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/&#34;&gt;the last article&lt;/a&gt;. Again, here&amp;rsquo;s a video of the functionality we want to test:&lt;/p&gt;
-
-
-&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
-  &lt;iframe src=&#34;//www.youtube.com/embed/qUYP1WNz50U&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
- &lt;/div&gt;
-
-
-&lt;p&gt;Last time, I showed how we might implement this functionality according to the principles of React and Redux. Again those principles are that the content of a screen is a function of some view-state object and updates to the screen are a function of some view-state object and some action describing a user&amp;rsquo;s interaction with the screen. Here&amp;rsquo;s what our React/Redux-like code looked like:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Reducer reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reducer&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; tag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reducer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Click&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tag&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-&lt;/span&gt;        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
-
-&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Reducer&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; TagFilterHolder &lt;span style=&#34;color: #0000FF&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagFilterHolder tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Click click&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-      &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Create a new holder with all the values from the old holder&lt;/span&gt;
-      TagFilterHolder newTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-      TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; click&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-          newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-          newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Recall that the &lt;code&gt;reloadFragment&lt;/code&gt; call uses the &lt;code&gt;mTagFilterHolder&lt;/code&gt; as a view-state object to determine what get&amp;rsquo;s rendered to the screen. Testing this &lt;code&gt;reduce&lt;/code&gt; method doesn&amp;rsquo;t require the use of mocks:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;shouldToggleFilter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Arrange&lt;/span&gt;
-    ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt; reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    TagFilterHolder tagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Config&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tags&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CATEGORY_THEME&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; tag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Config&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tags&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CATEGORY_THEME&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1,&lt;/span&gt;
-            &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;some stuff&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1);&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Click&lt;/span&gt; clickAction &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Click&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tag&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Act&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagFilterHolder holder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reducer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; clickAction&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Assert&lt;/span&gt;
-    assertFalse&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;holder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This shows that React/Redux-like architectures open up the possibility of using state-based verification in our UI unit test code. This opens up the possibility of unit tests that don&amp;rsquo;t suffer from the disadvantages pointed out by Martin Fowler.&lt;/p&gt;
-
-&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;The fact that React/Redux-like architectures open up the possibility of alternative testing strategies is an additional reason that we should consider these architectures for Android Development. I think that by utilizing RxJava with a subset of the features provided by the Android data-binding library, the approach I&amp;rsquo;ve sketched here can scale to an architecture that allows for time-travel debugging, hotswap, and a more flexible testing strategy, but that&amp;rsquo;s something that I&amp;rsquo;ll have to explore another time.&lt;/p&gt;
 </description>
     </item>
     

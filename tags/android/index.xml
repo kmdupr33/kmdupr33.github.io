@@ -9,6 +9,88 @@
     <atom:link href="http://philosophicalhacker.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Why we Should Probably Write More Tests for Our Android Apps</title>
+      <link>http://philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/</link>
+      <pubDate>Mon, 07 Nov 2016 07:36:45 -0500</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/</guid>
+      <description>
+
+&lt;p&gt;This past weekend, I had the privilege of speaking about writing testable Android apps &lt;a href=&#34;https://devfestflorida.org/speakers/12/&#34;&gt;at Florida DevFest&lt;/a&gt;. This post is a written version of one of the major points I made in my presentation.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start off with two descriptions of attitudes towards testing. The first comes from Kaushik Goupal (he&amp;rsquo;s describing an attitude, not endorsing it):&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Testing seems to be like going to gym. Everyone feels like &amp;ldquo;yeah. I should be testing. I should be going to the gym everyday.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;Koushik Goupal, Fragmented Episode 1 12:01&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The second comes from &lt;em&gt;Pragmatic Programmer&lt;/em&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Your signature should come to be recognized as an indicator of quality. People should see your name on a piece of code and expect it to be solid, well written, tested, and documented. A really professional job. Written by a real professional. A Pragmatic Programmer.&lt;/p&gt;
+
+&lt;p&gt;Andrew Hunt and Dave Thomas, Pragmatic Programmer&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Which attitude is right? Is automated testing a nice-to-have or is it an integral part of a software engineer&amp;rsquo;s work. I think that its the latter. Here&amp;rsquo;s why.&lt;/p&gt;
+
+&lt;h3 id=&#34;for-most-of-us-good-code-is-changeable-code&#34;&gt;For most of us, Good Code is Changeable Code&lt;/h3&gt;
+
+&lt;p&gt;Dan North, the &amp;ldquo;BDD&amp;rdquo; creator and core contributor of rspec, has an interesting perspective on what we&amp;rsquo;re doing as software engineers. He says,&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;goal of software delivery is to minimise the lead time to business impact. Everything else is detail.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This view is a bit too strong in my opinion, but it does get one thing right: good code is changeable code. Suppose you ship an app that is performant and beautiful and that many of your users love it. Your boss says, &amp;ldquo;this is great, but lets add a feature and change this other behavior.&amp;rdquo; If you&amp;rsquo;re response is, &amp;ldquo;Well, the code is spaghetti. Its hard to understand and I&amp;rsquo;m not confident that I won&amp;rsquo;t break things when I make changes,&amp;rdquo; you&amp;rsquo;re boss is going to be disappointed.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;For most of us, I don&amp;rsquo;t think that claim will seem controversial. If you&amp;rsquo;re working on a pet project or a prototype that isn&amp;rsquo;t going to need to survive multiple iterations, I&amp;rsquo;m not really including you in the &amp;ldquo;us&amp;rdquo; here.&lt;/p&gt;
+
+&lt;h3 id=&#34;for-most-of-us-changeable-code-is-tested-code&#34;&gt;For most of us, Changeable Code is Tested Code&lt;/h3&gt;
+
+&lt;p&gt;Say you agree that good code is changeable code. What does that have to do with tests? Well, for most of us, tests are the only practical way of minimizing the time it takes to change our software.&lt;/p&gt;
+
+&lt;p&gt;When I say &amp;ldquo;us&amp;rdquo; here, I&amp;rsquo;m talking about professional software engineers of average intelligence who are working on fairly large projects. I&amp;rsquo;m not that smart, so I make mistakes when I write code, especially if the codebase I&amp;rsquo;m working on is large. If you&amp;rsquo;re much smarter than me and/or you&amp;rsquo;re working on a smaller project, this argument doesn&amp;rsquo;t really apply.&lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s two reasons why changeable code is tested code.&lt;/p&gt;
+
+&lt;p&gt;First, writing unit tests for your code actually helps you write better code. I think this is an under-appreciated benefit of writing unit tests for your code. Steve Freeman and Nat Pryce have a nice way of explaining why this is true:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;for a class to be easy to unit-test, the class must…be loosely coupled and highly cohesive —in other words, well-designed.&lt;/p&gt;
+
+&lt;p&gt;Steve Freeman and Nat Pryce, Growing Object Oriented Software Guided by Tests&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I think its uncontroversial that loose coupling and high cohesion are properties that make it easier to change code.&lt;/p&gt;
+
+&lt;p&gt;Second, writing tests (unit or otherwise) allow us to make changes without having to worry that we&amp;rsquo;ve broken something. Mark Zuckerberg painted a really powerful picture of this in his recent &amp;ldquo;How to build the Future Interview:&amp;rdquo;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;We invest in this huge testing framework…engineers here have the power to try out an idea and ship it to maybe 10,000 people or 100,000 people.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Imagine that. Engineers can build a feature and ship it with confidence.&lt;sup&gt;2&lt;/sup&gt; That&amp;rsquo;s possible because of automated testing.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;If good code is changeable code and if changeable code is tested code, then we should probably write more automated tests for our Android apps. Automated tests aren&amp;rsquo;t a nice to have. They&amp;rsquo;re integral to writing good apps.&lt;/p&gt;
+
+&lt;p&gt;One quick caveat: A lot of folks seem to think that there&amp;rsquo;s less reason to write tests when you&amp;rsquo;re working with a startup because you&amp;rsquo;re trying to move quickly. I can imagine extreme circumstances where that might make sense, but once you get the hang of writing tests and writing testable software, writing tests don&amp;rsquo;t take that long. Because of this, I think that refraining from writing tests as a startup can often be an exercise in short-term thinking. In fact, I &lt;a href=&#34;http://www.philosophicalhacker.com/post/tdd-and-startups/&#34;&gt;think the argument for automated testing in a startup&lt;/a&gt; is even more compelling than it is for developers working on an established product.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;I actually suspect that the business value of writing well-architected, readable code ultimately reduces to the value of being able to change code in response to users needs, but that point isn&amp;rsquo;t essential to the argument I&amp;rsquo;m making.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;The context of this quote actually has more to do with a/b testing that regression testing, but regression testing plays a big role in Facebook&amp;rsquo;s ability to move quickly. Facebook has invested heavily in automated testing by, for example, employing Kent Beck, the guy who popularized TDD.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Unit Testable RecyclerViews</title>
       <link>http://philosophicalhacker.com/post/unit-testable-recycler-views/</link>
       <pubDate>Mon, 08 Aug 2016 08:34:46 -0400</pubDate>
@@ -1811,112 +1893,6 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;hr /&gt;
 
 &lt;p&gt;Below, Hannes Dorfmann has a great comment to this article. I&amp;rsquo;ve responded to that &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Introduction to RxJava for Android (Pt. 2)</title>
-      <link>http://philosophicalhacker.com/2015/06/19/introduction-to-rxjava-for-android-pt-2/</link>
-      <pubDate>Fri, 19 Jun 2015 12:19:14 +0000</pubDate>
-      
-      <guid>http://philosophicalhacker.com/2015/06/19/introduction-to-rxjava-for-android-pt-2/</guid>
-      <description>&lt;p&gt;I concluded my last post by summing up what we&amp;rsquo;ve seen so far and what we still need to understand about RxJava:&lt;/p&gt;
-
-&lt;blockquote&gt;We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that’s interested. We still don’t know, however, what it means for a data stream to be “functionally transformed” nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I’ll have to tackle in the second part of this written version of my upcoming RxJava talk.&lt;/blockquote&gt;
-
-&lt;p&gt;In this post, I&amp;rsquo;ll fill in the missing gaps in our understanding of my initial statement of what RxJava allows us to do.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;Recall that that initial statement was this:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg&#34; alt=&#34;rxjava_prezi_rxjava_def&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Recall that a data-stream, as I&amp;rsquo;ve defined it, is just sequential data that has a well-defined termination point and a way of notifying processors of that data that an error has occurred. RxJava lets us create asynchronous data streams out of anything. This might sound confusing until we remember that we are already familiar with a pattern that allows us to make synchronous data streams out of anything: the iterator pattern.&lt;/p&gt;
-
-&lt;p&gt;The definition for an &lt;code&gt;Iterator&lt;/code&gt; looks like this:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_as_async_iterator.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_as_async_iterator-1024x791.jpg&#34; alt=&#34;rxjava_as_async_iterator&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Notice that an Iterator fits the definition of a data-stream. Its ordered data that can be processed by calling &lt;code&gt;next()&lt;/code&gt;. It has a well-defined stopping point: when &lt;code&gt;hasNext()&lt;/code&gt; returns false. Finally, processors of an iterator&amp;rsquo;s data can also be notified if there was an error processing the data: the iterator can simply throw an exception.&lt;/p&gt;
-
-&lt;p&gt;You can make any class iterable as long as that class can supply an iterator with which to traverse its elements. This makes it possible to turn any class into a synchronous data stream. This is actually how the &lt;a href=&#34;https://docs.oracle.com/javase/1.5.0/docs/guide/language/foreach.html&#34;&gt;for-each syntax works in java&lt;/a&gt;. All Collection classes can return an iterator that&amp;rsquo;s used to sequentially traverse the data they contain.&lt;/p&gt;
-
-&lt;p&gt;This shouldn&amp;rsquo;t be surprising since the motivation for the iterator pattern according to the Gang of Four is to:&lt;/p&gt;
-
-&lt;blockquote&gt;Provide a way to access elements of an aggregate object sequentially without exposing its underlying implementation.
-
--GoF, Design Patterns&lt;/blockquote&gt;
-
-&lt;p&gt;RxJava Observables can be created out of anything and remember that Observables are just asynchronous data streams. Because Observables are asynchronous data streams that can be created out of anything just as Iterators are synchronous datastreams that can be created out of (nearly) anything, the &lt;a href=&#34;http://reactivex.io/intro.html&#34;&gt;reactive x introduction refers&lt;/a&gt; to Observables as the &amp;ldquo;asynchronous/push dual to the synchronous/pull iterator.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;This will make more sense once we see what it looks like to create an Observable:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_obserable_creation.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_obserable_creation-1024x791.jpg&#34; alt=&#34;rxjava_obserable_creation&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Here we&amp;rsquo;re creating an Observable that emits the data from a long-running operation performed by &lt;code&gt;userFetcher.fetchUsers()&lt;/code&gt;. Once &lt;code&gt;fetchUsers()&lt;/code&gt; returns with the Users, we call &lt;code&gt;onNext()&lt;/code&gt; on the &lt;code&gt;Subscriber&lt;/code&gt; that&amp;rsquo;s passed in to &lt;code&gt;call()&lt;/code&gt; method. Recall that a Subscriber is just a consumer of asynchronous data, so by calling &lt;code&gt;onNext()&lt;/code&gt;, we are passing the users we&amp;rsquo;ve fetched to the &lt;code&gt;Subscriber&lt;/code&gt;. This call to &lt;code&gt;onNext()&lt;/code&gt; as the asynchronous analog to the iterator&amp;rsquo;s &lt;code&gt;next()&lt;/code&gt; method.&lt;/p&gt;
-
-&lt;p&gt;You&amp;rsquo;ll notice that there&amp;rsquo;s another call after &lt;code&gt;onNext()&lt;/code&gt;: its the &lt;code&gt;onComplete()&lt;/code&gt; call. This tells the &lt;code&gt;Subscriber&lt;/code&gt;s that the asynchronous data stream has reached its end. This call is the asynchronous analogue of the iterator&amp;rsquo;s &lt;code&gt;hasNext()&lt;/code&gt; method returning false.&lt;/p&gt;
-
-&lt;p&gt;Finally, note that if there&amp;rsquo;s an exception thrown by the method that fetches the users, we call &lt;code&gt;onError()&lt;/code&gt;. This, of course, is the asynchronous analog of the iterator throwing an exception while processing synchronous data.&lt;/p&gt;
-
-&lt;p&gt;Alright, so hopefully at this point, we know what this means:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/we_know_rxjava_is_observer_plus_iterator.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/we_know_rxjava_is_observer_plus_iterator-1024x791.jpg&#34; alt=&#34;we_know_rxjava_is_observer_plus_iterator&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;But we still don&amp;rsquo;t know this:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/still_dont_know_functional.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/still_dont_know_functional-1024x791.jpg&#34; alt=&#34;still_dont_know_functional&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;When I say &amp;ldquo;functional transformation,&amp;rdquo; I&amp;rsquo;m using &amp;ldquo;functional&amp;rdquo; in the same sense that its used when people talk about functional programming. Functional transformations are transformations of data that don&amp;rsquo;t rely on any data outside of the function that does the transformation and that don&amp;rsquo;t have any side effects. We perform transformations of data all the time, but those transformations might not count as functional.&lt;/p&gt;
-
-&lt;p&gt;If you&amp;rsquo;ve ever written a filter for an list adapter, you&amp;rsquo;ve probably had to do a transformation of the unfiltered data. Here&amp;rsquo;s what this looks like in the Android Source&amp;rsquo;s implementation of filtering for the &lt;code&gt;ArrayAdapter&lt;/code&gt; class:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/functional_transformations_are_not_new.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/functional_transformations_are_not_new-e1434712869664-1024x792.jpg&#34; alt=&#34;functional_transformations_are_not_new&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This transformation, however, is not entirely functional. Its true that this method is creating a new Array to hold the filtered values rather than modifying the array of original values. This makes performFiltering() semi-functional since it doesn&amp;rsquo;t modify data outside of the method. However, because this method relies on data from outside of the function, it fails to be an entirely functional transformation of the unfiltered values.&lt;/p&gt;
-
-&lt;p&gt;RxJava, on the other hand, does perform completely functional transformations of asynchronous data. Here&amp;rsquo;s what that looks like:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/functional_transformations_are_not_new-e1434712869664.jpg&#34;&gt;
-&lt;/a&gt; &lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_full_on_functional_real.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_full_on_functional_real-e1434713514839-1024x300.jpg&#34; alt=&#34;rxjava_full_on_functional_real&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Here we&amp;rsquo;re creating an &lt;code&gt;Observable&lt;/code&gt; out of an array. We then transform the data stream emitted by this &lt;code&gt;Observable&lt;/code&gt; by calling &lt;code&gt;filter()&lt;/code&gt; on the Observable created from the array. &lt;code&gt;filter()&lt;/code&gt; takes a function that returns whether the items emitted by the source &lt;code&gt;Observable&lt;/code&gt; should be included in the transformed data-stream. In this case, the function passed into &lt;code&gt;filter()&lt;/code&gt; will return true for &amp;ldquo;Going Global with Google Play&amp;rdquo; and false for &amp;ldquo;Keynote,&amp;rdquo; so the former and not the latter will be emitted by the &lt;code&gt;Observable&lt;/code&gt; returned by &lt;code&gt;filter()&lt;/code&gt; and consumed by the &lt;code&gt;Subscriber&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The filter call is a functional transformation because the original Observable that was created from the array is not modified and because the &lt;code&gt;Func1&lt;/code&gt; that performs the filtering operation does not operate on any data that exists outside of &lt;code&gt;Func1&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;These functional transformations are called &amp;ldquo;operators&amp;rdquo;, and their functional nature is what allows us to chain together multiple operators to shape the asynchronous data stream so that it can be conveniently consumed by a &lt;code&gt;Subscriber&lt;/code&gt;. We&amp;rsquo;ll see what this chaining looks like later.&lt;/p&gt;
-
-&lt;p&gt;At this point, if I&amp;rsquo;ve done my job right, you should know that this means:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/know_observable_subscriber_operators.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/know_observable_subscriber_operators-1024x791.jpg&#34; alt=&#34;know_observable_subscriber_operators&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;We still don&amp;rsquo;t know, however, how RxJava let&amp;rsquo;s us create and consume asynchronous data streams on any thread. This is accomplished through &lt;code&gt;Schedulers&lt;/code&gt; and this is how &lt;code&gt;Schedulers&lt;/code&gt; are applied to &lt;code&gt;Observables&lt;/code&gt; and &lt;code&gt;Subscribers&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/schedulers.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/schedulers-e1434714320163-1024x443.jpg&#34; alt=&#34;schedulers&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;The key lines here are the &lt;code&gt;subscribeOn()&lt;/code&gt; and &lt;code&gt;observeOn()&lt;/code&gt; lines. These lines take &lt;code&gt;Schedulers&lt;/code&gt; that determine the threads on which asynchronous data is created and consumed, respectively. We pass a &lt;code&gt;Scheduler&lt;/code&gt; to &lt;code&gt;subscribeOn()&lt;/code&gt; that schedules the asynchronous data to be created on a background io thread and we pass a &lt;code&gt;Scheduler&lt;/code&gt; to the &lt;code&gt;observeOn()&lt;/code&gt; method that ensures that the asynchronous data is consumed on the main thread.&lt;/p&gt;
-
-&lt;p&gt;One quick thing to note here is that the &lt;code&gt;AndroidSchedulers.mainThread()&lt;/code&gt; method is not actually a part of RxJava. Its a part of &lt;a href=&#34;https://github.com/ReactiveX/RxAndroid&#34;&gt;RxAndroid&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;At this point, you should be in a pretty good position to understand all of my initial statement of what RxJava does:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/we_know_it_all1.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/we_know_it_all1-1024x791.jpg&#34; alt=&#34;we_know_it_all&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;And now that you understand what RxJava is, you can understand how its able to make quick work of a task like the one I described in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/12/an-introduction-to-rxjava-for-android/&#34;&gt;the first post in this series&lt;/a&gt;. Recall that the task was to execute a query from a &lt;code&gt;SearchView&lt;/code&gt; within an &lt;code&gt;Actionbar&lt;/code&gt; only if that query consisted of three characters and only if there was at least a 100 millisecond delay before any additional characters were typed into the SearchView.&lt;/p&gt;
-
-&lt;p&gt;This functionality exists already in Google&amp;rsquo;s iosched app. Here is a reimplementation of that functionality using RxJava:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/teaser_solution.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/teaser_solution-e1434715009899-1024x717.jpg&#34; alt=&#34;teaser_solution&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;m only going to explain parts of this snippet, but if you want to check out the full source, you can do that &lt;a href=&#34;https://github.com/kmdupr33/iosched/tree/feature/rxjava_rewrite&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Note that there are several operators here that I didn&amp;rsquo;t mention before, namely, &lt;code&gt;debouce()&lt;/code&gt; and &lt;code&gt;map()&lt;/code&gt;. RxJava has &lt;a href=&#34;https://github.com/ReactiveX/RxJava/wiki/Alphabetical-List-of-Observable-Operators&#34;&gt;a ton of operators&lt;/a&gt;, so be sure to check them all out. The &lt;code&gt;debounce()&lt;/code&gt; operator is what allows us to only execute a search on a query only if there&amp;rsquo;s been a 100 millisecond delay after the last text change in the query string.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;filter()&lt;/code&gt; operator here is only used to make sure that there is a fragment available to display the data fetched from the search, but we could have easily added another &lt;code&gt;filter()&lt;/code&gt; operator that would check the length of the query string.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;map()&lt;/code&gt; operators transform the data emitted by their source &lt;code&gt;Observable&lt;/code&gt;. The first &lt;code&gt;map()&lt;/code&gt; operator converts the query string into an intent created from that query string. The second &lt;code&gt;map()&lt;/code&gt; operator converts that intent into a &lt;code&gt;Bundle&lt;/code&gt; that can be used by the &lt;code&gt;SessionsFragment&lt;/code&gt; to load the appropriate sessions (based on the original query string).&lt;/p&gt;
-
-&lt;p&gt;If I&amp;rsquo;ve done my job right, hopefully now you know what RxJava is and why its awesome! Feel free to point out anything that was unclear or inaccurate.&lt;/p&gt;</description>
     </item>
     
   </channel>

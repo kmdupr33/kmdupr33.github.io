@@ -9,6 +9,88 @@
     <atom:link href="http://philosophicalhacker.com/tags/testing/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Why we Should Probably Write More Tests for Our Android Apps</title>
+      <link>http://philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/</link>
+      <pubDate>Mon, 07 Nov 2016 07:36:45 -0500</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/</guid>
+      <description>
+
+&lt;p&gt;This past weekend, I had the privilege of speaking about writing testable Android apps &lt;a href=&#34;https://devfestflorida.org/speakers/12/&#34;&gt;at Florida DevFest&lt;/a&gt;. This post is a written version of one of the major points I made in my presentation.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start off with two descriptions of attitudes towards testing. The first comes from Kaushik Goupal (he&amp;rsquo;s describing an attitude, not endorsing it):&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Testing seems to be like going to gym. Everyone feels like &amp;ldquo;yeah. I should be testing. I should be going to the gym everyday.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;Koushik Goupal, Fragmented Episode 1 12:01&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The second comes from &lt;em&gt;Pragmatic Programmer&lt;/em&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Your signature should come to be recognized as an indicator of quality. People should see your name on a piece of code and expect it to be solid, well written, tested, and documented. A really professional job. Written by a real professional. A Pragmatic Programmer.&lt;/p&gt;
+
+&lt;p&gt;Andrew Hunt and Dave Thomas, Pragmatic Programmer&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Which attitude is right? Is automated testing a nice-to-have or is it an integral part of a software engineer&amp;rsquo;s work. I think that its the latter. Here&amp;rsquo;s why.&lt;/p&gt;
+
+&lt;h3 id=&#34;for-most-of-us-good-code-is-changeable-code&#34;&gt;For most of us, Good Code is Changeable Code&lt;/h3&gt;
+
+&lt;p&gt;Dan North, the &amp;ldquo;BDD&amp;rdquo; creator and core contributor of rspec, has an interesting perspective on what we&amp;rsquo;re doing as software engineers. He says,&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;goal of software delivery is to minimise the lead time to business impact. Everything else is detail.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This view is a bit too strong in my opinion, but it does get one thing right: good code is changeable code. Suppose you ship an app that is performant and beautiful and that many of your users love it. Your boss says, &amp;ldquo;this is great, but lets add a feature and change this other behavior.&amp;rdquo; If you&amp;rsquo;re response is, &amp;ldquo;Well, the code is spaghetti. Its hard to understand and I&amp;rsquo;m not confident that I won&amp;rsquo;t break things when I make changes,&amp;rdquo; you&amp;rsquo;re boss is going to be disappointed.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;For most of us, I don&amp;rsquo;t think that claim will seem controversial. If you&amp;rsquo;re working on a pet project or a prototype that isn&amp;rsquo;t going to need to survive multiple iterations, I&amp;rsquo;m not really including you in the &amp;ldquo;us&amp;rdquo; here.&lt;/p&gt;
+
+&lt;h3 id=&#34;for-most-of-us-changeable-code-is-tested-code&#34;&gt;For most of us, Changeable Code is Tested Code&lt;/h3&gt;
+
+&lt;p&gt;Say you agree that good code is changeable code. What does that have to do with tests? Well, for most of us, tests are the only practical way of minimizing the time it takes to change our software.&lt;/p&gt;
+
+&lt;p&gt;When I say &amp;ldquo;us&amp;rdquo; here, I&amp;rsquo;m talking about professional software engineers of average intelligence who are working on fairly large projects. I&amp;rsquo;m not that smart, so I make mistakes when I write code, especially if the codebase I&amp;rsquo;m working on is large. If you&amp;rsquo;re much smarter than me and/or you&amp;rsquo;re working on a smaller project, this argument doesn&amp;rsquo;t really apply.&lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s two reasons why changeable code is tested code.&lt;/p&gt;
+
+&lt;p&gt;First, writing unit tests for your code actually helps you write better code. I think this is an under-appreciated benefit of writing unit tests for your code. Steve Freeman and Nat Pryce have a nice way of explaining why this is true:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;for a class to be easy to unit-test, the class must…be loosely coupled and highly cohesive —in other words, well-designed.&lt;/p&gt;
+
+&lt;p&gt;Steve Freeman and Nat Pryce, Growing Object Oriented Software Guided by Tests&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I think its uncontroversial that loose coupling and high cohesion are properties that make it easier to change code.&lt;/p&gt;
+
+&lt;p&gt;Second, writing tests (unit or otherwise) allow us to make changes without having to worry that we&amp;rsquo;ve broken something. Mark Zuckerberg painted a really powerful picture of this in his recent &amp;ldquo;How to build the Future Interview:&amp;rdquo;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;We invest in this huge testing framework…engineers here have the power to try out an idea and ship it to maybe 10,000 people or 100,000 people.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Imagine that. Engineers can build a feature and ship it with confidence.&lt;sup&gt;2&lt;/sup&gt; That&amp;rsquo;s possible because of automated testing.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;If good code is changeable code and if changeable code is tested code, then we should probably write more automated tests for our Android apps. Automated tests aren&amp;rsquo;t a nice to have. They&amp;rsquo;re integral to writing good apps.&lt;/p&gt;
+
+&lt;p&gt;One quick caveat: A lot of folks seem to think that there&amp;rsquo;s less reason to write tests when you&amp;rsquo;re working with a startup because you&amp;rsquo;re trying to move quickly. I can imagine extreme circumstances where that might make sense, but once you get the hang of writing tests and writing testable software, writing tests don&amp;rsquo;t take that long. Because of this, I think that refraining from writing tests as a startup can often be an exercise in short-term thinking. In fact, I &lt;a href=&#34;http://www.philosophicalhacker.com/post/tdd-and-startups/&#34;&gt;think the argument for automated testing in a startup&lt;/a&gt; is even more compelling than it is for developers working on an established product.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;I actually suspect that the business value of writing well-architected, readable code ultimately reduces to the value of being able to change code in response to users needs, but that point isn&amp;rsquo;t essential to the argument I&amp;rsquo;m making.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;The context of this quote actually has more to do with a/b testing that regression testing, but regression testing plays a big role in Facebook&amp;rsquo;s ability to move quickly. Facebook has invested heavily in automated testing by, for example, employing Kent Beck, the guy who popularized TDD.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>3 Ways of &#39;Getting to Green&#39;</title>
       <link>http://philosophicalhacker.com/post/3-ways-of-getting-to-green/</link>
       <pubDate>Sun, 16 Oct 2016 22:38:44 -0400</pubDate>
@@ -1560,70 +1642,6 @@ We try to make sure that we always create a valid object…Partially creating an
 &lt;hr /&gt;
 
 &lt;p&gt;Below, Hannes Dorfmann has a great comment to this article. I&amp;rsquo;ve responded to that &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Unit Testing Dynamically Constructed Views</title>
-      <link>http://philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/</link>
-      <pubDate>Sat, 06 Jun 2015 11:08:03 +0000</pubDate>
-      
-      <guid>http://philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/</guid>
-      <description>&lt;p&gt;Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&amp;rsquo;ve fetched or in response to some input. The &lt;code&gt;SessionDetailActivity&lt;/code&gt; in Google&amp;rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the &lt;code&gt;SessionDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34; alt=&#34;IO Testing Talk-04&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;In this screenshot, the &amp;ldquo;Distribute,&amp;rdquo; &amp;ldquo;Android,&amp;rdquo; and &amp;ldquo;Games&amp;rdquo; tags are added to the view hierarchy based on the tags associated with the &amp;rdquo;Going global with Google Play&amp;rdquo; IO session. In this post, I&amp;rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the &lt;code&gt;SesisonDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;As &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;I&amp;rsquo;ve stated elsewhere&lt;/a&gt;, dependency injection is key to making our apps unit testable. Because the MVP pattern allows us to inject dependencies into Presenters, objects which contain much of our app&amp;rsquo;s business logic, the pattern plays a key role in making our apps unit testable in general. Unsurprisingly, the pattern also plays a role in helping us write unit testable dynamically constructed views.&lt;/p&gt;
-
-&lt;p&gt;If you&amp;rsquo;re not familiar with MVP, you should check out &lt;a href=&#34;https://corner.squareup.com/2014/10/advocating-against-android-fragments.html&#34;&gt;this post&lt;/a&gt; in which Square talks about how they use MVP to get rid of fragments and to facilitate unit testing. &lt;a href=&#34;http://hannesdorfmann.com/android/mosby/&#34;&gt;This post&lt;/a&gt; in which Hannes Dorfmann introduces a library he wrote to facilitate the application of the MVP pattern also contains a decent introduction to the pattern.&lt;/p&gt;
-
-&lt;p&gt;Before I outline my approach to refactoring the &lt;code&gt;SessionDetailActivity&lt;/code&gt; so that we can have unit testable, view constructing code, let&amp;rsquo;s try to get a handle on how the &lt;code&gt;SessionDetailActivity&lt;/code&gt;works without any kind of refactoring. Here&amp;rsquo;s what the code currently looks like:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/0560695307233112cf3f.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;There are few important things to notice about this code fragment.&lt;/p&gt;
-
-&lt;p&gt;First, note that there&amp;rsquo;s business logic that &lt;em&gt;determines the structure of the view hierarchy that&amp;rsquo;s being built&lt;/em&gt; by this method. For example, if one of the tags has an id that&amp;rsquo;s equal to the keynote speaker tag id, we don&amp;rsquo;t want to add a view to the tags container for that tag (lines 18-31). Let&amp;rsquo;s call this kind of business logic &amp;ldquo;view-hierarchy-affecting business logic.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Also note that there&amp;rsquo;s business logic that determines the properties of the views that have been added by the view-hierarchy-affecting business logic. More specifically, it contains code that determines how the &lt;em&gt;how the app should respond when the user interacts with the views that are a part of the dynamically constructed view hierarchy&lt;/em&gt;. Here I have in mind the piece of the method that set&amp;rsquo;s up the tag view&amp;rsquo;s &lt;code&gt;OnClickListener&lt;/code&gt; to show them a list of IO sessions that have the tag associated with the tag view the user selected (lines 55 - 64). Let&amp;rsquo;s call this kind of business logic &amp;ldquo;view-property-affecting business logic.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;The problem of creating unit testable, dynamically constructed views is basically the problem of finding sensible places to put these two different kinds of business logic. Here&amp;rsquo;s what I suggest, the view-hierarchy-affecting business logic should go in a &lt;code&gt;SessionDetailPresenter&lt;/code&gt;:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/a0cef94a26e88f4f5ecf.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;The &lt;code&gt;SessionDetailActivity&lt;/code&gt; in this code segment is acting as the View within the MVP triad, and as such, it should not contain any business logic. Thus, we know that the view-property-affecting business logic should not be within the &lt;code&gt;SessionDetailActivity&lt;/code&gt;. Instead of placing the view-property affecting business logic within the &lt;code&gt;SessionDetailActivity&lt;/code&gt;, we have the &lt;code&gt;SessionDetailActivity&lt;/code&gt; delegate that logic out to another View-Presenter pair:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/49428a2fcaf71df555f0.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;The &amp;ldquo;SessionTagViewTranslator&amp;rdquo; in this code segment is really just the View within the View-Presenter pair. For reasons that I discuss &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/05/dont-call-it-mvp/&#34;&gt;here&lt;/a&gt;, I prefer the name &amp;ldquo;ViewTranslator&amp;rdquo; over &amp;ldquo;View&amp;rdquo; because it more clearly marks the difference between an MVP View and an Android View. Astute readers will notice that the SessionDetailActivity shouldn&amp;rsquo;t be responsible for forwarding the click event on the view to the TagPresenter. This problem arises because of a circular dependency between MVP Views and Presenters. I&amp;rsquo;ll discuss how to break this dependency in my next post. The &lt;code&gt;TagPresenter&lt;/code&gt; is fairly trivial, but here&amp;rsquo;s what it looks like:&lt;/p&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/fd03667d4593eff59b1a.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;The SesionTagViewTranslator is even more trivial, so I won&amp;rsquo;t bother showing the code for that.&lt;/p&gt;
-
-&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;To sum it all up: dynamically constructed views often have two different types of business logic: view-hierarchy-affecting business logic and view-property-affecting business logic. Making these views unit testable consists of two steps: First, place the view-hierarchy-affecting business logic in a top level presenter like the &lt;code&gt;SessionDetailPresenter&lt;/code&gt;. Second have an MVP-View (like the &lt;code&gt;SessionDetailActivity&lt;/code&gt;) create View-Presenter pairs for each Android view that&amp;rsquo;s added to the view hierarchy.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Against Android Unit Tests:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Why Android Unit Testing is so Hard: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;How to Make Our Android Apps Unit Testable: &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;part 1&lt;/a&gt;, &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;part 2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/&#34;&gt;Quick Summary&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;Followup: Summary&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;Followup: Unit Testing Dynamically Constructed Views&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/&#34;&gt;Followup: Testing in Android Studio 1.2&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;</description>
     </item>
     
   </channel>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" Why we Should Probably Write More Tests for Our Android Apps &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2016-11-07T07:36:45-05:00" />
+
+    
+    <meta property="og:article:tag" content="android" />
+    
+    <meta property="og:article:tag" content="testing" />
+    
+    
+
+  <title>
+     Why we Should Probably Write More Tests for Our Android Apps &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.17" />
+
+    <link rel="canonical" href="http://philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+<header class="main-header post-head no-cover">
+  <nav class="main-nav clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">Why we Should Probably Write More Tests for Our Android Apps</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2016-11-07T07:36:45-05:00">
+            Nov 7, 2016
+          </time>
+        
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<p>This past weekend, I had the privilege of speaking about writing testable Android apps <a href="https://devfestflorida.org/speakers/12/">at Florida DevFest</a>. This post is a written version of one of the major points I made in my presentation.</p>
+
+<p>Let&rsquo;s start off with two descriptions of attitudes towards testing. The first comes from Kaushik Goupal (he&rsquo;s describing an attitude, not endorsing it):</p>
+
+<blockquote>
+<p>Testing seems to be like going to gym. Everyone feels like &ldquo;yeah. I should be testing. I should be going to the gym everyday.&rdquo;</p>
+
+<p>Koushik Goupal, Fragmented Episode 1 12:01</p>
+</blockquote>
+
+<p>The second comes from <em>Pragmatic Programmer</em>:</p>
+
+<blockquote>
+<p>Your signature should come to be recognized as an indicator of quality. People should see your name on a piece of code and expect it to be solid, well written, tested, and documented. A really professional job. Written by a real professional. A Pragmatic Programmer.</p>
+
+<p>Andrew Hunt and Dave Thomas, Pragmatic Programmer</p>
+</blockquote>
+
+<p>Which attitude is right? Is automated testing a nice-to-have or is it an integral part of a software engineer&rsquo;s work. I think that its the latter. Here&rsquo;s why.</p>
+
+<h3 id="for-most-of-us-good-code-is-changeable-code">For most of us, Good Code is Changeable Code</h3>
+
+<p>Dan North, the &ldquo;BDD&rdquo; creator and core contributor of rspec, has an interesting perspective on what we&rsquo;re doing as software engineers. He says,</p>
+
+<blockquote>
+<p>goal of software delivery is to minimise the lead time to business impact. Everything else is detail.</p>
+</blockquote>
+
+<p>This view is a bit too strong in my opinion, but it does get one thing right: good code is changeable code. Suppose you ship an app that is performant and beautiful and that many of your users love it. Your boss says, &ldquo;this is great, but lets add a feature and change this other behavior.&rdquo; If you&rsquo;re response is, &ldquo;Well, the code is spaghetti. Its hard to understand and I&rsquo;m not confident that I won&rsquo;t break things when I make changes,&rdquo; you&rsquo;re boss is going to be disappointed.<sup>1</sup></p>
+
+<p>For most of us, I don&rsquo;t think that claim will seem controversial. If you&rsquo;re working on a pet project or a prototype that isn&rsquo;t going to need to survive multiple iterations, I&rsquo;m not really including you in the &ldquo;us&rdquo; here.</p>
+
+<h3 id="for-most-of-us-changeable-code-is-tested-code">For most of us, Changeable Code is Tested Code</h3>
+
+<p>Say you agree that good code is changeable code. What does that have to do with tests? Well, for most of us, tests are the only practical way of minimizing the time it takes to change our software.</p>
+
+<p>When I say &ldquo;us&rdquo; here, I&rsquo;m talking about professional software engineers of average intelligence who are working on fairly large projects. I&rsquo;m not that smart, so I make mistakes when I write code, especially if the codebase I&rsquo;m working on is large. If you&rsquo;re much smarter than me and/or you&rsquo;re working on a smaller project, this argument doesn&rsquo;t really apply.</p>
+
+<p>There&rsquo;s two reasons why changeable code is tested code.</p>
+
+<p>First, writing unit tests for your code actually helps you write better code. I think this is an under-appreciated benefit of writing unit tests for your code. Steve Freeman and Nat Pryce have a nice way of explaining why this is true:</p>
+
+<blockquote>
+<p>for a class to be easy to unit-test, the class must…be loosely coupled and highly cohesive —in other words, well-designed.</p>
+
+<p>Steve Freeman and Nat Pryce, Growing Object Oriented Software Guided by Tests</p>
+</blockquote>
+
+<p>I think its uncontroversial that loose coupling and high cohesion are properties that make it easier to change code.</p>
+
+<p>Second, writing tests (unit or otherwise) allow us to make changes without having to worry that we&rsquo;ve broken something. Mark Zuckerberg painted a really powerful picture of this in his recent &ldquo;How to build the Future Interview:&rdquo;</p>
+
+<blockquote>
+<p>We invest in this huge testing framework…engineers here have the power to try out an idea and ship it to maybe 10,000 people or 100,000 people.</p>
+</blockquote>
+
+<p>Imagine that. Engineers can build a feature and ship it with confidence.<sup>2</sup> That&rsquo;s possible because of automated testing.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>If good code is changeable code and if changeable code is tested code, then we should probably write more automated tests for our Android apps. Automated tests aren&rsquo;t a nice to have. They&rsquo;re integral to writing good apps.</p>
+
+<p>One quick caveat: A lot of folks seem to think that there&rsquo;s less reason to write tests when you&rsquo;re working with a startup because you&rsquo;re trying to move quickly. I can imagine extreme circumstances where that might make sense, but once you get the hang of writing tests and writing testable software, writing tests don&rsquo;t take that long. Because of this, I think that refraining from writing tests as a startup can often be an exercise in short-term thinking. In fact, I <a href="http://www.philosophicalhacker.com/post/tdd-and-startups/">think the argument for automated testing in a startup</a> is even more compelling than it is for developers working on an established product.</p>
+
+<h3 id="notes">Notes:</h3>
+
+<ol>
+<li><p>I actually suspect that the business value of writing well-architected, readable code ultimately reduces to the value of being able to change code in response to users needs, but that point isn&rsquo;t essential to the argument I&rsquo;m making.</p></li>
+
+<li><p>The context of this quote actually has more to do with a/b testing that regression testing, but regression testing plays a big role in Facebook&rsquo;s ability to move quickly. Facebook has invested heavily in automated testing by, for example, employing Kent Beck, the guy who popularized TDD.</p></li>
+</ol>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+        
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Why%20we%20Should%20Probably%20Write%20More%20Tests%20for%20Our%20Android%20Apps&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-we-should-probably-write-more-tests-for-our-android-apps%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-we-should-probably-write-more-tests-for-our-android-apps%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-we-should-probably-write-more-tests-for-our-android-apps%2f&amp;description=Why%20we%20Should%20Probably%20Write%20More%20Tests%20for%20Our%20Android%20Apps"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-we-should-probably-write-more-tests-for-our-android-apps%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/philosophicalhacker.com\/post\/why-we-should-probably-write-more-tests-for-our-android-apps\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+
