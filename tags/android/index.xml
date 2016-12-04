@@ -9,6 +9,188 @@
     <atom:link href="http://philosophicalhacker.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>What makes Android Apps Testable?</title>
+      <link>http://philosophicalhacker.com/post/what-makes-android-apps-testable/</link>
+      <pubDate>Sat, 03 Dec 2016 18:16:18 -0500</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/what-makes-android-apps-testable/</guid>
+      <description>
+
+&lt;p&gt;This post is a continuation of my attempt to reproduce &lt;a href=&#34;https://devfestflorida.org/schedule/day1?sessionId=113&#34;&gt;my recent DevFest talk&lt;/a&gt; in written form.&lt;/p&gt;
+
+&lt;h3 id=&#34;penrose-steps-dr-jekyll-mr-hyde-and-android-testing&#34;&gt;Penrose Steps, Dr. Jekyll/Mr. Hyde, and Android Testing&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say you&amp;rsquo;re sold on the importance of testing. (If not, maybe check out &lt;a href=&#34;http://philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/&#34;&gt;this article&lt;/a&gt;.) Let&amp;rsquo;s say you actually start using the junit dependency that&amp;rsquo;s been sitting in your build.gradle file and try to write your first test. I suspect that you&amp;rsquo;re going to find yourself in a kind of &amp;ldquo;penrose steps situation.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;The penrose steps, shown above, is an impossible structure. Penrose steps cannot exist in 3d space. What&amp;rsquo;s interesting about the 2d image of penrose steps, however, is that its not immediately obvious that what is being depicted is impossible.&lt;/p&gt;
+
+&lt;p&gt;Something similar can happen when we go to start writing tests for our code. We look at our code and we think, &amp;ldquo;I can totally write tests for this.&amp;rdquo; Upon further inspection, however, we realize. &amp;ldquo;Oh wait. This is actually impossible.&amp;rdquo; This penrose steps experience isn&amp;rsquo;t limited to Android developers:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Something nearly everyone notices when they try to write tests for existing code is just how poorly suited code is to testing.&lt;/p&gt;
+
+&lt;p&gt;&amp;ndash; Michael Feathers, Working Effectively with Legacy Code&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Testing support for Android has gotten a lot better in the past couple of years, but I think that actually attempting to use the testing tools that are now available for Android has helped us realize that our apps aren&amp;rsquo;t actually structured in a way that makes testing easy and in some cases, our architectures simply make it impossible to test our code.&lt;/p&gt;
+
+&lt;p&gt;This mismatch between our good intentions and our poorly structured apps can lead us to a kind of Dr. Jekyll and Mr. Hyde situation.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/dr-jekyll-poster.jpg&#34; alt=&#34;Dr Jekyll Poster&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Dr. Jekyll was a good dude, but he was messing with something he didn&amp;rsquo;t understand and that led him to transform into Mr. Hyde, the guy that does unspeakable things. Similarly, developers who want to test their code have good intentions, but if they don&amp;rsquo;t understand what makes code testable, they can do unspeakably (terrible) things to a codebase.&lt;/p&gt;
+
+&lt;p&gt;Case in point: &lt;a href=&#34;https://github.com/google/iosched/blob/2015/android/src/main/java/com/google/samples/apps/iosched/framework/PresenterFragmentImpl.java#L185&#34;&gt;The google 2015 I/O app&lt;/a&gt; contains a particularly egregious violation of the principle of single responsibility:&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PresenterFragmentImpl&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; Presenter&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; UpdatableView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;UserActionListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+        LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; cursorLoader &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; createLoader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; args&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderStarted&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                               Cursor data&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        processData&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; data&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This code snippet mixes production code and test code. That&amp;rsquo;s pretty unfortunate.&lt;/p&gt;
+
+&lt;h3 id=&#34;what-makes-software-testable&#34;&gt;What Makes Software Testable?&lt;/h3&gt;
+
+&lt;p&gt;To avoid Penrose steps and Dr. Jekyll scenarios while we&amp;rsquo;re trying to write tests for our Android apps, its helpful to have an answer to the question, &amp;ldquo;What makes Software Testable?&amp;rdquo; This picture suggests a metaphor for thinking about the answer to that question, a metaphor that I stole from Michal Feathers:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/seam.png&#34; alt=&#34;a seam in jeans pant leg&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If we want to change the appearance of this piece of fabric, we have two options: we could just directly apply whatever changes we want to the pieces of fabric that are joined at the seam. Another option, however, is to undo the seam and replace one piece of fabric with another.&lt;/p&gt;
+
+&lt;p&gt;Similarly, when we want to change the behavior of code for testing purposes, we have two options: we can directly apply our changes to the particular source file or we can use what Feather&amp;rsquo;s calls a &amp;ldquo;seam&amp;rdquo; to change the code&amp;rsquo;s behavior. Here&amp;rsquo;s how Feathers defines a seam:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;A seam is a place where you can alter behavior in your program without editing in that place.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Perhaps the easiest way of fleshing out this concept of a seam to see what it feels like to try to write tests for code that has no seams. Say we wanted to write code for a piece of functionality in the Google I/O app:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/settings.png&#34; alt=&#34;settings screen&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This toggle determines whether the google I/O calendar should be synced to the user&amp;rsquo;s personal calendar. Here&amp;rsquo;s the code for it:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onSharedPreferenceChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SharedPreferences sharedPrefs&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                            String key&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PREF_SYNC_CALENDAR&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;key&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        Intent intent&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;shouldSyncCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getActivity&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Add all calendar entries&lt;/span&gt;
+            intent &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Intent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ACTION_UPDATE_ALL_SESSIONS_CALENDAR&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Remove all calendar entries&lt;/span&gt;
+            intent &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Intent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ACTION_CLEAR_ALL_SESSIONS_CALENDAR&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+        intent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setClass&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getActivity&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; SessionCalendarService&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        getActivity&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;startService&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intent&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Let&amp;rsquo;s start writing our test for it:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onSharedPreferenceChangedRemovesSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Arrange&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Act&lt;/span&gt;
+    mSettingsFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onSharedPreferencesChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mMockSharedPreferences&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                  PREF_SYNC_CALENDAR&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Assert&lt;/span&gt;
+
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As the test method name implies, we want to test that &lt;code&gt;onSharedPreferencesChnaged&lt;/code&gt; removes the calendar sessions appropriately.&lt;sup&gt;2&lt;/sup&gt; We need to make sure the the &lt;code&gt;else&lt;/code&gt; branch of the above &lt;code&gt;if-else&lt;/code&gt; statement gets executed. To do that, we need to make sure that &lt;code&gt;SettingsUtils.shouldSyncCalendar(getActivity())&lt;/code&gt; returns false, but we can&amp;rsquo;t just go to the declaration of &lt;code&gt;SettingsUtils.shouldSyncCalendar&lt;/code&gt; and change the code so that it returns false. &lt;em&gt;We need to change behavior of our code without editing it &amp;ldquo;in place.&amp;rdquo;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the thing: because &lt;code&gt;SettingsUtils.shouldSyncCalendar&lt;/code&gt; is a static method, we can&amp;rsquo;t actually do this. There is no seam for us to exploit here. &lt;em&gt;If you code doesn&amp;rsquo;t have seams, you&amp;rsquo;re going to find it difficult to arrange in your tests.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Notice, moreover, that we can&amp;rsquo;t assert in this test either. How can we assert that an Android &lt;code&gt;Service&lt;/code&gt; has been launched? There&amp;rsquo;s no straightforward way to do this, which is why &lt;a href=&#34;https://developer.android.com/reference/android/support/test/espresso/intent/Intents.html&#34;&gt;the Intent class&lt;/a&gt; exists within espresso. What we need here is to be able to change the behavior of &lt;code&gt;Context.startService&lt;/code&gt; so that it records that a service has been started, but we can&amp;rsquo;t. Obviously, we can&amp;rsquo;t edit the &lt;code&gt;Context.startService&lt;/code&gt; method and we have no control over the &lt;code&gt;Context&lt;/code&gt; returned by &lt;code&gt;getActivity&lt;/code&gt;. We&amp;rsquo;ll see why that would create a seam later, but the important thing to note here is that &lt;em&gt;if you code doesn&amp;rsquo;t have seams, you&amp;rsquo;re going to find it difficult to assert in your tests.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Suppose instead that the settings toggle code looked like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;CalendarUpdatingOnSharedPreferenceChangedListener&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onPreferenceChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;CalendarPreferences calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                             String key&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PREF_SYNC_CALENDAR&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;key&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;shouldSyncCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;                mSessUpdaterLauncher&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;launchAddAllSessionsUpdater&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mSessUpdaterLauncher&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;launchClearAllSessionsUpdate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Notice that we&amp;rsquo;ve replaced a static method call with an instance method call. Notice also that the details of how the &lt;code&gt;SessionCalendarService&lt;/code&gt; is started is hidden behind a call to &lt;code&gt;mSessUpdateerLauncher.launchClearAllSessionsUpdate()&lt;/code&gt;. These two changes let us arrange and assert in our unit test:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onPreferenceChangedClearedCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Arrange&lt;/span&gt;
+    CUOSPCListener listener
+            &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; CUOSPCListener&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mSessionUpdateLauncher&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; CalendarPreferences calendarPreferences
+            &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;CalendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    when&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;shouldSyncCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;thenReturn&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Act&lt;/span&gt;
+    listener&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onPreferenceChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                 SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PREF_SYNC_CALENDAR&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Assert&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mSessionUpdateLauncher&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;launchClearAllSessionsUpdate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The changes we made to our code gave us seams that we exploited in our unit test. Using mockito&lt;sup&gt;3&lt;/sup&gt;, we changed the behavior of &lt;code&gt;calendarPreferences.shouldSyncCalendar()&lt;/code&gt; so that it returns false without going to the declaration of &lt;code&gt;CalendarPreferences.shouldSyncCalendar&lt;/code&gt; and editing it. We also used mockito to swap out a standard &lt;code&gt;SessionUpdaterLauncher&lt;/code&gt; with an implementation that records that a particular method has been called. This, of course, is what allows us to assert in our test with &lt;code&gt;verify&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The seams we&amp;rsquo;ve just created here are called &amp;ldquo;object seams,&amp;rdquo; and they&amp;rsquo;re something that I&amp;rsquo;ll cover more explicitly in my next post.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;If you&amp;rsquo;re sold on testing, but you don&amp;rsquo;t understand what makes code testable, you can wind up trying to do the impossible: test untestable code. You may also wind up doing terrible things to your code base to try to add tests. You can avoid these situations by understanding what makes code testable. Testable code has seams, and without those seams, you&amp;rsquo;re going to find it difficult to arrange and/or assert in your tests.&lt;/p&gt;
+
+&lt;h2 id=&#34;notes&#34;&gt;Notes:&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Thankfully, it looks like they may have fixed this in &lt;a href=&#34;https://github.com/google/iosched&#34;&gt;the 2016 version of the Google I/O app&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;This behavior may actually be too trivial to test in real life, but its makes for a simple example.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Of course, using mockito to accomplish this isn&amp;rsquo;t absolutely necessary.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Why we Should Probably Write More Tests for Our Android Apps</title>
       <link>http://philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/</link>
       <pubDate>Mon, 07 Nov 2016 07:36:45 -0500</pubDate>
@@ -1788,111 +1970,6 @@ That’s open to dispute. [Is] a presenter...in an invalid state without a View
 &lt;p&gt;By now, you can probably guess what I would say to Hannes&amp;rsquo; first argument: I would deny its first premise. I would say, in other words, that there&amp;rsquo;s something fishy about the circular dependency between an &lt;code&gt;Activity&lt;/code&gt; and its &lt;code&gt;Button&lt;/code&gt; in the first place and I think there&amp;rsquo;s something fishy about it, regardless of whether the &lt;code&gt;Button&lt;/code&gt; programs against an interface. Whether the &lt;code&gt;Button&lt;/code&gt; programs against an interface has nothing to do with the fact that, in the context of our application, it has a dependency on a click listener and that setting an &lt;code&gt;Activity&lt;/code&gt; as a Button&amp;rsquo;s click listener makes it more difficult for the button to have a different click listener, a difficulty we might want to avoid if we want to take full advantage of polymorphism in implementing ui-related business logic.&lt;/p&gt;
 
 &lt;p&gt;Regardless of whether I&amp;rsquo;m right or wrong to criticize the circular dependency between Activities/Presenters and their Views, I&amp;rsquo;ve learned a lot by thinking about this and by engaging with Hannes in this discussion. So thanks, Hannes, and thanks to everyone who takes the time to make thoughtful comments on what I&amp;rsquo;ve written. I owe you.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>MVPR: A Flexible, Testable Architecture for Android (Pt. 1)</title>
-      <link>http://philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/</link>
-      <pubDate>Tue, 07 Jul 2015 18:29:16 +0000</pubDate>
-      
-      <guid>http://philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/</guid>
-      <description>&lt;blockquote&gt;Thorough unit testing helps us improve the internal quality because, to be tested, a unit has to be structured to run outside the system in a test fixture. A unit test for an object needs to create the object, provide its dependencies, interact with it, and check that it behaved as expected. So, for a class to be easy to unit-test, the class must have explicit dependencies that can easily be substituted and clear responsibilities that can easily be invoked and verified. In software engineering terms, that means that the code must be loosely coupled and highly cohesive —in other words, well-designed.
-
-Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&lt;/blockquote&gt;
-
-&lt;p&gt;Lately, I&amp;rsquo;ve been working towards making Google&amp;rsquo;s IO app unit testable. A part of the reason I&amp;rsquo;m doing this is to test the claims that Freeman and Pryce make in the above quotation about unit testing. Although I&amp;rsquo;m still not even done with refactoring one Activity in Google&amp;rsquo;s IOSched app, I&amp;rsquo;m already finding some truth to what they&amp;rsquo;re saying.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;Activity&lt;/code&gt; that I&amp;rsquo;ve been working on is the &lt;code&gt;SessionDetailActivity&lt;/code&gt;. If you&amp;rsquo;ve been following me for a while, you know exactly what Activity I&amp;rsquo;m talking about, but if you&amp;rsquo;re tuning in the first time, here&amp;rsquo;s what the &lt;code&gt;SessionDetailActivity&lt;/code&gt; UI looks like:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34; alt=&#34;IO Testing Talk-04&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;As I mentioned in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;the post that introduced this series&lt;/a&gt;, there have been several challenges to making the &lt;code&gt;SessionDetailActivity&lt;/code&gt; unit testable. Unit testing its dynamically constructed views was a challenge that I discussed in &lt;a href=&#34;http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/&#34;&gt;my last post in this series&lt;/a&gt;, but in that post, I noted that my strategy for testing dynamically constructed views wasn&amp;rsquo;t entirely clean because of a circular dependency between &lt;code&gt;Views&lt;/code&gt; and &lt;code&gt;Presenters&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;This circular dependency is a symptom of a larger problem with how we structure our Android applications: both &lt;code&gt;Activities&lt;/code&gt; and &lt;code&gt;Presenters&lt;/code&gt; violate the principle of single responsibility. They are often responsible for at least two things: binding data to a &lt;code&gt;View&lt;/code&gt; and responding to user input. This is a part of the reason why &lt;a href=&#34;https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/SessionDetailActivity.java&#34;&gt;the &lt;code&gt;SessionDetailActivity&lt;/code&gt;&lt;/a&gt;, a class that&amp;rsquo;s supposed to serve as a model for Android development, is over 1000 lines long.&lt;/p&gt;
-
-&lt;p&gt;I think there&amp;rsquo;s a better way to structure our applications. In the next few posts, I&amp;rsquo;ll propose a new architecture that has the following properties:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;It breaks up the multiple responsibilities typically handled by &lt;code&gt;Presenters&lt;/code&gt; and &lt;code&gt;Activities&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;It breaks the circular dependency that traditionally exists between Views on the one hand and Activities or Presenters on the other hand.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;It enables us to use constructor dependency injection for all of our objects that present data to the user and respond to user input.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;It makes our ui-related business logic classes easier to unit test, impossible to construct without the dependencies necessary to fulfill their responsibilities, and (slightly) more amenable to the use of composition and polymorphism to extend and/or modify object behavior.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;In this post, I will try to give some reasons why we might consider a new architecture for Android development in the first place.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;why-a-new-architecture&#34;&gt;Why a New Architecture?&lt;/h2&gt;
-
-&lt;h3 id=&#34;activities-fragments-presenters-can-become-bloated&#34;&gt;Activities/Fragments/Presenters can become Bloated&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;Activities&lt;/code&gt; and &lt;code&gt;Fragments&lt;/code&gt; (I&amp;rsquo;m just going say &amp;ldquo;Activities&amp;rdquo; from now on, but what I say applies equally to &lt;code&gt;Fragments&lt;/code&gt;.) are egregious violators of the principle of single responsibility. At Droidcon Montreal, Richa Khandelwal &lt;a href=&#34;https://speakerdeck.com/richk/clean-android-architecture&#34;&gt;listed the responsibilities&lt;/a&gt; that often wind up in an &lt;code&gt;Activity&lt;/code&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Handle View Events&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Update Model&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Invoke another View&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Interact with System Components&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Handle System Events&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Update View based on System Events&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;As Richa shows later in the presentation, many of these responsibilities can be moved out of Activities, but even if we do that, Activities still violate the principle of single responsibility. Even the slimmest Activities are still responsible for binding a model&amp;rsquo;s data to the View and for responding to user input. Here&amp;rsquo;s an example:&lt;/p&gt;
-
-&lt;p&gt;The SessionDetailActivity in Google&amp;rsquo;s IOSched app is actually a good example of how bloated an Activity can get even if its only concerned with the two responsibilities of binding data to views and responding to user input. ~70% of the 1000+ lines of SessionDetailActivity are only concerned with these two responsibilities, so even if we moved all other code out of the SessionDetailActivity, we&amp;rsquo;d still have a class that&amp;rsquo;s about 700 lines long. Don&amp;rsquo;t believe me? Take a look at &lt;a href=&#34;https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/SessionDetailActivity.java&#34;&gt;the source code&lt;/a&gt;. Presenters can become bloated for the same reason an Activity does: Presenters are typically responsible for binding data to a View and for responding to user input, so a Presenter would be just as long as an Activity that&amp;rsquo;s slimmed down by removing all of its other extra responsibilities. &lt;/p&gt;
-
-&lt;h3 id=&#34;activities-fragments-presenters-often-have-a-circular-dependency-on-their-views&#34;&gt;Activities/Fragments/Presenters often have a Circular Dependency on their Views&lt;/h3&gt;
-
-&lt;p&gt;Activities typically fulfill their responsibilities of binding data to views and responding to user input by creating a circular dependency between themselves and the Views that make up their Content View (i.e., the view passed in to the setContentView() method). There&amp;rsquo;s a piece of code in the same gist that I showed above that provides an example of this.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;SessionDetailActivity&lt;/code&gt; has a reference to &lt;code&gt;mAddScheduleButton&lt;/code&gt; and &lt;code&gt;mAddSchedule&lt;/code&gt; button has a reference to &lt;code&gt;SessionDetailActivity&lt;/code&gt;. As we&amp;rsquo;ll see later, this circular dependency limits the approaches we can take to implementing the UI-related business logic that&amp;rsquo;s typically found in Activities.&lt;/p&gt;
-
-&lt;p&gt;MVP Presenters have basically the same circular dependency between themselves and their Views. Before I can explain this in more detail, I have to make a brief distinction between MVP-Views and Android-Views.&lt;/p&gt;
-
-&lt;p&gt;An MVP-View, as I&amp;rsquo;m defining it, is just an object that&amp;rsquo;s a part of the MVP triad. It&amp;rsquo;s typically defined as an interface, and it may be implemented by an Activity, Fragment, or an Android-View. An Android-View, as the name implies, is a class that is a part of the Android framework. More specifically, it&amp;rsquo;s a subclass of the &lt;code&gt;View&lt;/code&gt; class.&lt;/p&gt;
-
-&lt;p&gt;Using MVP-Views and Presenters just recreates virtually the same circular dependency between MVP-Views and Presenters that exists between Android-Views and Activities.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/CircularDependency-011.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/CircularDependency-011-300x222.png&#34; alt=&#34;CircularDependency-01&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/CircularDependency-021.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/CircularDependency-021-300x222.png&#34; alt=&#34;CircularDependency-02&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Presenters need MVP-Views so that they can bind data to the MVP-View. The MVP-View needs a reference to the Presenter so that it can forward clicks and other ui-related events to the Presenter. Square&amp;rsquo;s &lt;a href=&#34;https://corner.squareup.com/2014/10/advocating-against-android-fragments.html&#34;&gt;post against Fragments&lt;/a&gt; has an MVP implementation that exhibits this circular dependency. Hannes Dorfmann&amp;rsquo;s &lt;a href=&#34;http://hannesdorfmann.com/android/mosby/&#34;&gt;post introducing his library to help implement MVP&lt;/a&gt; also has some code that has this circular dependency.&lt;/p&gt;
-
-&lt;p&gt;Circular dependencies pose a problem when you try to construct objects for unit testing (or in general). However, typically, we don&amp;rsquo;t see the circular dependency between MVP-Views and Presenters or Activities and their Android-Views as a problem because Activities and Fragments are instantiated by the system and because we don&amp;rsquo;t usually use dependency injection to inject an Activity and/or Fragment&amp;rsquo;s dependencies. Instead, we just instantiate whatever dependences the Activity needs in onCreate():&lt;/p&gt;
-
-&lt;p&gt;Instantiating concrete classes of our dependencies in onCreate(), however, limits our ability to use composition and polymorphism to implement our ui-related business logic. Here&amp;rsquo;s an example where you might wish you could use polymorphism to implement ui-related business logic: Suppose your implementing an application that has users. Suppose further that the users have different privileges based on the level they attain. They might attain higher levels by verifying an email or by answering a question that others users have asked (StackOverflow style). Finally, suppose that the user interface that&amp;rsquo;s presented to the user is largely dependent on the level they have attained as a user. We might imagine that there a many buttons that do different things depending on the level the user has achieved or that the initial state of the view depends on the user&amp;rsquo;s level.&lt;/p&gt;
-
-&lt;p&gt;Polymorphism provides us with a clean, scalable way to implement this kind of logic: we can have a Presenter for each level the user can attain. Regardless of the level the user has attained, we can pass the same MVP-View to into a particular Presenter subclass and let that particular subclass appropriately handle clicks or present the initial UI based on the user&amp;rsquo;s level. Of course, there are ways of architecting Android apps so that we can take advantage of polymorphism in spite of the circular dependency between Presenters and MVP-Views, but none of the approaches that I&amp;rsquo;ve seen are particularly pretty, nor do they do a great job of facilitating unit testing. &lt;/p&gt;
-
-&lt;p&gt;I don&amp;rsquo;t have the space here to go over all of those different solutions that I have in mind, but I can briefly say why one easy way of resolving the circular dependency between MVP-Views and Presenters is not ideal. You might think that we can just create an MVP-View or Presenter without the dependencies they need to fulfill their responsibilities. We could, in other words, do something like this:&lt;/p&gt;
-
-&lt;p&gt;This would allow us to use polymorphism to solve problems like the one I mentioned above, but it doesn&amp;rsquo;t really break the circular dependency between MVP-Views and Presenters. All it does is allow us to create an object in an invalid state. This isn&amp;rsquo;t cleanest solution. To put the point in Freeman and Pryce&amp;rsquo;s words:&lt;/p&gt;
-
-&lt;blockquote&gt;“New or new not, there is no try”
-
-We try to make sure that we always create a valid object…Partially creating an object and then finishing it off by setting its properties is brittle…&lt;/blockquote&gt;
-
-&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;Presenters and Activities violate the principle of single responsibility. They are often responsible for binding data to a View and for responding to user input/actions. This can cause both Activities and Presenters to become bloated.&lt;/p&gt;
-
-&lt;p&gt;Presenters and Activities often carry out their multiple responsibilities by creating a circular dependency between themselves and their Views. Although this circular reference doesn&amp;rsquo;t appear to be a problem, it can make it more difficult to unit test our Views and/or Presenters and it can limit our ability to use polymorphism to implement ui-related business logic.&lt;/p&gt;
-
-&lt;p&gt;As I said before, I think there&amp;rsquo;s a way of structuring our applications that doesn&amp;rsquo;t have these disadvantages, and in the next post, I&amp;rsquo;ll go over this alternative architecture.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Below, Hannes Dorfmann has a great comment to this article. I&amp;rsquo;ve responded to that &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     
   </channel>

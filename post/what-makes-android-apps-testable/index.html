@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" What makes Android Apps Testable? &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://philosophicalhacker.com/post/what-makes-android-apps-testable/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2016-12-03T18:16:18-05:00" />
+
+    
+    <meta property="og:article:tag" content="android" />
+    
+    <meta property="og:article:tag" content="testing" />
+    
+    
+
+  <title>
+     What makes Android Apps Testable? &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.17" />
+
+    <link rel="canonical" href="http://philosophicalhacker.com/post/what-makes-android-apps-testable/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+  
+  <header class="main-header post-head" style="background-image: url(http://philosophicalhacker.com//images/ascending-and-descending-escher.jpg)">
+  
+  <nav class="main-nav overlay clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">What makes Android Apps Testable?</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2016-12-03T18:16:18-05:00">
+            Dec 3, 2016
+          </time>
+        
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<p>This post is a continuation of my attempt to reproduce <a href="https://devfestflorida.org/schedule/day1?sessionId=113">my recent DevFest talk</a> in written form.</p>
+
+<h3 id="penrose-steps-dr-jekyll-mr-hyde-and-android-testing">Penrose Steps, Dr. Jekyll/Mr. Hyde, and Android Testing</h3>
+
+<p>Let&rsquo;s say you&rsquo;re sold on the importance of testing. (If not, maybe check out <a href="/post/why-we-should-probably-write-more-tests-for-our-android-apps/">this article</a>.) Let&rsquo;s say you actually start using the junit dependency that&rsquo;s been sitting in your build.gradle file and try to write your first test. I suspect that you&rsquo;re going to find yourself in a kind of &ldquo;penrose steps situation.&rdquo;</p>
+
+<p>The penrose steps, shown above, is an impossible structure. Penrose steps cannot exist in 3d space. What&rsquo;s interesting about the 2d image of penrose steps, however, is that its not immediately obvious that what is being depicted is impossible.</p>
+
+<p>Something similar can happen when we go to start writing tests for our code. We look at our code and we think, &ldquo;I can totally write tests for this.&rdquo; Upon further inspection, however, we realize. &ldquo;Oh wait. This is actually impossible.&rdquo; This penrose steps experience isn&rsquo;t limited to Android developers:</p>
+
+<blockquote>
+<p>Something nearly everyone notices when they try to write tests for existing code is just how poorly suited code is to testing.</p>
+
+<p>&ndash; Michael Feathers, Working Effectively with Legacy Code</p>
+</blockquote>
+
+<p>Testing support for Android has gotten a lot better in the past couple of years, but I think that actually attempting to use the testing tools that are now available for Android has helped us realize that our apps aren&rsquo;t actually structured in a way that makes testing easy and in some cases, our architectures simply make it impossible to test our code.</p>
+
+<p>This mismatch between our good intentions and our poorly structured apps can lead us to a kind of Dr. Jekyll and Mr. Hyde situation.</p>
+
+<p><img src="/images/dr-jekyll-poster.jpg" alt="Dr Jekyll Poster" /></p>
+
+<p>Dr. Jekyll was a good dude, but he was messing with something he didn&rsquo;t understand and that led him to transform into Mr. Hyde, the guy that does unspeakable things. Similarly, developers who want to test their code have good intentions, but if they don&rsquo;t understand what makes code testable, they can do unspeakably (terrible) things to a codebase.</p>
+
+<p>Case in point: <a href="https://github.com/google/iosched/blob/2015/android/src/main/java/com/google/samples/apps/iosched/framework/PresenterFragmentImpl.java#L185">The google 2015 I/O app</a> contains a particularly egregious violation of the principle of single responsibility:<sup>1</sup></p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">PresenterFragmentImpl</span> <span style="color: #008000; font-weight: bold">extends</span> Fragment
+        <span style="color: #008000; font-weight: bold">implements</span> Presenter<span style="color: #666666">,</span> UpdatableView<span style="color: #666666">.</span><span style="color: #7D9029">UserActionListener</span><span style="color: #666666">,</span>
+        LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
+
+    <span style="color: #AA22FF">@Override</span>
+    <span style="color: #008000; font-weight: bold">public</span> Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #0000FF">onCreateLoader</span><span style="color: #666666">(</span><span style="color: #B00040">int</span> id<span style="color: #666666">,</span> Bundle args<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> cursorLoader <span style="color: #666666">=</span> createLoader<span style="color: #666666">(</span>id<span style="color: #666666">,</span> args<span style="color: #666666">);</span>
+<span style="background-color: #ffffcc">        mLoaderIdlingResource<span style="color: #666666">.</span><span style="color: #7D9029">onLoaderStarted</span><span style="color: #666666">(</span>cursorLoader<span style="color: #666666">);</span>
+</span>        <span style="color: #008000; font-weight: bold">return</span> cursorLoader<span style="color: #666666">;</span>
+    <span style="color: #666666">}</span>
+
+    <span style="color: #AA22FF">@Override</span>
+    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onLoadFinished</span><span style="color: #666666">(</span>Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> loader<span style="color: #666666">,</span>
+                               Cursor data<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        processData<span style="color: #666666">(</span>loader<span style="color: #666666">,</span> data<span style="color: #666666">);</span>
+<span style="background-color: #ffffcc">        mLoaderIdlingResource<span style="color: #666666">.</span><span style="color: #7D9029">onLoaderFinished</span><span style="color: #666666">(</span>loader<span style="color: #666666">);</span>
+</span>    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>This code snippet mixes production code and test code. That&rsquo;s pretty unfortunate.</p>
+
+<h3 id="what-makes-software-testable">What Makes Software Testable?</h3>
+
+<p>To avoid Penrose steps and Dr. Jekyll scenarios while we&rsquo;re trying to write tests for our Android apps, its helpful to have an answer to the question, &ldquo;What makes Software Testable?&rdquo; This picture suggests a metaphor for thinking about the answer to that question, a metaphor that I stole from Michal Feathers:</p>
+
+<p><img src="/images/seam.png" alt="a seam in jeans pant leg" /></p>
+
+<p>If we want to change the appearance of this piece of fabric, we have two options: we could just directly apply whatever changes we want to the pieces of fabric that are joined at the seam. Another option, however, is to undo the seam and replace one piece of fabric with another.</p>
+
+<p>Similarly, when we want to change the behavior of code for testing purposes, we have two options: we can directly apply our changes to the particular source file or we can use what Feather&rsquo;s calls a &ldquo;seam&rdquo; to change the code&rsquo;s behavior. Here&rsquo;s how Feathers defines a seam:</p>
+
+<blockquote>
+<p>A seam is a place where you can alter behavior in your program without editing in that place.</p>
+</blockquote>
+
+<p>Perhaps the easiest way of fleshing out this concept of a seam to see what it feels like to try to write tests for code that has no seams. Say we wanted to write code for a piece of functionality in the Google I/O app:</p>
+
+<p><img src="/images/settings.png" alt="settings screen" /></p>
+
+<p>This toggle determines whether the google I/O calendar should be synced to the user&rsquo;s personal calendar. Here&rsquo;s the code for it:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
+<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onSharedPreferenceChanged</span><span style="color: #666666">(</span>SharedPreferences sharedPrefs<span style="color: #666666">,</span>
+                            String key<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+
+    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">PREF_SYNC_CALENDAR</span><span style="color: #666666">.</span><span style="color: #7D9029">equals</span><span style="color: #666666">(</span>key<span style="color: #666666">))</span> <span style="color: #666666">{</span>
+        Intent intent<span style="color: #666666">;</span>
+        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">shouldSyncCalendar</span><span style="color: #666666">(</span>getActivity<span style="color: #666666">()))</span> <span style="color: #666666">{</span>
+            <span style="color: #408080; font-style: italic">// Add all calendar entries</span>
+            intent <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Intent<span style="color: #666666">(</span>ACTION_UPDATE_ALL_SESSIONS_CALENDAR<span style="color: #666666">);</span>
+        <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
+            <span style="color: #408080; font-style: italic">// Remove all calendar entries</span>
+            intent <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Intent<span style="color: #666666">(</span>ACTION_CLEAR_ALL_SESSIONS_CALENDAR<span style="color: #666666">);</span>
+        <span style="color: #666666">}</span>
+
+        intent<span style="color: #666666">.</span><span style="color: #7D9029">setClass</span><span style="color: #666666">(</span>getActivity<span style="color: #666666">(),</span> SessionCalendarService<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">);</span>
+        getActivity<span style="color: #666666">().</span><span style="color: #7D9029">startService</span><span style="color: #666666">(</span>intent<span style="color: #666666">);</span>
+    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>Let&rsquo;s start writing our test for it:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
+<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onSharedPreferenceChangedRemovesSessions</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
+    <span style="color: #408080; font-style: italic">// Arrange</span>
+
+    <span style="color: #408080; font-style: italic">//Act</span>
+    mSettingsFragment<span style="color: #666666">.</span><span style="color: #7D9029">onSharedPreferencesChanged</span><span style="color: #666666">(</span>mMockSharedPreferences<span style="color: #666666">,</span>
+                                  PREF_SYNC_CALENDAR<span style="color: #666666">);</span>
+
+    <span style="color: #408080; font-style: italic">//Assert</span>
+
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>As the test method name implies, we want to test that <code>onSharedPreferencesChnaged</code> removes the calendar sessions appropriately.<sup>2</sup> We need to make sure the the <code>else</code> branch of the above <code>if-else</code> statement gets executed. To do that, we need to make sure that <code>SettingsUtils.shouldSyncCalendar(getActivity())</code> returns false, but we can&rsquo;t just go to the declaration of <code>SettingsUtils.shouldSyncCalendar</code> and change the code so that it returns false. <em>We need to change behavior of our code without editing it &ldquo;in place.&rdquo;</em></p>
+
+<p>Here&rsquo;s the thing: because <code>SettingsUtils.shouldSyncCalendar</code> is a static method, we can&rsquo;t actually do this. There is no seam for us to exploit here. <em>If you code doesn&rsquo;t have seams, you&rsquo;re going to find it difficult to arrange in your tests.</em></p>
+
+<p>Notice, moreover, that we can&rsquo;t assert in this test either. How can we assert that an Android <code>Service</code> has been launched? There&rsquo;s no straightforward way to do this, which is why <a href="https://developer.android.com/reference/android/support/test/espresso/intent/Intents.html">the Intent class</a> exists within espresso. What we need here is to be able to change the behavior of <code>Context.startService</code> so that it records that a service has been started, but we can&rsquo;t. Obviously, we can&rsquo;t edit the <code>Context.startService</code> method and we have no control over the <code>Context</code> returned by <code>getActivity</code>. We&rsquo;ll see why that would create a seam later, but the important thing to note here is that <em>if you code doesn&rsquo;t have seams, you&rsquo;re going to find it difficult to assert in your tests.</em></p>
+
+<p>Suppose instead that the settings toggle code looked like this:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">CalendarUpdatingOnSharedPreferenceChangedListener</span> <span style="color: #666666">{</span>
+
+    <span style="color: #B00040">void</span> <span style="color: #0000FF">onPreferenceChanged</span><span style="color: #666666">(</span>CalendarPreferences calendarPreferences<span style="color: #666666">,</span>
+                             String key<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+
+        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">PREF_SYNC_CALENDAR</span><span style="color: #666666">.</span><span style="color: #7D9029">equals</span><span style="color: #666666">(</span>key<span style="color: #666666">))</span> <span style="color: #666666">{</span>
+<span style="background-color: #ffffcc">            <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>calendarPreferences<span style="color: #666666">.</span><span style="color: #7D9029">shouldSyncCalendar</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
+</span>                mSessUpdaterLauncher<span style="color: #666666">.</span><span style="color: #7D9029">launchAddAllSessionsUpdater</span><span style="color: #666666">();</span>
+            <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
+<span style="background-color: #ffffcc">                mSessUpdaterLauncher<span style="color: #666666">.</span><span style="color: #7D9029">launchClearAllSessionsUpdate</span><span style="color: #666666">();</span>
+</span>            <span style="color: #666666">}</span>
+        <span style="color: #666666">}</span>
+    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>Notice that we&rsquo;ve replaced a static method call with an instance method call. Notice also that the details of how the <code>SessionCalendarService</code> is started is hidden behind a call to <code>mSessUpdateerLauncher.launchClearAllSessionsUpdate()</code>. These two changes let us arrange and assert in our unit test:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
+<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onPreferenceChangedClearedCalendar</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
+
+    <span style="color: #408080; font-style: italic">// Arrange</span>
+    CUOSPCListener listener
+            <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> CUOSPCListener<span style="color: #666666">(</span>mSessionUpdateLauncher<span style="color: #666666">);</span>
+
+    <span style="color: #008000; font-weight: bold">final</span> CalendarPreferences calendarPreferences
+            <span style="color: #666666">=</span> mock<span style="color: #666666">(</span>CalendarPreferences<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">);</span>
+<span style="background-color: #ffffcc">    when<span style="color: #666666">(</span>calendarPreferences<span style="color: #666666">.</span><span style="color: #7D9029">shouldSyncCalendar</span><span style="color: #666666">()).</span><span style="color: #7D9029">thenReturn</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">false</span><span style="color: #666666">);</span>
+</span>
+    <span style="color: #408080; font-style: italic">// Act</span>
+    listener<span style="color: #666666">.</span><span style="color: #7D9029">onPreferenceChanged</span><span style="color: #666666">(</span>calendarPreferences<span style="color: #666666">,</span>
+                                 SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">PREF_SYNC_CALENDAR</span><span style="color: #666666">);</span>
+
+    <span style="color: #408080; font-style: italic">// Assert</span>
+<span style="background-color: #ffffcc">    verify<span style="color: #666666">(</span>mSessionUpdateLauncher<span style="color: #666666">).</span><span style="color: #7D9029">launchClearAllSessionsUpdate</span><span style="color: #666666">();</span>
+</span><span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>The changes we made to our code gave us seams that we exploited in our unit test. Using mockito<sup>3</sup>, we changed the behavior of <code>calendarPreferences.shouldSyncCalendar()</code> so that it returns false without going to the declaration of <code>CalendarPreferences.shouldSyncCalendar</code> and editing it. We also used mockito to swap out a standard <code>SessionUpdaterLauncher</code> with an implementation that records that a particular method has been called. This, of course, is what allows us to assert in our test with <code>verify</code>.</p>
+
+<p>The seams we&rsquo;ve just created here are called &ldquo;object seams,&rdquo; and they&rsquo;re something that I&rsquo;ll cover more explicitly in my next post.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>If you&rsquo;re sold on testing, but you don&rsquo;t understand what makes code testable, you can wind up trying to do the impossible: test untestable code. You may also wind up doing terrible things to your code base to try to add tests. You can avoid these situations by understanding what makes code testable. Testable code has seams, and without those seams, you&rsquo;re going to find it difficult to arrange and/or assert in your tests.</p>
+
+<h2 id="notes">Notes:</h2>
+
+<ol>
+<li><p>Thankfully, it looks like they may have fixed this in <a href="https://github.com/google/iosched">the 2016 version of the Google I/O app</a>.</p></li>
+
+<li><p>This behavior may actually be too trivial to test in real life, but its makes for a simple example.</p></li>
+
+<li><p>Of course, using mockito to accomplish this isn&rsquo;t absolutely necessary.</p></li>
+</ol>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+        
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=What%20makes%20Android%20Apps%20Testable%3f&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhat-makes-android-apps-testable%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhat-makes-android-apps-testable%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhat-makes-android-apps-testable%2f&amp;description=What%20makes%20Android%20Apps%20Testable%3f"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhat-makes-android-apps-testable%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/philosophicalhacker.com\/post\/what-makes-android-apps-testable\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+
