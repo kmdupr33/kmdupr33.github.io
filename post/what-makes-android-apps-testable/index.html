@@ -308,7 +308,7 @@
 
 <p>The changes we made to our code gave us seams that we exploited in our unit test. Using mockito<sup>3</sup>, we changed the behavior of <code>calendarPreferences.shouldSyncCalendar()</code> so that it returns false without going to the declaration of <code>CalendarPreferences.shouldSyncCalendar</code> and editing it. We also used mockito to swap out a standard <code>SessionUpdaterLauncher</code> with an implementation that records that a particular method has been called. This, of course, is what allows us to assert in our test with <code>verify</code>.</p>
 
-<p>The seams we&rsquo;ve just created here are called &ldquo;object seams,&rdquo; and they&rsquo;re something that I&rsquo;ll cover more explicitly in my next post.</p>
+<p>The seams we&rsquo;ve just created here are called &ldquo;object seams,&rdquo; and they&rsquo;re something that I&rsquo;ll cover more explicitly in <a href="/post/object-seams-and-mvp-for-testability/">my next post</a>.</p>
 
 <h3 id="conclusion">Conclusion</h3>
 

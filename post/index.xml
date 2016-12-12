@@ -6,8 +6,107 @@
     <description>Recent content in Post-rsses on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 03 Dec 2016 18:16:18 -0500</lastBuildDate>
+    <lastBuildDate>Fri, 09 Dec 2016 18:29:54 -0500</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Object Seams and MVP for Testability</title>
+      <link>http://philosophicalhacker.com/post/object-seams-and-mvp-for-testability/</link>
+      <pubDate>Fri, 09 Dec 2016 18:29:54 -0500</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/object-seams-and-mvp-for-testability/</guid>
+      <description>
+
+&lt;p&gt;In &lt;a href=&#34;http://philosophicalhacker.com/post/what-makes-android-apps-testable/&#34;&gt;my last post&lt;/a&gt;, a continuation of a written version of the talk I gave at Florida dev fest, I tried to give an answer to the question, &amp;ldquo;What makes apps testable?&amp;rdquo; The answer: seams. Seams make apps testable, and in this post, I want to talk about a particular kind of seam: object seams.&lt;/p&gt;
+
+&lt;p&gt;The key insight behind object seams in this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The fundamental thing to recognize is that when we look at a call in an object-oriented program, it does not define which method will actually be executed.&lt;/p&gt;
+
+&lt;p&gt;-Michael Feathers, Working Effectively with Legacy Code&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;When we use this fact to modify the behavior of a particular piece of code without editing the code in that place, then we&amp;rsquo;re using an object seam. The refactoring I showed in my last post was an example of exploiting an object seam, but we&amp;rsquo;re going to look at another example.&lt;/p&gt;
+
+&lt;p&gt;Before we do that, however, I want to point out that dependency injection is one of the key ways&lt;sup&gt;1&lt;/sup&gt; that we create object seams. There still seems to be some confusion about dependency injection, so let me quickly try to clarify: Dependency injection is pattern; its not dagger or any other library.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a definition of dependency injection:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The code that needs dependencies is not responsible for getting them&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If that&amp;rsquo;s true of code that you&amp;rsquo;re writing, you&amp;rsquo;re using dependency injection.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;With this in mind, we&amp;rsquo;re now in a position to see something that I struggled to discover over a year ago when I wrote &lt;a href=&#34;http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;my series on posts on why android unit testing is hard&lt;/a&gt;: the reason MVP makes our apps more testable is because MVP creates object seams via dependency injection.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s see an example of this. Here&amp;rsquo;s a video of some functionality in the 2015 Google I/O app. Notice that when I first open the app, I&amp;rsquo;m presented with some cards that ask my preferences on a few things. Once I return to the app, however, those cards are no longer present.&lt;/p&gt;
+
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;//www.youtube.com/embed/RtGSl9h-SoE&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
+ &lt;/div&gt;
+
+
+&lt;p&gt;Here&amp;rsquo;s the relevant code for this functionality:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;setupCards&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;CollectionView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Inventory&lt;/span&gt; inventory&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isAttendeeAtVenue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getContext&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(!&lt;/span&gt;ConfMessageCardUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;hasAnsweredConfMessageCardsPrompt&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getContext&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;            inventoryGroup
+            &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; InventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;GROUP_ID_MESSAGE_CARDS&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+            MessageData conferenceMessageOptIn &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; MessageCardHelper
+                    &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getConferenceOptInMessageData&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getContext&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+            inventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addItemWithTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;conferenceMessageOptIn&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+            inventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setDisplayCols&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(1);&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            inventory&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addGroup&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;inventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// ...&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Take a look at the first two lines. Right away, we have a red flag: static methods. Every use of a static method is a missed opportunity to create an object seam. If we decide we need to unit test some of the code here, we&amp;rsquo;re going to have trouble arranging in our test code.&lt;/p&gt;
+
+&lt;p&gt;Look at that last line of code. In order to convince yourself that you really understand the concept of a seam, ask yourself, &amp;ldquo;Is there a seam at this line of code?&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;We can change the behavior of this particular line of code without editing the source file, so there is in fact a seam here. We can change the behavior of this line of code by passing in various subclasses of &lt;code&gt;CollectionView.Inventory&lt;/code&gt; to this method.&lt;/p&gt;
+
+&lt;p&gt;Ok, so we&amp;rsquo;ve got a mixed bag in terms of our seams. Let&amp;rsquo;s say we refactor this code to use MVP. Our presenter looks something like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;presentCards&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mIsAttendeeAtVenue&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(!&lt;/span&gt;mMsgSettings&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;hasAnsweredMessagePrompt&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mExploreView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addMessageOptInCard&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Stuff&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The view is one of the injected dependencies and we can easily verify that the appropriate method has been called in our tests. This is the main way in which MVP helps us write more testable code: all of the interaction with the UI can now be verified by swapping out the injected View with an implementation that records its interaction with the Presenter. In our case, this implementation is usually generated by mockito.&lt;/p&gt;
+
+&lt;p&gt;One other thing to notice here: we&amp;rsquo;ve replaced static method calls with calls to injected dependencies. This isn&amp;rsquo;t necessarily mandated by MVP, but its something that we need to do if want to make this code unit testable.&lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s another kind of seam that we haven&amp;rsquo;t explored yet: linking seams. Linking seams are created using build variants, and we&amp;rsquo;ll talk about those more in my next post.&lt;/p&gt;
+
+&lt;h2 id=&#34;notes&#34;&gt;Notes:&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Another way is by using inheritance. Feathers&amp;rsquo; Extract and Override Method, Push Down Dependencies, and Pull Up Dependencies techniques are three interesting ways of creating object seams using inheritance.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://martinfowler.com/articles/injection.html&#34;&gt;Martin Fowler&amp;rsquo;s article&lt;/a&gt; is the definitive source on DI. He basically coined the phrase.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>What makes Android Apps Testable?</title>
@@ -173,7 +272,7 @@
 
 &lt;p&gt;The changes we made to our code gave us seams that we exploited in our unit test. Using mockito&lt;sup&gt;3&lt;/sup&gt;, we changed the behavior of &lt;code&gt;calendarPreferences.shouldSyncCalendar()&lt;/code&gt; so that it returns false without going to the declaration of &lt;code&gt;CalendarPreferences.shouldSyncCalendar&lt;/code&gt; and editing it. We also used mockito to swap out a standard &lt;code&gt;SessionUpdaterLauncher&lt;/code&gt; with an implementation that records that a particular method has been called. This, of course, is what allows us to assert in our test with &lt;code&gt;verify&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;The seams we&amp;rsquo;ve just created here are called &amp;ldquo;object seams,&amp;rdquo; and they&amp;rsquo;re something that I&amp;rsquo;ll cover more explicitly in my next post.&lt;/p&gt;
+&lt;p&gt;The seams we&amp;rsquo;ve just created here are called &amp;ldquo;object seams,&amp;rdquo; and they&amp;rsquo;re something that I&amp;rsquo;ll cover more explicitly in &lt;a href=&#34;http://philosophicalhacker.com/post/object-seams-and-mvp-for-testability/&#34;&gt;my next post&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
 
@@ -1556,196 +1655,6 @@ vice&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34
 &lt;p&gt;Even if we recognize that writing these characterization tests is better than manual verification, writing them can be pretty soul-sucking. Keep in mind that we don&amp;rsquo;t need to move all of the logic out at once, so we don&amp;rsquo;t need to write all characterization tests at once.&lt;/p&gt;
 
 &lt;p&gt;Instead, we can identify various responsibilities that are carried out by our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s and plan to extract classes to handle those responsibilities. Once we have a clear picture of the class we want to extract from the &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt;, we can write characterization tests that will serve as a safety net for that single extraction, rather than attempting to write characterization tests for all the non-trivial methods in the &lt;code&gt;Activity&lt;/code&gt;/&lt;code&gt;Fragment&lt;/code&gt; we are refactoring.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Why we Should Stop Putting Logic in Activities</title>
-      <link>http://philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/</link>
-      <pubDate>Tue, 14 Jun 2016 23:13:00 -0400</pubDate>
-      
-      <guid>http://philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/</guid>
-      <description>
-
-&lt;p&gt;A while back, I wrote &lt;a href=&#34;www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;a series of articles about why unit testing Android apps is so difficult and what we can do to make our apps more unit testable&lt;/a&gt;. The upshot of the those articles is that dependency injection makes it easier to unit test our Android apps and we can&amp;rsquo;t get proper dependency injection just by using Dagger (or any other DI framework for that matter) to inject dependencies into our &lt;code&gt;Activity&lt;/code&gt;s (or &lt;code&gt;Fragment&lt;/code&gt;s). I already consider this reason enough to stop putting non-trivial logic in our &lt;code&gt;Activity&lt;/code&gt;s (or &lt;code&gt;Fragment&lt;/code&gt;s).&lt;/p&gt;
-
-&lt;p&gt;More recently, however, I noticed that putting non-trivial logic in our &lt;code&gt;Activity&lt;/code&gt;s (and &lt;code&gt;Fragment&lt;/code&gt;s) also makes &lt;em&gt;functional&lt;/em&gt; testing difficult. I noticed that &lt;a href=&#34;www.philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/&#34;&gt;google&amp;rsquo;s code sample contained code that mixed espresso test code with application code&lt;/a&gt;, and I couldn&amp;rsquo;t believe my eyes when I saw that the &lt;em&gt;the Google IO app&lt;/em&gt;, an app that&amp;rsquo;s supposed to serve as a model for Android developers, also &lt;a href=&#34;https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/framework/PresenterFragmentImpl.java#L84&#34;&gt;mixes espresso test code with application code&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;If putting logic in our &lt;code&gt;Activity&lt;/code&gt;s (or Frag&amp;hellip;) is going to make functional &lt;em&gt;and&lt;/em&gt; unit testing difficult, then we &lt;em&gt;all&lt;/em&gt; should really consider alternatives ways of structuring our apps. This isn&amp;rsquo;t just an issue for unit testing nerds anymore.&lt;/p&gt;
-
-&lt;p&gt;In this article, I argue that we should stop putting logic in our &lt;code&gt;Activity&lt;/code&gt;s. I&amp;rsquo;ve already shown that putting logic in our &lt;code&gt;Activity&lt;/code&gt;s makes them difficult to unit test, so I won&amp;rsquo;t repeat that point here. I will, however, try to show why putting logic in our &lt;code&gt;Activity&lt;/code&gt;s makes functional testing with espresso difficult. Spoiler: its difficult because we don&amp;rsquo;t have proper dependency injection in &lt;code&gt;Activity&lt;/code&gt;s. Next, drawing on &lt;a href=&#34;https://plus.google.com/+DianneHackborn/posts/FXCCYxepsDU&#34;&gt;some recent comments by Diane Hackborn&lt;/a&gt;, I suggest that &lt;code&gt;Activity&lt;/code&gt;s were never really designed for holding our app-logic in the first place.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/coffee-art.jpg&#34; alt=&#34;coffee art&#34; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;why-functional-testing-with-espresso-is-hard&#34;&gt;Why Functional Testing (with Espresso) is Hard&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s look at an (abbreviated) snippet of code from the Google IO app:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PresenterFragmentImpl&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; Presenter&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; UpdatableView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;UserActionListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-        LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;/**&lt;/span&gt;
-&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;   * The Idling Resources that manages the busy/idle state of the cursor loaders.&lt;/span&gt;
-&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;   */&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; LoaderIdlingResource mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-
-  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;/**&lt;/span&gt;
-&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;   * Returns the {@link LoaderIdlingResource} that allows the Espresso UI test framework to track&lt;/span&gt;
-&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;   * the idle/busy state of the cursor loaders used in the {@link Model}.&lt;/span&gt;
-&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;   */&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; LoaderIdlingResource &lt;span style=&#34;color: #0000FF&#34;&gt;getLoaderIdlingResource&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;  
-
-  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-        mLoaderIdlingResource &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-                &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getClass&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;/&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; getId&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; getLoaderManager&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-
-        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Load data queries if any.&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mInitialQueriesToLoad &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            LoaderManager manager &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; getLoaderManager&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0;&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt; mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt; i&lt;span style=&#34;color: #666666&#34;&gt;++)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                manager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;].&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;  
-
-  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-      Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; cursorLoader &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; createLoader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; args&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-      mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderStarted&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Cursor data&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-      processData&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; data&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-      mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;So, here we&amp;rsquo;re mixing espresso test code with application code. The reason the test code is mixed with application code is so that the espresso tests will &amp;ldquo;pause&amp;rdquo; while the data is being loaded during the functional UI tests. We can see that the &lt;code&gt;LoaderIdlingResource&lt;/code&gt; gets registered with the espresso tests here:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@RunWith&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AndroidJUnit4&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
-&lt;span style=&#34;color: #AA22FF&#34;&gt;@LargeTest&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;VideoLibraryActivityTest&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Before&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;setupMembersAndIdlingResource&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-      mPresenter &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;PresenterFragmentImpl&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; mActivityRule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getActivity&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt;
-              &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getFragmentManager&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;findFragmentByTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;BaseActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PRESENTER_TAG&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-      Espresso&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;registerIdlingResources&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mPresenter&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getLoaderIdlingResource&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;As I said in &lt;a href=&#34;www.philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/&#34;&gt;my PSA&lt;/a&gt;, mixing testing code with app code is gross. Unfortunately, separating the testing and application concerns in this case is not as simple as it was last time. In fact, I can understand why the engineers at Google decided to mix application code with test code in this case: it&amp;rsquo;s because separating the Espresso code from the application code is a lot of work!&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the gist of how we can start to salvage the situation. We need what &lt;a href=&#34;https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052&#34;&gt;Michael Feathers&lt;/a&gt; calls a &amp;ldquo;seam,&amp;rdquo; a way to change the behavior of our &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; without having to edit the source of the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; itself. When the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; is run inside a test, we want the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; to notify an espresso test when it&amp;rsquo;s done loading it&amp;rsquo;s data. Otherwise, we want the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; to load data normally. To get this seam, we extract the Loader callback code into its own class and use an instance of this class as the &lt;code&gt;LoaderCallbacks&lt;/code&gt; argument to the call to &lt;code&gt;initLoader&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; mLoaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-&lt;/span&gt;
-&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Load data queries if any.&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mInitialQueriesToLoad &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        LoaderManager manager &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; getLoaderManager&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0;&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt; mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt; i&lt;span style=&#34;color: #666666&#34;&gt;++)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            manager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;].&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;              &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; mLoaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// No data query to load, update the view.&lt;/span&gt;
-        mUpdatableView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayData&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mModel&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;CursorLoaderCallbacks&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// We&amp;#39;ve just moved the callback code that was in the Fragment into this class.&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Next, we provide an alternative implementation of &lt;code&gt;LoaderManager.LoaderCallbacks&lt;/code&gt; that we&amp;rsquo;ll use for our espresso tests. This implementation uses the decorator pattern, just like last time:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;EspressoNotifyingLoaderCallbacks&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; LoaderIdlingResource mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;EspressoNotifyingLoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;LoaderIdlingResource mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;mLoaderIdlingResource&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;loaderCallbacks&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; loaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; cursorLoader &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; loaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; args&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderStarted&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Cursor data&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        loaderCallbacks&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoadFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; data&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoaderReset&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Now, here&amp;rsquo;s where things get tricky. We need to figure out a way to inject the right implementation of &lt;code&gt;LoaderCallbacks&lt;/code&gt; into our &lt;code&gt;PresenterFragmentImpl&lt;/code&gt;. When we&amp;rsquo;re testing, we want an instance of &lt;code&gt;EspressoNotifyingLoaderCallbacks&lt;/code&gt;. When we running a normal application, we want a &lt;code&gt;CursorLoaderCallbacks&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the problem: the &lt;code&gt;EspressoNotifyingLoaderCallbacks&lt;/code&gt; has a &lt;code&gt;LoaderIdlingResource&lt;/code&gt;. &lt;code&gt;LoaderIdlingResource&lt;/code&gt; depends on an &lt;code&gt;Activity&lt;/code&gt;&amp;rsquo;s &lt;code&gt;LoaderManager&lt;/code&gt;, which means that we can&amp;rsquo;t create the &lt;code&gt;EspressoNotifyingLoaderCallbacks&lt;/code&gt; until &lt;em&gt;after&lt;/em&gt; the activity has been created.&lt;/p&gt;
-
-&lt;p&gt;We can&amp;rsquo;t afford to wait this long! We need the &lt;code&gt;EspressoNotifyingLoaderCallbacks&lt;/code&gt; to be injected into the &lt;code&gt;Activity&lt;/code&gt; before that &lt;code&gt;Activity&lt;/code&gt; adds the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt;, thereby triggering it&amp;rsquo;s lifecycle methods that create a &lt;code&gt;Loader&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Technically, in this particular case, we can inject the &lt;code&gt;EspressoNotifyingLoaderCallbacks&lt;/code&gt; into the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; before that Fragment is added to it&amp;rsquo;s hosting &lt;code&gt;Activity&lt;/code&gt;, but if we were trying to test logic in an &lt;code&gt;Activity&lt;/code&gt;, we&amp;rsquo;d be out of luck. Either way, moving our logic out of the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; would give us a cleaner way of separating our test code from our application code. I&amp;rsquo;ll attempt to show this cleaner separation in another post.&lt;/p&gt;
-
-&lt;p&gt;I can think of a few ways around this problem, but none of them seem particularly pretty. If we didn&amp;rsquo;t have any logic in our &lt;code&gt;Activity&lt;/code&gt; and &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; in the first place and if we placed that logic in a POJO that could make use of &lt;a href=&#34;http://misko.hevery.com/2009/02/19/constructor-injection-vs-setter-injection/&#34;&gt;constructor dependency injection&lt;/a&gt;, this would be much easier. We could just pass the &lt;code&gt;EspressoNotifyingLoaderCallbacks&lt;/code&gt; as a dependency to some POJO&amp;rsquo;s constructor. The &lt;code&gt;Activity&lt;/code&gt;, moreover, could just forward its lifecycle calls to that POJO, so that it would act appropriately.&lt;/p&gt;
-
-&lt;p&gt;So, the reason why functional testing with Android &lt;code&gt;Activity&lt;/code&gt;&amp;rsquo;s is so hard is the same reason why unit testing &lt;code&gt;Activity&lt;/code&gt;&amp;rsquo;s is hard: we can&amp;rsquo;t do proper dependency injection.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/architecture.jpg&#34; alt=&#34;building&#34; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;activities-weren-t-designed-for-app-logic&#34;&gt;Activities weren&amp;rsquo;t Designed for App Logic&lt;/h2&gt;
-
-&lt;p&gt;Diane Hackborn wrote an interesting post on Google Plus recently, and I think several of her comments suggest that &lt;code&gt;Activity&lt;/code&gt;&amp;rsquo;s were never really designed to be the home of our app-logic in the first place. Here&amp;rsquo;s one such comment:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;We often see questions from developers that are asking from the Android platform engineers about the kinds of design patterns and architectures they use in their apps.  But the answer, maybe surprisingly, is we often don&amp;rsquo;t have a strong opinion or really an opinion at all.&lt;/p&gt;
-
-&lt;p&gt;This may be surprising, because Android could feel like it has strong opinions on how apps should be written.  With its Java language APIs and fairly high-level concepts, it can look like a typical application framework that is there to say how applications should be doing their work.  But for the most part, it is not.&lt;/p&gt;
-
-&lt;p&gt;It is probably better to call the core Android APIs a &amp;ldquo;system framework.&amp;rdquo;  For the most part, the platform APIs we provide are there to define how an application interacts with the operating system; but for anything going on purely within the app, these APIs are often just not relevant.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Here&amp;rsquo;s another telling comment:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;In Android&amp;hellip;we explicitly decided we were not going to have a main() function, because we needed to give the platform more control over how an app runs&amp;hellip;To accomplish this, we decomposed the typical main entry point of an app into a few different types of interactions the system can have with it.  And these are the Activity, BroadcastReceiver, Service, and ContentProvider APIs that Android developers quickly become familiar with.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Together I take these two comments to mean something like this: &lt;code&gt;Activity&lt;/code&gt;&amp;rsquo;s are entry points to your application. That&amp;rsquo;s all we know. When we designed it we had no intentional at all as to whether you should put your app-logic within it. We don&amp;rsquo;t even have an opinion on whether this is a good idea.&lt;/p&gt;
-
-&lt;p&gt;After seeing that putting our logic in &lt;code&gt;Activity&lt;/code&gt;s makes unit and functional testing difficult, and after getting some insight into the intended design of &lt;code&gt;Activity&lt;/code&gt;s, I think we wouldn&amp;rsquo;t be crazy in thinking that putting app-logic in our &lt;code&gt;Activity&lt;/code&gt; makes about as much sense as putting app-logic in a main function of a java program.&lt;/p&gt;
-
-&lt;p&gt;Of course, I&amp;rsquo;m open to being wrong about any of this. I&amp;rsquo;m offering this argument mainly as a way of getting a conversation going in the community about best practices in Android development. I mostly just don&amp;rsquo;t want to open up the Google IO app for 2017 and see test code mixed in with application code. As long as we can agree on a way of avoiding that, I&amp;rsquo;ll be happy, even if I turn out to be wrong about this.&lt;/p&gt;
 </description>
     </item>
     

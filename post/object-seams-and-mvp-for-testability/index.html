@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" Object Seams and MVP for Testability &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://philosophicalhacker.com/post/object-seams-and-mvp-for-testability/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2016-12-09T18:29:54-05:00" />
+
+    
+    <meta property="og:article:tag" content="android" />
+    
+    <meta property="og:article:tag" content="testing" />
+    
+    
+
+  <title>
+     Object Seams and MVP for Testability &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.17" />
+
+    <link rel="canonical" href="http://philosophicalhacker.com/post/object-seams-and-mvp-for-testability/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+<header class="main-header post-head no-cover">
+  <nav class="main-nav clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">Object Seams and MVP for Testability</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2016-12-09T18:29:54-05:00">
+            Dec 9, 2016
+          </time>
+        
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<p>In <a href="/post/what-makes-android-apps-testable/">my last post</a>, a continuation of a written version of the talk I gave at Florida dev fest, I tried to give an answer to the question, &ldquo;What makes apps testable?&rdquo; The answer: seams. Seams make apps testable, and in this post, I want to talk about a particular kind of seam: object seams.</p>
+
+<p>The key insight behind object seams in this:</p>
+
+<blockquote>
+<p>The fundamental thing to recognize is that when we look at a call in an object-oriented program, it does not define which method will actually be executed.</p>
+
+<p>-Michael Feathers, Working Effectively with Legacy Code</p>
+</blockquote>
+
+<p>When we use this fact to modify the behavior of a particular piece of code without editing the code in that place, then we&rsquo;re using an object seam. The refactoring I showed in my last post was an example of exploiting an object seam, but we&rsquo;re going to look at another example.</p>
+
+<p>Before we do that, however, I want to point out that dependency injection is one of the key ways<sup>1</sup> that we create object seams. There still seems to be some confusion about dependency injection, so let me quickly try to clarify: Dependency injection is pattern; its not dagger or any other library.</p>
+
+<p>Here&rsquo;s a definition of dependency injection:</p>
+
+<blockquote>
+<p>The code that needs dependencies is not responsible for getting them</p>
+</blockquote>
+
+<p>If that&rsquo;s true of code that you&rsquo;re writing, you&rsquo;re using dependency injection.<sup>2</sup></p>
+
+<p>With this in mind, we&rsquo;re now in a position to see something that I struggled to discover over a year ago when I wrote <a href="/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">my series on posts on why android unit testing is hard</a>: the reason MVP makes our apps more testable is because MVP creates object seams via dependency injection.</p>
+
+<p>Let&rsquo;s see an example of this. Here&rsquo;s a video of some functionality in the 2015 Google I/O app. Notice that when I first open the app, I&rsquo;m presented with some cards that ask my preferences on a few things. Once I return to the app, however, those cards are no longer present.</p>
+
+
+<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/RtGSl9h-SoE" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
+ </div>
+
+
+<p>Here&rsquo;s the relevant code for this functionality:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">setupCards</span><span style="color: #666666">(</span>CollectionView<span style="color: #666666">.</span><span style="color: #7D9029">Inventory</span> inventory<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<span style="background-color: #ffffcc">    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">isAttendeeAtVenue</span><span style="color: #666666">(</span>getContext<span style="color: #666666">()))</span> <span style="color: #666666">{</span>
+</span><span style="background-color: #ffffcc">        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>ConfMessageCardUtils<span style="color: #666666">.</span><span style="color: #7D9029">hasAnsweredConfMessageCardsPrompt</span><span style="color: #666666">(</span>getContext<span style="color: #666666">()))</span> <span style="color: #666666">{</span>
+</span>            inventoryGroup
+            <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> InventoryGroup<span style="color: #666666">(</span>GROUP_ID_MESSAGE_CARDS<span style="color: #666666">);</span>
+            MessageData conferenceMessageOptIn <span style="color: #666666">=</span> MessageCardHelper
+                    <span style="color: #666666">.</span><span style="color: #7D9029">getConferenceOptInMessageData</span><span style="color: #666666">(</span>getContext<span style="color: #666666">());</span>
+            inventoryGroup<span style="color: #666666">.</span><span style="color: #7D9029">addItemWithTag</span><span style="color: #666666">(</span>conferenceMessageOptIn<span style="color: #666666">);</span>
+            inventoryGroup<span style="color: #666666">.</span><span style="color: #7D9029">setDisplayCols</span><span style="color: #666666">(1);</span>
+<span style="background-color: #ffffcc">            inventory<span style="color: #666666">.</span><span style="color: #7D9029">addGroup</span><span style="color: #666666">(</span>inventoryGroup<span style="color: #666666">);</span>
+</span>        <span style="color: #666666">}</span> <span style="color: #408080; font-style: italic">// ...</span>
+    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>Take a look at the first two lines. Right away, we have a red flag: static methods. Every use of a static method is a missed opportunity to create an object seam. If we decide we need to unit test some of the code here, we&rsquo;re going to have trouble arranging in our test code.</p>
+
+<p>Look at that last line of code. In order to convince yourself that you really understand the concept of a seam, ask yourself, &ldquo;Is there a seam at this line of code?&rdquo;</p>
+
+<p>We can change the behavior of this particular line of code without editing the source file, so there is in fact a seam here. We can change the behavior of this line of code by passing in various subclasses of <code>CollectionView.Inventory</code> to this method.</p>
+
+<p>Ok, so we&rsquo;ve got a mixed bag in terms of our seams. Let&rsquo;s say we refactor this code to use MVP. Our presenter looks something like this:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
+
+    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">presentCards</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+
+<span style="background-color: #ffffcc">        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>mIsAttendeeAtVenue<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+</span>
+<span style="background-color: #ffffcc">            <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>mMsgSettings<span style="color: #666666">.</span><span style="color: #7D9029">hasAnsweredMessagePrompt</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
+</span>
+<span style="background-color: #ffffcc">                mExploreView<span style="color: #666666">.</span><span style="color: #7D9029">addMessageOptInCard</span><span style="color: #666666">();</span>
+</span>
+            <span style="color: #666666">}</span> <span style="color: #408080; font-style: italic">// Stuff</span>
+        <span style="color: #666666">}</span>
+    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>The view is one of the injected dependencies and we can easily verify that the appropriate method has been called in our tests. This is the main way in which MVP helps us write more testable code: all of the interaction with the UI can now be verified by swapping out the injected View with an implementation that records its interaction with the Presenter. In our case, this implementation is usually generated by mockito.</p>
+
+<p>One other thing to notice here: we&rsquo;ve replaced static method calls with calls to injected dependencies. This isn&rsquo;t necessarily mandated by MVP, but its something that we need to do if want to make this code unit testable.</p>
+
+<p>There&rsquo;s another kind of seam that we haven&rsquo;t explored yet: linking seams. Linking seams are created using build variants, and we&rsquo;ll talk about those more in my next post.</p>
+
+<h2 id="notes">Notes:</h2>
+
+<ol>
+<li><p>Another way is by using inheritance. Feathers&rsquo; Extract and Override Method, Push Down Dependencies, and Pull Up Dependencies techniques are three interesting ways of creating object seams using inheritance.</p></li>
+
+<li><p><a href="http://martinfowler.com/articles/injection.html">Martin Fowler&rsquo;s article</a> is the definitive source on DI. He basically coined the phrase.</p></li>
+</ol>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+        
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Object%20Seams%20and%20MVP%20for%20Testability&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fobject-seams-and-mvp-for-testability%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fobject-seams-and-mvp-for-testability%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fobject-seams-and-mvp-for-testability%2f&amp;description=Object%20Seams%20and%20MVP%20for%20Testability"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fobject-seams-and-mvp-for-testability%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/philosophicalhacker.com\/post\/object-seams-and-mvp-for-testability\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+

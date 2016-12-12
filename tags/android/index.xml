@@ -9,6 +9,105 @@
     <atom:link href="http://philosophicalhacker.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Object Seams and MVP for Testability</title>
+      <link>http://philosophicalhacker.com/post/object-seams-and-mvp-for-testability/</link>
+      <pubDate>Fri, 09 Dec 2016 18:29:54 -0500</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/object-seams-and-mvp-for-testability/</guid>
+      <description>
+
+&lt;p&gt;In &lt;a href=&#34;http://philosophicalhacker.com/post/what-makes-android-apps-testable/&#34;&gt;my last post&lt;/a&gt;, a continuation of a written version of the talk I gave at Florida dev fest, I tried to give an answer to the question, &amp;ldquo;What makes apps testable?&amp;rdquo; The answer: seams. Seams make apps testable, and in this post, I want to talk about a particular kind of seam: object seams.&lt;/p&gt;
+
+&lt;p&gt;The key insight behind object seams in this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The fundamental thing to recognize is that when we look at a call in an object-oriented program, it does not define which method will actually be executed.&lt;/p&gt;
+
+&lt;p&gt;-Michael Feathers, Working Effectively with Legacy Code&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;When we use this fact to modify the behavior of a particular piece of code without editing the code in that place, then we&amp;rsquo;re using an object seam. The refactoring I showed in my last post was an example of exploiting an object seam, but we&amp;rsquo;re going to look at another example.&lt;/p&gt;
+
+&lt;p&gt;Before we do that, however, I want to point out that dependency injection is one of the key ways&lt;sup&gt;1&lt;/sup&gt; that we create object seams. There still seems to be some confusion about dependency injection, so let me quickly try to clarify: Dependency injection is pattern; its not dagger or any other library.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a definition of dependency injection:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The code that needs dependencies is not responsible for getting them&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If that&amp;rsquo;s true of code that you&amp;rsquo;re writing, you&amp;rsquo;re using dependency injection.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;With this in mind, we&amp;rsquo;re now in a position to see something that I struggled to discover over a year ago when I wrote &lt;a href=&#34;http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;my series on posts on why android unit testing is hard&lt;/a&gt;: the reason MVP makes our apps more testable is because MVP creates object seams via dependency injection.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s see an example of this. Here&amp;rsquo;s a video of some functionality in the 2015 Google I/O app. Notice that when I first open the app, I&amp;rsquo;m presented with some cards that ask my preferences on a few things. Once I return to the app, however, those cards are no longer present.&lt;/p&gt;
+
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;//www.youtube.com/embed/RtGSl9h-SoE&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
+ &lt;/div&gt;
+
+
+&lt;p&gt;Here&amp;rsquo;s the relevant code for this functionality:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;setupCards&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;CollectionView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Inventory&lt;/span&gt; inventory&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isAttendeeAtVenue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getContext&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(!&lt;/span&gt;ConfMessageCardUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;hasAnsweredConfMessageCardsPrompt&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getContext&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;            inventoryGroup
+            &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; InventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;GROUP_ID_MESSAGE_CARDS&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+            MessageData conferenceMessageOptIn &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; MessageCardHelper
+                    &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getConferenceOptInMessageData&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getContext&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+            inventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addItemWithTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;conferenceMessageOptIn&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+            inventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setDisplayCols&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(1);&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            inventory&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addGroup&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;inventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// ...&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Take a look at the first two lines. Right away, we have a red flag: static methods. Every use of a static method is a missed opportunity to create an object seam. If we decide we need to unit test some of the code here, we&amp;rsquo;re going to have trouble arranging in our test code.&lt;/p&gt;
+
+&lt;p&gt;Look at that last line of code. In order to convince yourself that you really understand the concept of a seam, ask yourself, &amp;ldquo;Is there a seam at this line of code?&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;We can change the behavior of this particular line of code without editing the source file, so there is in fact a seam here. We can change the behavior of this line of code by passing in various subclasses of &lt;code&gt;CollectionView.Inventory&lt;/code&gt; to this method.&lt;/p&gt;
+
+&lt;p&gt;Ok, so we&amp;rsquo;ve got a mixed bag in terms of our seams. Let&amp;rsquo;s say we refactor this code to use MVP. Our presenter looks something like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;presentCards&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mIsAttendeeAtVenue&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(!&lt;/span&gt;mMsgSettings&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;hasAnsweredMessagePrompt&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mExploreView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addMessageOptInCard&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;
+            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Stuff&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The view is one of the injected dependencies and we can easily verify that the appropriate method has been called in our tests. This is the main way in which MVP helps us write more testable code: all of the interaction with the UI can now be verified by swapping out the injected View with an implementation that records its interaction with the Presenter. In our case, this implementation is usually generated by mockito.&lt;/p&gt;
+
+&lt;p&gt;One other thing to notice here: we&amp;rsquo;ve replaced static method calls with calls to injected dependencies. This isn&amp;rsquo;t necessarily mandated by MVP, but its something that we need to do if want to make this code unit testable.&lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s another kind of seam that we haven&amp;rsquo;t explored yet: linking seams. Linking seams are created using build variants, and we&amp;rsquo;ll talk about those more in my next post.&lt;/p&gt;
+
+&lt;h2 id=&#34;notes&#34;&gt;Notes:&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Another way is by using inheritance. Feathers&amp;rsquo; Extract and Override Method, Push Down Dependencies, and Pull Up Dependencies techniques are three interesting ways of creating object seams using inheritance.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://martinfowler.com/articles/injection.html&#34;&gt;Martin Fowler&amp;rsquo;s article&lt;/a&gt; is the definitive source on DI. He basically coined the phrase.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>What makes Android Apps Testable?</title>
       <link>http://philosophicalhacker.com/post/what-makes-android-apps-testable/</link>
       <pubDate>Sat, 03 Dec 2016 18:16:18 -0500</pubDate>
@@ -172,7 +271,7 @@
 
 &lt;p&gt;The changes we made to our code gave us seams that we exploited in our unit test. Using mockito&lt;sup&gt;3&lt;/sup&gt;, we changed the behavior of &lt;code&gt;calendarPreferences.shouldSyncCalendar()&lt;/code&gt; so that it returns false without going to the declaration of &lt;code&gt;CalendarPreferences.shouldSyncCalendar&lt;/code&gt; and editing it. We also used mockito to swap out a standard &lt;code&gt;SessionUpdaterLauncher&lt;/code&gt; with an implementation that records that a particular method has been called. This, of course, is what allows us to assert in our test with &lt;code&gt;verify&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;The seams we&amp;rsquo;ve just created here are called &amp;ldquo;object seams,&amp;rdquo; and they&amp;rsquo;re something that I&amp;rsquo;ll cover more explicitly in my next post.&lt;/p&gt;
+&lt;p&gt;The seams we&amp;rsquo;ve just created here are called &amp;ldquo;object seams,&amp;rdquo; and they&amp;rsquo;re something that I&amp;rsquo;ll cover more explicitly in &lt;a href=&#34;http://philosophicalhacker.com/post/object-seams-and-mvp-for-testability/&#34;&gt;my next post&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
 
@@ -1879,96 +1978,6 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;Writing good Android apps can be very difficult. Don&amp;rsquo;t make it harder on yourself by repeating the mistakes I made. If you found a mistake in what I&amp;rsquo;ve written, please let me know in the comments. (Misleading comments are worse than no comments at all.) If you think this&amp;rsquo;ll be useful for a new developer, share it. Save them some headache.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>My Response to Hannes Dorfmann on &#34;the Circular Dependency Problem&#34;</title>
-      <link>http://philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/</link>
-      <pubDate>Wed, 08 Jul 2015 13:42:14 +0000</pubDate>
-      
-      <guid>http://philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/</guid>
-      <description>&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/&#34;&gt;my last post&lt;/a&gt;, I argued that there are two disadvantages to &lt;code&gt;Activities&lt;/code&gt; and Presenters. The first disadvantage is that they are often bloated classes. The second disadvantage is that these classes often have a circular dependency between themselves and their Views. Yesterday, Hannes Dorfmann made a comment on my post that was so thoughtful and excellent that I think its worth dedicating an entire post to responding to it.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;
-
-&lt;p&gt;Specifically, Hannes&amp;rsquo; comments challenge my claim that the circular dependency between Activities/Fragments/Presenters and their Views are a problem.&lt;/p&gt;
-
-&lt;blockquote&gt;...Regarding circular dependencies: Imho I don’t think that circular dependencies are a bad thing as long as you program against an interface and not the implementation:
-
-1. Presenter program against View interface. This makes your presenter easily testable since you can replace the view with a mock view while unit testing
-
-2. View program against Presenter interface. During testing you can replace the presenter with a mock presenter easily. Therefore view is testable. I guess the problem you face here is that the view (like Activity) is creating a presenter with new Presenter(). But with dependency injection you can inject a MockPresenter while unit testing.&lt;/blockquote&gt;
-
-&lt;p&gt;These are interesting points. I think I agree that programming against interfaces makes code more unit testable in certain situations, but I&amp;rsquo;m not sure that this addresses the disadvantage created by the circular dependencies between Activities/Presenters and their Views. Here&amp;rsquo;s why: if an MVP-View is instantiating a concrete implementation of a Presenter, then the only way for us to swap out its dependency is by using setter injection. Setter injection, as I pointed out in the last post is generally less preferable to constructor injection. Steve Freeman and Nat Pryce say this in &lt;a href=&#34;http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627&#34;&gt;their book&lt;/a&gt;. Martin Fowler, following Kent Beck, says something similar in &lt;a href=&#34;http://martinfowler.com/articles/injection.html#ConstructorVersusSetterInjection&#34;&gt;his article on dependency injection&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Hannes&amp;rsquo; comment challenges my claim here too, however:&lt;/p&gt;
-
-&lt;blockquote&gt;...Actually, also the Observer pattern has circular dependencies. I.e. Activity implements OnClickListener and displays a Button and registers himself as OnClickListener on the button. Activity has dependency to Button since Activity needs the reference to the Button to register himself. On the other side Button has a reference to the OnClickListener, which actually is the Activity.
-
-From my point of view its completely fine since Button programs against the OnClickInterface. Therefore, it’s not a „hard“ dependency to the Activity (which is the OnClickListener) and I wouldn’t call it circular dependency. This is the same as View and Presenter. Presenter is programming against the View interface and therefore completely fine.&lt;/blockquote&gt;
-
-&lt;p&gt;This is a great argument. Hannes builds on the argument later in his comment:&lt;/p&gt;
-
-&lt;blockquote&gt;Regarding invalid state of an object:
-That’s open to dispute. [Is] a presenter...in an invalid state without a View? [Is] a Button...in an invalid state without having set an OnClickListener?&lt;/blockquote&gt;
-
-&lt;p&gt;I see Hannes as making two parallel arguments from analogy here, both of which support the conclusion that there&amp;rsquo;s no problem with the circular dependency between Activities/Presenters and Views. Here&amp;rsquo;s the first argument:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;There really isn&amp;rsquo;t a problematic circular dependency between an &lt;code&gt;Activity&lt;/code&gt; and a &lt;code&gt;Button&lt;/code&gt; because the &lt;code&gt;Button&lt;/code&gt; only sees the &lt;code&gt;Activity&lt;/code&gt; as an &lt;code&gt;OnClickListener&lt;/code&gt; interface.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;A &lt;code&gt;Presenter&lt;/code&gt; programs against a &lt;code&gt;View&lt;/code&gt; interface in the same way that a &lt;code&gt;Button&lt;/code&gt; programs against the &lt;code&gt;OnClickListener&lt;/code&gt; interface.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;So, the circular dependency between an &lt;code&gt;Presenter&lt;/code&gt; and a &lt;code&gt;View&lt;/code&gt; is just as unproblematic as the circular dependency between the &lt;code&gt;Activity&lt;/code&gt; and the &lt;code&gt;Button&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the second argument:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;A &lt;code&gt;Button&lt;/code&gt; isn&amp;rsquo;t in an invalid state just because its created without a click listener.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;A &lt;code&gt;Presenter&lt;/code&gt; programs against an &lt;code&gt;View&lt;/code&gt; interface just as a &lt;code&gt;Button&lt;/code&gt; programs against a &lt;code&gt;OnClickListener&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;So, a &lt;code&gt;Presenter&lt;/code&gt; isn&amp;rsquo;t in an invalid state just because its created without its &lt;code&gt;View&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;I have a response to these arguments, but I&amp;rsquo;m not quite sure how well it stands up to Hannes&amp;rsquo; arguments. I&amp;rsquo;m sure further discussion will help us hash all of this out.&lt;/p&gt;
-
-&lt;p&gt;I think that a good response to both arguments requires us to get clearer on how we&amp;rsquo;re using the word &amp;rdquo;dependency.&amp;ldquo; My definition of a dependency is basically the one offered by Freeman and Pryce in their book:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Services that the object requires from its peers so it can perform its responsibilities. The object cannot function without these services. It should not be possible to create the object without them. For example, a graphics package will need something like a screen or canvas to draw on—it doesn’t make sense without one.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Growing Object Oriented Software Guided by Tests,&lt;/em&gt; pg. 94&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;A dependency, however, is only one of three different types of &amp;ldquo;peers&amp;rdquo; that an object may have. There&amp;rsquo;s also something called a &amp;ldquo;notification,&amp;rdquo; which they define in the following passage:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Peers that need to be kept up to date with the object’s activity. The object will notify interested peers whenever it changes state or performs a significant action. Notifications are “fire and forget”; the object neither knows nor cares which peers are listening. Notifications are so useful because they decouple objects from each other. For example, in a user interface system, a button component promises to notify any registered listeners when it’s clicked, but does not know what those listeners will do.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Ibid.,&lt;/em&gt; pg. 94&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;With this distinction in mind, we can now start to respond to Hannes&amp;rsquo; arguments. The OnClickListener, from a &lt;code&gt;Button&#39;s&lt;/code&gt; perspective, is really a notification, not a dependency, so I agree with the first premise in Hannes&amp;rsquo; argument: there&amp;rsquo;s nothing &lt;em&gt;necessarily&lt;/em&gt; problematic with creating a &lt;code&gt;Button&lt;/code&gt; without a click listener. I also agree with Hannes&amp;rsquo; second premise: A &lt;code&gt;Presenter&lt;/code&gt; can program against a &lt;code&gt;View&lt;/code&gt; interface just as a &lt;code&gt;Button&lt;/code&gt; can program against an &lt;code&gt;OnClickListener&lt;/code&gt; interface.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s where we may start to disagree: there&amp;rsquo;s a key difference between an &lt;code&gt;OnClickListener&lt;/code&gt; and an MVP-View. An MVP-View, from the perspective of a Presenter within a particular application, is &lt;em&gt;necessarily&lt;/em&gt; a dependency, not a notification. A Presenter shouldn&amp;rsquo;t exist at all if its not going to present a View because that&amp;rsquo;s its &lt;em&gt;sole responsibility&lt;/em&gt;. To create a Presenter without a View is to create an object that cannot fulfill its responsibility. On the other hand, a Button without a click listener can still perform its responsibilities without a click listener. Its responsibility is to draw itself to the screen and notify any &lt;em&gt;registered&lt;/em&gt; listeners that the button has been clicked. If there aren&amp;rsquo;t any registered listeners, then a Button can still exercise its responsibility of drawing itself to the screen and it can still notify any listeners that may register with it in the future.&lt;/p&gt;
-
-&lt;p&gt;I should qualify what I&amp;rsquo;ve just said. I used and emphasized the word &amp;ldquo;necessarily&amp;rdquo; above because whether something is a dependency or a notification is often context-dependent. I agree with Freeman and Pryce when they say:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;What matters most is the context in which the collaborating objects are used. For example, in one application an auditing log could be a dependency, because auditing is a legal requirement for the business and no object should be created without an audit trail. Elsewhere, it could be a notification, because auditing is a user choice and objects will function perfectly well without it.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Ibid.&lt;/em&gt;, pg. 94-95&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;So, its possible that, depending on the context, an &lt;code&gt;OnClickListener&lt;/code&gt; could be either a dependency or a notification. I think that in the context of the design of the Android framework, an &lt;code&gt;OnClickListener&lt;/code&gt; is a notification. I think, however, that in the context of the development of an application, a button&amp;rsquo;s &lt;code&gt;OnClickListener&lt;/code&gt; can often actually be a dependency. When we create a &lt;code&gt;Button&lt;/code&gt; in our application, we plug in the domain-specific responsibilities we have in mind for it. We might say, for example, &amp;ldquo;this button registers the user for our service and takes them to a welcome screen.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Once we&amp;rsquo;ve added this domain-specific responsibility to a &lt;code&gt;Button&lt;/code&gt;, it doesn&amp;rsquo;t make sense for the &lt;code&gt;Button&lt;/code&gt; to exist without its &lt;code&gt;OnClickListener&lt;/code&gt;, the object it needs to fulfill its (now) domain-specific responsibility. Of course, we can&amp;rsquo;t modify the &lt;code&gt;Button&#39;s&lt;/code&gt; api to accommodate this fact that the &lt;code&gt;Button&lt;/code&gt;, in the context of our application, now has a dependency on a particular &lt;code&gt;OnClickListener&lt;/code&gt;, but we can wrap the Android button into a new domain-specific Button object that reflects the fact that, in the context of our application, it doesn&amp;rsquo;t make sense for this Button to exist without its click listener. There&amp;rsquo;s actually a strong relationship between this suggestion and the suggestion that I&amp;rsquo;ll make in my next post when I present the MVPR architecture.&lt;/p&gt;
-
-&lt;p&gt;By now, you can probably guess what I would say to Hannes&amp;rsquo; first argument: I would deny its first premise. I would say, in other words, that there&amp;rsquo;s something fishy about the circular dependency between an &lt;code&gt;Activity&lt;/code&gt; and its &lt;code&gt;Button&lt;/code&gt; in the first place and I think there&amp;rsquo;s something fishy about it, regardless of whether the &lt;code&gt;Button&lt;/code&gt; programs against an interface. Whether the &lt;code&gt;Button&lt;/code&gt; programs against an interface has nothing to do with the fact that, in the context of our application, it has a dependency on a click listener and that setting an &lt;code&gt;Activity&lt;/code&gt; as a Button&amp;rsquo;s click listener makes it more difficult for the button to have a different click listener, a difficulty we might want to avoid if we want to take full advantage of polymorphism in implementing ui-related business logic.&lt;/p&gt;
-
-&lt;p&gt;Regardless of whether I&amp;rsquo;m right or wrong to criticize the circular dependency between Activities/Presenters and their Views, I&amp;rsquo;ve learned a lot by thinking about this and by engaging with Hannes in this discussion. So thanks, Hannes, and thanks to everyone who takes the time to make thoughtful comments on what I&amp;rsquo;ve written. I owe you.&lt;/p&gt;</description>
     </item>
     
   </channel>
