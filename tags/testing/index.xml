@@ -9,6 +9,162 @@
     <atom:link href="http://philosophicalhacker.com/tags/testing/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Build Variants and Link Seams</title>
+      <link>http://philosophicalhacker.com/post/build-variants-and-link-seams/</link>
+      <pubDate>Sun, 18 Dec 2016 15:39:11 -0500</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/build-variants-and-link-seams/</guid>
+      <description>
+
+&lt;p&gt;&lt;em&gt;This post is just another installment in a series of posts that are a written version of &lt;a href=&#34;https://devfestflorida.org/schedule/day1?sessionId=113&#34;&gt;my Florida dev fest talk&lt;/a&gt;. &lt;a href=&#34;http://philosophicalhacker.com/post/object-seams-and-mvp-for-testability/&#34;&gt;Last time&lt;/a&gt;, we talked about object seams and how they make our apps more testable. This time, we&amp;rsquo;ll talk about how link seams help you write more testable apps and how build variants are used to create link seams.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;what-are-link-seams&#34;&gt;What are link seams?&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;“[code] contains calls to code in other files. Linkers…resolve each of the calls so that you can have a complete program at runtime…you can usually exploit [this] to substitute pieces of your program”&lt;/p&gt;
+
+&lt;p&gt;-Michael Feathers&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The above quotation is Feathers&amp;rsquo; definition of a link seam. Recall that a seam is just something that allows us to change the behavior of a particular piece of code without modifying that code in that place.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s try to clarify this concept of a link seam by looking at one way of solving the &amp;ldquo;dr. jekyll/mr. hyde&amp;rdquo; smell I mentioned in &lt;a href=&#34;http://philosophicalhacker.com/post/what-makes-android-apps-testable/&#34;&gt;my first post&lt;/a&gt; in this series. Hopefully, this picture will help jog your memory of that smell:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/dr-jekyll-poster.jpg&#34; alt=&#34;Dr. Jekyll and Mr. Hyde&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the smelly code that used to live in the Google I/O app:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PresenterFragmentImpl&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; Presenter&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; UpdatableView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;UserActionListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+        LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; cursorLoader &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; createLoader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; args&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderStarted&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                               Cursor data&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        processData&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; data&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The two highlighted lines point to a smell: this code mixes testing responsibilities in with production code. Idling resources, in case you didn&amp;rsquo;t know, are used to tell espresso when it can continue executing tests. They&amp;rsquo;re used to avoid having to place &lt;code&gt;sleep&lt;/code&gt; calls all over your tests.&lt;/p&gt;
+
+&lt;p&gt;Now, we &lt;em&gt;could&lt;/em&gt; actually solve this issue by using link seams. As we&amp;rsquo;ll see later, using link seams to solve this problem directly is probably a bad idea, but its a useful example for introducing link seams and showing why they might be useful.&lt;/p&gt;
+
+&lt;p&gt;Before we see how this is possible, let&amp;rsquo;s step back and remember that build variants are a thing. Build variants create special source sets that will get loaded onto the classpath whenever we are building a particular variant apk.&lt;/p&gt;
+
+&lt;p&gt;The typical example of build variants are &amp;ldquo;free&amp;rdquo; and &amp;ldquo;paid&amp;rdquo; versions of your app, but those variants wouldn&amp;rsquo;t solve our problem. Our problem is this:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;The app needs to be in a state we can use for testing that&amp;rsquo;ll have a way of telling espresso to wait for some long-running operation to complete.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;We also want a normal state for the app that we&amp;rsquo;d use for production that doesn&amp;rsquo;t care about espresso at all.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;So, let&amp;rsquo;s say we created build variants for these to two states. Suppose we had a &amp;ldquo;mock&amp;rdquo; build variant that we wanted to use for testing and a &amp;ldquo;prod&amp;rdquo; version that we wanted to use for production. If we had those variants, we&amp;rsquo;d have special source sets and our project structure would look something like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/sourcesets-testable-apps-3.png&#34; alt=&#34;debug and mock source sets&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If we had these different source sets, we could create two different &lt;code&gt;PresenterFragmentImpl.java&lt;/code&gt; files. One would live in the &lt;code&gt;mock&lt;/code&gt; build variant. The other would live in the &lt;code&gt;prod&lt;/code&gt; variant. Common functionality could be abstracted to a superclass that lives in the &lt;code&gt;main&lt;/code&gt; sourceset.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;If we&amp;rsquo;ve got things setup this way, then when the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; gets instantiated, we&amp;rsquo;ll have different implementations depending on whether we&amp;rsquo;re building a &lt;code&gt;prod&lt;/code&gt; or &lt;code&gt;mock&lt;/code&gt; build variant. In that case, we can change the behavior of our program while also leaving the code that instantiates and uses our &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; alone:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; PresenterFragmentImpl &lt;span style=&#34;color: #0000FF&#34;&gt;addPresenterFragment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; uVResId&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                  Model model&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                  QueryEnum&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; queries&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                            UserActionEnum&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; actions&lt;span style=&#34;color: #666666&#34;&gt;){&lt;/span&gt;
+&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;presenter &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Create, set up and add the presenter.&lt;/span&gt;
+    presenter &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; PresenterFragmentImpl&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; presenter&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;What we&amp;rsquo;ve done perfectly fits the definition of a link seam: we&amp;rsquo;ve manipulated the classpath to link together different files in such a way that we can modify the behavior of the code that instantiates and uses &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; without actually modifying the source files that create and use &lt;code&gt;PresenterFragmentImpl&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;what-should-they-be-used-for&#34;&gt;What should they be used for?&lt;/h3&gt;
+
+&lt;p&gt;Now that we (hopefully) have an idea of what link seams are, we can ask, &amp;ldquo;How &lt;em&gt;should&lt;/em&gt; we use link seams to make our Android apps testable?&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;I think link seams are most appropriately used for espresso tests.&lt;sup&gt;2&lt;/sup&gt; However, there are a lot of &lt;em&gt;disadvantages&lt;/em&gt; with the way I was using link seams above. I don&amp;rsquo;t want to really spend any time on why I think this, but basically it boils down to this: once your object graph / dependency situation starts getting more complicated, your seams can wind up looking very messy.&lt;/p&gt;
+
+&lt;p&gt;In order to understand a better way to exploit link seams, it helps to be familiar with Feathers&amp;rsquo; concept of an &amp;ldquo;enabling point.&amp;rdquo; Feathers defines an enabling point as follows:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Every seam has an enabling point, a place where you can make the decision to use one behavior or another.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The enabling point for object seams is the point where those objects are instantiated, which is why dependency injection creates seams. If you instantiate a dependency within the client object, that client is tightly coupled with a particular implementation of that dependency. You can&amp;rsquo;t change the behavior of that object without changing the source code of the class. Inverting the control of dependency implementation selection, on the other hand, creates an object seam whose enabling point is the point at which the dependency of a particular object is instantiated.&lt;/p&gt;
+
+&lt;p&gt;The enabling point for link seams created by build variants is the point when we make the decision to run &lt;code&gt;assembleMockDebug&lt;/code&gt; or &lt;code&gt;assembleProdDebug&lt;/code&gt;. That&amp;rsquo;s the point at which we choose which behavior the app is going to have.&lt;/p&gt;
+
+&lt;p&gt;Instead of using link seams directly to make our code testable, I think, we&amp;rsquo;re better off using link seams as an &lt;em&gt;enabling point&lt;/em&gt; for object seams. As we said &lt;a href=&#34;http://philosophicalhacker.com/post/object-seams-and-mvp-for-testability/&#34;&gt;last time&lt;/a&gt;, object seams are often created via dependency injection. So, what I&amp;rsquo;m suggesting is that we&amp;rsquo;re better off setting up our code so that the different build variants choose how our dependency injection gets setup.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s flesh suggestion out by seeing how it would apply to the above example. Instead of having a &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; for each sourceset, we&amp;rsquo;d have a different factory for each sourceset.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// prod sourcest&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;FragFactory&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; PresenterFragmentImpl &lt;span style=&#34;color: #0000FF&#34;&gt;make&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; PresenterFragmentImpl&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// mock sourcest&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;FragFactory&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; PresenterFragmentImpl &lt;span style=&#34;color: #0000FF&#34;&gt;make&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; MockPresenterFragmentImpl&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Then, instead of directly instantiating a &lt;code&gt;PresenterFragmentImpl&lt;/code&gt;, we&amp;rsquo;d get one from a factory.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; PresenterFragmentImpl &lt;span style=&#34;color: #0000FF&#34;&gt;addPresenterFragment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; uVResId&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                  Model model&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                  QueryEnum&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; queries&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                                  UserActionEnum&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; actions&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;presenter &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Create, set up and add the presenter.&lt;/span&gt;
+      presenter &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mFragFactory&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;make&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...        &lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; presenter&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Getting the instance from a factory actually allows us the ability to change our apps behavior at run time instead of compile time, which can be very useful. &lt;a href=&#34;https://speakerdeck.com/jakewharton/android-apps-with-dagger-devoxx-2013?slide=168&#34;&gt;Square, for example, has a &amp;ldquo;mock mode&amp;rdquo;&lt;/a&gt; in their applications for testing where they can pull out a navigation drawer and tell the app to stub network responses instead of hitting their servers. The app restarts and does exactly that. This allows the stubbing code they wrote to be useful both for automated and manual testing.&lt;/p&gt;
+
+&lt;p&gt;Mock mode is neat, but there&amp;rsquo;s a more important reason for using link seams as an enabling point for object seams: it opens us up to the possibility of using some kind of dependency injection library for managing the different states we want the app to be in for testing purposes. For example, we can set up our dagger modules differently depending on what build variant is being built and clients can consume all of the appropriate dependencies exposed by dagger.&lt;sup&gt;3&lt;/sup&gt; Solutions like this give us a clean way of managing our seams.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Link seams are ways of changing the behavior of a particular piece of code without editing that code in place by exploiting the way that files are linked together. With android, we do this via build variants. Link seams are useful for espresso tests, but shouldn&amp;rsquo;t be used directly to put the app into a testable state. Instead, link seams should be used as an enabling point for object seams. This enables us to put our apps into a more testable state at run time (e.g., square&amp;rsquo;s mock mode) and it helps us keep our seams clean, especially if we use a DI library.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;If you already have a free and paid build variant, for example, and you&amp;rsquo;re worried about how you would create mock and prod variants of those variants, you should look into &lt;a href=&#34;http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Multi-flavor-variants&#34;&gt;flavor dimensions&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;However, if you&amp;rsquo;re trying to get unit tests around a particularly gnarly class whose dependencies aren&amp;rsquo;t injected, it may be appropriate to use link seams.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Turns out there&amp;rsquo;s actually &lt;a href=&#34;https://google.github.io/dagger/testing.html&#34;&gt;a guide in the dagger 2 docs&lt;/a&gt; that specifically addresses how to do this.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Object Seams and MVP for Testability</title>
       <link>http://philosophicalhacker.com/post/object-seams-and-mvp-for-testability/</link>
       <pubDate>Fri, 09 Dec 2016 18:29:54 -0500</pubDate>
@@ -95,7 +251,7 @@
 
 &lt;p&gt;One other thing to notice here: we&amp;rsquo;ve replaced static method calls with calls to injected dependencies. This isn&amp;rsquo;t necessarily mandated by MVP, but its something that we need to do if want to make this code unit testable.&lt;/p&gt;
 
-&lt;p&gt;There&amp;rsquo;s another kind of seam that we haven&amp;rsquo;t explored yet: linking seams. Linking seams are created using build variants, and we&amp;rsquo;ll talk about those more in my next post.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s another kind of seam that we haven&amp;rsquo;t explored yet: linking seams. Linking seams are created using build variants, and we&amp;rsquo;ll talk about those more in &lt;a href=&#34;http://philosophicalhacker.com/post/build-variants-and-link-seams/&#34;&gt;my next post&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2 id=&#34;notes&#34;&gt;Notes:&lt;/h2&gt;
 
@@ -1640,93 +1796,6 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 &lt;p&gt;I don&amp;rsquo;t think I&amp;rsquo;ve said anything too controversial here. I see myself as simply applying general programming lessons learned from people who are smarter than me. Of course, as always, I&amp;rsquo;m open to being wrong about this.&lt;/p&gt;
 
 &lt;p&gt;If you are convinced that you should get rid of your static references to application Contexts, it really shouldn&amp;rsquo;t be too difficult for you to inject your classes and methods with the Context they need to do their job. You might even find that you have a bunch of law of demeter violations that you can clean up along the way. Android Studio&amp;rsquo;s intentions and refactoring capabilities make this kind of work trivial, even if it is a bit tedious.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>6 Things I wish I Knew before I Wrote my first Android App</title>
-      <link>http://philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/</link>
-      <pubDate>Thu, 09 Jul 2015 21:07:51 +0000</pubDate>
-      
-      <guid>http://philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/</guid>
-      <description>&lt;p&gt;My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&amp;rsquo;t even bother listing it on my resume&amp;rsquo; anymore. That app wouldn&amp;rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s a list of things to keep in mind as you&amp;rsquo;re writing your first Android apps. These lessons are derived from actual mistakes that I made in the source code of my first app, mistakes that I&amp;rsquo;ll be showing below. Keeping these things in mind will help you write an app that you can be a little prouder of.&lt;/p&gt;
-
-&lt;p&gt;Of course, if you&amp;rsquo;re doing your job right as a student of Android development, you&amp;rsquo;ll probably hate your app later regardless. As @codestandards says,&lt;/p&gt;
-
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;If the code you wrote a year ago doesn&amp;#39;t seem bad to you, you&amp;#39;re probably not learning enough.&lt;/p&gt;&amp;mdash; Code Standards (@codestandards) &lt;a href=&#34;https://twitter.com/codestandards/status/601373392059518976&#34;&gt;May 21, 2015&lt;/a&gt;&lt;/blockquote&gt;
-&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;If you&amp;rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&amp;rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&amp;rsquo;ve never been guilty of making the mistakes I demo in those items.
-&lt;/p&gt;
-
-&lt;h2 id=&#34;1-don-t-have-static-references-to-contexts&#34;&gt;1. Don&amp;rsquo;t have static references to Contexts&lt;/h2&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/e9af62a0ad04abbb0a7d.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;This might seem like an impossible mistake for anyone to make. Its not. I made this mistake. I&amp;rsquo;ve seen others make this mistake, and I&amp;rsquo;ve interviewed people who weren&amp;rsquo;t very quick at figuring out why this is a mistake in the first place. Don&amp;rsquo;t do this. Its a n00b move.&lt;/p&gt;
-
-&lt;p&gt;If &lt;code&gt;MeTrackerStore&lt;/code&gt; keeps a reference to the Activity passed into its constructor, the Activity will never be garbage collected. (Unless the static variable is reassigned to a different Activity.) This is because &lt;code&gt;mMeTrackerStore&lt;/code&gt; is static, and the memory for static variables isn&amp;rsquo;t reclaimed until the process in which the application is running quits. If you find yourself tempted to do this, there&amp;rsquo;s probably something seriously wrong with your code. Find help. Maybe looking at Google&amp;rsquo;s Udacity course on &lt;a href=&#34;https://www.udacity.com/course/android-development-for-beginners--ud837&#34;&gt;&amp;ldquo;Android Development for Beginners&amp;rdquo;&lt;/a&gt; will help you out.&lt;/p&gt;
-
-&lt;p&gt;Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/&#34;&gt;I wouldn&amp;rsquo;t recommend that you do that either&lt;/a&gt;. &lt;/p&gt;
-
-&lt;h2 id=&#34;2-beware-of-implicit-references-to-objects-whose-lifecycle-you-do-not-control&#34;&gt;2. Beware of &amp;ldquo;implicit references&amp;rdquo; to objects whose lifecycle you do not control&lt;/h2&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/494707e126e5fc7156ea.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;There&amp;rsquo;s multiple problems with this code. I&amp;rsquo;m only going to focus on one of those problems. In Java, (non-static) inner classes have an implicit reference to the instances of the class that encloses them.&lt;/p&gt;
-
-&lt;p&gt;In this example, any GetLatAndLongAndUpdateMapCameraAsyncTask would have a reference to the DefineGeofenceFragment that contains it. The same thing is true for anonymous classes: they have an implicit reference to instances of the class that contains the anonymous class.&lt;/p&gt;
-
-&lt;p&gt;The GetLatAndLongAndUpdateMapCameraAsyncTask has an implicit reference to a Fragment, an object whose lifecycle we don&amp;rsquo;t control. The Android SDK is responsible for creating and destroying Fragments appropriately and if GetLatAndLongAndUpdateCameraAsyncTask can&amp;rsquo;t be garbage collected because its still executing, the DefineGeofenceFragment that it implicitly refers to will also be kept from being garbage collected.&lt;/p&gt;
-
-&lt;p&gt;There&amp;rsquo;s a great Google IO video &lt;a href=&#34;https://www.youtube.com/watch?v=_CruQY55HOk&#34;&gt;that explains why this sort of thing happens&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;3-make-android-studio-work-for-you&#34;&gt;3. Make Android Studio work for You&lt;/h2&gt;
-
-&lt;script src=&#34;//gist.github.com/kmdupr33/f0e08822fe0d3b74973a.js&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;This snippet is what Android Studio generated when I used the &amp;ldquo;Generate Getter&amp;rdquo; code completion in Android Studio. The getter keeps the &amp;rsquo;m&amp;rsquo; prefixed to the instance variable and uses it when generating a getter method name. This is not ideal.&lt;/p&gt;
-
-&lt;p&gt;(In case you&amp;rsquo;re wondering why &amp;rsquo;m&amp;rsquo; is prefixed to the instance variable name in the first place: the &amp;rsquo;m&amp;rsquo; is often prefixed to instance variables by convention. It stands for &amp;lsquo;member.&amp;rsquo;)&lt;/p&gt;
-
-&lt;p&gt;Regardless of whether you think prefixing &amp;rsquo;m&amp;rsquo; to your instance variables is a good idea, there&amp;rsquo;s a lesson here: Android studio can help you code to whatever convention you adopt. For example, you can use the code style dialog in Android Studio to make Android Studio automatically prepend &amp;rsquo;m&amp;rsquo; to your instance variable and automatically remove the &amp;rsquo;m&amp;rsquo; when its generating getters, setters, and constructor params for the instance variables.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.16.13-PM.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.16.13-PM-1024x714.png&#34; alt=&#34;Screen Shot 2015-07-09 at 4.16.13 PM&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Android Studio can do a lot more than that too. &lt;a href=&#34;http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/&#34;&gt;Learning shortcuts&lt;/a&gt; and learning about &lt;a href=&#34;https://www.jetbrains.com/idea/help/live-templates.html&#34;&gt;live templates&lt;/a&gt; are good places to start.&lt;/p&gt;
-
-&lt;h2 id=&#34;4-methods-should-do-one-thing&#34;&gt;4. Methods should do one thing&lt;/h2&gt;
-
-&lt;p&gt;There&amp;rsquo;s a method in one of the classes that I wrote that&amp;rsquo;s over 100 lines long. Such methods are hard to read, modify, and reuse. Try to write methods that only do one thing. Typically, this means that you should be suspicious of methods that are over 20 lines long. Here you can recruit Android Studio to help you spot problematic methods:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.25.00-PM.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.25.00-PM-1024x718.png&#34; alt=&#34;Screen Shot 2015-07-09 at 4.25.00 PM&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;5-learn-from-other-people-who-are-smarter-and-more-experienced-than-you&#34;&gt;5. Learn from other people who are smarter and more experienced than you.&lt;/h2&gt;
-
-&lt;p&gt;This might sound trivial, but its a mistake that I made when I wrote my first app.&lt;/p&gt;
-
-&lt;p&gt;When you&amp;rsquo;re writing an app you&amp;rsquo;re going to make mistakes. Other people have already made those mistakes. Learn from those people. You&amp;rsquo;re wasting your time if you repeat the avoidable mistakes of others. I wasted a ton of time on my first app making mistakes that I could have avoided if I just spent a little more time learning from experienced software developers.&lt;/p&gt;
-
-&lt;p&gt;Read &lt;a href=&#34;http://www.amazon.com/The-Pragmatic-Programmer-Journeyman-Master/dp/020161622X&#34;&gt;Pragmatic Programmer&lt;/a&gt;. Then read &lt;a href=&#34;http://www.amazon.com/Effective-Java-Edition-Joshua-Bloch/dp/0321356683&#34;&gt;Effective Java&lt;/a&gt;. These two books will help you avoid making common mistakes that we make as novice developers. After you done with those books, keep looking for smart people to learn from.&lt;/p&gt;
-
-&lt;h2 id=&#34;6-use-libraries&#34;&gt;6. Use Libraries&lt;/h2&gt;
-
-&lt;p&gt;When you&amp;rsquo;re writing an app, you&amp;rsquo;re probably going to encounter problems that smarter and more experienced people have already solved. Moreover, a lot of these solutions are available as open source libraries. Take advantage of them.&lt;/p&gt;
-
-&lt;p&gt;In my first app, I wrote code that provided functionality that&amp;rsquo;s already provided by libraries. Some of those libraries are standard java ones. Others are third-party libraries like Retrofit and Picasso. If you&amp;rsquo;re not sure what libraries you should be using you can do three things:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Listen to the &lt;a href=&#34;http://fragmentedpodcast.com/episodes/9/&#34;&gt;Google IO Fragmented podcast episode&lt;/a&gt;. In this episode the ask developers what 3rd party libraries they see as essential for Android development. Spoiler: its mostly Dagger, Retrofit, Picasso, and Mockito.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Subscribe &lt;a href=&#34;http://androidweekly.net/&#34;&gt;to Android Weekly&lt;/a&gt;. They&amp;rsquo;ve got a section that contains the latest libraries that are coming out. Keep an eye out for what seems useful to you.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Look for open source applications that solve problems similar to the ones that you are solving with your app. You might find one that uses a third-party library that you want to use or you might find that they&amp;rsquo;ve used a standard java library that you were unaware of.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;Writing good Android apps can be very difficult. Don&amp;rsquo;t make it harder on yourself by repeating the mistakes I made. If you found a mistake in what I&amp;rsquo;ve written, please let me know in the comments. (Misleading comments are worse than no comments at all.) If you think this&amp;rsquo;ll be useful for a new developer, share it. Save them some headache.&lt;/p&gt;</description>
     </item>
     
   </channel>
