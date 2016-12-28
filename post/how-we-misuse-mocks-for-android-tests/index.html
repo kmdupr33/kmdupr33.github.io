@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" How we Misuse Mocks for Android Tests &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2016-12-27T08:21:42-05:00" />
+
+    
+    <meta property="og:article:tag" content="android" />
+    
+    <meta property="og:article:tag" content="testing" />
+    
+    
+
+  <title>
+     How we Misuse Mocks for Android Tests &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.17" />
+
+    <link rel="canonical" href="http://philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+  
+  <header class="main-header post-head" style="background-image: url(http://philosophicalhacker.com//images/tools.jpg)">
+  
+  <nav class="main-nav overlay clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">How we Misuse Mocks for Android Tests</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2016-12-27T08:21:42-05:00">
+            Dec 27, 2016
+          </time>
+        
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<p>Mocks are a pretty standard tool in our android developer tool belt. The extent to which we should use this tool for unit testing is a complicated and controversial issue.<sup>1</sup> Within the Android community specifically, I think that a part of the controversy is due to confusion over the intended use of mocks. More specifically, some android developers seem intent on mocking types they don&rsquo;t own and on verifying all interactions of a target class with a collaborator.</p>
+
+<p>It turns out that these two practices are not recommended by the folks who invented mocks because they have well-known have disadvantages. These disadvantages are precisely the ones that people seem to cite when they argue against mocks. There may be good arguments against mocks, but citing disadvantages of using them in a way that they aren&rsquo;t meant to be used is about as compelling as arguing that we shouldn&rsquo;t use hammers because they aren&rsquo;t good for fastening screws.</p>
+
+<p>In this post, we&rsquo;ll look at two ways I&rsquo;ve seen mocks misused. Hopefully, by pointing out the intended use of mocks, we&rsquo;ll find them more useful for unit testing android applications.</p>
+
+<h3 id="too-many-verifications">Too many verifications</h3>
+
+<p>A common complaint about mocks is that they tie tests too closely with the implementation details of the target code. Since we want our tests to help us refactor those implementation details with confidence, this coupling ruins one of the major advantages of writing tests.</p>
+
+<p>There are two things we can say in response to this complaint.</p>
+
+<p>First, Steve Freeman and Nat Pryce, the folks who really pioneered the use of mocks in testing, are well aware that this can occur when using mocks. This is why they recommend that we &ldquo;write few expectations&rdquo; in our tests using mocks:</p>
+
+<blockquote>
+<p>A colleague, Romilly Cocking, when he first started working with us, was surprised by how few expectations we usually write in a unit test. Just like “everyone” has now learned to avoid too many assertions in a test, we try to avoid too many expectations. If we have more than a few, then either we’re trying to test too large a unit, or we’re locking down too many of the object’s interactions.<sup>2</sup></p>
+</blockquote>
+
+<p>Second, whether a particular object&rsquo;s interaction with a collaborator is an implementation detail depends on how we think about object-oriented programming and on the most compelling interpretation of OO I&rsquo;m aware of, some interactions with collaborators aren&rsquo;t really implementation details. Freeman puts this nicely <a href="http://higherorderlogic.com/2013/01/some-mocks/">here</a>:</p>
+
+<blockquote>
+<p>Some of us think about objects in terms of Alan Kay’s emphasis on message passing, others don’t. In my world, I’m interested in the protocols of how objects communicate, not what’s inside them, so testing based on interactions is a natural fit.</p>
+</blockquote>
+
+<p>I think a compelling example of an object interacting with a collaborator in a way that isn&rsquo;t an implementation detail is actually a <code>Presenter</code> interacting with a <code>View</code> in MVP. Take, for example, this <code>Presenter</code> that we talked about in <a href="No page found with path or logical name "post/object-seams-and-mvp-for-testability.md  ".
+">my post on MVP and object seams</a></p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
+
+  <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">presentCards</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+
+    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>mIsAttendeeAtVenue<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+
+      <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>mMsgSettings<span style="color: #666666">.</span><span style="color: #7D9029">hasAnsweredMessagePrompt</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
+
+<span style="background-color: #ffffcc">        mExploreView<span style="color: #666666">.</span><span style="color: #7D9029">addMessageOptInCard</span><span style="color: #666666">();</span>
+</span>
+      <span style="color: #666666">}</span>
+    <span style="color: #666666">}</span>
+  <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>In this snippet, the <code>Presenter</code>&rsquo;s responsibility is to display the appropriate cards depending on various factors. When we write a test that includes the line <code>verify(mExploreView).addMessageOptInCard()</code>, we&rsquo;re merely making sure that the <code>Presenter</code> does its job. We&rsquo;re concerned with the &ldquo;what,&rdquo; not with the &ldquo;how.&rdquo; If <code>mExploreView</code> wants to change how it actually adds a message opt in card, we don&rsquo;t care. If the implementation of <code>MessageSettings.hasAnsweredMessagePrompt</code> changes, again, we don&rsquo;t care.</p>
+
+<h3 id="mocking-types-we-don-t-own">Mocking Types We Don&rsquo;t Own</h3>
+
+<p>Although the exceptions thrown by running android unit tests that exercise unmocked android dependencies suggests otherwise, we shouldn&rsquo;t be in the business of mocking types we don&rsquo;t own. Again, Freeman and Pryce are explicit about the disadvantages of doing this:</p>
+
+<blockquote>
+<p>We find that tests that mock external libraries often need to be complex to get the code into the right state for the functionality we need to exercise. The mess in such tests is telling us that the design isn’t right but, instead of fixing the problem by improving the code, we have to carry the extra complexity in both code and test. A second risk is that we have to be sure that the behavior we stub or mock matches what the external library will actually do.</p>
+</blockquote>
+
+<p>This second risk is actually something that Jake Wharton has commented on explicitly in the context of using robolectric for Android testing:</p>
+
+<blockquote>
+<p>[With robolectric], you end up testing the wrong thing&hellip;your test is testing the robolectric implementation of these lifecycles and these mechanisms&hellip;the fact that you&rsquo;re relying on those behaviors&hellip;it&rsquo;s going to devalue the actual test itself.</p>
+
+<p>-Jake Wharton, Fragmented Podcast Episode 7 4:10</p>
+</blockquote>
+
+<p>The approach recommended by Freeman and Pryce &ndash; and the approach that I strive to follow when writing tests for my code &ndash; is to instead write an adapter layer that translates requests from our application to the third party library, which in this case is the Android SDK. The <code>View</code> in MVP is often a part of this adapter layer, as it translates requests made in the language of our application into code that talks directly to the Android SDK.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>So, don&rsquo;t make too many verifications on your mocks and don&rsquo;t mock types you don&rsquo;t own. Following this advice &ndash; advice that&rsquo;s given by the inventors of mocks &ndash; will make your tests simpler and less tied to implementation details of the class you&rsquo;re trying to test.<sup>3</sup> If we follow this advice, I think we&rsquo;ll find that mocks are a very apt tool for unit testing android applications.</p>
+
+<h3 id="notes">Notes</h3>
+
+<ol>
+<li><p>See <a href="http://martinfowler.com/articles/mocksArentStubs.html">&ldquo;Mocks Aren&rsquo;t Stubs&rdquo;</a> and <a href="http://higherorderlogic.com/2013/01/some-mocks/">&ldquo;Some Mocks&rdquo;</a> for example.</p></li>
+
+<li><p>&ldquo;Growing Object Oriented Software Guided by Tests,&rdquo; 319.</p></li>
+
+<li><p>I actually think following these two pieces of advice leads to a virtuous circle: if you only mock types you own, then you have to define types in the language of your application. This makes your test less coupled to implementation details, as stubbing these types in the arrange step of your unit test will actually just feel like you&rsquo;re declaratively specifying preconditions in the language of your application. Conversely, there&rsquo;s a vicious cycle caused by mocking types you don&rsquo;t own. You&rsquo;re tests are going to be more tied to implementation details and because mocking types we don&rsquo;t own winds up being complicated, its especially painful to change tests when implementation details need to change.</p></li>
+</ol>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+        
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=How%20we%20Misuse%20Mocks%20for%20Android%20Tests&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fhow-we-misuse-mocks-for-android-tests%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fhow-we-misuse-mocks-for-android-tests%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fhow-we-misuse-mocks-for-android-tests%2f&amp;description=How%20we%20Misuse%20Mocks%20for%20Android%20Tests"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fhow-we-misuse-mocks-for-android-tests%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/philosophicalhacker.com\/post\/how-we-misuse-mocks-for-android-tests\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+
