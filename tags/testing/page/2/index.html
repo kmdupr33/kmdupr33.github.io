@@ -143,35 +143,6 @@
 	   
 <article class="post post">
     <header class="post-header">
-        <h2 class="post-title"><a href="/post/how-to-safely-move-logic-out-of-activities/">How to Safely move Logic out of Activities</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>In my last post, I argued that we should stop putting our app logic in Activitys and Fragments because it makes both unit testing and functional testing our apps more difficult. In this post, I&rsquo;ll try to suggest a method of safely removing app logic from our Activitys and Fragments, drawing on a central idea discussed in Michael Feathers&rsquo; Working Effectively with Legacy Code: characterization tests.
-In the first section, I briefly introduce the idea of characterization tests. <a class="read-more" href="/post/how-to-safely-move-logic-out-of-activities/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        on
-            
-                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="http://philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-                <a href="http://philosophicalhacker.com/tags/refactoring/">#refactoring</a>,
-            
-        
-        <time class="post-date" datetime="2016-06-16T16:58:30-04:00">
-            16 Jun 2016
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
         <h2 class="post-title"><a href="/post/why-we-should-stop-putting-logic-in-activities/">Why we Should Stop Putting Logic in Activities</a></h2>
     </header>
     <section class="post-excerpt">
@@ -476,6 +447,41 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_<
         
         <time class="post-date" datetime="2015-07-07T18:29:16Z">
             7 Jul 2015
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/06/06/unit-testing-dynamically-constructed-views/">Unit Testing Dynamically Constructed Views</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p><p>Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&rsquo;ve fetched or in response to some input. The <code>SessionDetailActivity</code> in Google&rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the <code>SessionDetailActivity</code>&rsquo;s view hierarchy.</p>
+
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png" alt="IO Testing Talk-04" /></a></p>
+
+<p>In this screenshot, the &ldquo;Distribute,&rdquo; &ldquo;Android,&rdquo; and &ldquo;Games&rdquo; tags are added to the view hierarchy based on the tags associated with the &rdquo;Going global with Google Play&rdquo; IO session. In this post, I&rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the <code>SesisonDetailActivity</code>&rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards <a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">making Google&rsquo;s IOSched app unit testable</a>.</p>
+
+<p></p> <a class="read-more" href="/2015/06/06/unit-testing-dynamically-constructed-views/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        
+            
+        
+        on
+            
+                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="http://philosophicalhacker.com/tags/testing/">#testing</a>,
+            
+        
+        <time class="post-date" datetime="2015-06-06T11:08:03Z">
+            6 Jun 2015
         </time>
     </footer>
 </article>
