@@ -143,6 +143,54 @@
 	   
 <article class="post post">
     <header class="post-header">
+        <h2 class="post-title"><a href="/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">Why Android Unit Testing is so Hard (Pt 1)</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p><p><strong>Edit:</strong> In <a href="http://philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">the post that concludes this series</a>, I point out that making unit testable Android apps does not require us to remove compile-time dependencies on the Android SDK and that attempting to do so is impractical anyway. Ignore anything in this post that suggests otherwise.</p>
+
+<hr />
+
+<p>Unit testing your Android apps can be extremely difficult. As I suggested in <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">the introduction to this series,</a> it seems clear that there’s widespread agreement on this. The many folks who responded to my introductory post, moreover, seemed to reinforce my claim that Android unit testing is tough:</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">What he said! RT <a href="https://twitter.com/philosohacker">@philosohacker</a>: New post on how we can better test our Android apps <a href="http://t.co/gQCJKIOrSN">http://t.co/gQCJKIOrSN</a></p>&mdash; Andy Dyer (@dammitandy) <a href="https://twitter.com/dammitandy/status/587629744188829699">April 13, 2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr"><a href="https://twitter.com/corey_latislaw">@corey_latislaw</a> Yay! Maybe I can finally figuring out how to test Android apps properly. Also, this. <a href="http://t.co/8gIqfoFVnL">http://t.co/8gIqfoFVnL</a></p>&mdash; Vinay Shenoy (@vinaysshenoy) <a href="https://twitter.com/vinaysshenoy/status/587608070131290112">April 13, 2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Fully agree: &quot;Against Android Unit Tests&quot;. Structure your code to have as little contact with the SDK as possible. <a href="http://t.co/rLZlpGrCD5">http://t.co/rLZlpGrCD5</a></p>&mdash; Pascal Hartig (@passy) <a href="https://twitter.com/passy/status/587336731260751875">April 12, 2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>So, Android unit testing is hard. That much is clear. Why Android unit testing is so difficult, however, is less clear. Its true that a part of the difficulty with Android unit testing has to do with the nonsense that you have to overcome to get Roboletric started so that you can run your tests at a decent speed, but I think that there’s a deeper reason why we are having a hard time testing our applications: the way that Google has written the Android SDK and the way that Google encourages us to structure our applications makes testing difficult and, in some cases, impossible.</p>
+
+<p>I realize that this is a bold claim, so I will spend the entire post trying to establish it. In the following post, I’ll try to say more about how the “standard” way of developing Android applications encourages us to write code that is difficult/impossible to write sensible unit tests against. These posts are a part of a series in which I’m exploring the viability of enhancing the testability of Android applications by restructuring them so that application code does not directly depend on the Android SDK. Showing why the standard architecture for Android development makes testing difficult will both motivate and inform my alternative proposal for structuring Android applications, a proposal that I will outline in the fourth post of the series.</p>
+
+<p></p> <a class="read-more" href="/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        
+            
+        
+        on
+            
+                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="http://philosophicalhacker.com/tags/testing/">#testing</a>,
+            
+        
+        <time class="post-date" datetime="2015-04-17T13:46:58Z">
+            17 Apr 2015
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
         <h2 class="post-title"><a href="/2015/04/16/is-mark-zuckerberg-a-douche-bag/">Is Mark Zuckerberg a Douche-bag?</a></h2>
     </header>
     <section class="post-excerpt">
@@ -392,39 +440,6 @@ Credentials A couple of comments came up about my &ldquo;credentials.&rdquo; Her
         
         <time class="post-date" datetime="2014-05-27T23:18:56Z">
             27 May 2014
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2014/05/26/why-paul-graham-is-sort-of-wrong-about-philosophy/">Why Paul Graham is (sort of) Wrong About Philosophy</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>A couple years ago, Paul Graham wrote an essay about philosophy. The essay, on my reading, makes three central claims:
- Philosophy has largely been driven by our failure to realize that our words are imprecise.
- This failure is the result of failing to search for useful knowledge.
- We can do philosophy better if we filter out thoughts that don’t meet a usefulness criterion.
-  While I agree with a lot of what Graham says about philosophy in his essay, I think Graham is wrong on some of the more important points he makes. <a class="read-more" href="/2014/05/26/why-paul-graham-is-sort-of-wrong-about-philosophy/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        
-            
-        
-        on
-            
-                <a href="http://philosophicalhacker.com/tags/paul-graham/">#paul graham</a>,
-            
-                <a href="http://philosophicalhacker.com/tags/philosophy/">#philosophy</a>,
-            
-        
-        <time class="post-date" datetime="2014-05-26T19:06:05Z">
-            26 May 2014
         </time>
     </footer>
 </article>
