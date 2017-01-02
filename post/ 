@@ -1,0 +1,45 @@
++++
+slug = "what-should-we-unit-test"
+title = "What Should we Unit Test?"
+author = ""
+tags = [
+  "android",
+  "testing",
+]
+menu = ""
+comments = true
+draft = true
+image = "images/the-scream.jpg"
+share = true
+date = "2017-01-01T16:41:45-05:00"
++++
+
+When I go to work, I'm afraid of three things. I worry that
+
+* the new feature I'm implemented won't work as expected
+* the code I'm tweaking will break functionality that used to work
+* the application isn't architected in a way that makes it easy for me to adapt it to ever-changing business requirements
+
+Automated testing is supposed to help alleviate all three of these fears, but when we're first getting started with automated testing, it can be difficult to know where to start. We might look at a piece of code and wonder to ourselves, "Should I write a test for this code?" Cursory research on the question yields platitudes like "unit test your business logic," but when I first got started, that didn't really mean much to me<sup>1</sup> and now that I have a bit more experience writing android unit tests, I find that answer to be too simplistic.
+
+I think that if we keep in mind the fears that led us to write tests in the first place, we'll have a much easier time figuring out what to test. This should come as no surprise. After all, Kent Beck, the guy who popularized TDD, tells us:
+
+>Write tests until fear is transformed into boredom.
+
+This post is about the tests that fear drives us to write, tests that we should be spending most of our time writing.
+
+### Write tests for new code whose complexity scares you
+
+Sometimes we write complicated code when simpler code could have done the trick. Sometimes, however, we can't make our code any simpler. The problem we're solving or the domain/rule we're modeling is just complicated. When this happens, I get a little anxious. Here's an example:
+
+### Write tests for old code that breaks often
+
+### Write tests for all code that you think will change
+
+### Conclusion
+
+If you let fear by your guide, you'll write the tests you need to write. We're writing tests because we're afraid that if we don't, our code won't work as expected, that we'll break stuff that used to work, or that we won't be able to cope with changing business requirements. Keeping these fears in mind will lead us to write tests when we're writing new code whose complexity scares us, when we're finding that our old code breaks often, and when we suspect that our code will need to change.
+
+### Notes:
+
+1. I think this is partially because many of us in the android community (myself included) don't have a firm grasp of the meaning of the phrase "business logic." People often give hand-wavy definitions of business logic during their presentations. (I've been guilty of giving such definitions myself.) Sometimes I'll even hear someone give an example of business logic and I'll think to myself, "That's not really business logic." (I thought this when I heard Jake Wharton's example of business logic in [Fragmented Episode 7 on testing](fragmentedpodcast.com/episodes/7/).) Another reason I think this platitude is unhelpful is that business logic, on whatever definition you fancy, is often mixed in with all other types of code in Android applications. This makes its hard to tease out the subset of the Android code that is properly called "business logic."

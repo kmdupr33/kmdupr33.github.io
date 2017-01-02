@@ -6,8 +6,88 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 27 Dec 2016 08:21:42 -0500</lastBuildDate>
+    <lastBuildDate>Sun, 01 Jan 2017 16:41:45 -0500</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>What Should we Unit Test?</title>
+      <link>http://philosophicalhacker.com/post/what-should-we-unit-test/</link>
+      <pubDate>Sun, 01 Jan 2017 16:41:45 -0500</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/what-should-we-unit-test/</guid>
+      <description>
+
+&lt;p&gt;When I go to work, I&amp;rsquo;m afraid of three things. I worry that&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;the new feature I&amp;rsquo;m implementing won&amp;rsquo;t work as expected&lt;/li&gt;
+&lt;li&gt;the code I&amp;rsquo;m tweaking will break functionality that used to work&lt;/li&gt;
+&lt;li&gt;the application isn&amp;rsquo;t architected in a way that makes it easy for me to adapt it to ever-changing business requirements&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Automated testing is supposed to help alleviate all three of these fears, but when we&amp;rsquo;re first getting started with automated testing, it can be difficult to know where to start. We might look at a piece of code and wonder to ourselves, &amp;ldquo;Should I write a test for this code?&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;Cursory research on the question yields platitudes like &amp;ldquo;unit test your business logic,&amp;rdquo; but when I first got started, that didn&amp;rsquo;t really mean much to me&lt;sup&gt;1&lt;/sup&gt; and now that I have a bit more experience writing android unit tests, I find that answer to be too simplistic.&lt;/p&gt;
+
+&lt;p&gt;Over-zealous testing enthusiasts may shout a different answer at us: &amp;ldquo;YOU SHOULD TEST (ALMOST) EVERYTHING!&amp;rdquo; They may be right. They&amp;rsquo;re not over-zealous because of how much they want us to test. Rather, they&amp;rsquo;re over-zealous because that&amp;rsquo;s a very unhelpful answer to the question &amp;ldquo;Where should I &lt;em&gt;start&lt;/em&gt; testing?&amp;rdquo; Its simply not true that all tests are equally helpful, a fact that Kent Beck, the guy who popularized TDD, recently tweeted about:&lt;/p&gt;
+
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Being proud of 100% test coverage is like being proud of reading every word in the newspaper. Some are more important than others.&lt;/p&gt;&amp;mdash; Kent Beck (@KentBeck) &lt;a href=&#34;https://twitter.com/KentBeck/status/812703192437981184&#34;&gt;December 24, 2016&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;I think that if we keep in mind the fears that lead us to write tests in the first place, we&amp;rsquo;ll have a much easier time figuring out what to test. This should come as no surprise. After all, Kent Beck&amp;rsquo;s answer to the question of what to test is this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Write tests until fear is transformed into boredom.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This post is about the tests that fear drives us to write, tests that we should be spending most of our time writing.&lt;/p&gt;
+
+&lt;h3 id=&#34;when-new-functionality-is-complicated&#34;&gt;When new functionality is complicated&lt;/h3&gt;
+
+&lt;p&gt;Sometimes we write complicated code when simpler code could have done the trick. Sometimes, however, we can&amp;rsquo;t make our code any simpler. The problem we&amp;rsquo;re solving or the domain/rule we&amp;rsquo;re modeling is just complicated. When this happens, I get a little anxious. For example, suppose you had to implement the following functionality:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Show a &amp;ldquo;rate dialog&amp;rdquo; to a user if they&amp;rsquo;ve used the app three times. The user can opt to rate the app, request to be reminded to rate the app, or decline to rate the app. If the user opts to rate the app, take them to the google play store and don&amp;rsquo;t show the rate dialog again. If the user opts to be reminded to rate the app, reshow the dialog after three days have passed. If the user declines to rate the app, never show the dialog again.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This isn&amp;rsquo;t terribly complicated, but its enough to make me anxious that I&amp;rsquo;ve covered all my bases as I&amp;rsquo;m writing the code. This is the kind of thing I&amp;rsquo;d write a unit test for.&lt;/p&gt;
+
+&lt;h3 id=&#34;when-you-ve-got-old-code-that-breaks-often&#34;&gt;When you&amp;rsquo;ve got old code that breaks often&lt;/h3&gt;
+
+&lt;p&gt;Sometimes there are parts of a code base that are very brittle. I typically dread having to make changes in these parts of a codebase. Even worse: some brittle parts of the code base have to change often and this causes lots of bugs. Making changes in this kind of code is like leaving food and dirty dishes out a crappy apartment: it invites bugs.&lt;/p&gt;
+
+&lt;p&gt;Working on code that changes often and is often the source of bugs is maybe the scariest part of being a software engineer. You watch your co-workers trudge through the scary code and then they eventually find out the code that they changed introduced a bug. When you get assigned a ticket in that area, you have to pretend that you didn&amp;rsquo;t just see your co-worker get pwned by the code there. The fear is strong, so this is a great place to write tests.&lt;sup&gt;3&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, brittle code isn&amp;rsquo;t typically code that going to be easily unit testable, so you may have to settle for a functional-level test. Alternatively, you could employ some very conservative refactoring to get the brittle code into a unit-testable state.&lt;sup&gt;4&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;when-you-think-your-code-will-change&#34;&gt;When you think your code will change&lt;/h3&gt;
+
+&lt;p&gt;If you think you&amp;rsquo;re code will change, you&amp;rsquo;ve got a few reasons to write tests for it:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Tested code can be changed without introducing bugs.&lt;/li&gt;
+&lt;li&gt;Tested code has a more flexible architecture that makes it is easier to change.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;For some of us, all the code we write is susceptible to change. That&amp;rsquo;s why test zealots aren&amp;rsquo;t crazy in my mind. However, we can and should prioritize code that we think it is more likely to change in the near feature and make sure that we have tests around that code.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;If you let fear by your guide, you&amp;rsquo;ll write the tests you need to write. We&amp;rsquo;re writing tests because we&amp;rsquo;re afraid that if we don&amp;rsquo;t, new functionality won&amp;rsquo;t work as expected, that we&amp;rsquo;ll break stuff that used to work, or that we won&amp;rsquo;t be able to cope with changing business requirements. Keeping these fears in mind will lead us to write tests when we&amp;rsquo;re writing complicated new features, when we&amp;rsquo;re finding that our old code breaks often, and when we suspect that our code will need to change.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;I think this is partially because many of us in the android community don&amp;rsquo;t have a firm grasp of the meaning of the phrase &amp;ldquo;business logic.&amp;rdquo; People often give hand-wavy definitions of business logic during their presentations. (I&amp;rsquo;ve been guilty of giving such definitions myself.) Sometimes I&amp;rsquo;ll even hear someone give an example of business logic and I&amp;rsquo;ll think to myself, &amp;ldquo;That&amp;rsquo;s not really business logic.&amp;rdquo; (I thought this when I heard Jake Wharton&amp;rsquo;s example of business logic in &lt;a href=&#34;fragmentedpodcast.com/episodes/7/&#34;&gt;Fragmented Episode 7 on testing&lt;/a&gt;.) Another reason I think this platitude is unhelpful is that business logic, on whatever definition you fancy, is often mixed in with all other types of code in Android applications. This makes its hard to tease out the subset of the Android code that is properly called &amp;ldquo;business logic.&amp;rdquo;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;em&gt;TDD By Example&lt;/em&gt;, Kent Beck, 194. On this same page, Beck also reluctantly gives us a list of things to test: conditionals, loops, operations, and polymorphism.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;I&amp;rsquo;d love it if there was a tool that looked through my jira bug tickets, found the associated commits for addressing those tickets, and told me the classes and packages that needed to be changed to fix those bugs. I&amp;rsquo;d focus my efforts on writing tests for these buggy classes.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Michael Feathers talks about these conservative refactoring techniques in &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>How we Misuse Mocks for Android Tests</title>
@@ -1532,99 +1612,6 @@ The following code should make you nervous:&lt;/p&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Using the Transform api from the Gradle plugin proved to be a dead end because I needed my Transform implementation to load classes that depend on the android SDK and depending on the Android SDK from a gradle build script is not well supported.&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Why don&#39;t we have a unit test recorder?</title>
-      <link>http://philosophicalhacker.com/post/why-dont-we-have-a-unit-test-recorder/</link>
-      <pubDate>Fri, 01 Jul 2016 11:49:34 -0400</pubDate>
-      
-      <guid>http://philosophicalhacker.com/post/why-dont-we-have-a-unit-test-recorder/</guid>
-      <description>
-
-&lt;p&gt;Last week, I introduced Vice, a &lt;em&gt;proof of concept&lt;/em&gt; regression test generation library. Vice generates regression tests simply by exercising the code we want to test.&lt;/p&gt;
-
-&lt;p&gt;This is neat, but there&amp;rsquo;s already &lt;a href=&#34;https://github.com/dmcg/okey-doke&#34;&gt;something else out there that does something like this&lt;/a&gt;, and ultimately, Vice as it stands doesn&amp;rsquo;t answer a fundamental question I have about regression tests: if we can record functional UI tests using &lt;a href=&#34;http://android-developers.blogspot.com/2016/05/android-studio-22-preview-new-ui.html&#34;&gt;the espresso test recorder&lt;/a&gt; or &lt;a href=&#34;https://developer.apple.com/library/mac/documentation/ToolsLanguages/Conceptual/Xcode_Overview/RecordingUITests.html&#34;&gt;apple&amp;rsquo;s test recorder&lt;/a&gt;, why don&amp;rsquo;t we have a &lt;em&gt;unit test recorder&lt;/em&gt;?&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;This past week, I&amp;rsquo;ve been exploring potential ways creating a unit test recorder with special attention to implementing this functionality for Android development. In this post, I present an overall strategy for doing this and I present what I&amp;rsquo;ve learned so far vis-a-vis practically implementing this strategy for Android development.&lt;/p&gt;
-
-&lt;h3 id=&#34;the-strategy&#34;&gt;The Strategy&lt;/h3&gt;
-
-&lt;p&gt;Call the classes for which we want to generate tests &amp;ldquo;target classes.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;As I said &lt;a href=&#34;http://www.philosophicalhacker.com/post/vice-a-regression-test-generation-library/&#34;&gt;before&lt;/a&gt;, Vice already works by rewriting target classes so that instances of those classes record their method invocations. More specifically, these instances record both the arguments and return value of their method invocations. Let&amp;rsquo;s call these rewritten classes &amp;ldquo;Recorders.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Once this information is recorded, we can use it to generate regression tests that ensure that the behavior of our code remains unchanged. Those tests simply assert that target classes either a) return proper values or b) interact appropriately with their collaborators when their methods are invoked.&lt;/p&gt;
-
-&lt;p&gt;Making Vice into a test recording library is as simple as rewriting the &lt;em&gt;providers&lt;/em&gt; of instances of the target classes so that these methods return a recorder.&lt;/p&gt;
-
-&lt;p&gt;When I say &amp;ldquo;provider&amp;rdquo; here, I just mean any method that is responsible for providing an object &lt;em&gt;that is used by our application&lt;/em&gt;. Providers may be constructors, ordinary factory methods, or special methods in some DI-framework module class (e.g., &lt;code&gt;@Provides&lt;/code&gt; annotated methods in &lt;a href=&#34;http://google.github.io/dagger/&#34;&gt;Dagger&lt;/a&gt;).&lt;/p&gt;
-
-&lt;p&gt;If &lt;em&gt;all&lt;/em&gt; the instances in an application are recorders, then generating unit tests should be fairly trivial. As I see it, the central problem of creating a a unit test recorder is figuring out how to rewrite providers so that they return recorders instead of ordinary instances.&lt;/p&gt;
-
-&lt;h3 id=&#34;learnings&#34;&gt;Learnings&lt;/h3&gt;
-
-&lt;h4 id=&#34;bytebuddy-alone-won-t-work&#34;&gt;Bytebuddy alone won&amp;rsquo;t work&lt;/h4&gt;
-
-&lt;p&gt;Doing this on Android was trickier than I first imagined. I thought that I could just use Bytebuddy to rewrite providers to return recorders like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;RecordingObject&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;rewrite&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Method providers&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; isAndroid&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Map&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Class&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&amp;gt;,&lt;/span&gt; List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Provider&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; classesGroup
-            &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; streamSupplier&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;get&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt;
-                &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;collect&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;groupingBy&lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;Function&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Provider&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Class&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&amp;gt;&amp;gt;)&lt;/span&gt; Provider&lt;span style=&#34;color: #666666&#34;&gt;::&lt;/span&gt;getDeclaringClass&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-    classesGroup&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;forEach&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;aClass&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; classProviders&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Working with the classProviders using the Stream API gives us a cleaner way of building up our dynamic subclass.&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; DynamicType&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Builder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&amp;gt;&lt;/span&gt; recordingSubclass &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; classProviders&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;stream&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt;
-                &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;byteBuddy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subclass&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;aClass&lt;span style=&#34;color: #666666&#34;&gt;),&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; BiFunction&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;DynamicType&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Builder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&amp;gt;,&lt;/span&gt; Provider&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; DynamicType&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Builder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&amp;gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-                    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; DynamicType&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Builder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&amp;gt;&lt;/span&gt; apply&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;DynamicType&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Builder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&amp;gt;&lt;/span&gt; builder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Provider provider&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; provider&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;rewrite&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;builder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; any&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-                    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-                &lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;builder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; builder2&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; builder2&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-        recordingSubclass&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;make&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt;
-                &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;load&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;aClass&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getClassLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt;
-                      isAndroid &lt;span style=&#34;color: #666666&#34;&gt;?&lt;/span&gt; AndroidClassLoadingStrategy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Default&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;WRAPPER&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; ClassReloadingStrategy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;fromInstalledAgent&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; recorders&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The hope here was that we could simply pass in an array of method or constructor references and use Bytebuddy to rewrite those providers to return recorders. Unfortunately, I didn&amp;rsquo;t read notice this line in the Bytebuddy docs:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&amp;hellip;with the ART runtime which succeeds the Dalvik virtual machine, Android applications are compiled into native machine code before being installed on an Android device. As a result, Byte Buddy cannot longer [sic.] redefine or rebase classes as long as an applications is not explicitly deployed together with its Java sources as there is otherwise no intermediate code representation to interpret.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Since we can&amp;rsquo;t redefine classes using Bytebuddy alone, this approach turns out to be a dead end.&lt;/p&gt;
-
-&lt;h4 id=&#34;some-alternative-implementation-approaches&#34;&gt;Some alternative implementation approaches&lt;/h4&gt;
-
-&lt;p&gt;Dexmaker is a library that allows us to write dex files at runtime. I believe that dexmaker is used so that we can use mockito with Android, but I&amp;rsquo;m not sure. If dexmaker is in fact used for this purpose, it could be a useful tool for creating a unit test recorder on Android.&lt;/p&gt;
-
-&lt;p&gt;Another possibility is to leverage &lt;a href=&#34;http://tools.android.com/tech-docs/new-build-system/transform-api&#34;&gt;the Transform api&lt;/a&gt; that&amp;rsquo;s a part of the Android gradle plugin. This api allows us to manipulate java bytecode before that code is converted to dex bytecode. At first glance, this approach appears to be preferable to the former one for the following reasons:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;We can probably use Bytebuddy here since other users of the Transform api seem to have had some success using similar libraries (viz., javassist and webasm). See, for example, &lt;a href=&#34;https://github.com/nsk-mironov/smuggler/blob/master/smuggler-compiler/build.gradle&#34;&gt;smuggler&lt;/a&gt; and &lt;a href=&#34;https://github.com/realm/realm-java/blob/467bd4b0cb61cf3479f9fa550005b9fd492bc112/realm-transformer/build.gradle&#34;&gt;the realm transformer&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;We&amp;rsquo;re rewriting our providers at build time rather than runtime, which will presumably make for a smoother app running experience.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Because we rewriting our providers at build time, we may be able to take advantage of incremental builds.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Rewriting the providers at runtime isn&amp;rsquo;t really &lt;em&gt;required&lt;/em&gt; for the functionality that we want. By using the transform api, we plugging in to an extension point that&amp;rsquo;s well supported by Android.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;I&amp;rsquo;ll be trying out these alternative approaches in the coming week. Hopefully, next time I&amp;rsquo;ll have a working unit test recorder!&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;In case its not obvious, this seems like an important question because unit-level tests can run much more quickly than functional UI tests, so they can actually serve as, to use Michael Feathers&amp;rsquo; metaphor, a &amp;ldquo;software vice&amp;rdquo; when we&amp;rsquo;re refactoring or adding features. Having to wait 5+ minutes to know if you&amp;rsquo;re changes have broken anything is way too long for functional UI tests to be useful feedback while programming.&lt;/li&gt;
 &lt;/ol&gt;
 </description>
     </item>
