@@ -9,6 +9,86 @@
     <atom:link href="http://philosophicalhacker.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Why I Don&#39;t use Roboletric</title>
+      <link>http://philosophicalhacker.com/post/why-i-dont-use-roboletric/</link>
+      <pubDate>Fri, 06 Jan 2017 22:01:04 -0500</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/why-i-dont-use-roboletric/</guid>
+      <description>
+
+&lt;p&gt;The more that I learn about testing, the more suspicious of roboletric I get. I&amp;rsquo;m honestly starting to think that many of the heros of unit testing (e.g., Kent Beck, Michael Feathers, Steve Freeman, and Nat Pryce) would be pretty suspicious of Roboletric. Here are my concerns:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Roboletric is a set of mocks for a set of types we don&amp;rsquo;t own. Mocking types we don&amp;rsquo;t own is not recommended by the folks who invented mocks.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Roboletric turns TDD on its head by allowing us to ignore something our standard unit tests are trying to tell us: our logic is tightly coupled and muddled with Android-SDK-related implementation details. That&amp;rsquo;s why we have such a hard time writing standard unit tests. Instead of listening to the design feedback of standard unit tests, Roboletric asks us to use a giant mock instead.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;These concerns lead me to believe that Roboletric should be used sparingly, if at all. Let&amp;rsquo;s look at the concerns in detail. Along the way, I&amp;rsquo;ll be pulling in quotes from Feathers, Freeman, and Pryce to bolster my claim that the folks who are largely responsible for our practices of unit testing today would be suspicious of Roboletric.&lt;/p&gt;
+
+&lt;h3 id=&#34;mocking-types-we-don-t-own&#34;&gt;Mocking Types We Don&amp;rsquo;t Own&lt;/h3&gt;
+
+&lt;p&gt;I&amp;rsquo;ve already talked about how mocking types we don&amp;rsquo;t own can be a problem in &lt;a href=&#34;http://www.philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/&#34;&gt;my post on how we misuse mocks for Android development&lt;/a&gt;, so I won&amp;rsquo;t repeat those points in detail here. The gist of this worry is twofold:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;According to Steve Freeman and Nat Pryce, the folks who really popularized mocks, mocking types we don&amp;rsquo;t own partially defeats the purpose of mocking and testing because the process of testing is supposed to tell us something about the design of the code we&amp;rsquo;re mocking. Because we don&amp;rsquo;t own the types, we can&amp;rsquo;t actually do anything with the design feedback our tests are giving us.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Secondly, and perhaps more importantly, mocking types we don&amp;rsquo;t own forces us to ensure that the mocked versions of the types our tests depend on actually match the behavior of their un-mocked counterparts. This is a concern that&amp;rsquo;s shared both by Freeman and Pryce and by Jake Wharton.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;roboletric-turns-tdd-on-its-head&#34;&gt;Roboletric turns TDD on its head&lt;/h3&gt;
+
+&lt;p&gt;Obviously, Android developers aren&amp;rsquo;t the first ones who have tried testing code that relies on a framework. Typically, when folks outside the Android community are test driving code that depends on a framework, TDD encourages them to add a layer of abstraction between the framework and their code. This keeps the code loosely coupled and highly cohesive. The framework code stays at a layer below the application code.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s Freeman and Pryce on this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip;we grow our systems a slice of functionality at a time. As the code scales up&amp;hellip;we use two principal heuristics to guide this structuring: Separation of Concerns&amp;hellip;[and] Higher Levels of Abstraction&amp;hellip;Applied consistently, these two forces will push the structure of an application towards something like Cockburn’s “ports and adapters” architecture [Cockburn08] , in which the code for the business domain is isolated from its dependencies on technical infrastructure, such as databases and user interfaces.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Higher levels of abstraction make our code more understandable and maintainable, and in order to achieve this in our design, we need to make sure our objects are &amp;ldquo;Context Independent,&amp;rdquo; which means that &amp;ldquo;each object has no build-in knowledge of the system in which it executes.&amp;rdquo;&lt;sup&gt;2&lt;/sup&gt; A few pages later in the next chapter, they go on to talk about how TDD specifically helps them drive towards this goal:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip;to construct an object for a unit test, we have to pass its dependencies to it, which means that we have to know what they are. This encourages context independence, since we have to be able to set up the target object’s environment before we can unit-test it—a unit test is just another context. We’ll notice that an object with implicit (or just too many) dependencies is painful to prepare for testing—and make a point of cleaning it up.&lt;sup&gt;3&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Many of the difficulties we have as Android developers in testing (and otherwise) arise because our systems don&amp;rsquo;t exhibit separation of concerns and higher levels of abstraction. Freeman and Pryce are saying that there&amp;rsquo;s a direct link between these properties and testability, a link that Feathers echos in his book:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;one pervasive problem in legacy code bases is that there often aren’t any layers of abstraction; the most important code in the system often sits intermingled with low-level API calls. We’ve already seen how this can make testing difficult, but the problems go beyond testing. &lt;strong&gt;Code is harder to understand when it is littered with wide interfaces containing dozens of unused methods.&lt;/strong&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The emphasis on the last sentence is mine. It&amp;rsquo;s meant to highlight that Feathers and Freeman and Pryce are in agreement on the link between testability, abstraction, and understandable code.&lt;/p&gt;
+
+&lt;p&gt;So, outside the Android community, its widely recognized that writing tests without any layers of abstraction between our application code and a framework is often impossible, so TDD exerts a positive influence on us to create layers of abstraction and because of this, we wind up with cleaner code.&lt;/p&gt;
+
+&lt;p&gt;Hopefully, now we can start to see why Roboletric actually turns TDD on its head. Let&amp;rsquo;s start by remembering something I noted at the outset of this post: unfortunately, most Android apps are written in a way that muddles and couples application code with Android-SDK-related implementation details. The natural direction TDD with pure unit tests is pushing us in is to &lt;strong&gt;move the code we want to test OUT of Android framework classes like Activities, Fragments, and Services;&lt;/strong&gt; its pushing us in a cleaner direction of separating our application-specific logic from the Android SDK.&lt;sup&gt;5&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;Roboletric, on the other hand, allows us to test our apps while leaving our application code mixed in with the Android SDK. Roboletric does this by &amp;ldquo;defanging the Android SDK&amp;rdquo; by mocking types we don&amp;rsquo;t own to make testing easier, but if we take traditional TDD seriously, &lt;strong&gt;this is exactly backwards&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;We don&amp;rsquo;t need to make testing easier by leaving our app code the same and changing the way we do testing. Instead, we need to make testing easier by listening to the tests and moving our application specific logic to a layer that&amp;rsquo;s higher than the Android SDK.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;So, there you have it. Those are the biggest reasons why I don&amp;rsquo;t use robolectric. If you&amp;rsquo;ve got some ideas on where robolectric may be appropriate, I&amp;rsquo;d love to hear them.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;, Steve Freeman and Nat Pryce, 93-94.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Ibid., 99-100.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Ibid., 103-104.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, Michael Feathers, 350-352. Emphasis mine.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;To some extent, I&amp;rsquo;ve been hitting on this at various points. See &lt;a href=&#34;http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Against Android Unit Tests&lt;/a&gt;, &lt;a href=&#34;http://philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;Why we shouldn&amp;rsquo;t put logic in Activities&lt;/a&gt; and &lt;a href=&#34;post/object-seams-and-mvp-for-testability.md&#34;&gt;Object Seams and MVP&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>What Should we Unit Test?</title>
       <link>http://philosophicalhacker.com/post/what-should-we-unit-test/</link>
       <pubDate>Sun, 01 Jan 2017 16:41:45 -0500</pubDate>
@@ -1916,143 +1996,6 @@ The following code should make you nervous:&lt;/p&gt;
 &lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
 
 &lt;p&gt;That&amp;rsquo;s all for now, but you can anticipate how this might make unit testing logic within the click listener easier. The &lt;code&gt;reduce&lt;/code&gt; function works only with POJOs and we know that it&amp;rsquo;s working properly when it returns an object that has the correct &lt;em&gt;state&lt;/em&gt;. This allows us to use &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;state-based verification&lt;/a&gt; in our tests, and as we&amp;rsquo;ll see next time, this can make our tests less brittle and more meaningful. I believe that writing our UI-related business logic in reducers &lt;em&gt;may&lt;/em&gt; give us a better way of writing tests that writing that logic in &lt;code&gt;Presenters&lt;/code&gt;. More on that next time.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>PSA: Dont Use Espresso Idling Resources like Google does</title>
-      <link>http://philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/</link>
-      <pubDate>Tue, 07 Jun 2016 06:54:20 -0400</pubDate>
-      
-      <guid>http://philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/</guid>
-      <description>
-
-&lt;blockquote&gt;
-&lt;p&gt;Roman Nurik: &amp;hellip;That&amp;rsquo;s actually one of the harder things with writing good sample code. People are going to be copying and pasting the heck out of it so you can&amp;rsquo;t take those shortcuts that you sometimes hopefully aren&amp;rsquo;t taking.&lt;/p&gt;
-
-&lt;p&gt;Chet Haase: I always take the shortcuts. That&amp;rsquo;s one of the more interesting things that the developer relations group does in general&amp;hellip;we will put together tests and sample code for the features that we work but we really don&amp;rsquo;t have the time to dive in deeply and do it in a real context.&lt;/p&gt;
-
-&lt;p&gt;Android Developers Backstage, &lt;a href=&#34;http://androidbackstage.blogspot.com/2015/04/episode-24-roman-holiday.html&#34;&gt;Episode 23&lt;/a&gt;, 17:35-18:34&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Google has to put together a series of &amp;ldquo;code labs&amp;rdquo; that are meant to provide a hands on learning experience for grokking Android-related topics. It&amp;rsquo;s been a while since I&amp;rsquo;ve worked seriously on the Android platform, so I thought I&amp;rsquo;d take a look at the code lab on Android testing to see what has changed. (Cause I care &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests&#34;&gt;about testing&lt;/a&gt;.)&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#0&#34;&gt;The Android testing code lab&lt;/a&gt; walks you through the process of creating tests for a Todo application. One of the features of the todo application is that it shows a list of todos. This feature is implemented by a &lt;code&gt;NotesPresenter&lt;/code&gt; class (presenter as in &amp;ldquo;&lt;a href=&#34;https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter&#34;&gt;Model View Presenter&lt;/a&gt;&amp;rdquo;). While I was looking at the testing code lab on testing, I stumbled upon something disturbing within the &lt;code&gt;NotesPresenter&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; forceUpdate&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;    
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The network request might be handled in a different thread so make sure Espresso knows&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// that the app is busy until the response is handled.&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;increment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// App is busy until further notice&lt;/span&gt;
-&lt;/span&gt;
-    mNotesRepository&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; NotesRepository&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoadNotesCallback&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Note&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; notes&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;decrement&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Set app as idle.&lt;/span&gt;
-&lt;/span&gt;            mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setProgressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;notes&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isEmpty&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotesEmptyPlaceholder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;notes&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This article is about why this code is disturbing and what we can do to fix it. Spoiler: it violates the principle of single responsibility and we can fix it using the dependency injection and decorator patterns.&lt;/p&gt;
-
-&lt;h1 id=&#34;disturbing&#34;&gt;Disturbing&lt;/h1&gt;
-
-&lt;p&gt;The comments in the above code definitely help to point out why this is troubling, but if you&amp;rsquo;re not familiar with &lt;code&gt;IdlingResource&lt;/code&gt;, you may not immediately see why the problem with this code. &lt;code&gt;IdlingResource&lt;/code&gt;s help you write robust functional UI tests with espresso. These tests are &amp;ldquo;robust&amp;rdquo; because you don&amp;rsquo;t need to explicitly tell your tests to &amp;ldquo;sleep&amp;rdquo; for a &lt;em&gt;predetermined&lt;/em&gt; amount of time while some asynchronous task completes. &lt;code&gt;IdlingResource&lt;/code&gt;s is a way of telling espresso &amp;ldquo;don&amp;rsquo;t do any more assertions because the app is doing something that might affect whether your assertions are satisfied.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;For example, suppose we have an espresso test that verifies that the todo notes are displayed after they are loaded and that the progressIndicator in the view is hidden after those notes are loaded:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    onView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;withId&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;progressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;check&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;matches&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;not&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isDisplayed&lt;span style=&#34;color: #666666&#34;&gt;())));&lt;/span&gt;
-    onView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;withId&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;notes_list&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;check&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;matches&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isDisplayed&lt;span style=&#34;color: #666666&#34;&gt;()));&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;We don&amp;rsquo;t want this code to immediately assert that the progressIndicator is invisible and the notes list are visible because it takes some time for the notes to load from the network. So, the previous code snippet with an &lt;code&gt;IdlingResource&lt;/code&gt; would tell this test that it needs to wait until the notes are loaded from the network before performing this verification.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s take a second look at the disturbing code:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; forceUpdate&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;    
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The network request might be handled in a different thread so make sure Espresso knows&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// that the app is busy until the response is handled.&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;increment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// App is busy until further notice&lt;/span&gt;
-&lt;/span&gt;
-    mNotesRepository&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; NotesRepository&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoadNotesCallback&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Note&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; notes&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;decrement&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Set app as idle.&lt;/span&gt;
-&lt;/span&gt;            mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setProgressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;notes&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isEmpty&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotesEmptyPlaceholder&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                mNotesView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;notes&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;We can now quickly say what&amp;rsquo;s disturbing about this: this presenter violates the principle of single responsibility. More than that: it violates the principle in a particularly egregious way: it mixes &lt;em&gt;application&lt;/em&gt; responsibilities with &lt;em&gt;testing&lt;/em&gt; responsibilities. This is silly. Don&amp;rsquo;t do this. Violating the principle of single responsibility is a sure-fire way to create spaghetti code and spaghetti doesn&amp;rsquo;t look as good in code as it does on a plate.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/spaghetti.jpeg&#34; alt=&#34;spaghetti on a plate&#34; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;fixit&#34;&gt;Fixit&lt;/h1&gt;
-
-&lt;p&gt;Instead of mixing responsibilities, register your &lt;code&gt;IdlingResource&lt;/code&gt; in your tests-related code, where test-related responsibilities belong. One way to do this is the use dependency injection and decorators. The code lab project already has a limited dependency injection mechanism, so we can just use that. The project has a dependency injector that&amp;rsquo;s specifically used for testing called &lt;code&gt;Injection.&lt;/code&gt; All we need to do is decorate the &lt;code&gt;NotesRepository&lt;/code&gt; that&amp;rsquo;s injected by the &lt;code&gt;Injection&lt;/code&gt; class, and we have what we need to avoid mixing responsibilities:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; NotesRepository &lt;span style=&#34;color: #0000FF&#34;&gt;provideNotesRepository&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; NotesRepository inMemoryRepoInstance
-      &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; NoteRepositories&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getInMemoryRepoInstance&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; FakeNotesServiceApiImpl&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; NotesRepository&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@NonNull&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; LoadNotesCallback callback&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;increment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-            inMemoryRepoInstance&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LoadNotesCallback&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-                &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Note&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; notes&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                    EspressoIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;decrement&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-                    callback&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;notes&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-                &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-            &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The &lt;code&gt;NotesRepository&lt;/code&gt; returned by this method gets injected into the &lt;code&gt;Presenter&lt;/code&gt; here:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;NotesFragment&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; NotesContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;View&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Nullable&lt;/span&gt; Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;/...&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mActionsListener
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;          &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; NotesPresenter&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Injection&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;provideNotesRepository&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Voila. And now your espresso tests will wait until the notes have been loaded before asserting the view state and you&amp;rsquo;ve avoided mixing testing responsibilities with your business logic. Bon Appetite.&lt;/p&gt;
 </description>
     </item>
     

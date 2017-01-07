@@ -143,6 +143,35 @@
 	   
 <article class="post post">
     <header class="post-header">
+        <h2 class="post-title"><a href="/post/how-to-safely-move-logic-out-of-activities/">How to Safely move Logic out of Activities</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>In my last post, I argued that we should stop putting our app logic in Activitys and Fragments because it makes both unit testing and functional testing our apps more difficult. In this post, I&rsquo;ll try to suggest a method of safely removing app logic from our Activitys and Fragments, drawing on a central idea discussed in Michael Feathers&rsquo; Working Effectively with Legacy Code: characterization tests.
+In the first section, I briefly introduce the idea of characterization tests. <a class="read-more" href="/post/how-to-safely-move-logic-out-of-activities/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        on
+            
+                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="http://philosophicalhacker.com/tags/testing/">#testing</a>,
+            
+                <a href="http://philosophicalhacker.com/tags/refactoring/">#refactoring</a>,
+            
+        
+        <time class="post-date" datetime="2016-06-16T16:58:30-04:00">
+            16 Jun 2016
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
         <h2 class="post-title"><a href="/post/why-we-should-stop-putting-logic-in-activities/">Why we Should Stop Putting Logic in Activities</a></h2>
     </header>
     <section class="post-excerpt">
@@ -414,63 +443,6 @@ Chet Haase: I always take the shortcuts. That&rsquo;s one of the more interestin
         
         <time class="post-date" datetime="2015-07-08T13:42:14Z">
             8 Jul 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/">MVPR: A Flexible, Testable Architecture for Android (Pt. 1)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p><blockquote>Thorough unit testing helps us improve the internal quality because, to be tested, a unit has to be structured to run outside the system in a test fixture. A unit test for an object needs to create the object, provide its dependencies, interact with it, and check that it behaved as expected. So, for a class to be easy to unit-test, the class must have explicit dependencies that can easily be substituted and clear responsibilities that can easily be invoked and verified. In software engineering terms, that means that the code must be loosely coupled and highly cohesive —in other words, well-designed.
-
-Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_</blockquote>
-
-<p>Lately, I&rsquo;ve been working towards making Google&rsquo;s IO app unit testable. A part of the reason I&rsquo;m doing this is to test the claims that Freeman and Pryce make in the above quotation about unit testing. Although I&rsquo;m still not even done with refactoring one Activity in Google&rsquo;s IOSched app, I&rsquo;m already finding some truth to what they&rsquo;re saying.</p>
-
-<p>The <code>Activity</code> that I&rsquo;ve been working on is the <code>SessionDetailActivity</code>. If you&rsquo;ve been following me for a while, you know exactly what Activity I&rsquo;m talking about, but if you&rsquo;re tuning in the first time, here&rsquo;s what the <code>SessionDetailActivity</code> UI looks like:</p>
-
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png" alt="IO Testing Talk-04" /></a></p>
-
-<p>As I mentioned in <a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">the post that introduced this series</a>, there have been several challenges to making the <code>SessionDetailActivity</code> unit testable. Unit testing its dynamically constructed views was a challenge that I discussed in <a href="http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/">my last post in this series</a>, but in that post, I noted that my strategy for testing dynamically constructed views wasn&rsquo;t entirely clean because of a circular dependency between <code>Views</code> and <code>Presenters</code>.</p>
-
-<p>This circular dependency is a symptom of a larger problem with how we structure our Android applications: both <code>Activities</code> and <code>Presenters</code> violate the principle of single responsibility. They are often responsible for at least two things: binding data to a <code>View</code> and responding to user input. This is a part of the reason why <a href="https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/SessionDetailActivity.java">the <code>SessionDetailActivity</code></a>, a class that&rsquo;s supposed to serve as a model for Android development, is over 1000 lines long.</p>
-
-<p>I think there&rsquo;s a better way to structure our applications. In the next few posts, I&rsquo;ll propose a new architecture that has the following properties:</p>
-
-<ol>
-<li><p>It breaks up the multiple responsibilities typically handled by <code>Presenters</code> and <code>Activities</code></p></li>
-
-<li><p>It breaks the circular dependency that traditionally exists between Views on the one hand and Activities or Presenters on the other hand.</p></li>
-
-<li><p>It enables us to use constructor dependency injection for all of our objects that present data to the user and respond to user input.</p></li>
-
-<li><p>It makes our ui-related business logic classes easier to unit test, impossible to construct without the dependencies necessary to fulfill their responsibilities, and (slightly) more amenable to the use of composition and polymorphism to extend and/or modify object behavior.</p></li>
-</ol>
-
-<p>In this post, I will try to give some reasons why we might consider a new architecture for Android development in the first place.</p>
-
-<p></p> <a class="read-more" href="/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        
-            
-        
-        on
-            
-                <a href="http://philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="http://philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-07-07T18:29:16Z">
-            7 Jul 2015
         </time>
     </footer>
 </article>

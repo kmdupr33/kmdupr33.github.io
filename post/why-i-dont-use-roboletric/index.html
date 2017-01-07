@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" Why I Don&#39;t use Roboletric &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://philosophicalhacker.com/post/why-i-dont-use-roboletric/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2017-01-06T22:01:04-05:00" />
+
+    
+    <meta property="og:article:tag" content="android" />
+    
+    <meta property="og:article:tag" content="testing" />
+    
+    
+
+  <title>
+     Why I Don&#39;t use Roboletric &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.17" />
+
+    <link rel="canonical" href="http://philosophicalhacker.com/post/why-i-dont-use-roboletric/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+<header class="main-header post-head no-cover">
+  <nav class="main-nav clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">Why I Don&#39;t use Roboletric</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2017-01-06T22:01:04-05:00">
+            Jan 6, 2017
+          </time>
+        
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<p>The more that I learn about testing, the more suspicious of roboletric I get. I&rsquo;m honestly starting to think that many of the heros of unit testing (e.g., Kent Beck, Michael Feathers, Steve Freeman, and Nat Pryce) would be pretty suspicious of Roboletric. Here are my concerns:</p>
+
+<ol>
+<li><p>Roboletric is a set of mocks for a set of types we don&rsquo;t own. Mocking types we don&rsquo;t own is not recommended by the folks who invented mocks.</p></li>
+
+<li><p>Roboletric turns TDD on its head by allowing us to ignore something our standard unit tests are trying to tell us: our logic is tightly coupled and muddled with Android-SDK-related implementation details. That&rsquo;s why we have such a hard time writing standard unit tests. Instead of listening to the design feedback of standard unit tests, Roboletric asks us to use a giant mock instead.</p></li>
+</ol>
+
+<p>These concerns lead me to believe that Roboletric should be used sparingly, if at all. Let&rsquo;s look at the concerns in detail. Along the way, I&rsquo;ll be pulling in quotes from Feathers, Freeman, and Pryce to bolster my claim that the folks who are largely responsible for our practices of unit testing today would be suspicious of Roboletric.</p>
+
+<h3 id="mocking-types-we-don-t-own">Mocking Types We Don&rsquo;t Own</h3>
+
+<p>I&rsquo;ve already talked about how mocking types we don&rsquo;t own can be a problem in <a href="http://www.philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/">my post on how we misuse mocks for Android development</a>, so I won&rsquo;t repeat those points in detail here. The gist of this worry is twofold:</p>
+
+<ol>
+<li><p>According to Steve Freeman and Nat Pryce, the folks who really popularized mocks, mocking types we don&rsquo;t own partially defeats the purpose of mocking and testing because the process of testing is supposed to tell us something about the design of the code we&rsquo;re mocking. Because we don&rsquo;t own the types, we can&rsquo;t actually do anything with the design feedback our tests are giving us.</p></li>
+
+<li><p>Secondly, and perhaps more importantly, mocking types we don&rsquo;t own forces us to ensure that the mocked versions of the types our tests depend on actually match the behavior of their un-mocked counterparts. This is a concern that&rsquo;s shared both by Freeman and Pryce and by Jake Wharton.</p></li>
+</ol>
+
+<h3 id="roboletric-turns-tdd-on-its-head">Roboletric turns TDD on its head</h3>
+
+<p>Obviously, Android developers aren&rsquo;t the first ones who have tried testing code that relies on a framework. Typically, when folks outside the Android community are test driving code that depends on a framework, TDD encourages them to add a layer of abstraction between the framework and their code. This keeps the code loosely coupled and highly cohesive. The framework code stays at a layer below the application code.</p>
+
+<p>Here&rsquo;s Freeman and Pryce on this:</p>
+
+<blockquote>
+<p>&hellip;we grow our systems a slice of functionality at a time. As the code scales up&hellip;we use two principal heuristics to guide this structuring: Separation of Concerns&hellip;[and] Higher Levels of Abstraction&hellip;Applied consistently, these two forces will push the structure of an application towards something like Cockburn’s “ports and adapters” architecture [Cockburn08] , in which the code for the business domain is isolated from its dependencies on technical infrastructure, such as databases and user interfaces.<sup>1</sup></p>
+</blockquote>
+
+<p>Higher levels of abstraction make our code more understandable and maintainable, and in order to achieve this in our design, we need to make sure our objects are &ldquo;Context Independent,&rdquo; which means that &ldquo;each object has no build-in knowledge of the system in which it executes.&rdquo;<sup>2</sup> A few pages later in the next chapter, they go on to talk about how TDD specifically helps them drive towards this goal:</p>
+
+<blockquote>
+<p>&hellip;to construct an object for a unit test, we have to pass its dependencies to it, which means that we have to know what they are. This encourages context independence, since we have to be able to set up the target object’s environment before we can unit-test it—a unit test is just another context. We’ll notice that an object with implicit (or just too many) dependencies is painful to prepare for testing—and make a point of cleaning it up.<sup>3</sup></p>
+</blockquote>
+
+<p>Many of the difficulties we have as Android developers in testing (and otherwise) arise because our systems don&rsquo;t exhibit separation of concerns and higher levels of abstraction. Freeman and Pryce are saying that there&rsquo;s a direct link between these properties and testability, a link that Feathers echos in his book:</p>
+
+<blockquote>
+<p>one pervasive problem in legacy code bases is that there often aren’t any layers of abstraction; the most important code in the system often sits intermingled with low-level API calls. We’ve already seen how this can make testing difficult, but the problems go beyond testing. <strong>Code is harder to understand when it is littered with wide interfaces containing dozens of unused methods.</strong><sup>4</sup></p>
+</blockquote>
+
+<p>The emphasis on the last sentence is mine. It&rsquo;s meant to highlight that Feathers and Freeman and Pryce are in agreement on the link between testability, abstraction, and understandable code.</p>
+
+<p>So, outside the Android community, its widely recognized that writing tests without any layers of abstraction between our application code and a framework is often impossible, so TDD exerts a positive influence on us to create layers of abstraction and because of this, we wind up with cleaner code.</p>
+
+<p>Hopefully, now we can start to see why Roboletric actually turns TDD on its head. Let&rsquo;s start by remembering something I noted at the outset of this post: unfortunately, most Android apps are written in a way that muddles and couples application code with Android-SDK-related implementation details. The natural direction TDD with pure unit tests is pushing us in is to <strong>move the code we want to test OUT of Android framework classes like Activities, Fragments, and Services;</strong> its pushing us in a cleaner direction of separating our application-specific logic from the Android SDK.<sup>5</sup></p>
+
+<p>Roboletric, on the other hand, allows us to test our apps while leaving our application code mixed in with the Android SDK. Roboletric does this by &ldquo;defanging the Android SDK&rdquo; by mocking types we don&rsquo;t own to make testing easier, but if we take traditional TDD seriously, <strong>this is exactly backwards</strong>.</p>
+
+<p>We don&rsquo;t need to make testing easier by leaving our app code the same and changing the way we do testing. Instead, we need to make testing easier by listening to the tests and moving our application specific logic to a layer that&rsquo;s higher than the Android SDK.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>So, there you have it. Those are the biggest reasons why I don&rsquo;t use robolectric. If you&rsquo;ve got some ideas on where robolectric may be appropriate, I&rsquo;d love to hear them.</p>
+
+<h3 id="notes">Notes:</h3>
+
+<ol>
+<li><p><em>Growing Object Oriented Software Guided by Tests</em>, Steve Freeman and Nat Pryce, 93-94.</p></li>
+
+<li><p>Ibid., 99-100.</p></li>
+
+<li><p>Ibid., 103-104.</p></li>
+
+<li><p><em>Working Effectively with Legacy Code</em>, Michael Feathers, 350-352. Emphasis mine.</p></li>
+
+<li><p>To some extent, I&rsquo;ve been hitting on this at various points. See <a href="/2015/04/10/against-android-unit-tests/">Against Android Unit Tests</a>, <a href="/post/why-we-should-stop-putting-logic-in-activities/">Why we shouldn&rsquo;t put logic in Activities</a> and <a href="post/object-seams-and-mvp-for-testability.md">Object Seams and MVP</a>.</p></li>
+</ol>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+        
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Why%20I%20Don%27t%20use%20Roboletric&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-i-dont-use-roboletric%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-i-dont-use-roboletric%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-i-dont-use-roboletric%2f&amp;description=Why%20I%20Don%27t%20use%20Roboletric"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-i-dont-use-roboletric%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/philosophicalhacker.com\/post\/why-i-dont-use-roboletric\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+
