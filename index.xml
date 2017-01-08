@@ -10,22 +10,22 @@
     <atom:link href="http://philosophicalhacker.com/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>Why I Don&#39;t use Roboletric</title>
+      <title>Why I Don&#39;t use Robolectric</title>
       <link>http://philosophicalhacker.com/post/why-i-dont-use-roboletric/</link>
       <pubDate>Fri, 06 Jan 2017 22:01:04 -0500</pubDate>
       
       <guid>http://philosophicalhacker.com/post/why-i-dont-use-roboletric/</guid>
       <description>
 
-&lt;p&gt;The more that I learn about testing, the more suspicious of roboletric I get. I&amp;rsquo;m honestly starting to think that many of the heros of unit testing (e.g., Kent Beck, Michael Feathers, Steve Freeman, and Nat Pryce) would be pretty suspicious of Roboletric. Here are my concerns:&lt;/p&gt;
+&lt;p&gt;The more that I learn about testing, the more suspicious of Robolectric I get. I&amp;rsquo;m honestly starting to think that many of the heros of unit testing (e.g., Kent Beck, Michael Feathers, Steve Freeman, and Nat Pryce) would be pretty suspicious of Robolectric. Here are my concerns:&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Roboletric is a set of mocks for a set of types we don&amp;rsquo;t own. Mocking types we don&amp;rsquo;t own is not recommended by the folks who invented mocks.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Robolectric is a set of mocks for a set of types we don&amp;rsquo;t own. Mocking types we don&amp;rsquo;t own is not recommended by the folks who invented mocks.&lt;/p&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;p&gt;Roboletric turns TDD on its head by allowing us to ignore something our standard unit tests are trying to tell us: our logic is tightly coupled and muddled with Android-SDK-related implementation details. That&amp;rsquo;s why we have such a hard time writing standard unit tests. Instead of listening to the design feedback of standard unit tests, Roboletric asks us to use a giant mock instead.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Robolectric turns TDD on its head by allowing us to ignore something our standard unit tests are trying to tell us: our logic is tightly coupled and muddled with Android-SDK-related implementation details. That&amp;rsquo;s why we have such a hard time writing standard unit tests. Instead of listening to the design feedback of standard unit tests, Robolectric asks us to use a giant mock instead.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;These concerns lead me to believe that Roboletric should be used sparingly, if at all. Let&amp;rsquo;s look at the concerns in detail. Along the way, I&amp;rsquo;ll be pulling in quotes from Feathers, Freeman, and Pryce to bolster my claim that the folks who are largely responsible for our practices of unit testing today would be suspicious of Roboletric.&lt;/p&gt;
+&lt;p&gt;These concerns lead me to believe that Robolectric should be used sparingly, if at all. Let&amp;rsquo;s look at the concerns in detail. Along the way, I&amp;rsquo;ll be pulling in quotes from Feathers, Freeman, and Pryce to bolster my claim that the folks who are largely responsible for our practices of unit testing today would be suspicious of Robolectric.&lt;/p&gt;
 
 &lt;h3 id=&#34;mocking-types-we-don-t-own&#34;&gt;Mocking Types We Don&amp;rsquo;t Own&lt;/h3&gt;
 
@@ -37,7 +37,7 @@
 &lt;li&gt;&lt;p&gt;Secondly, and perhaps more importantly, mocking types we don&amp;rsquo;t own forces us to ensure that the mocked versions of the types our tests depend on actually match the behavior of their un-mocked counterparts. This is a concern that&amp;rsquo;s shared both by Freeman and Pryce and by Jake Wharton.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;roboletric-turns-tdd-on-its-head&#34;&gt;Roboletric turns TDD on its head&lt;/h3&gt;
+&lt;h3 id=&#34;robolectric-turns-tdd-on-its-head&#34;&gt;Robolectric turns TDD on its head&lt;/h3&gt;
 
 &lt;p&gt;Obviously, Android developers aren&amp;rsquo;t the first ones who have tried testing code that relies on a framework. Typically, when folks outside the Android community are test driving code that depends on a framework, TDD encourages them to add a layer of abstraction between the framework and their code. This keeps the code loosely coupled and highly cohesive. The framework code stays at a layer below the application code.&lt;/p&gt;
 
@@ -63,9 +63,9 @@
 
 &lt;p&gt;So, outside the Android community, its widely recognized that writing tests without any layers of abstraction between our application code and a framework is often impossible, so TDD exerts a positive influence on us to create layers of abstraction and because of this, we wind up with cleaner code.&lt;/p&gt;
 
-&lt;p&gt;Hopefully, now we can start to see why Roboletric actually turns TDD on its head. Let&amp;rsquo;s start by remembering something I noted at the outset of this post: unfortunately, most Android apps are written in a way that muddles and couples application code with Android-SDK-related implementation details. The natural direction TDD with pure unit tests is pushing us in is to &lt;strong&gt;move the code we want to test OUT of Android framework classes like Activities, Fragments, and Services;&lt;/strong&gt; its pushing us in a cleaner direction of separating our application-specific logic from the Android SDK.&lt;sup&gt;5&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;Hopefully, now we can start to see why Robolectric actually turns TDD on its head. Let&amp;rsquo;s start by remembering something I noted at the outset of this post: unfortunately, most Android apps are written in a way that muddles and couples application code with Android-SDK-related implementation details. The natural direction TDD with pure unit tests is pushing us in is to &lt;strong&gt;move the code we want to test OUT of Android framework classes like Activities, Fragments, and Services;&lt;/strong&gt; its pushing us in a cleaner direction of separating our application-specific logic from the Android SDK.&lt;sup&gt;5&lt;/sup&gt;&lt;/p&gt;
 
-&lt;p&gt;Roboletric, on the other hand, allows us to test our apps while leaving our application code mixed in with the Android SDK. Roboletric does this by &amp;ldquo;defanging the Android SDK&amp;rdquo; by mocking types we don&amp;rsquo;t own to make testing easier, but if we take traditional TDD seriously, &lt;strong&gt;this is exactly backwards&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Robolectric, on the other hand, allows us to test our apps while leaving our application code mixed in with the Android SDK. Robolectric does this by &amp;ldquo;defanging the Android SDK&amp;rdquo; by mocking types we don&amp;rsquo;t own to make testing easier, but if we take traditional TDD seriously, &lt;strong&gt;this is exactly backwards&lt;/strong&gt;.&lt;/p&gt;
 
 &lt;p&gt;We don&amp;rsquo;t need to make testing easier by leaving our app code the same and changing the way we do testing. Instead, we need to make testing easier by listening to the tests and moving our application specific logic to a layer that&amp;rsquo;s higher than the Android SDK.&lt;/p&gt;
 

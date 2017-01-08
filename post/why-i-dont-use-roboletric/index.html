@@ -19,7 +19,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  	<meta property="og:title" content=" Why I Don&#39;t use Roboletric &middot;  Philosophical Hacker" />
+  	<meta property="og:title" content=" Why I Don&#39;t use Robolectric &middot;  Philosophical Hacker" />
   	<meta property="og:site_name" content="Philosophical Hacker" />
   	<meta property="og:url" content="http://philosophicalhacker.com/post/why-i-dont-use-roboletric/" />
 
@@ -36,7 +36,7 @@
     
 
   <title>
-     Why I Don&#39;t use Roboletric &middot;  Philosophical Hacker
+     Why I Don&#39;t use Robolectric &middot;  Philosophical Hacker
   </title>
 
     <meta name="description" content="Articles on android development" />
@@ -130,7 +130,7 @@
   <article class="post post">
 
     <header class="post-header">
-        <h1 class="post-title">Why I Don&#39;t use Roboletric</h1>
+        <h1 class="post-title">Why I Don&#39;t use Robolectric</h1>
         <small></small>
 
         <section class="post-meta">
@@ -150,15 +150,15 @@
     <section class="post-content">
       
 
-<p>The more that I learn about testing, the more suspicious of roboletric I get. I&rsquo;m honestly starting to think that many of the heros of unit testing (e.g., Kent Beck, Michael Feathers, Steve Freeman, and Nat Pryce) would be pretty suspicious of Roboletric. Here are my concerns:</p>
+<p>The more that I learn about testing, the more suspicious of Robolectric I get. I&rsquo;m honestly starting to think that many of the heros of unit testing (e.g., Kent Beck, Michael Feathers, Steve Freeman, and Nat Pryce) would be pretty suspicious of Robolectric. Here are my concerns:</p>
 
 <ol>
-<li><p>Roboletric is a set of mocks for a set of types we don&rsquo;t own. Mocking types we don&rsquo;t own is not recommended by the folks who invented mocks.</p></li>
+<li><p>Robolectric is a set of mocks for a set of types we don&rsquo;t own. Mocking types we don&rsquo;t own is not recommended by the folks who invented mocks.</p></li>
 
-<li><p>Roboletric turns TDD on its head by allowing us to ignore something our standard unit tests are trying to tell us: our logic is tightly coupled and muddled with Android-SDK-related implementation details. That&rsquo;s why we have such a hard time writing standard unit tests. Instead of listening to the design feedback of standard unit tests, Roboletric asks us to use a giant mock instead.</p></li>
+<li><p>Robolectric turns TDD on its head by allowing us to ignore something our standard unit tests are trying to tell us: our logic is tightly coupled and muddled with Android-SDK-related implementation details. That&rsquo;s why we have such a hard time writing standard unit tests. Instead of listening to the design feedback of standard unit tests, Robolectric asks us to use a giant mock instead.</p></li>
 </ol>
 
-<p>These concerns lead me to believe that Roboletric should be used sparingly, if at all. Let&rsquo;s look at the concerns in detail. Along the way, I&rsquo;ll be pulling in quotes from Feathers, Freeman, and Pryce to bolster my claim that the folks who are largely responsible for our practices of unit testing today would be suspicious of Roboletric.</p>
+<p>These concerns lead me to believe that Robolectric should be used sparingly, if at all. Let&rsquo;s look at the concerns in detail. Along the way, I&rsquo;ll be pulling in quotes from Feathers, Freeman, and Pryce to bolster my claim that the folks who are largely responsible for our practices of unit testing today would be suspicious of Robolectric.</p>
 
 <h3 id="mocking-types-we-don-t-own">Mocking Types We Don&rsquo;t Own</h3>
 
@@ -170,7 +170,7 @@
 <li><p>Secondly, and perhaps more importantly, mocking types we don&rsquo;t own forces us to ensure that the mocked versions of the types our tests depend on actually match the behavior of their un-mocked counterparts. This is a concern that&rsquo;s shared both by Freeman and Pryce and by Jake Wharton.</p></li>
 </ol>
 
-<h3 id="roboletric-turns-tdd-on-its-head">Roboletric turns TDD on its head</h3>
+<h3 id="robolectric-turns-tdd-on-its-head">Robolectric turns TDD on its head</h3>
 
 <p>Obviously, Android developers aren&rsquo;t the first ones who have tried testing code that relies on a framework. Typically, when folks outside the Android community are test driving code that depends on a framework, TDD encourages them to add a layer of abstraction between the framework and their code. This keeps the code loosely coupled and highly cohesive. The framework code stays at a layer below the application code.</p>
 
@@ -196,9 +196,9 @@
 
 <p>So, outside the Android community, its widely recognized that writing tests without any layers of abstraction between our application code and a framework is often impossible, so TDD exerts a positive influence on us to create layers of abstraction and because of this, we wind up with cleaner code.</p>
 
-<p>Hopefully, now we can start to see why Roboletric actually turns TDD on its head. Let&rsquo;s start by remembering something I noted at the outset of this post: unfortunately, most Android apps are written in a way that muddles and couples application code with Android-SDK-related implementation details. The natural direction TDD with pure unit tests is pushing us in is to <strong>move the code we want to test OUT of Android framework classes like Activities, Fragments, and Services;</strong> its pushing us in a cleaner direction of separating our application-specific logic from the Android SDK.<sup>5</sup></p>
+<p>Hopefully, now we can start to see why Robolectric actually turns TDD on its head. Let&rsquo;s start by remembering something I noted at the outset of this post: unfortunately, most Android apps are written in a way that muddles and couples application code with Android-SDK-related implementation details. The natural direction TDD with pure unit tests is pushing us in is to <strong>move the code we want to test OUT of Android framework classes like Activities, Fragments, and Services;</strong> its pushing us in a cleaner direction of separating our application-specific logic from the Android SDK.<sup>5</sup></p>
 
-<p>Roboletric, on the other hand, allows us to test our apps while leaving our application code mixed in with the Android SDK. Roboletric does this by &ldquo;defanging the Android SDK&rdquo; by mocking types we don&rsquo;t own to make testing easier, but if we take traditional TDD seriously, <strong>this is exactly backwards</strong>.</p>
+<p>Robolectric, on the other hand, allows us to test our apps while leaving our application code mixed in with the Android SDK. Robolectric does this by &ldquo;defanging the Android SDK&rdquo; by mocking types we don&rsquo;t own to make testing easier, but if we take traditional TDD seriously, <strong>this is exactly backwards</strong>.</p>
 
 <p>We don&rsquo;t need to make testing easier by leaving our app code the same and changing the way we do testing. Instead, we need to make testing easier by listening to the tests and moving our application specific logic to a layer that&rsquo;s higher than the Android SDK.</p>
 
@@ -247,7 +247,7 @@
     
 <section class="share">
   <h4>Share this post</h4>
-  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Why%20I%20Don%27t%20use%20Roboletric&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-i-dont-use-roboletric%2f"
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Why%20I%20Don%27t%20use%20Robolectric&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-i-dont-use-roboletric%2f"
       onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
       <span class="hidden">Twitter</span>
   </a>
@@ -255,7 +255,7 @@
       onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
       <span class="hidden">Facebook</span>
   </a>
-  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-i-dont-use-roboletric%2f&amp;description=Why%20I%20Don%27t%20use%20Roboletric"
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2fwhy-i-dont-use-roboletric%2f&amp;description=Why%20I%20Don%27t%20use%20Robolectric"
       onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
       <span class="hidden">Pinterest</span>
   </a>
