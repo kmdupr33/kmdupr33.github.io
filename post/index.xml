@@ -6,8 +6,140 @@
     <description>Recent content in Post-rsses on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 06 Jan 2017 22:01:04 -0500</lastBuildDate>
+    <lastBuildDate>Sat, 14 Jan 2017 10:54:43 -0500</lastBuildDate>
     <atom:link href="http://philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>TDD &gt; The Principle of Single Responsibility</title>
+      <link>http://philosophicalhacker.com/post/tdd-is-greater-than-the-principle-of-single-responsibility/</link>
+      <pubDate>Sat, 14 Jan 2017 10:54:43 -0500</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/tdd-is-greater-than-the-principle-of-single-responsibility/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;The programmer, like the poet, works only slightly removed from pure thought-stuff. He builds his castles in the air, from air, creating by exertion of the imagination. Few media of creation are so flexible, so easy to polish and rework, so readily capable of &lt;strong&gt;realizing grand conceptual structures&amp;hellip;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Fred Brooks, The Mythical Man-Month&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Grand structures &amp;ndash; whether they are conceptual, programmatic, or physical &amp;ndash; require strong foundations. This is true in two senses.&lt;/p&gt;
+
+&lt;p&gt;In the first, obvious sense, strong foundations are required for a structure to withstand its own weight and the forces that want to knock it down. Structures without strong foundations often collapse.&lt;/p&gt;
+
+&lt;p&gt;In the second, less obvious sense, there&amp;rsquo;s another kind of foundation that&amp;rsquo;s crucial to a structure&amp;rsquo;s integrity: the epistemic foundations that guide the architect as she lays the foundation and builds her structure, the architect&amp;rsquo;s first principles. These epistemic foundations are even more fundamental to the structure&amp;rsquo;s integrity than the foundation the structure actually sits upon. An architect that doesn&amp;rsquo;t understand the foundational principles of her craft builds bad foundations, which leads to structures that collapse.&lt;/p&gt;
+
+&lt;p&gt;The principle of single responsibility is supposed to be this second kind of strong foundation for those of us that &amp;ldquo;build castles in the air.&amp;rdquo; Its a principle that&amp;rsquo;s supposed to help us build software with strong foundations, software that won&amp;rsquo;t topple under its own weight and under the weight of forces that want to knock it down.&lt;/p&gt;
+
+&lt;p&gt;I think that TDD actually serves as a better foundation for designing robust software. The epigraph I opened this article with actually provides a nice preview of why I think this: building abstractions is a big part of building good software, but without these abstractions, the principle of responsibility isn&amp;rsquo;t very helpful in guiding me. I often need something that pushes me to discover and build abstractions in the first place, and TDD does a better job of this than the principle of single responsibility.&lt;/p&gt;
+
+&lt;p&gt;In the rest of this post, I&amp;rsquo;ll unpack and attempt to justify that last statement.&lt;/p&gt;
+
+&lt;h3 id=&#34;abstraction-and-the-psr&#34;&gt;Abstraction and the PSR&lt;/h3&gt;
+
+&lt;p&gt;Imagine for a moment that Bill, another engineer shows you an app he&amp;rsquo;s working on. When you take a look at it, you notice that the app consists of a single class that &lt;em&gt;implements&lt;/em&gt; the entirety of your application. Until recently, if this happened to me, I would have immediately reached for the principle of single responsibility to explain what he did wrong.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Me:&lt;/strong&gt; Have you ever heard of the principle of single responsibility?&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bill:&lt;/strong&gt; Yeah. Actually, that principle was guiding me as I wrote this class.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Me:&lt;/strong&gt; Really? Well, what is this class&amp;rsquo; responsibility?&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bill:&lt;/strong&gt; Well, this class is responsible for running the app. This class didn&amp;rsquo;t seem to violate the PSR because the class fits Bob Martin&amp;rsquo;s definition of a class that follows the PSR. He says that &amp;ldquo;a class should only have one reason to change.&amp;rdquo;&lt;sup&gt;1&lt;/sup&gt; That&amp;rsquo;s true of this class. There&amp;rsquo;s only one reason it&amp;rsquo;ll change: if the app needs to behave differently, we&amp;rsquo;ll have to change this class. Also, the class passed Steve Freeman and Nat Pryce&amp;rsquo;s test for whether a class follows the PSR: I can state the class&amp;rsquo;s responsibility without any and&amp;rsquo;s, or&amp;rsquo;s, or but&amp;rsquo;s.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;This is an absurd conversation, but its an extreme case to demonstrate an important point: whether a class seems to satisfy the principle of single responsibility depends largely on whether we can &lt;em&gt;identify&lt;/em&gt; other responsibilities that our class is tackling. Bill&amp;rsquo;s position feels absurd because we, as experienced developers, can identify other non-trivial responsibilities that are handled by his God class.&lt;/p&gt;
+
+&lt;p&gt;However, here&amp;rsquo;s the kicker: its not always obvious that a class is handling multiple responsibilities. Bob Martin even says this in his chapter on the principle of single responsibility:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The SRP is one of the simplest of the principles, and one of the hardest to get right. Con-
+joining responsibilities is something that we do naturally. &lt;strong&gt;Finding&lt;/strong&gt; and separating those responsibilities from one another is much of what software design is really about.&lt;sup&gt;3&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If we keep in mind that the act of &lt;em&gt;naming&lt;/em&gt; another responsibility is already the first step creating an abstraction,&lt;sup&gt;4&lt;/sup&gt; we see that Michael Feathers gives us more evidence that finding and separating responsibilities is not a trivial exercise:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip;one pervasive problem in legacy code bases is that there often aren’t any layers of abstraction; the most important code in the system often sits intermingled with low-level API calls.&lt;sup&gt;5&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;To say that there are no layers of abstraction is to say that the programmer has failed to identify and separate responsibilities. In this particular example, the programmer has failed to identify domain-related responsibilities as separate from the responsibility of talking to some library or framework via low-level API calls.&lt;sup&gt;6&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s one more piece of evidence that identifying responsibilities is not trivial. Again, I&amp;rsquo;m trading here on the idea that identifying responsibilities is the beginning of creating abstractions. Creating abstractions, in turn, is a part of creating a higher-level vocabulary with which to write your programs. Apparently, Kent Beck has said something like this recently:&lt;/p&gt;
+
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Reading through my notes &amp;amp; saw this pretty quote: &amp;quot;You’re creating a vocabulary, not writing a program. Be a poet for a moment.&amp;quot; &lt;a href=&#34;https://twitter.com/KentBeck&#34;&gt;@KentBeck&lt;/a&gt;&lt;/p&gt;&amp;mdash; Jessica (@encompassky) &lt;a href=&#34;https://twitter.com/encompassky/status/813931671116451841&#34;&gt;December 28, 2016&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;Think about how much careful thought, experience, and discovery goes into creating sensible vocabularies. David West has a great bit about this in his book &lt;em&gt;Object Thinking&lt;/em&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;When we discover new things, we invent (or borrow) new words to express our discovery. When we want to make critical distinctions between or among similar notions, we use specialized vocabularies. The use of special vocabularies is common in our professional lives because, as specialists, we need to become familiar with unique ideas and to make important distinctions that as laypersons we might not make.&lt;sup&gt;7&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If we think of programming as naming responsibilities to create abstractions that make up a vocabulary, then the non-triviality of creating vocabularies in general has a direct bearing on the difficulty of identifying responsibilities while writing programs, which, if we take Kent Beck seriously, is just a particular kind of vocabulary construction.&lt;/p&gt;
+
+&lt;p&gt;So, whether a class seems to satisfy the principle of single responsibility depends on whether we can identify other responsibilities a class might be tackling. This isn&amp;rsquo;t a trivial task and the PSR doesn&amp;rsquo;t do anything to aid us in accomplishing it.&lt;/p&gt;
+
+&lt;h3 id=&#34;abstraction-and-tdd&#34;&gt;Abstraction and TDD&lt;/h3&gt;
+
+&lt;p&gt;TDD, on the other hand, actually puts pressure on us to identify responsibilities that may be hidden in the object we&amp;rsquo;re trying to test. This happens for two reasons.&lt;/p&gt;
+
+&lt;p&gt;One reason is that we can&amp;rsquo;t unit test a class at all if we won&amp;rsquo;t have a way of getting the object into the right state for a test and a way of verifying the object is in the correct state after we&amp;rsquo;ve exercised it. Often, doing this requires that we identify an object&amp;rsquo;s dependencies and interactions AS separate objects with separate responsibilities. Steve Freeman and Nat Pryce seem to say something like this without actually using the language of responsibility:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;…to construct an object for a unit test, we have to pass its dependencies to it, which means that we have to know what they are.&lt;sup&gt;8&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;There&amp;rsquo;s another quotation that supports my point here, albeit in a less direct way. Freeman and Pryce say, &amp;ldquo;for a class to be easy to unit-test, the class must…be loosely coupled and &lt;strong&gt;highly cohesive&lt;/strong&gt; —in other words, well-designed.&amp;rdquo; Cohesion, in Bob Martin&amp;rsquo;s mind, is closely linked with the idea of a class&amp;rsquo; responsibility, so this quote is almost a way of saying that unit testable classes are likely to follow the PSR.&lt;sup&gt;9&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;The second reason TDD helps us identify responsibilities is that a part of the TDD process is to eliminate duplication. Kent Beck actually has a nice summary of how this creates cohesion:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The first feature goes in&amp;hellip;the second feature, a variation on the first, goes in. &lt;strong&gt;The duplication between the two features is put in one place, whereas the differences tend to go in different places (different methods or even different classes).&lt;/strong&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Quotations from famous software engineers aside, if we think for a second about what would happen if Bill tried to unit test his God class, I think we&amp;rsquo;ll find some intuitive support for the idea that TDD exerts pressure to identify responsibilities.&lt;/p&gt;
+
+&lt;p&gt;For example, his app likely displays data in a format that&amp;rsquo;s different from how its stored in the database. When writing a test to verify that his God object massages the data into a more presentable format correctly, he&amp;rsquo;ll see that the database needs to have specific data pre-loaded in order for the test to pass. He could solve this problem by creating a sandbox database and pre-loading it with specific data, but it would be &lt;em&gt;easier&lt;/em&gt; to unit test his class if he identifies &amp;ldquo;getting data from the database&amp;rdquo; as a separate responsibility, creates a class for it, and injects that dependency into his God class.&lt;/p&gt;
+
+&lt;p&gt;Testing other pieces of functionality of his application will require the same process, which, theoretically, will involve more identifying and separating of responsibilities.&lt;sup&gt;11&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;The PSR is supposed to serve as a foundational principle for helping us write good software. However, the PSR isn&amp;rsquo;t helpful if we fail to identify hidden responsibilities that our class may be assuming. Because identifying these responsibilities isn&amp;rsquo;t trivial and because the PSR does nothing to help us with this non-trivial task, the PSR alone isn&amp;rsquo;t very helpful.&lt;/p&gt;
+
+&lt;p&gt;TDD actually does a better job at helping us identify responsibilities. A class won&amp;rsquo;t be easy to unit test unless we&amp;rsquo;ve identified and injected its dependencies, and to identify a dependency is to identify a responsibility. Eliminating duplication, moreover, forces us to identify and create abstractions to co-locate common functionality so that it can be reused, and to identify an abstraction is to identify a responsibility.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Robert Martin, &lt;em&gt;Agile Software Development: Principles, Patterns, and Practices&lt;/em&gt;, 110. Excerpt &lt;a href=&#34;https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Steve Freeman and Nat Pryce, &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;, 96-97.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Robert Martin, &lt;em&gt;Agile Software Development: Principles, Patterns, and Practices&lt;/em&gt;, 114. Excerpt &lt;a href=&#34;https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view&#34;&gt;here&lt;/a&gt;. Emphasis mine.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Michael Feathers, &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, 350-352.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Perhaps this is why &amp;ldquo;naming things&amp;rdquo; is one of the two things that are hard about computer science, &lt;a href=&#34;https://martinfowler.com/bliki/TwoHardThings.html&#34;&gt;according to Phil Karlton&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;I think that a part of the reason finding responsibilities can be difficult is because we have to think at a level of abstraction that is actually lower than the one we were using when we decided to create the class in the first place. When Bill created the &lt;code&gt;Application&lt;/code&gt; class, he did so because he thought, &amp;ldquo;I need a class that&amp;rsquo;ll run my application.&amp;rdquo; When he started writing database-related code in this class, he could continue to think &amp;ldquo;this code is just helping this class fulfill its responsibility of running the app,&amp;rdquo; and in a sense, he would be right, but he&amp;rsquo;d be thinking at the wrong level of abstraction. Dropping down a level, he&amp;rsquo;d see that his Application class displays UI &lt;em&gt;and&lt;/em&gt; talks to a database &lt;em&gt;and&lt;/em&gt;&amp;hellip;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;David West, &lt;em&gt;Object Thinking&lt;/em&gt;, 143-144.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Steve Freeman and Nat Pryce, &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;, 43.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Ibid., 103-104.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Robert Martin, &lt;em&gt;Agile Software Development: Principles, Patterns, and Practices&lt;/em&gt;, 109. Excerpt &lt;a href=&#34;https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view&#34;&gt;here&lt;/a&gt;. Martin Actually sees the PSR as being first described using the language of cohesion. Personally, I prefer the vocabulary of cohesion to the PSR because a class can have cohesiveness in degrees. Somehow, the more gradient (vs. binary) way of thinking about class design along this dimension seems to fit better with the idea that identifying responsibilities is related to the level of abstraction we&amp;rsquo;re on when we&amp;rsquo;re thinking about a class, but my thoughts on this aren&amp;rsquo;t well formed enough to say more.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Kent Beck, &lt;em&gt;TDD By Example&lt;/em&gt;, 195.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Technically, this doesn&amp;rsquo;t fit the definition of TDD because the tests are written last, but there is a real sense in which the tests are driving the re-design of Bill&amp;rsquo;s app. This is why I say TDD is actually helping him design better classes.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Why I Don&#39;t use Robolectric</title>
@@ -1315,181 +1447,6 @@
         &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
     &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;</description>
-    </item>
-    
-    <item>
-      <title>RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava</title>
-      <link>http://philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</link>
-      <pubDate>Sat, 23 Jul 2016 15:43:29 -0400</pubDate>
-      
-      <guid>http://philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</guid>
-      <description>&lt;blockquote&gt;
-&lt;p&gt;Loaders are awesome&amp;hellip;they&amp;rsquo;re essentially the best practice implementation of asynchronous data loading in your Activities.&lt;/p&gt;
-
-&lt;p&gt;-Reto Meier, Developing Android Apps Udacity Course
-
-The following code should make you nervous:&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        setContentView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;activity_boilerplate_free&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        mLoginObservable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Action1&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt; authResponse&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                Log&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;d&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;call: Successfully logged in&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;                
-            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;When you see this code you should be asking, &amp;ldquo;What will happen upon a configuration change? Will the &lt;code&gt;Activity&lt;/code&gt; leak? Do we need to re-query the network just because of a configuration change?&amp;rdquo; (Hopefully, when you see this code, you&amp;rsquo;re also wondering, &lt;a href=&#34;http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;like I do&lt;/a&gt;, &amp;ldquo;Why are we putting logic in our &lt;code&gt;Activitys&lt;/code&gt;?&amp;ldquo;)&lt;/p&gt;
-
-&lt;p&gt;Nervous questions aside, wouldn&amp;rsquo;t it be better if we &lt;em&gt;could&lt;/em&gt; write data loading code like this? Wouldn&amp;rsquo;t it be nice if we load data into our apps using &lt;code&gt;Observable&lt;/code&gt;s without worrying about leaking activities and/or wasting the user&amp;rsquo;s data by re-querying the network every time there was a configuration change? Wouldn&amp;rsquo;t it be nice, moreover, if we could do this without writing any boilerplate code?&lt;/p&gt;
-
-&lt;p&gt;I think so, and in this post, I&amp;rsquo;ll introduce a &lt;em&gt;tiny&lt;/em&gt; library that&amp;rsquo;ll help us write code like this. The gist of the approach is to use Loaders &lt;em&gt;with&lt;/em&gt; RxJava. Before we get into this approach, however, lets look at some other ways that people handle asynchronous data loading in their apps so that we can see what this approach offers that other ones don&amp;rsquo;t.&lt;/p&gt;
-
-&lt;h3 id=&#34;prior-art&#34;&gt;Prior Art&lt;/h3&gt;
-
-&lt;h4 id=&#34;loaders&#34;&gt;Loaders&lt;/h4&gt;
-
-&lt;p&gt;Loaders give us what we want vis-a-vis memory-leak-free querying whose results persist across orientation changes, but many people find the API clunky and/or confusing. Apparently, Jake Wharton is one of these people:&lt;/p&gt;
-
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;The fragment and loader APIs fit in perfectly on Android. Useful enough that you use them but also want shoot yourself in the face.&lt;/p&gt;&amp;mdash; Jake Wharton (@JakeWharton) &lt;a href=&#34;https://twitter.com/JakeWharton/status/325630461852413952&#34;&gt;April 20, 2013&lt;/a&gt;&lt;/blockquote&gt;
-&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-
-&lt;h4 id=&#34;retained-fragment&#34;&gt;Retained Fragment&lt;/h4&gt;
-
-&lt;p&gt;Using a retained fragment is another approach for persisting the results of a network request across orientation changes and avoiding memory leaks. Unfortunately, this approach requires a fair amount of boiler-plate code. The barebones implementation as discussed in &lt;a href=&#34;https://developer.android.com/guide/topics/resources/runtime-changes.html&#34;&gt;the docs&lt;/a&gt; will make this clear enough. Even if we could get rid of most of this boilerplate, we still don&amp;rsquo;t have an api for working with our asynchronous data that&amp;rsquo;s as nice as RxJava&amp;rsquo;s &lt;code&gt;Observable&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h4 id=&#34;cache-replay&#34;&gt;Cache-Replay&lt;/h4&gt;
-
-&lt;p&gt;Cache-Replay is an approach suggested in Dan Lew&amp;rsquo;s &lt;a href=&#34;http://blog.danlew.net/2014/10/08/grokking-rxjava-part-4/&#34;&gt;&amp;ldquo;Grokking RxJava Pt 4&amp;rdquo;&lt;/a&gt;. The idea here is do the following:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;store our &lt;code&gt;Obersvable&lt;/code&gt; outside the Activity life-cycle (e.g., a retained fragment or singleton)&lt;/li&gt;
-&lt;li&gt;un-subscribe from this &lt;code&gt;Observable&lt;/code&gt; when our Activity is being destroyed&lt;/li&gt;
-&lt;li&gt;use the &lt;code&gt;cache&lt;/code&gt; and &lt;code&gt;replay&lt;/code&gt; operators to ensure that when we re-subscribe to this &lt;code&gt;Observable&lt;/code&gt;, we&amp;rsquo;re getting the same data&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;This approach may be the best we&amp;rsquo;ve seen so far. We get all the benefits of &lt;code&gt;Loader&lt;/code&gt;s and &lt;code&gt;Observable&lt;/code&gt;s, but unfortunately, we still have some boilerplate: we have to find a place outside the activity life-cycle for our &lt;code&gt;Observable&lt;/code&gt; and we have to remember to un-subscribe from that &lt;code&gt;Obsevable&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h4 id=&#34;rxlifecycle&#34;&gt;RxLifecycle&lt;/h4&gt;
-
-&lt;p&gt;RxLifecycle can alleviate some of the weaknesses of the previous approach by giving us a way to automatically complete observable &amp;ldquo;sequences based on Activity or Fragment life-cycle events.&amp;rdquo;&lt;sup&gt;1&lt;/sup&gt; There&amp;rsquo;s not much boilerplate we have to write to take advantage of this, which is an impressive feat of the library:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MyActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; RxActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onResume&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onResume&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-        myObservable
-            &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;compose&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;bindToLifecycle&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt;
-            &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Unfortunately, if we don&amp;rsquo;t want to subclass a particular kind of Activity to take advantage of this we&amp;rsquo;ll need to write more boilerplate to generate an observable sequence of life-cycle events. Either way, RxLifecycle, combined with the previously outlined cache-replay approach, gives us a pretty nice way of loading data in our Android apps.&lt;/p&gt;
-
-&lt;h4 id=&#34;rxgroups&#34;&gt;RxGroups&lt;/h4&gt;
-
-&lt;p&gt;As far as I know, RxGroups is the most recent entry in the long line of solutions to data loading in Android apps. RxGroups alone gives us memory-leak-free querying whose results are cached across orientation changes, and according to &lt;a href=&#34;https://github.com/airbnb/RxGroups&#34;&gt;the docs&lt;/a&gt;, the code we need to write to get this is pretty small. Since RxGroups seems to give us all of the benefits of &lt;code&gt;Loader&lt;/code&gt;s and &lt;code&gt;Observable&lt;/code&gt;s with the smallest amount of boilerplate, I think it may be the best solution out there, aside from the solution I&amp;rsquo;m about to propose.&lt;/p&gt;
-
-&lt;h4 id=&#34;other-rxloader-libraries&#34;&gt;Other &amp;ldquo;RxLoader&amp;rdquo; Libraries&lt;/h4&gt;
-
-&lt;p&gt;There are a at least two other libraries that leverage RxJava for data loading. Neither of these libraries, however, use Android Loaders, so they wind up reinventing much of the functionality of &lt;code&gt;Loader&lt;/code&gt;s and users of these libraries are still stuck with a few lines of boilerplate.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-better-way&#34;&gt;A Better Way?&lt;/h3&gt;
-
-&lt;p&gt;I think if we use &lt;code&gt;Loader&lt;/code&gt;s &lt;em&gt;with&lt;/em&gt; &lt;code&gt;Observable&lt;/code&gt;s, we can come up with a solution that&amp;rsquo;s better than the above solutions. Here&amp;rsquo;s the basic idea: we wrap the call to &lt;code&gt;LoaderManager.initLoader&lt;/code&gt; in an &lt;code&gt;Observable&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;create&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnSubscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Subscriber&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;?&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt; T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; subscriber&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        loaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderId&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-                    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;U&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// return some loader&lt;/span&gt;
-                    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-                    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-                    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; T data&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                        subscriber&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onNext&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;data&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-                    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-                    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-                    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoaderReset&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;T&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{}&lt;/span&gt;
-            &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;        
-&lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;To be sure, this isn&amp;rsquo;t the cleanest way of doing this, but I think its a useful way of initially presenting the idea. Let&amp;rsquo;s think for a second about what this simple little trick gives us.&lt;/p&gt;
-
-&lt;p&gt;First, we don&amp;rsquo;t have to worry about un-subscribing from this &lt;code&gt;Observable&lt;/code&gt; to avoid memory leaks because the &lt;code&gt;Observable&lt;/code&gt; &lt;em&gt;won&amp;rsquo;t survive the configuration change.&lt;/em&gt; Moreover, although the Observable gets garbage collected upon an orientation change, the data it emits will persist across orientation changes because that data is loaded with a &lt;code&gt;Loader.&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;These two properties let us write boilerplate-free data loading code like the code with which we began this article:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        setContentView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;activity_boilerplate_free&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        mLoginObservable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Action1&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt; authResponse&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                Log&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;d&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;call: Successfully logged in&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;                
-            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;But where does the &lt;code&gt;mLoginObservable&lt;/code&gt; that&amp;rsquo;s wrapped the &lt;code&gt;LoaderManager.init&lt;/code&gt; call come from? That&amp;rsquo;s where RxLoader comes into play. RxLoader is a &lt;em&gt;very&lt;/em&gt; lightweight library (less than 150 LOC). It&amp;rsquo;s simply an RxJava &lt;code&gt;Transformer&lt;/code&gt; that lets you take an Observable and compose it into something with loader-like behaviour, something that in fact uses a &lt;code&gt;Loader&lt;/code&gt; to get this behaviour for free. With RxLoader, your data loading code is as simple as this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;BoilerplateFree&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; AppCompatActivity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...    &lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        setContentView&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;activity_boilerplate_free&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoginObservable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;compose&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;RxLoader&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;from&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt;
-&lt;/span&gt;            &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Action1&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;call&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;AuthManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;AuthResponse&lt;/span&gt; authResponse&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-                Log&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;d&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;call: Successfully logged in&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;                
-            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;One line of code gets you an &lt;code&gt;Observable&lt;/code&gt; with memory-leak-proof data loading whose results are cached across orientation changes.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/kmdupr33/RxLoader&#34;&gt;Here&amp;rsquo;s&lt;/a&gt; the project on github. I&amp;rsquo;ll be improving it and getting it on to maven central soon.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Quote is from &lt;a href=&#34;https://github.com/trello/RxLifecycle&#34;&gt;the RxLifecycle docs&lt;/a&gt;.&lt;/li&gt;
-&lt;/ol&gt;</description>
     </item>
     
   </channel>

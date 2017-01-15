@@ -9,6 +9,138 @@
     <atom:link href="http://philosophicalhacker.com/tags/testing/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>TDD &gt; The Principle of Single Responsibility</title>
+      <link>http://philosophicalhacker.com/post/tdd-is-greater-than-the-principle-of-single-responsibility/</link>
+      <pubDate>Sat, 14 Jan 2017 10:54:43 -0500</pubDate>
+      
+      <guid>http://philosophicalhacker.com/post/tdd-is-greater-than-the-principle-of-single-responsibility/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;The programmer, like the poet, works only slightly removed from pure thought-stuff. He builds his castles in the air, from air, creating by exertion of the imagination. Few media of creation are so flexible, so easy to polish and rework, so readily capable of &lt;strong&gt;realizing grand conceptual structures&amp;hellip;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Fred Brooks, The Mythical Man-Month&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Grand structures &amp;ndash; whether they are conceptual, programmatic, or physical &amp;ndash; require strong foundations. This is true in two senses.&lt;/p&gt;
+
+&lt;p&gt;In the first, obvious sense, strong foundations are required for a structure to withstand its own weight and the forces that want to knock it down. Structures without strong foundations often collapse.&lt;/p&gt;
+
+&lt;p&gt;In the second, less obvious sense, there&amp;rsquo;s another kind of foundation that&amp;rsquo;s crucial to a structure&amp;rsquo;s integrity: the epistemic foundations that guide the architect as she lays the foundation and builds her structure, the architect&amp;rsquo;s first principles. These epistemic foundations are even more fundamental to the structure&amp;rsquo;s integrity than the foundation the structure actually sits upon. An architect that doesn&amp;rsquo;t understand the foundational principles of her craft builds bad foundations, which leads to structures that collapse.&lt;/p&gt;
+
+&lt;p&gt;The principle of single responsibility is supposed to be this second kind of strong foundation for those of us that &amp;ldquo;build castles in the air.&amp;rdquo; Its a principle that&amp;rsquo;s supposed to help us build software with strong foundations, software that won&amp;rsquo;t topple under its own weight and under the weight of forces that want to knock it down.&lt;/p&gt;
+
+&lt;p&gt;I think that TDD actually serves as a better foundation for designing robust software. The epigraph I opened this article with actually provides a nice preview of why I think this: building abstractions is a big part of building good software, but without these abstractions, the principle of responsibility isn&amp;rsquo;t very helpful in guiding me. I often need something that pushes me to discover and build abstractions in the first place, and TDD does a better job of this than the principle of single responsibility.&lt;/p&gt;
+
+&lt;p&gt;In the rest of this post, I&amp;rsquo;ll unpack and attempt to justify that last statement.&lt;/p&gt;
+
+&lt;h3 id=&#34;abstraction-and-the-psr&#34;&gt;Abstraction and the PSR&lt;/h3&gt;
+
+&lt;p&gt;Imagine for a moment that Bill, another engineer shows you an app he&amp;rsquo;s working on. When you take a look at it, you notice that the app consists of a single class that &lt;em&gt;implements&lt;/em&gt; the entirety of your application. Until recently, if this happened to me, I would have immediately reached for the principle of single responsibility to explain what he did wrong.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Me:&lt;/strong&gt; Have you ever heard of the principle of single responsibility?&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bill:&lt;/strong&gt; Yeah. Actually, that principle was guiding me as I wrote this class.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Me:&lt;/strong&gt; Really? Well, what is this class&amp;rsquo; responsibility?&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bill:&lt;/strong&gt; Well, this class is responsible for running the app. This class didn&amp;rsquo;t seem to violate the PSR because the class fits Bob Martin&amp;rsquo;s definition of a class that follows the PSR. He says that &amp;ldquo;a class should only have one reason to change.&amp;rdquo;&lt;sup&gt;1&lt;/sup&gt; That&amp;rsquo;s true of this class. There&amp;rsquo;s only one reason it&amp;rsquo;ll change: if the app needs to behave differently, we&amp;rsquo;ll have to change this class. Also, the class passed Steve Freeman and Nat Pryce&amp;rsquo;s test for whether a class follows the PSR: I can state the class&amp;rsquo;s responsibility without any and&amp;rsquo;s, or&amp;rsquo;s, or but&amp;rsquo;s.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;This is an absurd conversation, but its an extreme case to demonstrate an important point: whether a class seems to satisfy the principle of single responsibility depends largely on whether we can &lt;em&gt;identify&lt;/em&gt; other responsibilities that our class is tackling. Bill&amp;rsquo;s position feels absurd because we, as experienced developers, can identify other non-trivial responsibilities that are handled by his God class.&lt;/p&gt;
+
+&lt;p&gt;However, here&amp;rsquo;s the kicker: its not always obvious that a class is handling multiple responsibilities. Bob Martin even says this in his chapter on the principle of single responsibility:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The SRP is one of the simplest of the principles, and one of the hardest to get right. Con-
+joining responsibilities is something that we do naturally. &lt;strong&gt;Finding&lt;/strong&gt; and separating those responsibilities from one another is much of what software design is really about.&lt;sup&gt;3&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If we keep in mind that the act of &lt;em&gt;naming&lt;/em&gt; another responsibility is already the first step creating an abstraction,&lt;sup&gt;4&lt;/sup&gt; we see that Michael Feathers gives us more evidence that finding and separating responsibilities is not a trivial exercise:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip;one pervasive problem in legacy code bases is that there often aren’t any layers of abstraction; the most important code in the system often sits intermingled with low-level API calls.&lt;sup&gt;5&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;To say that there are no layers of abstraction is to say that the programmer has failed to identify and separate responsibilities. In this particular example, the programmer has failed to identify domain-related responsibilities as separate from the responsibility of talking to some library or framework via low-level API calls.&lt;sup&gt;6&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s one more piece of evidence that identifying responsibilities is not trivial. Again, I&amp;rsquo;m trading here on the idea that identifying responsibilities is the beginning of creating abstractions. Creating abstractions, in turn, is a part of creating a higher-level vocabulary with which to write your programs. Apparently, Kent Beck has said something like this recently:&lt;/p&gt;
+
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Reading through my notes &amp;amp; saw this pretty quote: &amp;quot;You’re creating a vocabulary, not writing a program. Be a poet for a moment.&amp;quot; &lt;a href=&#34;https://twitter.com/KentBeck&#34;&gt;@KentBeck&lt;/a&gt;&lt;/p&gt;&amp;mdash; Jessica (@encompassky) &lt;a href=&#34;https://twitter.com/encompassky/status/813931671116451841&#34;&gt;December 28, 2016&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;Think about how much careful thought, experience, and discovery goes into creating sensible vocabularies. David West has a great bit about this in his book &lt;em&gt;Object Thinking&lt;/em&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;When we discover new things, we invent (or borrow) new words to express our discovery. When we want to make critical distinctions between or among similar notions, we use specialized vocabularies. The use of special vocabularies is common in our professional lives because, as specialists, we need to become familiar with unique ideas and to make important distinctions that as laypersons we might not make.&lt;sup&gt;7&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If we think of programming as naming responsibilities to create abstractions that make up a vocabulary, then the non-triviality of creating vocabularies in general has a direct bearing on the difficulty of identifying responsibilities while writing programs, which, if we take Kent Beck seriously, is just a particular kind of vocabulary construction.&lt;/p&gt;
+
+&lt;p&gt;So, whether a class seems to satisfy the principle of single responsibility depends on whether we can identify other responsibilities a class might be tackling. This isn&amp;rsquo;t a trivial task and the PSR doesn&amp;rsquo;t do anything to aid us in accomplishing it.&lt;/p&gt;
+
+&lt;h3 id=&#34;abstraction-and-tdd&#34;&gt;Abstraction and TDD&lt;/h3&gt;
+
+&lt;p&gt;TDD, on the other hand, actually puts pressure on us to identify responsibilities that may be hidden in the object we&amp;rsquo;re trying to test. This happens for two reasons.&lt;/p&gt;
+
+&lt;p&gt;One reason is that we can&amp;rsquo;t unit test a class at all if we won&amp;rsquo;t have a way of getting the object into the right state for a test and a way of verifying the object is in the correct state after we&amp;rsquo;ve exercised it. Often, doing this requires that we identify an object&amp;rsquo;s dependencies and interactions AS separate objects with separate responsibilities. Steve Freeman and Nat Pryce seem to say something like this without actually using the language of responsibility:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;…to construct an object for a unit test, we have to pass its dependencies to it, which means that we have to know what they are.&lt;sup&gt;8&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;There&amp;rsquo;s another quotation that supports my point here, albeit in a less direct way. Freeman and Pryce say, &amp;ldquo;for a class to be easy to unit-test, the class must…be loosely coupled and &lt;strong&gt;highly cohesive&lt;/strong&gt; —in other words, well-designed.&amp;rdquo; Cohesion, in Bob Martin&amp;rsquo;s mind, is closely linked with the idea of a class&amp;rsquo; responsibility, so this quote is almost a way of saying that unit testable classes are likely to follow the PSR.&lt;sup&gt;9&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;The second reason TDD helps us identify responsibilities is that a part of the TDD process is to eliminate duplication. Kent Beck actually has a nice summary of how this creates cohesion:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The first feature goes in&amp;hellip;the second feature, a variation on the first, goes in. &lt;strong&gt;The duplication between the two features is put in one place, whereas the differences tend to go in different places (different methods or even different classes).&lt;/strong&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Quotations from famous software engineers aside, if we think for a second about what would happen if Bill tried to unit test his God class, I think we&amp;rsquo;ll find some intuitive support for the idea that TDD exerts pressure to identify responsibilities.&lt;/p&gt;
+
+&lt;p&gt;For example, his app likely displays data in a format that&amp;rsquo;s different from how its stored in the database. When writing a test to verify that his God object massages the data into a more presentable format correctly, he&amp;rsquo;ll see that the database needs to have specific data pre-loaded in order for the test to pass. He could solve this problem by creating a sandbox database and pre-loading it with specific data, but it would be &lt;em&gt;easier&lt;/em&gt; to unit test his class if he identifies &amp;ldquo;getting data from the database&amp;rdquo; as a separate responsibility, creates a class for it, and injects that dependency into his God class.&lt;/p&gt;
+
+&lt;p&gt;Testing other pieces of functionality of his application will require the same process, which, theoretically, will involve more identifying and separating of responsibilities.&lt;sup&gt;11&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;The PSR is supposed to serve as a foundational principle for helping us write good software. However, the PSR isn&amp;rsquo;t helpful if we fail to identify hidden responsibilities that our class may be assuming. Because identifying these responsibilities isn&amp;rsquo;t trivial and because the PSR does nothing to help us with this non-trivial task, the PSR alone isn&amp;rsquo;t very helpful.&lt;/p&gt;
+
+&lt;p&gt;TDD actually does a better job at helping us identify responsibilities. A class won&amp;rsquo;t be easy to unit test unless we&amp;rsquo;ve identified and injected its dependencies, and to identify a dependency is to identify a responsibility. Eliminating duplication, moreover, forces us to identify and create abstractions to co-locate common functionality so that it can be reused, and to identify an abstraction is to identify a responsibility.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Robert Martin, &lt;em&gt;Agile Software Development: Principles, Patterns, and Practices&lt;/em&gt;, 110. Excerpt &lt;a href=&#34;https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Steve Freeman and Nat Pryce, &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;, 96-97.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Robert Martin, &lt;em&gt;Agile Software Development: Principles, Patterns, and Practices&lt;/em&gt;, 114. Excerpt &lt;a href=&#34;https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view&#34;&gt;here&lt;/a&gt;. Emphasis mine.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Michael Feathers, &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, 350-352.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Perhaps this is why &amp;ldquo;naming things&amp;rdquo; is one of the two things that are hard about computer science, &lt;a href=&#34;https://martinfowler.com/bliki/TwoHardThings.html&#34;&gt;according to Phil Karlton&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;I think that a part of the reason finding responsibilities can be difficult is because we have to think at a level of abstraction that is actually lower than the one we were using when we decided to create the class in the first place. When Bill created the &lt;code&gt;Application&lt;/code&gt; class, he did so because he thought, &amp;ldquo;I need a class that&amp;rsquo;ll run my application.&amp;rdquo; When he started writing database-related code in this class, he could continue to think &amp;ldquo;this code is just helping this class fulfill its responsibility of running the app,&amp;rdquo; and in a sense, he would be right, but he&amp;rsquo;d be thinking at the wrong level of abstraction. Dropping down a level, he&amp;rsquo;d see that his Application class displays UI &lt;em&gt;and&lt;/em&gt; talks to a database &lt;em&gt;and&lt;/em&gt;&amp;hellip;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;David West, &lt;em&gt;Object Thinking&lt;/em&gt;, 143-144.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Steve Freeman and Nat Pryce, &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;, 43.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Ibid., 103-104.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Robert Martin, &lt;em&gt;Agile Software Development: Principles, Patterns, and Practices&lt;/em&gt;, 109. Excerpt &lt;a href=&#34;https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view&#34;&gt;here&lt;/a&gt;. Martin Actually sees the PSR as being first described using the language of cohesion. Personally, I prefer the vocabulary of cohesion to the PSR because a class can have cohesiveness in degrees. Somehow, the more gradient (vs. binary) way of thinking about class design along this dimension seems to fit better with the idea that identifying responsibilities is related to the level of abstraction we&amp;rsquo;re on when we&amp;rsquo;re thinking about a class, but my thoughts on this aren&amp;rsquo;t well formed enough to say more.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Kent Beck, &lt;em&gt;TDD By Example&lt;/em&gt;, 195.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Technically, this doesn&amp;rsquo;t fit the definition of TDD because the tests are written last, but there is a real sense in which the tests are driving the re-design of Bill&amp;rsquo;s app. This is why I say TDD is actually helping him design better classes.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Why I Don&#39;t use Robolectric</title>
       <link>http://philosophicalhacker.com/post/why-i-dont-use-roboletric/</link>
       <pubDate>Fri, 06 Jan 2017 22:01:04 -0500</pubDate>
@@ -1603,150 +1735,6 @@
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;The fact that React/Redux-like architectures open up the possibility of alternative testing strategies is an additional reason that we should consider these architectures for Android Development. I think that by utilizing RxJava with a subset of the features provided by the Android data-binding library, the approach I&amp;rsquo;ve sketched here can scale to an architecture that allows for time-travel debugging, hotswap, and a more flexible testing strategy, but that&amp;rsquo;s something that I&amp;rsquo;ll have to explore another time.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>How React-and-Redux-like Architectures for Android can make Testing Easier</title>
-      <link>http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/</link>
-      <pubDate>Wed, 08 Jun 2016 17:30:09 -0400</pubDate>
-      
-      <guid>http://philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/</guid>
-      <description>
-
-&lt;blockquote&gt;
-&lt;p&gt;I think there&amp;rsquo;s a lot of value in seeing what else is happening, even if you&amp;rsquo;re not a master of one of those other languages. As long as you&amp;rsquo;re being exposed to it, you&amp;rsquo;re opening your mind up to different ways of approaching problems and solving problems and different techniques.&lt;/p&gt;
-
-&lt;p&gt;Jake Wharton, Fragmented, &lt;a href=&#34;http://fragmentedpodcast.com/episodes/6/&#34;&gt;Episode 6&lt;/a&gt;, 27:45-28:20&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;React and Redux are libraries that have taken the web development world by storm. Touted benefits of these libraries include code that&amp;rsquo;s &amp;ldquo;easier to reason about,&amp;rdquo; &lt;a href=&#34;https://www.youtube.com/watch?v=xsSnOQynTHs&#34;&gt;time traveling debugging, and hot reloading&lt;/a&gt;. Recently, &lt;a href=&#34;https://www.youtube.com/watch?v=UsuzhTlccRk&#34;&gt;Christiana Lee spoke&lt;/a&gt; about how these benefits could be applied to Android development in general.&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;m interested in how the central principles underlying React and Redux may improve our ability to write unit tests for our Android code. In this article, I&amp;rsquo;ll try to briefly bring out the important bits of React/Redux for our purposes. In the next article, I&amp;rsquo;ll talk about why structuring our code in a React/Redux way can be beneficial for testing.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/lambda.png&#34; alt=&#34;lambda symbol&#34; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;the-principle-behind-react&#34;&gt;The Principle behind React&lt;/h1&gt;
-
-&lt;p&gt;React, as I see it, is about making what gets rendered to our screen a &lt;em&gt;function of some view-state object&lt;/em&gt;. We do something like this every time we write a &lt;code&gt;RecyclerView&lt;/code&gt; or &lt;code&gt;ListView&lt;/code&gt;. The view-state object is usually some kind of collection (e.g., a &lt;code&gt;List&lt;/code&gt; or &lt;code&gt;Array&lt;/code&gt;). We pass that object to an &lt;code&gt;Adapter&lt;/code&gt; which renders our view. Typically, what is rendered is just a function of the collection we pass to the adapter.&lt;/p&gt;
-
-&lt;p&gt;However, we can use view-state objects in contexts other than collection views. To see this, let&amp;rsquo;s look at an example view from the Google IO app.&lt;/p&gt;
-
-
-&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
-  &lt;iframe src=&#34;//www.youtube.com/embed/qUYP1WNz50U&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
- &lt;/div&gt;
-
-
-&lt;p&gt;Notice that when we tap one of the filter items in the IO app, the list of sessions updates so that it incorporates that filter. Let&amp;rsquo;s start with how this is currently implemented in the IO app:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; isChecked &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;CheckBox&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isChecked&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;        LOGD&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Checkbox with tag: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; isChecked =&amp;gt; &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; isChecked&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isChecked&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Note here that &lt;code&gt;mTagFilterHolder&lt;/code&gt; is a state object that&amp;rsquo;s used to determine what should be shown in the list. We can see this more clearly if we look at &lt;code&gt;reloadFragment()&lt;/code&gt;, which looks like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;reloadFragment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Build the tag URI&lt;/span&gt;
-    Uri uri &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mCurrentUri&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;uri &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        uri &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; ScheduleContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Sessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;buildCategoryTagFilterUri&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
-                ScheduleContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Sessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CONTENT_URI&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;toStringArray&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategoryCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// build a uri with the specific filters&lt;/span&gt;
-        uri &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; ScheduleContract&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Sessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;buildCategoryTagFilterUri&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;uri&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;toStringArray&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategoryCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    setActivityTitle&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    Intent intent &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Intent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Intent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ACTION_VIEW&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; uri&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    intent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;putExtra&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ExploreSessionsFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;EXTRA_SHOW_LIVESTREAMED_SESSIONS&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isShowLiveStreamedSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-
-    LOGD&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Reloading fragment with categories &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategoryCount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt;
-            &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; uri: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; uri &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt;
-            &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; showLiveStreamedEvents: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isShowLiveStreamedSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-
-    mFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reloadFromArguments&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intentToFragmentArguments&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intent&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;&lt;code&gt;mTagFilterHolder&lt;/code&gt; is being used to construct the URI that a &lt;code&gt;ContentProvider&lt;/code&gt; will use to filter the results that get passed to a &lt;code&gt;ListView&lt;/code&gt;. So, this implementation of the list filter is already well on its way to an implementation the follows principle behind React. That&amp;rsquo;s because what&amp;rsquo;s rendered is already partially &lt;em&gt;a function of some view-state object&lt;/em&gt;. In this case, the view-state object is the &lt;code&gt;mTagFilterHolder&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h1 id=&#34;the-principle-behind-redux&#34;&gt;The Principle Behind Redux&lt;/h1&gt;
-
-&lt;p&gt;Redux, as I see it, as is about making any updates to our view &lt;em&gt;a function of the view-state object and an object that describes a view-related action that just occurred&lt;/em&gt;. In Redux, these functions are called &amp;ldquo;reducers,&amp;rdquo; and they return a new view-state object that is used to render the view.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;OnClickListener&lt;/code&gt; we saw above is almost a reducer in Redux&amp;rsquo;s sense of the word because it updates the view by updating the view-state object and telling the fragment to re-render itself. Let&amp;rsquo;s take a second look at that &lt;code&gt;OnClickListener&lt;/code&gt; to remind ourselves of this:&lt;/p&gt;
-
-&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #B00040&#34;&gt;boolean&lt;/span&gt; isChecked &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;CheckBox&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isChecked&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-        TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-        LOGD&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Checkbox with tag: &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot; isChecked =&amp;gt; &amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; isChecked&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;isChecked&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
-
-&lt;p&gt;This &lt;code&gt;ClickListener&lt;/code&gt; isn&amp;rsquo;t quite a reducer. Remember: reducers are functions of a view-state object and an object that describes a view-related action that just occurred. This &lt;code&gt;ClickListener&lt;/code&gt;, however, is in a good position to call a reducer function:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        mTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reduce&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-          &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Click&lt;span style=&#34;color: #666666&#34;&gt;((&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()));&lt;/span&gt;
-        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
-
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; TagFilterHolder &lt;span style=&#34;color: #0000FF&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagFilterHolder tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Click click&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Create a new holder with all the values from the old holder&lt;/span&gt;
-  TagFilterHolder newTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-  TagMetadata theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; click&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;  
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The &lt;code&gt;reduce&lt;/code&gt; method fits the Redux&amp;rsquo;s definition of a reducer function. The &lt;code&gt;tagFilterHodler&lt;/code&gt; parameter passed into &lt;code&gt;reduce&lt;/code&gt; method is the current state and the &lt;code&gt;click&lt;/code&gt; parameter is an object that describes a view-related action that just occurred. &lt;code&gt;reduce&lt;/code&gt;, moreover, returns a new view-state that describes how the view should render.&lt;/p&gt;
-
-&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
-
-&lt;p&gt;That&amp;rsquo;s all for now, but you can anticipate how this might make unit testing logic within the click listener easier. The &lt;code&gt;reduce&lt;/code&gt; function works only with POJOs and we know that it&amp;rsquo;s working properly when it returns an object that has the correct &lt;em&gt;state&lt;/em&gt;. This allows us to use &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;state-based verification&lt;/a&gt; in our tests, and as we&amp;rsquo;ll see next time, this can make our tests less brittle and more meaningful. I believe that writing our UI-related business logic in reducers &lt;em&gt;may&lt;/em&gt; give us a better way of writing tests that writing that logic in &lt;code&gt;Presenters&lt;/code&gt;. More on that next time.&lt;/p&gt;
 </description>
     </item>
     

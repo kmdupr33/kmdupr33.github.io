@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" TDD &gt; The Principle of Single Responsibility &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="http://philosophicalhacker.com/post/tdd-is-greater-than-the-principle-of-single-responsibility/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2017-01-14T10:54:43-05:00" />
+
+    
+    <meta property="og:article:tag" content="architecture" />
+    
+    <meta property="og:article:tag" content="testing" />
+    
+    
+
+  <title>
+     TDD &gt; The Principle of Single Responsibility &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="http://philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="http://philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="http://philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.17" />
+
+    <link rel="canonical" href="http://philosophicalhacker.com/post/tdd-is-greater-than-the-principle-of-single-responsibility/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="http://philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+  
+  <header class="main-header post-head" style="background-image: url(http://philosophicalhacker.com/images/castle.jpg)">
+  
+  <nav class="main-nav overlay clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">TDD &gt; The Principle of Single Responsibility</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2017-01-14T10:54:43-05:00">
+            Jan 14, 2017
+          </time>
+        
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/architecture/">#architecture</a></span>
+         
+          <span class="post-tag small"><a href="http://philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<blockquote>
+<p>The programmer, like the poet, works only slightly removed from pure thought-stuff. He builds his castles in the air, from air, creating by exertion of the imagination. Few media of creation are so flexible, so easy to polish and rework, so readily capable of <strong>realizing grand conceptual structures&hellip;</strong></p>
+
+<p>Fred Brooks, The Mythical Man-Month</p>
+</blockquote>
+
+<hr />
+
+<p>Grand structures &ndash; whether they are conceptual, programmatic, or physical &ndash; require strong foundations. This is true in two senses.</p>
+
+<p>In the first, obvious sense, strong foundations are required for a structure to withstand its own weight and the forces that want to knock it down. Structures without strong foundations often collapse.</p>
+
+<p>In the second, less obvious sense, there&rsquo;s another kind of foundation that&rsquo;s crucial to a structure&rsquo;s integrity: the epistemic foundations that guide the architect as she lays the foundation and builds her structure, the architect&rsquo;s first principles. These epistemic foundations are even more fundamental to the structure&rsquo;s integrity than the foundation the structure actually sits upon. An architect that doesn&rsquo;t understand the foundational principles of her craft builds bad foundations, which leads to structures that collapse.</p>
+
+<p>The principle of single responsibility is supposed to be this second kind of strong foundation for those of us that &ldquo;build castles in the air.&rdquo; Its a principle that&rsquo;s supposed to help us build software with strong foundations, software that won&rsquo;t topple under its own weight and under the weight of forces that want to knock it down.</p>
+
+<p>I think that TDD actually serves as a better foundation for designing robust software. The epigraph I opened this article with actually provides a nice preview of why I think this: building abstractions is a big part of building good software, but without these abstractions, the principle of responsibility isn&rsquo;t very helpful in guiding me. I often need something that pushes me to discover and build abstractions in the first place, and TDD does a better job of this than the principle of single responsibility.</p>
+
+<p>In the rest of this post, I&rsquo;ll unpack and attempt to justify that last statement.</p>
+
+<h3 id="abstraction-and-the-psr">Abstraction and the PSR</h3>
+
+<p>Imagine for a moment that Bill, another engineer shows you an app he&rsquo;s working on. When you take a look at it, you notice that the app consists of a single class that <em>implements</em> the entirety of your application. Until recently, if this happened to me, I would have immediately reached for the principle of single responsibility to explain what he did wrong.</p>
+
+<p><strong>Me:</strong> Have you ever heard of the principle of single responsibility?</p>
+
+<p><strong>Bill:</strong> Yeah. Actually, that principle was guiding me as I wrote this class.</p>
+
+<p><strong>Me:</strong> Really? Well, what is this class&rsquo; responsibility?</p>
+
+<p><strong>Bill:</strong> Well, this class is responsible for running the app. This class didn&rsquo;t seem to violate the PSR because the class fits Bob Martin&rsquo;s definition of a class that follows the PSR. He says that &ldquo;a class should only have one reason to change.&rdquo;<sup>1</sup> That&rsquo;s true of this class. There&rsquo;s only one reason it&rsquo;ll change: if the app needs to behave differently, we&rsquo;ll have to change this class. Also, the class passed Steve Freeman and Nat Pryce&rsquo;s test for whether a class follows the PSR: I can state the class&rsquo;s responsibility without any and&rsquo;s, or&rsquo;s, or but&rsquo;s.<sup>2</sup></p>
+
+<p>This is an absurd conversation, but its an extreme case to demonstrate an important point: whether a class seems to satisfy the principle of single responsibility depends largely on whether we can <em>identify</em> other responsibilities that our class is tackling. Bill&rsquo;s position feels absurd because we, as experienced developers, can identify other non-trivial responsibilities that are handled by his God class.</p>
+
+<p>However, here&rsquo;s the kicker: its not always obvious that a class is handling multiple responsibilities. Bob Martin even says this in his chapter on the principle of single responsibility:</p>
+
+<blockquote>
+<p>The SRP is one of the simplest of the principles, and one of the hardest to get right. Con-
+joining responsibilities is something that we do naturally. <strong>Finding</strong> and separating those responsibilities from one another is much of what software design is really about.<sup>3</sup></p>
+</blockquote>
+
+<p>If we keep in mind that the act of <em>naming</em> another responsibility is already the first step creating an abstraction,<sup>4</sup> we see that Michael Feathers gives us more evidence that finding and separating responsibilities is not a trivial exercise:</p>
+
+<blockquote>
+<p>&hellip;one pervasive problem in legacy code bases is that there often aren’t any layers of abstraction; the most important code in the system often sits intermingled with low-level API calls.<sup>5</sup></p>
+</blockquote>
+
+<p>To say that there are no layers of abstraction is to say that the programmer has failed to identify and separate responsibilities. In this particular example, the programmer has failed to identify domain-related responsibilities as separate from the responsibility of talking to some library or framework via low-level API calls.<sup>6</sup></p>
+
+<p>Here&rsquo;s one more piece of evidence that identifying responsibilities is not trivial. Again, I&rsquo;m trading here on the idea that identifying responsibilities is the beginning of creating abstractions. Creating abstractions, in turn, is a part of creating a higher-level vocabulary with which to write your programs. Apparently, Kent Beck has said something like this recently:</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Reading through my notes &amp; saw this pretty quote: &quot;You’re creating a vocabulary, not writing a program. Be a poet for a moment.&quot; <a href="https://twitter.com/KentBeck">@KentBeck</a></p>&mdash; Jessica (@encompassky) <a href="https://twitter.com/encompassky/status/813931671116451841">December 28, 2016</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>Think about how much careful thought, experience, and discovery goes into creating sensible vocabularies. David West has a great bit about this in his book <em>Object Thinking</em>:</p>
+
+<blockquote>
+<p>When we discover new things, we invent (or borrow) new words to express our discovery. When we want to make critical distinctions between or among similar notions, we use specialized vocabularies. The use of special vocabularies is common in our professional lives because, as specialists, we need to become familiar with unique ideas and to make important distinctions that as laypersons we might not make.<sup>7</sup></p>
+</blockquote>
+
+<p>If we think of programming as naming responsibilities to create abstractions that make up a vocabulary, then the non-triviality of creating vocabularies in general has a direct bearing on the difficulty of identifying responsibilities while writing programs, which, if we take Kent Beck seriously, is just a particular kind of vocabulary construction.</p>
+
+<p>So, whether a class seems to satisfy the principle of single responsibility depends on whether we can identify other responsibilities a class might be tackling. This isn&rsquo;t a trivial task and the PSR doesn&rsquo;t do anything to aid us in accomplishing it.</p>
+
+<h3 id="abstraction-and-tdd">Abstraction and TDD</h3>
+
+<p>TDD, on the other hand, actually puts pressure on us to identify responsibilities that may be hidden in the object we&rsquo;re trying to test. This happens for two reasons.</p>
+
+<p>One reason is that we can&rsquo;t unit test a class at all if we won&rsquo;t have a way of getting the object into the right state for a test and a way of verifying the object is in the correct state after we&rsquo;ve exercised it. Often, doing this requires that we identify an object&rsquo;s dependencies and interactions AS separate objects with separate responsibilities. Steve Freeman and Nat Pryce seem to say something like this without actually using the language of responsibility:</p>
+
+<blockquote>
+<p>…to construct an object for a unit test, we have to pass its dependencies to it, which means that we have to know what they are.<sup>8</sup></p>
+</blockquote>
+
+<p>There&rsquo;s another quotation that supports my point here, albeit in a less direct way. Freeman and Pryce say, &ldquo;for a class to be easy to unit-test, the class must…be loosely coupled and <strong>highly cohesive</strong> —in other words, well-designed.&rdquo; Cohesion, in Bob Martin&rsquo;s mind, is closely linked with the idea of a class&rsquo; responsibility, so this quote is almost a way of saying that unit testable classes are likely to follow the PSR.<sup>9</sup></p>
+
+<p>The second reason TDD helps us identify responsibilities is that a part of the TDD process is to eliminate duplication. Kent Beck actually has a nice summary of how this creates cohesion:</p>
+
+<blockquote>
+<p>The first feature goes in&hellip;the second feature, a variation on the first, goes in. <strong>The duplication between the two features is put in one place, whereas the differences tend to go in different places (different methods or even different classes).</strong><sup>10</sup></p>
+</blockquote>
+
+<p>Quotations from famous software engineers aside, if we think for a second about what would happen if Bill tried to unit test his God class, I think we&rsquo;ll find some intuitive support for the idea that TDD exerts pressure to identify responsibilities.</p>
+
+<p>For example, his app likely displays data in a format that&rsquo;s different from how its stored in the database. When writing a test to verify that his God object massages the data into a more presentable format correctly, he&rsquo;ll see that the database needs to have specific data pre-loaded in order for the test to pass. He could solve this problem by creating a sandbox database and pre-loading it with specific data, but it would be <em>easier</em> to unit test his class if he identifies &ldquo;getting data from the database&rdquo; as a separate responsibility, creates a class for it, and injects that dependency into his God class.</p>
+
+<p>Testing other pieces of functionality of his application will require the same process, which, theoretically, will involve more identifying and separating of responsibilities.<sup>11</sup></p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>The PSR is supposed to serve as a foundational principle for helping us write good software. However, the PSR isn&rsquo;t helpful if we fail to identify hidden responsibilities that our class may be assuming. Because identifying these responsibilities isn&rsquo;t trivial and because the PSR does nothing to help us with this non-trivial task, the PSR alone isn&rsquo;t very helpful.</p>
+
+<p>TDD actually does a better job at helping us identify responsibilities. A class won&rsquo;t be easy to unit test unless we&rsquo;ve identified and injected its dependencies, and to identify a dependency is to identify a responsibility. Eliminating duplication, moreover, forces us to identify and create abstractions to co-locate common functionality so that it can be reused, and to identify an abstraction is to identify a responsibility.</p>
+
+<h3 id="notes">Notes</h3>
+
+<ol>
+<li><p>Robert Martin, <em>Agile Software Development: Principles, Patterns, and Practices</em>, 110. Excerpt <a href="https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view">here</a>.</p></li>
+
+<li><p>Steve Freeman and Nat Pryce, <em>Growing Object Oriented Software Guided by Tests</em>, 96-97.</p></li>
+
+<li><p>Robert Martin, <em>Agile Software Development: Principles, Patterns, and Practices</em>, 114. Excerpt <a href="https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view">here</a>. Emphasis mine.</p></li>
+
+<li><p>Michael Feathers, <em>Working Effectively with Legacy Code</em>, 350-352.</p></li>
+
+<li><p>Perhaps this is why &ldquo;naming things&rdquo; is one of the two things that are hard about computer science, <a href="https://martinfowler.com/bliki/TwoHardThings.html">according to Phil Karlton</a>.</p></li>
+
+<li><p>I think that a part of the reason finding responsibilities can be difficult is because we have to think at a level of abstraction that is actually lower than the one we were using when we decided to create the class in the first place. When Bill created the <code>Application</code> class, he did so because he thought, &ldquo;I need a class that&rsquo;ll run my application.&rdquo; When he started writing database-related code in this class, he could continue to think &ldquo;this code is just helping this class fulfill its responsibility of running the app,&rdquo; and in a sense, he would be right, but he&rsquo;d be thinking at the wrong level of abstraction. Dropping down a level, he&rsquo;d see that his Application class displays UI <em>and</em> talks to a database <em>and</em>&hellip;</p></li>
+
+<li><p>David West, <em>Object Thinking</em>, 143-144.</p></li>
+
+<li><p>Steve Freeman and Nat Pryce, <em>Growing Object Oriented Software Guided by Tests</em>, 43.</p></li>
+
+<li><p>Ibid., 103-104.</p></li>
+
+<li><p>Robert Martin, <em>Agile Software Development: Principles, Patterns, and Practices</em>, 109. Excerpt <a href="https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view">here</a>. Martin Actually sees the PSR as being first described using the language of cohesion. Personally, I prefer the vocabulary of cohesion to the PSR because a class can have cohesiveness in degrees. Somehow, the more gradient (vs. binary) way of thinking about class design along this dimension seems to fit better with the idea that identifying responsibilities is related to the level of abstraction we&rsquo;re on when we&rsquo;re thinking about a class, but my thoughts on this aren&rsquo;t well formed enough to say more.</p></li>
+
+<li><p>Kent Beck, <em>TDD By Example</em>, 195.</p></li>
+
+<li><p>Technically, this doesn&rsquo;t fit the definition of TDD because the tests are written last, but there is a real sense in which the tests are driving the re-design of Bill&rsquo;s app. This is why I say TDD is actually helping him design better classes.</p></li>
+</ol>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+        
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=TDD%20%3e%20The%20Principle%20of%20Single%20Responsibility&amp;url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2ftdd-is-greater-than-the-principle-of-single-responsibility%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fphilosophicalhacker.com%2fpost%2ftdd-is-greater-than-the-principle-of-single-responsibility%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2ftdd-is-greater-than-the-principle-of-single-responsibility%2f&amp;description=TDD%20%3e%20The%20Principle%20of%20Single%20Responsibility"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=http%3a%2f%2fphilosophicalhacker.com%2fpost%2ftdd-is-greater-than-the-principle-of-single-responsibility%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'http:\/\/philosophicalhacker.com\/post\/tdd-is-greater-than-the-principle-of-single-responsibility\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="http://philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+
