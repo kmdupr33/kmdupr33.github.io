@@ -119,7 +119,7 @@
 &lt;p&gt;I think that if we keep in mind the fears that lead us to write tests in the first place, we&amp;rsquo;ll have a much easier time figuring out what to test. This should come as no surprise. After all, Kent Beck&amp;rsquo;s answer to the question of what to test is this:&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;Write tests until fear is transformed into boredom.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;Write tests until fear is transformed into boredom.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;This post is about the tests that fear drives us to write, tests that we should be spending most of our time writing.&lt;/p&gt;
@@ -155,12 +155,12 @@
 
 &lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
 
-&lt;p&gt;If you let fear by your guide, you&amp;rsquo;ll write the tests you need to write. We&amp;rsquo;re writing tests because we&amp;rsquo;re afraid that if we don&amp;rsquo;t, new functionality won&amp;rsquo;t work as expected, that we&amp;rsquo;ll break stuff that used to work, or that we won&amp;rsquo;t be able to cope with changing business requirements. Keeping these fears in mind will lead us to write tests when we&amp;rsquo;re writing complicated new features, when we&amp;rsquo;re finding that our old code breaks often, and when we suspect that our code will need to change.&lt;/p&gt;
+&lt;p&gt;If you let fear be your guide, you&amp;rsquo;ll write the tests you need to write. We&amp;rsquo;re writing tests because we&amp;rsquo;re afraid that if we don&amp;rsquo;t, new functionality won&amp;rsquo;t work as expected, that we&amp;rsquo;ll break stuff that used to work, or that we won&amp;rsquo;t be able to cope with changing business requirements. Keeping these fears in mind will lead us to write tests when we&amp;rsquo;re writing complicated new features, when we&amp;rsquo;re finding that our old code breaks often, and when we suspect that our code will need to change.&lt;/p&gt;
 
 &lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;I think this is partially because many of us in the android community don&amp;rsquo;t have a firm grasp of the meaning of the phrase &amp;ldquo;business logic.&amp;rdquo; People often give hand-wavy definitions of business logic during their presentations. (I&amp;rsquo;ve been guilty of giving such definitions myself.) Sometimes I&amp;rsquo;ll even hear someone give an example of business logic and I&amp;rsquo;ll think to myself, &amp;ldquo;That&amp;rsquo;s not really business logic.&amp;rdquo; (I thought this when I heard Jake Wharton&amp;rsquo;s example of business logic in &lt;a href=&#34;fragmentedpodcast.com/episodes/7/&#34;&gt;Fragmented Episode 7 on testing&lt;/a&gt;.) Another reason I think this platitude is unhelpful is that business logic, on whatever definition you fancy, is often mixed in with all other types of code in Android applications. This makes its hard to tease out the subset of the Android code that is properly called &amp;ldquo;business logic.&amp;rdquo;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I think this is partially because many of us in the android community don&amp;rsquo;t have a firm grasp of the meaning of the phrase &amp;ldquo;business logic.&amp;rdquo; People often give hand-wavy definitions of business logic during their presentations. (I&amp;rsquo;ve been guilty of giving such definitions myself.) Sometimes I&amp;rsquo;ll even hear someone give an example of business logic and I&amp;rsquo;ll think to myself, &amp;ldquo;That&amp;rsquo;s not really business logic.&amp;rdquo; (I thought this when I heard Jake Wharton&amp;rsquo;s example of business logic in &lt;a href=&#34;http://fragmentedpodcast.com/episodes/7/&#34;&gt;Fragmented Episode 7 on testing&lt;/a&gt;.) Another reason I think this platitude is unhelpful is that business logic, on whatever definition you fancy, is often mixed in with all other types of code in Android applications. This makes its hard to tease out the subset of the Android code that is properly called &amp;ldquo;business logic.&amp;rdquo;&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;&lt;em&gt;TDD By Example&lt;/em&gt;, Kent Beck, 194. On this same page, Beck also reluctantly gives us a list of things to test: conditionals, loops, operations, and polymorphism.&lt;/p&gt;&lt;/li&gt;
 
