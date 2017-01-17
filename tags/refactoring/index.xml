@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Philosophical Hacker</title>
-    <link>http://philosophicalhacker.com/tags/refactoring/index.xml</link>
+    <link>https://philosophicalhacker.com/tags/refactoring/index.xml</link>
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://philosophicalhacker.com/tags/refactoring/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://philosophicalhacker.com/tags/refactoring/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>How to Safely move Logic out of Activities</title>
-      <link>http://philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/</link>
+      <link>https://philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/</link>
       <pubDate>Thu, 16 Jun 2016 16:58:30 -0400</pubDate>
       
-      <guid>http://philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/</guid>
+      <guid>https://philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/</guid>
       <description>
 
 &lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;my last post&lt;/a&gt;, I argued that we should stop putting our app logic in &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s because it makes both unit testing &lt;em&gt;and&lt;/em&gt; functional testing our apps more difficult. In this post, I&amp;rsquo;ll try to suggest a method of safely removing app logic from our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s, drawing on a central idea discussed in Michael Feathers&amp;rsquo; &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;: characterization tests.&lt;/p&gt;
@@ -42,7 +42,7 @@
 &lt;p&gt;Pg. 218&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://philosophicalhacker.com/images/net.jpg&#34; alt=&#34;safety net&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://philosophicalhacker.com/images/net.jpg&#34; alt=&#34;safety net&#34; /&gt;&lt;/p&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;Image Credit: Cea on &lt;a href=&#34;https://www.flickr.com/photos/centralasian/3896333282/in/photolist-6WiJ93-i2ZU8-AL26v-NqLkJ-57Gmup-4QiXwQ-67j8Sw-fuf5d1-5DJrYY-9YjbZP-7UJ75S-piX5fr-jzCox-8s9BdN-uST4Hi-tw8VdM-5yxEvF-2QSfpF-onBRex-6Aj5cU-3Jyy7k-8YYKtq-8TRZ33-as2Fdq-rhXdJ8-oTXJh5-aNqeHH-hcEk7d-7ACDg-6EcoYB-mmgBPF-mz68zf-sFGHZq-6EhPsd-dor5Cp-6EcFhV-coe1tY-EDaP5-9Yn6dW-2zCxU-8YiQA1-7dQsZA-8Fq6BQ-n1F765-7dQssm-6wskCt-C44Dg-6EepXT-6EesLa-C4543&#34;&gt;Flickr Creative Commons&lt;/a&gt;&lt;/p&gt;
