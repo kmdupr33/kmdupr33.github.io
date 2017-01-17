@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Philosophical Hacker</title>
-    <link>https://philosophicalhacker.com/tags/go/index.xml</link>
+    <link>https://www.philosophicalhacker.com/tags/go/index.xml</link>
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://philosophicalhacker.com/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://www.philosophicalhacker.com/tags/go/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Testing Package Implementation from &#39;the Outside&#39;</title>
-      <link>https://philosophicalhacker.com/post/testing-package-implmentation-details-from-the-outside/</link>
+      <link>https://www.philosophicalhacker.com/post/testing-package-implmentation-details-from-the-outside/</link>
       <pubDate>Wed, 03 Feb 2016 21:30:42 -0500</pubDate>
       
-      <guid>https://philosophicalhacker.com/post/testing-package-implmentation-details-from-the-outside/</guid>
+      <guid>https://www.philosophicalhacker.com/post/testing-package-implmentation-details-from-the-outside/</guid>
       <description>
 
 &lt;p&gt;Sometimes you need to test a package&amp;rsquo;s implementation from outside of the package containing the implementation you&amp;rsquo;d like to test. This post briefly covers why this need arises and how we can meet  that need. Much of the information here is already covered in Andrew Gerrand&amp;rsquo;s &lt;a href=&#34;https://www.youtube.com/watch?v=ndmB0bj7eyw&#34;&gt;testing techniques talk&lt;/a&gt;, so if you&amp;rsquo;ve watched that, you&amp;rsquo;ll probably only think the last section of this post is interesting.&lt;/p&gt;
@@ -83,10 +83,10 @@ Now, suppose you wanted to test the &lt;span style=&#34;color: #BA2121&#34;&gt;`
     
     <item>
       <title>Table-driven tests with Gomock</title>
-      <link>https://philosophicalhacker.com/post/table-driven-tests-with-gomock/</link>
+      <link>https://www.philosophicalhacker.com/post/table-driven-tests-with-gomock/</link>
       <pubDate>Sat, 23 Jan 2016 13:01:07 -0500</pubDate>
       
-      <guid>https://philosophicalhacker.com/post/table-driven-tests-with-gomock/</guid>
+      <guid>https://www.philosophicalhacker.com/post/table-driven-tests-with-gomock/</guid>
       <description>
 
 &lt;p&gt;Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&amp;rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.&lt;/p&gt;
@@ -260,10 +260,10 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
     
     <item>
       <title>Integration Tests in Go</title>
-      <link>https://philosophicalhacker.com/post/integration-tests-in-go/</link>
+      <link>https://www.philosophicalhacker.com/post/integration-tests-in-go/</link>
       <pubDate>Fri, 22 Jan 2016 19:27:36 -0500</pubDate>
       
-      <guid>https://philosophicalhacker.com/post/integration-tests-in-go/</guid>
+      <guid>https://www.philosophicalhacker.com/post/integration-tests-in-go/</guid>
       <description>
 
 &lt;p&gt;Although Go has support for testing built in to its toolchain, certain kinds of testing can be a bit tricky. For example, it may not be immediately obvious how you would go about writing and running &lt;em&gt;integration tests&lt;/em&gt; in go. This post contains info on how to write and run integration tests for your go code.&lt;/p&gt;
@@ -404,10 +404,10 @@ Then the Cache doesn&#39;t call `Find()` on its `GohperFinder`. Instead, it retu
     
     <item>
       <title>Getting started with Gomock</title>
-      <link>https://philosophicalhacker.com/post/getting-started-with-gomock/</link>
+      <link>https://www.philosophicalhacker.com/post/getting-started-with-gomock/</link>
       <pubDate>Wed, 20 Jan 2016 10:43:26 -0500</pubDate>
       
-      <guid>https://philosophicalhacker.com/post/getting-started-with-gomock/</guid>
+      <guid>https://www.philosophicalhacker.com/post/getting-started-with-gomock/</guid>
       <description>&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing&#34;&gt;my last post&lt;/a&gt;, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&amp;rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&amp;rsquo;s a brief tutorial on how to get started with gomock.&lt;/p&gt;
 
 &lt;p&gt;&lt;/p&gt;
@@ -535,10 +535,10 @@ GopherFinder
     
     <item>
       <title>Should we use mocking libraries for go testing?</title>
-      <link>https://philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/</link>
+      <link>https://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/</link>
       <pubDate>Thu, 14 Jan 2016 02:20:53 +0000</pubDate>
       
-      <guid>https://philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/</guid>
+      <guid>https://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/</guid>
       <description>&lt;p&gt;A few weeks ago, I started learning go. Since I&amp;rsquo;m a wannabe TDD-er, I took a look at some resources on testing go code. I stumbled upon &lt;a href=&#34;https://talks.golang.org/2014/testing.slide#1&#34;&gt;Andrew Gerrand&amp;rsquo;s excellent Testing Techniques talk&lt;/a&gt; in which he says this:&lt;/p&gt;
 
 &lt;blockquote&gt;Go eschews a lot of things, including mocks and fakes.&lt;/blockquote&gt;
