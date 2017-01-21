@@ -9,6 +9,132 @@
     <atom:link href="https://www.philosophicalhacker.com/tags/testing/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Exploiting Android-Specific Seams for Testing and Flexibility</title>
+      <link>https://www.philosophicalhacker.com/post/exploiting-android-specific-seams-for-testing-and-flexibility/</link>
+      <pubDate>Sat, 21 Jan 2017 11:20:01 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/exploiting-android-specific-seams-for-testing-and-flexibility/</guid>
+      <description>
+
+&lt;p&gt;As I pointed out throughout my &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/&#34;&gt;series of posts on writing testable Android applications&lt;/a&gt;, the key to writing testable Android apps, is creating and exploiting seams. During these posts, I pointed out two types of seams that are available in any OO programming language and any programming environment. In this post, I want to highlight some Android-specific seams that we can leverage to make our applications more testable and flexible.&lt;/p&gt;
+
+&lt;h3 id=&#34;manifest-seams&#34;&gt;Manifest Seams&lt;/h3&gt;
+
+&lt;p&gt;Manifest seams allow you to change a manifest that&amp;rsquo;s used for a particular build variant without editing your main manifest in place. Changing your manifest, of course, results in different behavior for your app. These new behaviors can be used to make your app more testable. To flesh out the concept of a manifest seam, let&amp;rsquo;s look at using manifest seams to set up your app&amp;rsquo;s &amp;ldquo;mock mode.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;An application running in mock mode stubs out its interactions with external services for testing purposes.&lt;sup&gt;1&lt;/sup&gt; A nice example of mock mode in action is &lt;a href=&#34;https://github.com/JakeWharton/u2020&#34;&gt;Jake Wharton&amp;rsquo;s u2020 app&lt;/a&gt;. In his implementation of mock mode, Wharton uses an object seam, along with dagger, to swap out views within Activities so that in mock mode, the &lt;code&gt;MainActivity&lt;/code&gt;&amp;rsquo;s view will contain a debug drawer that can be used to configure the stubbing behavior for the app.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MainActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Activity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Inject&lt;/span&gt; ViewContainer viewContainer&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+
+    ViewGroup container &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; viewContainer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;forActivity&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;    
+
+    inflater&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;inflate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;main_activity&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; container&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    ButterKnife&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;bind&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; container&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;  
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This code gives u2020 users the ability to change mock behavior using the app&amp;rsquo;s UI without having to modify any production code. We could use manifest seams, however, to accomplish the same thing.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;Manifest seams are made possible via manifest merging and merge rule markers. To exploit a manifest seam for mock mode, we can use merge rule markers tell the manifest merger to change the initial &lt;code&gt;Activity&lt;/code&gt; that&amp;rsquo;s launched for a particular build variant.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;&amp;lt;!-- src/mock/AndroidManifest.xml --&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;activity&lt;/span&gt;
+  &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;.StubConfigActivity&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;intent-filter&amp;gt;&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;action&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.action.MAIN&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;category&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.category.LAUNCHER&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/intent-filter&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/activity&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;activity&lt;/span&gt;
+  &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;.MainActivity&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;intent-filter&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;tools:node=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;remove&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;action&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.action.MAIN&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;category&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.category.LAUNCHER&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/intent-filter&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/activity&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The resulting manifest for the mock build variant will have the &lt;code&gt;StubConfigActivity&lt;/code&gt; as its launching activity, rather than the &lt;code&gt;MainActivity&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I think there are other interesting possibilities here that are worth exploring. For example, you could use merge rule markers to substitute out which actions and categories are on non-launcher &lt;code&gt;Activity&lt;/code&gt;&amp;rsquo;s intent-filter and thereby change which activities are started when we call &lt;code&gt;context.startActivity&lt;/code&gt; with implicit intents.&lt;/p&gt;
+
+&lt;h3 id=&#34;buildconfig-seams&#34;&gt;BuildConfig Seams&lt;/h3&gt;
+
+&lt;p&gt;BuildConfig seams allow us to change the values stored in the &lt;code&gt;BuildConfig&lt;/code&gt;&amp;rsquo;s constants depending on which build variant we&amp;rsquo;re building. By default, &lt;code&gt;BuildConfig&lt;/code&gt; contains some useful values like, &lt;code&gt;DEBUG&lt;/code&gt; and &lt;code&gt;FLAVOR&lt;/code&gt;, but we can actually create additional &lt;code&gt;BuildConfig&lt;/code&gt; constants via gradle. Let&amp;rsquo;s start by looking a simple example of creating a BuildConfig field:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;productFlavors &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  mock &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    buildConfigField&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;Boolean&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;MOCK&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;true&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A simple use case for BuildConfig seams is setting up the base url for the api your app is hitting. This can make testing easier because you can point your app to a staging, sandbox, mock, or production servers without modifying production code.&lt;sup&gt;3&lt;/sup&gt; Leveraging a BuildConfig seam in this way might look something like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;defaultConfig &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  buildConfigField&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;String&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;API_BASE&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;\&amp;quot;api.awesomecompany.com\&amp;quot;&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+productFlavors &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  sandbox &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    buildConfigField&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;String&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;API_BASE&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;\&amp;quot;localhost:8080\&amp;quot;&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You could then use the BuildConfig field like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; String &lt;span style=&#34;color: #0000FF&#34;&gt;buildGetAwesomenessApiUrl&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;http://&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; BuildConfig&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;API_BASE&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;/awesomenesss&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;For those of you who have read &lt;a href=&#34;https://www.philosophicalhacker.com/post/build-variants-and-link-seams/&#34;&gt;my post on link seams&lt;/a&gt;, BuildConfig seams may just look like a special case of using build variants to create link seams. In some sense, that&amp;rsquo;s true.&lt;/p&gt;
+
+&lt;p&gt;However, BuildConfig seams have an advantage over placing identically named files in different sourcesets for different build variants: you can set a BuildConfig field for the default configuration and override it for specific build variants. You can&amp;rsquo;t do this by placing identically named files in the &lt;code&gt;main&lt;/code&gt; and build-variant sourcesets folders because the compiler will complain that there&amp;rsquo;s two files with the same name.&lt;/p&gt;
+
+&lt;p&gt;There are other things to explore here as well. One use case I&amp;rsquo;ve found for BuildConfig seams is in &lt;em&gt;composing&lt;/em&gt; dagger configuration behavior for multi-dimensional product flavors by storing class names in BuildConfig fields and instantiating them via reflection. I&amp;rsquo;m not very confident that this is a sensible way to use BuildConfig seams, but its interesting anyway, and it might serve as a foundation for a better way to use BuildConfig seams.&lt;/p&gt;
+
+&lt;h3 id=&#34;resource-seams&#34;&gt;Resource Seams&lt;/h3&gt;
+
+&lt;p&gt;Resources from different build variants, like AndroidManifests, get merged. Unlike manifest merging, we don&amp;rsquo;t have merge rule markers that allow us to tweak how the resources are merged. However, we can still take advantage of the default merge behavior to change the behavior of our apps without editing production code in place. The default merge behavior, according to &lt;a href=&#34;https://developer.android.com/studio/write/add-resources.html#resource_merging&#34;&gt;the docs&lt;/a&gt;, is this:&lt;/p&gt;
+
+&lt;p&gt;build variant &amp;gt; build type &amp;gt; product flavor &amp;gt; main source set &amp;gt; library dependencies&lt;/p&gt;
+
+&lt;p&gt;This means that we can place resources in the main source set as a kind of default and override them for specific build variants. Again, this is something that we can&amp;rsquo;t do by placing identically named java files in different sourcesets.&lt;/p&gt;
+
+&lt;p&gt;BuildConfig seams and Resource seams obviously have some similarities, which makes choosing between them confusing. Off the cuff, we can say that using a BuildConfig field is easier than getting a resource value, so we may want to prefer BuildConfig seams when we don&amp;rsquo;t have access to a &lt;code&gt;Context&lt;/code&gt;. Stuffing all of our build variant specific values into a single BuildConfig class, however, isn&amp;rsquo;t going to scale well, so we may want to prefer Resource seams if we do have access to a &lt;code&gt;Context&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Android developers have their own Android-specific seams that they can exploit for testing purposes. Manifest seams rely on manifest merging and merge rule markers. BuildConfig seams rely on the &lt;code&gt;productFlavor.buildConfigField&lt;/code&gt; method. Resource seams rely on Android&amp;rsquo;s default the resource merging behavior.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;If you don&amp;rsquo;t know why we&amp;rsquo;d want to do this, &lt;a href=&#34;https://android-developers.googleblog.com/2015/12/leveraging-product-flavors-in-android.html&#34;&gt;read this&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Manifest seams may be an inferior way of doing this, as Wharton&amp;rsquo;s strategy allows users to change mock behavior throughout their session with the app, while manifest seams, as we&amp;rsquo;ll see, only allow us to change this behavior when the app is first launched. My purpose here isn&amp;rsquo;t to say which approach is better. Its just to point out that manifest seams exist.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;I haven&amp;rsquo;t found much use for mock web servers. I can eliminate flaky tests without them, and they often slow tests down since the tests are still making network requests.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>TDD &gt; The Principle of Single Responsibility</title>
       <link>https://www.philosophicalhacker.com/post/tdd-is-greater-than-the-principle-of-single-responsibility/</link>
       <pubDate>Sat, 14 Jan 2017 10:54:43 -0500</pubDate>
@@ -1613,128 +1739,6 @@ joining responsibilities is something that we do naturally. &lt;strong&gt;Findin
 &lt;p&gt;After seeing that putting our logic in &lt;code&gt;Activity&lt;/code&gt;s makes unit and functional testing difficult, and after getting some insight into the intended design of &lt;code&gt;Activity&lt;/code&gt;s, I think we wouldn&amp;rsquo;t be crazy in thinking that putting app-logic in our &lt;code&gt;Activity&lt;/code&gt; makes about as much sense as putting app-logic in a main function of a java program.&lt;/p&gt;
 
 &lt;p&gt;Of course, I&amp;rsquo;m open to being wrong about any of this. I&amp;rsquo;m offering this argument mainly as a way of getting a conversation going in the community about best practices in Android development. I mostly just don&amp;rsquo;t want to open up the Google IO app for 2017 and see test code mixed in with application code. As long as we can agree on a way of avoiding that, I&amp;rsquo;ll be happy, even if I turn out to be wrong about this.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Testing Strategies with a React/Redux Architecture</title>
-      <link>https://www.philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/</link>
-      <pubDate>Thu, 09 Jun 2016 15:22:47 -0400</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/</guid>
-      <description>
-
-&lt;p&gt;In &lt;a href=&#34;https://www.philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/&#34;&gt;my last post&lt;/a&gt;, I briefly introduced the principles behind React and Redux. I said that React is about making what gets rendered to the screen a function of some view-state object. I also said that Redux is about making updates to the screen a function of the current view-state object and an action describing a user&amp;rsquo;s interaction with the view.&lt;/p&gt;
-
-&lt;p&gt;In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis testing. More specifically, I suggest that a React/Redux-like architecture opens up a testing strategy that doesn&amp;rsquo;t suffer from the disadvantages of the testing strategy we use with the MVP architecture.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-disadvantage-of-mvp&#34;&gt;A Disadvantage of MVP&lt;/h2&gt;
-
-&lt;p&gt;Android architectures that rely on MVP are forced to use behavior-based verification in their unit tests. Behavior-based verification is about ensuring that the unit being tested is interacting properly with it&amp;rsquo;s collaborators. For example, consider this test from &lt;a href=&#34;https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#5&#34;&gt;Google&amp;rsquo;s testing code lab&lt;/a&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadNotesFromRepositoryAndLoadIntoView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Given an initialized NotesPresenter with initialized notes&lt;/span&gt;
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// When loading of Notes is requested&lt;/span&gt;
-   mNotesPresenter&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;loadNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Callback is captured and invoked with stubbed notes&lt;/span&gt;
-   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesRepository&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mLoadNotesCallbackCaptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;capture&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-   mLoadNotesCallbackCaptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getValue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;NOTES&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Then progress indicator is hidden and notes are shown in UI&lt;/span&gt;
-   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setProgressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;NOTES&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The test ensures that the &lt;code&gt;mNotesPresenter&lt;/code&gt;&amp;rsquo;s &lt;code&gt;loadNotes&lt;/code&gt; works properly by verifying that it&amp;rsquo;s called &lt;code&gt;setProgressIndicator&lt;/code&gt; and &lt;code&gt;showNotes&lt;/code&gt; on that &lt;code&gt;mNotesPresenter&lt;/code&gt;&amp;rsquo;s &lt;code&gt;View&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Behavior-based based verification and mocks can be useful, but there are some costs with using this method of verification for our tests. Martin Fowler summarizes these costs well in his essay &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;&amp;ldquo;Mocks aren&amp;rsquo;t Stubs&amp;rdquo;&lt;/a&gt;. In this essay he talks about the costs of &amp;ldquo;mockist tests,&amp;rdquo; tests that uses mocks and behavior-based verification. Here are some relevant excerpts:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;When you write a mockist test, you are testing the outbound calls of the SUT [System Under Test] to ensure it talks properly to its suppliers. A classic test only cares about the final state - not how that state was derived. Mockist tests are thus more coupled to the implementation of a method. Changing the nature of calls to collaborators usually cause a mockist test to break&amp;hellip;implementation changes are much more likely to break tests than with classic testing.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Here&amp;rsquo;s another disadvantage he points out:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Mockist testers do talk more about avoiding &amp;lsquo;train wrecks&amp;rsquo; - method chains of style of getThis().getThat().getTheOther(). Avoiding method chains is also known as following the Law of Demeter. While method chains are a smell, the opposite problem of middle men objects bloated with forwarding methods is also a smell. (I&amp;rsquo;ve always felt I&amp;rsquo;d be more comfortable with the Law of Demeter if it were called the Suggestion of Demeter.)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;If we&amp;rsquo;re sympathetic with Fowler here and we think that middle men objects bloated with forwarding methods is just as much a smell as law of demeter violations, then we might regret the fact that effective use of mocks require that we follow the law of demeter &amp;ldquo;to the T.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Fowler also mentions some advantages of behavior-based verification. Ultimately, he doesn&amp;rsquo;t seem to have a strong opinion on which strategy should be used. I&amp;rsquo;m not going to try to settle that question here either. It might turn out that the benefits of mockist tests outweigh the costs. For the remainder of the article, I just want to focus on how a React/Redux architecture opens up the possibility of state-based verification for our UI-related unit tests.&lt;/p&gt;
-
-&lt;h2 id=&#34;state-based-verification-with-react-redux&#34;&gt;State-based Verification with React/Redux&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s return the filtered list example we introduced in &lt;a href=&#34;https://www.philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/&#34;&gt;the last article&lt;/a&gt;. Again, here&amp;rsquo;s a video of the functionality we want to test:&lt;/p&gt;
-
-
-&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
-  &lt;iframe src=&#34;//www.youtube.com/embed/qUYP1WNz50U&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
- &lt;/div&gt;
-
-
-&lt;p&gt;Last time, I showed how we might implement this functionality according to the principles of React and Redux. Again those principles are that the content of a screen is a function of some view-state object and updates to the screen are a function of some view-state object and some action describing a user&amp;rsquo;s interaction with the screen. Here&amp;rsquo;s what our React/Redux-like code looked like:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Reducer reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reducer&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; tag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reducer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Click&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tag&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-&lt;/span&gt;        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
-
-&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Reducer&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; TagFilterHolder &lt;span style=&#34;color: #0000FF&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagFilterHolder tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Click click&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-      &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Create a new holder with all the values from the old holder&lt;/span&gt;
-      TagFilterHolder newTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-      TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; click&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-          newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-          newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Recall that the &lt;code&gt;reloadFragment&lt;/code&gt; call uses the &lt;code&gt;mTagFilterHolder&lt;/code&gt; as a view-state object to determine what get&amp;rsquo;s rendered to the screen. Testing this &lt;code&gt;reduce&lt;/code&gt; method doesn&amp;rsquo;t require the use of mocks:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;shouldToggleFilter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Arrange&lt;/span&gt;
-    ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt; reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    TagFilterHolder tagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Config&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tags&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CATEGORY_THEME&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; tag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Config&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tags&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CATEGORY_THEME&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1,&lt;/span&gt;
-            &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;some stuff&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1);&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Click&lt;/span&gt; clickAction &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Click&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tag&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Act&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagFilterHolder holder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reducer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; clickAction&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Assert&lt;/span&gt;
-    assertFalse&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;holder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This shows that React/Redux-like architectures open up the possibility of using state-based verification in our UI unit test code. This opens up the possibility of unit tests that don&amp;rsquo;t suffer from the disadvantages pointed out by Martin Fowler.&lt;/p&gt;
-
-&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;The fact that React/Redux-like architectures open up the possibility of alternative testing strategies is an additional reason that we should consider these architectures for Android Development. I think that by utilizing RxJava with a subset of the features provided by the Android data-binding library, the approach I&amp;rsquo;ve sketched here can scale to an architecture that allows for time-travel debugging, hotswap, and a more flexible testing strategy, but that&amp;rsquo;s something that I&amp;rsquo;ll have to explore another time.&lt;/p&gt;
 </description>
     </item>
     
