@@ -6,8 +6,114 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 21 Jan 2017 11:20:01 -0500</lastBuildDate>
+    <lastBuildDate>Sat, 28 Jan 2017 09:19:38 -0500</lastBuildDate>
     <atom:link href="https://www.philosophicalhacker.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Espresso Test Addiction: An Anti-pattern</title>
+      <link>https://www.philosophicalhacker.com/post/espresso-test-addiction/</link>
+      <pubDate>Sat, 28 Jan 2017 09:19:38 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/espresso-test-addiction/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;More than 1000 apps&amp;hellip;they have espresso tests for the first time using the test recorder&amp;hellip;espresso adoption has also grown since the introduction of [the espresso test recorder].&lt;/p&gt;
+
+&lt;p&gt;Android Developers Backstage, &lt;a href=&#34;http://androidbackstage.blogspot.com/2016/10/episode-57-espresso-test-recorder.html&#34;&gt;Episode 37 Espresso Test Recorder&lt;/a&gt;, 31:10&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Record-playback tools are almost always a bad idea for any kind of automation, since they resist changeability and obstruct useful abstractions. They are only worth having as a tool to generate fragments of scripts which you can then &lt;strong&gt;edit&lt;/strong&gt; as a proper programming language&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;Martin Fowler, &lt;a href=&#34;https://martinfowler.com/bliki/TestPyramid.html&#34;&gt;&amp;ldquo;Test Pyramid&amp;rdquo;&lt;/a&gt; (emphasis mine)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Espresso tests make a nice addition to our testing tool-belt. The espresso test recorder, moreover, makes getting started with testing and espresso very easy. As I&amp;rsquo;ve said before, &lt;a href=&#34;https://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;getting started with automated testing on Android is hard&lt;/a&gt;, so having nice tools and an clear on-boarding ramp for testing is a good thing.&lt;/p&gt;
+
+&lt;p&gt;Of course, we all know that its possible to have too much of a good thing, and I sometimes worry that espresso and espresso recorder are contributing to the formation of a UI testing addiction in the Android community. I worry, moreover, that this addiction that will probably lead to less testing in the long-run.&lt;/p&gt;
+
+&lt;p&gt;UI tests and test recorders are, of course, not new, so they have well-understood limitations. Moreover, lots of smart programmers have said smart things about how to best use these tools. This post reviews these limitations and best practices in general and suggests how we ought to apply those practices to Android development.&lt;/p&gt;
+
+&lt;h3 id=&#34;ui-tests-outside-the-android-community&#34;&gt;UI Tests Outside the Android Community&lt;/h3&gt;
+
+&lt;p&gt;Outside the Android community, the caution around writing too many UI tests is actually surprisingly loud and clear.&lt;/p&gt;
+
+&lt;p&gt;Mike Cohn, for example, expresses this caution with &lt;a href=&#34;https://www.mountaingoatsoftware.com/blog/the-forgotten-layer-of-the-test-automation-pyramid&#34;&gt;his testing pyramid suggestion&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;At the base of the test automation pyramid is unit testing. Unit testing should be the foundation of a solid test automation strategy and as such represents the largest part of the pyramid&amp;hellip;Automated user interface testing is placed at the top of the test automation pyramid &lt;strong&gt;because we want to do as little of it as possible.&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Cohn warns us in this article (and the book the article is advertising) that if we don&amp;rsquo;t have a healthy test pyramid, then &amp;ldquo;all other testing ends up being performed through the user interface, resulting in tests that are expensive to run, expensive to write, and brittle.&amp;rdquo; This test pyramid suggestion is echoed by &lt;a href=&#34;https://martinfowler.com/bliki/TestPyramid.html&#34;&gt;Martin Fowler&lt;/a&gt; and by &lt;a href=&#34;https://testing.googleblog.com/2015/04/just-say-no-to-more-end-to-end-tests.html&#34;&gt;Google&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Michael Feathers, to take another example, also talks about the limitations of large tests, particularly with respect to how useful they are in helping us refactor with confidence:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Unit testing is one of the most important components in legacy code work. System-level regression tests are great, but small, localized tests are invaluable. They can give you feedback as you develop and allow you to refactor with much more safety.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;And later on, contrasting unit tests with larger tests, he says:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Larger tests tend to take longer to execute. This tends to make test runs rather frustrating. Tests that take too long to run end up not being run.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Finally, Gerard Meszaros in his &lt;em&gt;xUnit Test Patterns&lt;/em&gt; has an entire section explaining why over-using UI tests isn&amp;rsquo;t a great idea.&lt;sup&gt;3&lt;/sup&gt; Here&amp;rsquo;s one specific passage with a strong caution against using recorded UI tests in particular:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;In the last decade [1998-2008], more general-purpose test automation tools have become available for testing applications through their user interfaces. Some of these tools use scripting languages to define the tests; the sexier tools rely on the &amp;ldquo;robot user&amp;rdquo; or &amp;ldquo;record and playback&amp;rdquo; metaphor for test automation. Unfortunately, many of the early experiences with these latter tools left the testers and test managers less than satisfied. The cause was high test maintenance costs caused by the &amp;ldquo;fragile test&amp;rdquo; problem.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The gist of all of these quotes is that writing too many UI tests will likely result in a suite that is a) too slow to support development/refactoring, b) too difficult to maintain, as changes in the UI can break a large amount of tests.&lt;sup&gt;4&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;but-what-about-the-robot-pattern&#34;&gt;But what about the &amp;ldquo;robot pattern?&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;At this point, some readers may wonder whether &amp;ldquo;&lt;a href=&#34;https://realm.io/news/kau-jake-wharton-testing-robots/&#34;&gt;the robot pattern&lt;/a&gt;&amp;rdquo; makes writing a ton of UI tests ok. The robot pattern, to refresh your memory, is a way of making your UI tests more resistant to change by hiding the details of view interaction behind &amp;ldquo;robot&amp;rdquo; objects. While the robot pattern does &lt;em&gt;mitigate&lt;/em&gt; the issue of brittle tests, over-relying on UI tests, even with the robot pattern, is still going to result in a sub-par testing suite. Here&amp;rsquo;s why.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start by noting that the robot pattern is not new. The robot pattern is just &lt;a href=&#34;https://martinfowler.com/bliki/PageObject.html&#34;&gt;Martin Fowler&amp;rsquo;s page object pattern&lt;/a&gt;.&lt;sup&gt;5&lt;/sup&gt; So, when other software engineers outside the Android community suggest that too much UI testing is a bad idea, its not because they aren&amp;rsquo;t aware of the possibility of &amp;ldquo;the robot pattern.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;Next, we can note something obvious about the robot pattern: it does nothing to improve the &lt;em&gt;speed&lt;/em&gt; of UI tests. The lack of speed of UI tests is one of the main disadvantages of over-relying on them.&lt;/p&gt;
+
+&lt;p&gt;Finally, although the robot pattern does make UI tests resistant to small UI changes, it does not allow tests to gracefully adapt to larger UI changes. Suppose, for example, that a particular piece of functionality is moved to a different screen within our app. If this happens, we&amp;rsquo;ll need to update our tests &lt;em&gt;and&lt;/em&gt; our robots.&lt;/p&gt;
+
+&lt;p&gt;For the reasons, the robot pattern doesn&amp;rsquo;t change the fact that we&amp;rsquo;re often better off trying to find a way of testing functionality at the unit-level or integration-level.&lt;/p&gt;
+
+&lt;h3 id=&#34;how-to-use-espresso-tests-and-the-recorder&#34;&gt;How to use Espresso Tests and the Recorder&lt;/h3&gt;
+
+&lt;p&gt;Based on experiences and recommendations of &lt;em&gt;very&lt;/em&gt; experienced software engineers outside the Android community, here&amp;rsquo;s how I recommend we handle use espresso and recorder for UI tests:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;If there&amp;rsquo;s a way to test the functionality that you&amp;rsquo;re trying to test at the unit level, do so.&lt;/li&gt;
+&lt;li&gt;If you can&amp;rsquo;t do this, refactor so that you can test the functionality at the unit-level. Use the test recorder to record a UI test to support your refactoring to be sure that you didn&amp;rsquo;t break anything.&lt;sup&gt;6&lt;/sup&gt; After you&amp;rsquo;ve refactored your code to test the functionality at the unit-level, delete the recorded test.&lt;/li&gt;
+&lt;li&gt;If you&amp;rsquo;re &lt;em&gt;really&lt;/em&gt; interested in testing how the application works &lt;em&gt;as a whole&lt;/em&gt;, using a UI test is fine, but, as the epigraph opening this post suggests, &lt;em&gt;refactor&lt;/em&gt; your recorded tests to use the &amp;ldquo;robot pattern&amp;rdquo; to keep your UI tests resistant to small changes in the UI.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Espresso and the test recorder are great tools, but don&amp;rsquo;t let them suck you into writing too many UI tests. That way lies madness&amp;hellip;and slow, fragile tests. These are tests that won&amp;rsquo;t be useful, and as a result, &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-should-we-unit-test/&#34;&gt;the fear that&amp;rsquo;s supposed to be alleviated by writing unit tests will return&lt;/a&gt;. I don&amp;rsquo;t want to work with code I&amp;rsquo;m afraid to change, so selfishly, I hope we&amp;rsquo;ll all do better here.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Michael Feathers, &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, 34-35.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Ibid., 35-36.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Gerard Meszaros, &lt;em&gt;xUnit Test Patterns&lt;/em&gt;, 299.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Poor defect localization is another disadvantage of UI tests that I&amp;rsquo;m not covering in detail here. Writing too many UI tests &lt;em&gt;can&lt;/em&gt; be a way of ignoring the design feedback your tests are trying to give you. (&lt;a href=&#34;https://www.philosophicalhacker.com/post/why-i-dont-use-roboletric/&#34;&gt;The same thing can happen when we write robolectric tests.&lt;/a&gt;) Unit testing android applications is hard because our Android apps often have bad architecture. Instead of listening to our tests that are telling us &amp;ldquo;your classes are tightly coupled and they violate the principle of single responsibility,&amp;rdquo; we just say, &amp;ldquo;forget unit tests. I&amp;rsquo;ll just test everything through the UI instead.&amp;rdquo;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;The key idea of this pattern, however, is definitely older than Fowler&amp;rsquo;s page object pattern. Gerard Meszaros talks about it in &lt;em&gt;xUnit Test Patterns&lt;/em&gt;, for example, which was published in 2007.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;This strategy is recommended by both Feathers and Meszaros.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Exploiting Android-Specific Seams for Testing and Flexibility</title>
@@ -1308,61 +1414,6 @@ joining responsibilities is something that we do naturally. &lt;strong&gt;Findin
 &lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
 
 &lt;p&gt;In some ways, it feels like the lean startup movement has been a barrier to me realizing this. We&amp;rsquo;re taught that the &amp;ldquo;holy grail&amp;rdquo; of a startup&amp;rsquo;s journey is product-market fit and so we focus much of our thinking on finding that fit. I&amp;rsquo;m finding, however, that there really is important prior question to the question &amp;ldquo;Am I building something people want?&amp;rdquo; That question is &amp;ldquo;Do I have enough capital to find out whether I can build a viable business building something people want?&amp;rdquo;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>On Selling your Soul: Notes on Gregg Pollack&#39;s Founder&#39;s Talk</title>
-      <link>https://www.philosophicalhacker.com/post/on-selling-your-soul/</link>
-      <pubDate>Tue, 09 Aug 2016 08:21:36 -0400</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/on-selling-your-soul/</guid>
-      <description>
-
-&lt;blockquote&gt;
-&lt;p&gt;If you&amp;rsquo;re going to be successful, Richard, you need to learn to be an asshole.&lt;/p&gt;
-
-&lt;p&gt;Erlich Bachman, &lt;em&gt;Silicon Valley&lt;/em&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;For those of you who don&amp;rsquo;t know, I was recently accepted into &lt;a href=&#34;http://starterstudio.com/&#34;&gt;Starter Studio&lt;/a&gt;, an Orlando-based incubator to work on &lt;a href=&#34;http://universityandroid.com&#34;&gt;University Android&lt;/a&gt;, a codeacademy-like program for learning Android development. Every Monday night, Starter Studio brings in successful founders to talk about things they&amp;rsquo;ve learned along the way to success. I&amp;rsquo;ve decided that throughout my time at Starter Studio, I&amp;rsquo;d like to note two big &amp;ldquo;take aways&amp;rdquo; from each founder&amp;rsquo;s talk: one business-related and one personal. Here are my notes on Gregg Pollack&amp;rsquo;s talk.&lt;/p&gt;
-
-&lt;p&gt;Yesterday, Gregg Pollack, the founder of CodeSchool spoke. At the end of his talk, he invited us to connect with him on linkedin, and before moving on, he paused, smirked, and let us in on the &amp;ldquo;dark side&amp;rdquo; on his seemingly arbitrary linkedin invitation: he told us all that he wanted us to connect with him on linkedin so that he could add our emails to his mailing list for his new startup he&amp;rsquo;s working on. I think this little exchange pretty well characterizes the two things I took away from his talk: 1) a startup is a hustle; you have to be focused on sales and marketing, but 2) you don&amp;rsquo;t have to be a complete asshole about it.&lt;/p&gt;
-
-&lt;h3 id=&#34;the-hustle&#34;&gt;The Hustle&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;If you take away one thing from this talk, know that 50% of building a startup is sales and marketing.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;That statement was pretty surprising to me. I&amp;rsquo;m not sure why, but I know that if its true, then I&amp;rsquo;m not spending nearly enough time on marketing and sales for my company. (To be frank, these founder&amp;rsquo;s talk notes are a partial remedy to that.)&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;ve found that while working on University Android, I&amp;rsquo;ve had a bit of a tough time transitioning from an engineering mindset to the mindset of an entrepreneur. I often find myself getting caught up in engineering issues that simply are not relevant &lt;em&gt;yet&lt;/em&gt; for my company.&lt;/p&gt;
-
-&lt;p&gt;As an engineer at an established company, you&amp;rsquo;re paid to write &lt;em&gt;scalable&lt;/em&gt; code. As a founder, on the other hand, you won&amp;rsquo;t get paid until you find a scalable business model. To be sure, the engineering solutions I come up with as a founder have to be scalable to some extent, but scalable solutions for founders are only good insofar as they allow them to find a scalable business model.&lt;/p&gt;
-
-&lt;p&gt;Going forward, I&amp;rsquo;m going to try to spend more time hustling.&lt;/p&gt;
-
-&lt;h3 id=&#34;the-asshole&#34;&gt;The Asshole&lt;/h3&gt;
-
-&lt;p&gt;At one point during the talk, Gregg said something shocking:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;A lot of people think that all the money &lt;a href=&#34;https://techcrunch.com/2015/01/26/online-learning-service-pluralsight-acquires-code-school-for-36-million/&#34;&gt;in the acquisition went to me&lt;/a&gt;. That&amp;rsquo;s not true&amp;hellip;I was able to re-structure my ownership of the company before the acquisition to give more equity to the people who really worked hard on code school.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;A lot of people say that they really value their employees, but I doubt that many of these people would do what Gregg did before the acquisition. I think that what he did was pretty remarkable. I may only think that because &lt;a href=&#34;http://www.philosophicalhacker.com/2014/05/21/why-ill-probably-try-to-manipulate-you-2/&#34;&gt;I&amp;rsquo;m just cynical about business&lt;/a&gt;. I am, after all, one of the people that often rolls their eyes at silicon&amp;rsquo;s valley&amp;rsquo;s fictitious companies (at the real ones they satirize) that always claim they want to &amp;ldquo;make the world a better place.&amp;rdquo; But I don&amp;rsquo;t think my cynicism is the only thing behind my judgment of Gregg&amp;rsquo;s generosity. Optimists, correct me if I&amp;rsquo;m wrong.&lt;/p&gt;
-
-&lt;p&gt;The phrase &amp;ldquo;to sell your soul&amp;rdquo; typically has negative connotations, but if we play with our words a little, there&amp;rsquo;s another sense in which that phrase isn&amp;rsquo;t so negative. Founders pour &amp;ldquo;everything&amp;rdquo; into their startups. They often love their startups. We often say that &amp;ldquo;your startup is your baby.&amp;rdquo; In Arabic, a language that I, as a half-arab, have a little exposure to, one way of lovingly referring to your beloved is to say &amp;ldquo;you are my soul.&amp;rdquo; If we adopt this foreign idiom and Gregg&amp;rsquo;s advice about the importance of marketing for startups, then we can say &lt;em&gt;building a startup is largely the process of selling your soul.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Going forward, I&amp;rsquo;m going to be more optimistic and intentional about finding ways of selling my soul without selling my soul and becoming an asshole (See what I did there? Sure. The word play is cheesy and a bit forced, but how else was I supposed to make the point of this post work with my &amp;ldquo;click-bait&amp;rdquo; title ;) ).&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;I&amp;rsquo;m paraphrasing.&lt;/li&gt;
-&lt;li&gt;Still paraphrasing.&lt;/li&gt;
-&lt;/ol&gt;
 </description>
     </item>
     

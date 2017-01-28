@@ -9,6 +9,112 @@
     <atom:link href="https://www.philosophicalhacker.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Espresso Test Addiction: An Anti-pattern</title>
+      <link>https://www.philosophicalhacker.com/post/espresso-test-addiction/</link>
+      <pubDate>Sat, 28 Jan 2017 09:19:38 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/espresso-test-addiction/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;More than 1000 apps&amp;hellip;they have espresso tests for the first time using the test recorder&amp;hellip;espresso adoption has also grown since the introduction of [the espresso test recorder].&lt;/p&gt;
+
+&lt;p&gt;Android Developers Backstage, &lt;a href=&#34;http://androidbackstage.blogspot.com/2016/10/episode-57-espresso-test-recorder.html&#34;&gt;Episode 37 Espresso Test Recorder&lt;/a&gt;, 31:10&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Record-playback tools are almost always a bad idea for any kind of automation, since they resist changeability and obstruct useful abstractions. They are only worth having as a tool to generate fragments of scripts which you can then &lt;strong&gt;edit&lt;/strong&gt; as a proper programming language&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;Martin Fowler, &lt;a href=&#34;https://martinfowler.com/bliki/TestPyramid.html&#34;&gt;&amp;ldquo;Test Pyramid&amp;rdquo;&lt;/a&gt; (emphasis mine)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Espresso tests make a nice addition to our testing tool-belt. The espresso test recorder, moreover, makes getting started with testing and espresso very easy. As I&amp;rsquo;ve said before, &lt;a href=&#34;https://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;getting started with automated testing on Android is hard&lt;/a&gt;, so having nice tools and an clear on-boarding ramp for testing is a good thing.&lt;/p&gt;
+
+&lt;p&gt;Of course, we all know that its possible to have too much of a good thing, and I sometimes worry that espresso and espresso recorder are contributing to the formation of a UI testing addiction in the Android community. I worry, moreover, that this addiction that will probably lead to less testing in the long-run.&lt;/p&gt;
+
+&lt;p&gt;UI tests and test recorders are, of course, not new, so they have well-understood limitations. Moreover, lots of smart programmers have said smart things about how to best use these tools. This post reviews these limitations and best practices in general and suggests how we ought to apply those practices to Android development.&lt;/p&gt;
+
+&lt;h3 id=&#34;ui-tests-outside-the-android-community&#34;&gt;UI Tests Outside the Android Community&lt;/h3&gt;
+
+&lt;p&gt;Outside the Android community, the caution around writing too many UI tests is actually surprisingly loud and clear.&lt;/p&gt;
+
+&lt;p&gt;Mike Cohn, for example, expresses this caution with &lt;a href=&#34;https://www.mountaingoatsoftware.com/blog/the-forgotten-layer-of-the-test-automation-pyramid&#34;&gt;his testing pyramid suggestion&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;At the base of the test automation pyramid is unit testing. Unit testing should be the foundation of a solid test automation strategy and as such represents the largest part of the pyramid&amp;hellip;Automated user interface testing is placed at the top of the test automation pyramid &lt;strong&gt;because we want to do as little of it as possible.&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Cohn warns us in this article (and the book the article is advertising) that if we don&amp;rsquo;t have a healthy test pyramid, then &amp;ldquo;all other testing ends up being performed through the user interface, resulting in tests that are expensive to run, expensive to write, and brittle.&amp;rdquo; This test pyramid suggestion is echoed by &lt;a href=&#34;https://martinfowler.com/bliki/TestPyramid.html&#34;&gt;Martin Fowler&lt;/a&gt; and by &lt;a href=&#34;https://testing.googleblog.com/2015/04/just-say-no-to-more-end-to-end-tests.html&#34;&gt;Google&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Michael Feathers, to take another example, also talks about the limitations of large tests, particularly with respect to how useful they are in helping us refactor with confidence:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Unit testing is one of the most important components in legacy code work. System-level regression tests are great, but small, localized tests are invaluable. They can give you feedback as you develop and allow you to refactor with much more safety.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;And later on, contrasting unit tests with larger tests, he says:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Larger tests tend to take longer to execute. This tends to make test runs rather frustrating. Tests that take too long to run end up not being run.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Finally, Gerard Meszaros in his &lt;em&gt;xUnit Test Patterns&lt;/em&gt; has an entire section explaining why over-using UI tests isn&amp;rsquo;t a great idea.&lt;sup&gt;3&lt;/sup&gt; Here&amp;rsquo;s one specific passage with a strong caution against using recorded UI tests in particular:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;In the last decade [1998-2008], more general-purpose test automation tools have become available for testing applications through their user interfaces. Some of these tools use scripting languages to define the tests; the sexier tools rely on the &amp;ldquo;robot user&amp;rdquo; or &amp;ldquo;record and playback&amp;rdquo; metaphor for test automation. Unfortunately, many of the early experiences with these latter tools left the testers and test managers less than satisfied. The cause was high test maintenance costs caused by the &amp;ldquo;fragile test&amp;rdquo; problem.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The gist of all of these quotes is that writing too many UI tests will likely result in a suite that is a) too slow to support development/refactoring, b) too difficult to maintain, as changes in the UI can break a large amount of tests.&lt;sup&gt;4&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;but-what-about-the-robot-pattern&#34;&gt;But what about the &amp;ldquo;robot pattern?&amp;rdquo;&lt;/h3&gt;
+
+&lt;p&gt;At this point, some readers may wonder whether &amp;ldquo;&lt;a href=&#34;https://realm.io/news/kau-jake-wharton-testing-robots/&#34;&gt;the robot pattern&lt;/a&gt;&amp;rdquo; makes writing a ton of UI tests ok. The robot pattern, to refresh your memory, is a way of making your UI tests more resistant to change by hiding the details of view interaction behind &amp;ldquo;robot&amp;rdquo; objects. While the robot pattern does &lt;em&gt;mitigate&lt;/em&gt; the issue of brittle tests, over-relying on UI tests, even with the robot pattern, is still going to result in a sub-par testing suite. Here&amp;rsquo;s why.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start by noting that the robot pattern is not new. The robot pattern is just &lt;a href=&#34;https://martinfowler.com/bliki/PageObject.html&#34;&gt;Martin Fowler&amp;rsquo;s page object pattern&lt;/a&gt;.&lt;sup&gt;5&lt;/sup&gt; So, when other software engineers outside the Android community suggest that too much UI testing is a bad idea, its not because they aren&amp;rsquo;t aware of the possibility of &amp;ldquo;the robot pattern.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;Next, we can note something obvious about the robot pattern: it does nothing to improve the &lt;em&gt;speed&lt;/em&gt; of UI tests. The lack of speed of UI tests is one of the main disadvantages of over-relying on them.&lt;/p&gt;
+
+&lt;p&gt;Finally, although the robot pattern does make UI tests resistant to small UI changes, it does not allow tests to gracefully adapt to larger UI changes. Suppose, for example, that a particular piece of functionality is moved to a different screen within our app. If this happens, we&amp;rsquo;ll need to update our tests &lt;em&gt;and&lt;/em&gt; our robots.&lt;/p&gt;
+
+&lt;p&gt;For the reasons, the robot pattern doesn&amp;rsquo;t change the fact that we&amp;rsquo;re often better off trying to find a way of testing functionality at the unit-level or integration-level.&lt;/p&gt;
+
+&lt;h3 id=&#34;how-to-use-espresso-tests-and-the-recorder&#34;&gt;How to use Espresso Tests and the Recorder&lt;/h3&gt;
+
+&lt;p&gt;Based on experiences and recommendations of &lt;em&gt;very&lt;/em&gt; experienced software engineers outside the Android community, here&amp;rsquo;s how I recommend we handle use espresso and recorder for UI tests:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;If there&amp;rsquo;s a way to test the functionality that you&amp;rsquo;re trying to test at the unit level, do so.&lt;/li&gt;
+&lt;li&gt;If you can&amp;rsquo;t do this, refactor so that you can test the functionality at the unit-level. Use the test recorder to record a UI test to support your refactoring to be sure that you didn&amp;rsquo;t break anything.&lt;sup&gt;6&lt;/sup&gt; After you&amp;rsquo;ve refactored your code to test the functionality at the unit-level, delete the recorded test.&lt;/li&gt;
+&lt;li&gt;If you&amp;rsquo;re &lt;em&gt;really&lt;/em&gt; interested in testing how the application works &lt;em&gt;as a whole&lt;/em&gt;, using a UI test is fine, but, as the epigraph opening this post suggests, &lt;em&gt;refactor&lt;/em&gt; your recorded tests to use the &amp;ldquo;robot pattern&amp;rdquo; to keep your UI tests resistant to small changes in the UI.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Espresso and the test recorder are great tools, but don&amp;rsquo;t let them suck you into writing too many UI tests. That way lies madness&amp;hellip;and slow, fragile tests. These are tests that won&amp;rsquo;t be useful, and as a result, &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-should-we-unit-test/&#34;&gt;the fear that&amp;rsquo;s supposed to be alleviated by writing unit tests will return&lt;/a&gt;. I don&amp;rsquo;t want to work with code I&amp;rsquo;m afraid to change, so selfishly, I hope we&amp;rsquo;ll all do better here.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Michael Feathers, &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, 34-35.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Ibid., 35-36.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Gerard Meszaros, &lt;em&gt;xUnit Test Patterns&lt;/em&gt;, 299.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Poor defect localization is another disadvantage of UI tests that I&amp;rsquo;m not covering in detail here. Writing too many UI tests &lt;em&gt;can&lt;/em&gt; be a way of ignoring the design feedback your tests are trying to give you. (&lt;a href=&#34;https://www.philosophicalhacker.com/post/why-i-dont-use-roboletric/&#34;&gt;The same thing can happen when we write robolectric tests.&lt;/a&gt;) Unit testing android applications is hard because our Android apps often have bad architecture. Instead of listening to our tests that are telling us &amp;ldquo;your classes are tightly coupled and they violate the principle of single responsibility,&amp;rdquo; we just say, &amp;ldquo;forget unit tests. I&amp;rsquo;ll just test everything through the UI instead.&amp;rdquo;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;The key idea of this pattern, however, is definitely older than Fowler&amp;rsquo;s page object pattern. Gerard Meszaros talks about it in &lt;em&gt;xUnit Test Patterns&lt;/em&gt;, for example, which was published in 2007.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;This strategy is recommended by both Feathers and Meszaros.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Exploiting Android-Specific Seams for Testing and Flexibility</title>
       <link>https://www.philosophicalhacker.com/post/exploiting-android-specific-seams-for-testing-and-flexibility/</link>
       <pubDate>Sat, 21 Jan 2017 11:20:01 -0500</pubDate>
@@ -1858,128 +1964,6 @@ The following code should make you nervous:&lt;/p&gt;
       
       <guid>https://www.philosophicalhacker.com/post/a-new-way-of-learning-android-development/</guid>
       <description>&lt;p&gt;I&amp;rsquo;m working on &lt;a href=&#34;http://universityandroid.com&#34;&gt;a new way of learning android development&lt;/a&gt;. I call it &amp;ldquo;University Android.&amp;rdquo; The first lesson is available now. Check it out.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Testing Strategies with a React/Redux Architecture</title>
-      <link>https://www.philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/</link>
-      <pubDate>Thu, 09 Jun 2016 15:22:47 -0400</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/</guid>
-      <description>
-
-&lt;p&gt;In &lt;a href=&#34;https://www.philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/&#34;&gt;my last post&lt;/a&gt;, I briefly introduced the principles behind React and Redux. I said that React is about making what gets rendered to the screen a function of some view-state object. I also said that Redux is about making updates to the screen a function of the current view-state object and an action describing a user&amp;rsquo;s interaction with the view.&lt;/p&gt;
-
-&lt;p&gt;In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis testing. More specifically, I suggest that a React/Redux-like architecture opens up a testing strategy that doesn&amp;rsquo;t suffer from the disadvantages of the testing strategy we use with the MVP architecture.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-disadvantage-of-mvp&#34;&gt;A Disadvantage of MVP&lt;/h2&gt;
-
-&lt;p&gt;Android architectures that rely on MVP are forced to use behavior-based verification in their unit tests. Behavior-based verification is about ensuring that the unit being tested is interacting properly with it&amp;rsquo;s collaborators. For example, consider this test from &lt;a href=&#34;https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#5&#34;&gt;Google&amp;rsquo;s testing code lab&lt;/a&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadNotesFromRepositoryAndLoadIntoView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Given an initialized NotesPresenter with initialized notes&lt;/span&gt;
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// When loading of Notes is requested&lt;/span&gt;
-   mNotesPresenter&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;loadNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Callback is captured and invoked with stubbed notes&lt;/span&gt;
-   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesRepository&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mLoadNotesCallbackCaptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;capture&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-   mLoadNotesCallbackCaptor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getValue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onNotesLoaded&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;NOTES&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-   &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Then progress indicator is hidden and notes are shown in UI&lt;/span&gt;
-   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setProgressIndicator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-   verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mNotesView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNotes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;NOTES&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The test ensures that the &lt;code&gt;mNotesPresenter&lt;/code&gt;&amp;rsquo;s &lt;code&gt;loadNotes&lt;/code&gt; works properly by verifying that it&amp;rsquo;s called &lt;code&gt;setProgressIndicator&lt;/code&gt; and &lt;code&gt;showNotes&lt;/code&gt; on that &lt;code&gt;mNotesPresenter&lt;/code&gt;&amp;rsquo;s &lt;code&gt;View&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Behavior-based based verification and mocks can be useful, but there are some costs with using this method of verification for our tests. Martin Fowler summarizes these costs well in his essay &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;&amp;ldquo;Mocks aren&amp;rsquo;t Stubs&amp;rdquo;&lt;/a&gt;. In this essay he talks about the costs of &amp;ldquo;mockist tests,&amp;rdquo; tests that uses mocks and behavior-based verification. Here are some relevant excerpts:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;When you write a mockist test, you are testing the outbound calls of the SUT [System Under Test] to ensure it talks properly to its suppliers. A classic test only cares about the final state - not how that state was derived. Mockist tests are thus more coupled to the implementation of a method. Changing the nature of calls to collaborators usually cause a mockist test to break&amp;hellip;implementation changes are much more likely to break tests than with classic testing.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Here&amp;rsquo;s another disadvantage he points out:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Mockist testers do talk more about avoiding &amp;lsquo;train wrecks&amp;rsquo; - method chains of style of getThis().getThat().getTheOther(). Avoiding method chains is also known as following the Law of Demeter. While method chains are a smell, the opposite problem of middle men objects bloated with forwarding methods is also a smell. (I&amp;rsquo;ve always felt I&amp;rsquo;d be more comfortable with the Law of Demeter if it were called the Suggestion of Demeter.)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;If we&amp;rsquo;re sympathetic with Fowler here and we think that middle men objects bloated with forwarding methods is just as much a smell as law of demeter violations, then we might regret the fact that effective use of mocks require that we follow the law of demeter &amp;ldquo;to the T.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Fowler also mentions some advantages of behavior-based verification. Ultimately, he doesn&amp;rsquo;t seem to have a strong opinion on which strategy should be used. I&amp;rsquo;m not going to try to settle that question here either. It might turn out that the benefits of mockist tests outweigh the costs. For the remainder of the article, I just want to focus on how a React/Redux architecture opens up the possibility of state-based verification for our UI-related unit tests.&lt;/p&gt;
-
-&lt;h2 id=&#34;state-based-verification-with-react-redux&#34;&gt;State-based Verification with React/Redux&lt;/h2&gt;
-
-&lt;p&gt;Let&amp;rsquo;s return the filtered list example we introduced in &lt;a href=&#34;https://www.philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/&#34;&gt;the last article&lt;/a&gt;. Again, here&amp;rsquo;s a video of the functionality we want to test:&lt;/p&gt;
-
-
-&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
-  &lt;iframe src=&#34;//www.youtube.com/embed/qUYP1WNz50U&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
- &lt;/div&gt;
-
-
-&lt;p&gt;Last time, I showed how we might implement this functionality according to the principles of React and Redux. Again those principles are that the content of a screen is a function of some view-state object and updates to the screen are a function of some view-state object and some action describing a user&amp;rsquo;s interaction with the screen. Here&amp;rsquo;s what our React/Redux-like code looked like:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Reducer reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Reducer&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// The OnClickListener for the Switch widgets on the navigation filter.&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt; mDrawerItemCheckBoxClickListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; View&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnClickListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;View v&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; tag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; v&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reducer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Click&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tag&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-&lt;/span&gt;        reloadFragment&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;};&lt;/span&gt;
-
-&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Reducer&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; TagFilterHolder &lt;span style=&#34;color: #0000FF&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TagFilterHolder tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Click click&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-      &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Create a new holder with all the values from the old holder&lt;/span&gt;
-      TagFilterHolder newTagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-      TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; theTag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; click&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-          newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-          newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; theTag&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getCategory&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; newTagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Recall that the &lt;code&gt;reloadFragment&lt;/code&gt; call uses the &lt;code&gt;mTagFilterHolder&lt;/code&gt; as a view-state object to determine what get&amp;rsquo;s rendered to the screen. Testing this &lt;code&gt;reduce&lt;/code&gt; method doesn&amp;rsquo;t require the use of mocks:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;shouldToggleFilter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Arrange&lt;/span&gt;
-    ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt; reducer &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Reducer&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    TagFilterHolder tagFilterHolder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Config&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tags&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CATEGORY_THEME&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt; tag &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; TagMetadata&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Config&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Tags&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;CATEGORY_THEME&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1,&lt;/span&gt;
-            &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;some stuff&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1);&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Click&lt;/span&gt; clickAction &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; ExploreSessionsActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Click&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tag&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Act&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; TagFilterHolder holder &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; reducer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;reduce&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;tagFilterHolder&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; clickAction&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Assert&lt;/span&gt;
-    assertFalse&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;holder&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;AudienceGrowth&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This shows that React/Redux-like architectures open up the possibility of using state-based verification in our UI unit test code. This opens up the possibility of unit tests that don&amp;rsquo;t suffer from the disadvantages pointed out by Martin Fowler.&lt;/p&gt;
-
-&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-
-&lt;p&gt;The fact that React/Redux-like architectures open up the possibility of alternative testing strategies is an additional reason that we should consider these architectures for Android Development. I think that by utilizing RxJava with a subset of the features provided by the Android data-binding library, the approach I&amp;rsquo;ve sketched here can scale to an architecture that allows for time-travel debugging, hotswap, and a more flexible testing strategy, but that&amp;rsquo;s something that I&amp;rsquo;ll have to explore another time.&lt;/p&gt;
 </description>
     </item>
     
