@@ -6,8 +6,163 @@
     <description>Recent content in Post-rsses on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 28 Jan 2017 09:19:38 -0500</lastBuildDate>
+    <lastBuildDate>Sat, 04 Feb 2017 13:20:35 -0500</lastBuildDate>
     <atom:link href="https://www.philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Why I Avoid Singletons for Android Data Loading</title>
+      <link>https://www.philosophicalhacker.com/post/against-singletons-for-android-data-loading/</link>
+      <pubDate>Sat, 04 Feb 2017 13:20:35 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/against-singletons-for-android-data-loading/</guid>
+      <description>
+
+&lt;p&gt;Imagine for a moment that there&amp;rsquo;s an annoying fly buzzing around your guests at a BBQ you&amp;rsquo;re hosting. You and your guests swat at it a few times, but no one manages to nail the sucker. You run into the house to grab a fly swatter, but you find that even if you wait for the fly to settle down somewhere, you can&amp;rsquo;t quite smash it.&lt;/p&gt;
+
+&lt;p&gt;Frustrated and desperate, you decide to evacuate the party (and the state), get your hands on a nuke, and nuke the fly along with your backyard and neighborhood. Watching the mushroom cloud form from your fallout shelter, you raise glasses with your guests and say, &amp;ldquo;we got&amp;rsquo;em boys. Good work.&amp;rdquo;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Obviously, this is an absurd story. I&amp;rsquo;m telling this brief absurd story because there are parallels between singletons as a data loading solution and nukes as a fly swatter. Singletons for data loading, like nukes, are hard to test, leave a mess behind them, and are overkill. These parallels are the reasons that I try to avoid using singletons for data loading on Android. That&amp;rsquo;s what this post is about.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-fly-data-loading-in-activities&#34;&gt;The Fly: Data Loading in Activities&lt;/h3&gt;
+
+&lt;p&gt;Before I dive into the reasons I try to avoid singletons for data loading in Activities, I want to clearly state the problem for which I think singletons are poorly suited.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the problem:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;Activity&lt;/code&gt;s are destroyed and re-created on configuration changes.&lt;/li&gt;
+&lt;li&gt;If we&amp;rsquo;ve performed an expensive operation to get the data displayed by that &lt;code&gt;Activity&lt;/code&gt;, we&amp;rsquo;ll want a way for the results of long-running operations to be cached across orientation changes.&lt;/li&gt;
+&lt;li&gt;If we need to perform an expensive operation to get data, the results of this operation must be held if there&amp;rsquo;s a configuration change while the operation is being performed and delivered once the &lt;code&gt;Activity&lt;/code&gt; has been re-created after the configuration change.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I think singletons are a &lt;em&gt;sub-optimal&lt;/em&gt; solution for this specific problem. This is not a post about why singletons are bad, full stop. Let&amp;rsquo;s move on to why I think this.&lt;/p&gt;
+
+&lt;h3 id=&#34;hard-to-test&#34;&gt;Hard to Test&lt;/h3&gt;
+
+&lt;p&gt;Fortunately, nukes are hard to test. You&amp;rsquo;ve got to find a large area that you can pollute with radiation, and, depending on your place in the world order, you need to be prepared to handle varying degrees of fallout from the international community.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, singletons are also hard to test, and this counts as one strike against them as a data loading solution in my mind. Others have already noted in detail why testing with singletons is hard,&lt;sup&gt;1&lt;/sup&gt; but let&amp;rsquo;s look at a brief example to see why testing with singletons is hard.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say you&amp;rsquo;re tasked with implementing a screen that loads data from a database like the explore sessions screen from the google I/O app:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/session-data-ss.png&#34; alt=&#34;Session list&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Because the fairly complicated logic governing whether the list of sessions should be preceded by various preference cards &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-should-we-unit-test/&#34;&gt;scares you a little&lt;/a&gt;, you decide to write tests for this screen. Since you know &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;you&amp;rsquo;re not going to have an easy time testing logic in an &lt;code&gt;Activity&lt;/code&gt;&lt;/a&gt;, you move the logic to a presenter:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;SessionsPresenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;  
+  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+  &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;present&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;shouldShowSessionNotificationsCard&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      sessionsView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showSessionNotificationsCard&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;shouldShowConferenceMessagesCard&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      sessionsView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showConferenceMessagesCard&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    SessionsStore&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getInstance&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt;
+&lt;/span&gt;      &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;loadSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; SessionsStore&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoadCompleteListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadComplete&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Session&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; sessions&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;          &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;sessions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isEmpty&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            sessionsView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNoSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;          &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            sessionsView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;sessions&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;          &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+      &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;      
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In the first highlighted line, we&amp;rsquo;re accessing a singleton to load the sessions. In the following highlighted lines, we either show the sessions or something indicating that there are no sessions at this time.&lt;/p&gt;
+
+&lt;p&gt;The use of a singleton in this code makes this presenter difficult to test. When we&amp;rsquo;re writing a test for &lt;code&gt;SessionsPresenter&lt;/code&gt;, we need to be able to swap out the implementation of &lt;code&gt;SessionsStore&lt;/code&gt; with stubs that will return canned responses so that we can execute each branch of the if-statement highlighted above. This is not easy with a singleton in place.&lt;/p&gt;
+
+&lt;p&gt;Getting around this problem forces us to create additional methods that are only used by the tests. For example, to test the above code, we&amp;rsquo;d need to add &lt;code&gt;SessionStore.setTestInstance&lt;/code&gt; and set the test instance with a stub during our unit test:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;SessionsPresenterTests&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;  
+  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;showsNoSessionsViewWhenNoSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;    
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+    SessionsStore&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setTestInstance&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; SessionsStore&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SessionsStore&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoadCompleteListener&lt;/span&gt; listener&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        listener&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoadComplete&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Collections&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;emptyList&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
+      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;When we need to change the API of the SUT &lt;em&gt;solely&lt;/em&gt;&lt;sup&gt;2&lt;/sup&gt; for the purpose of testing, our tests are telling us there&amp;rsquo;s a problem with our design.&lt;/p&gt;
+
+&lt;p&gt;Even with these added methods, however, we lose the ability to speed up our tests by running them in parallel.&lt;sup&gt;3&lt;/sup&gt; The likelihood that tests are run regularly is related to how long it takes to run them. Tests are often more likely to be useful the more often they are run, so placing an uneeded limit on how quickly our tests can run is not ideal.&lt;/p&gt;
+
+&lt;p&gt;At this point, some readers may point out that these problems are alleviated if we inject the singleton through the constructor and if we keep our &lt;code&gt;Activity&lt;/code&gt; as a dumb view that isn&amp;rsquo;t scary enough to test. The code for this suggestion might look something like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;SessionsActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Activity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle bundle&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;bundle&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; SessionsPresenter&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SessionStore&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getInstance&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;present&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This does alleviate the testing problems at the unit level. However, if we want to stub out what gets returned by the singleton &lt;code&gt;SessionStore&lt;/code&gt; for UI tests, we&amp;rsquo;ll still have to add a &lt;code&gt;SessionStore.setTestInstance&lt;/code&gt; method. Again, modifying the API of our classes for testing purposes is smelly.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re using a &lt;code&gt;@Singleton&lt;/code&gt;-scoped dependency that you inject with dagger, then we can facilitate UI testing without adding a &lt;code&gt;setTestInstance&lt;/code&gt; method. This is the best version of the idea of using singletons for loading data in &lt;code&gt;Activity&lt;/code&gt;s. Even if I didn&amp;rsquo;t mind the fact that including dagger was a high price to pay for doing any data loading in an Android app, I still wouldn&amp;rsquo;t ever feel comfortable using &lt;code&gt;@Singleton&lt;/code&gt;-scoped dependencies for data loading for the following reasons.&lt;/p&gt;
+
+&lt;h3 id=&#34;leaves-a-mess-behind-them&#34;&gt;Leaves a mess behind them&lt;/h3&gt;
+
+&lt;p&gt;Data owned by your singleton will live &lt;em&gt;for the entire process&lt;/em&gt;, unless you do something to clean it up. We&amp;rsquo;re often worried about memory on Android devices. &lt;em&gt;Even if our app performs fairly well on devices with low-memory&lt;/em&gt;, irresponsible use of memory can lead to a sort of tragedy of the commons, where the user experience suffers overall.&lt;/p&gt;
+
+&lt;p&gt;Chet Haase in &lt;a href=&#34;https://medium.com/google-developers/developing-for-android-i-understanding-the-mobile-context-fd2351b131f8#.t0wde59q7&#34;&gt;&lt;em&gt;Developing for Android&lt;/em&gt;&lt;/a&gt; captures this well:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;if any of these apps consume more memory than they need to, then there will be less system memory left over for the others. When that happens, the system will evict app processes (shutting them down), forcing the user into a situation where apps are constantly re-launching when the user switches to them because they cannot stay present in the background due to memory pressure.&lt;/p&gt;
+
+&lt;p&gt;So overall: use as little memory as you can, because the entire system suffers if you don’t.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If our apps are going to be good citizens on user&amp;rsquo;s devices, we ought to clean up the data owned by our singleton once we&amp;rsquo;re done using it. Singletons for loading data, along with the memory concerns on Android, place an extra burden on us as programmers. Strike two for singletons.&lt;/p&gt;
+
+&lt;p&gt;I can imagine cases and apps where the memory issue isn&amp;rsquo;t a big deal. I work at &lt;a href=&#34;http://www.unikey.com/&#34;&gt;a company where the minimum API level for our app is 20&lt;/a&gt;, so we definitely have less performance concerns than other companies. In cases where the data held by singletons really isn&amp;rsquo;t cause for concern, I could just never clean up the data held by the singleton, which definitely makes working with them easier. Still, there&amp;rsquo;s another reason I try to avoid singleton&amp;rsquo;s for data loading.&lt;/p&gt;
+
+&lt;h3 id=&#34;overkill&#34;&gt;Overkill&lt;/h3&gt;
+
+&lt;p&gt;Nuking a fly is absurd because its overkill. You just want to kill the fly. You don&amp;rsquo;t mean to obliterate the 3 mile radius around the fly.&lt;/p&gt;
+
+&lt;p&gt;Similarly, singletons are overkill. We don&amp;rsquo;t really need the data loaded for our &lt;code&gt;Activity&lt;/code&gt; to live for the entire process. This is precisely why we usually have to clean up some of the data when the &lt;code&gt;Activity&lt;/code&gt; is done using it.&lt;/p&gt;
+
+&lt;p&gt;Often what we really want is data that is cached across configuration changes, but the fact that the cached data within a singleton lives for the entire process makes implementing our retrieval of that data more complicated. Let me explain why.&lt;/p&gt;
+
+&lt;p&gt;Suppose I want to want to send two emails with two different attachments. Both times I go to attach an email, the same &lt;em&gt;type&lt;/em&gt; of Activity will be launched. Suppose this &lt;code&gt;Activity&lt;/code&gt; gets its data from a singleton-based data loader. If both of these &lt;code&gt;Activity&lt;/code&gt;s try to grab data from the Singleton, the user can wind up with stale data the second time they try to attach an email because the first &lt;code&gt;Activity&lt;/code&gt; has already populated the cache with dat that was fresh at the time the first &lt;code&gt;Activity&lt;/code&gt; asked for it.&lt;/p&gt;
+
+&lt;p&gt;Of course, these are solvable problems. However, I think it&amp;rsquo;d be better if we didn&amp;rsquo;t have these problems in the first place. It turns out there&amp;rsquo;s already a solution for data loading that doesn&amp;rsquo;t have any of these problems/complications.&lt;/p&gt;
+
+&lt;h3 id=&#34;loaders-a-professional-fly-swatter&#34;&gt;Loaders: A Professional Fly Swatter&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;Loader&lt;/code&gt;s are designed for this exact problem. They don&amp;rsquo;t &amp;ldquo;overkill&amp;rdquo; by giving us data that lasts the entire process instead of what we need: data that survives configuration changes. Because of this, there&amp;rsquo;s no need for us to worry about stale data when multiple &lt;code&gt;Activitiy&lt;/code&gt;s need the same data. Moreover, we don&amp;rsquo;t have to worry about cleaning up data once its no long used. Finally, if we use them sensibly, &lt;code&gt;Loader&lt;/code&gt;s don&amp;rsquo;t pose any special challenges to testing.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;m not denying that it can be difficult to get a handle on how &lt;code&gt;Loader&lt;/code&gt;s work. Nor am I saying that their API is a joy to work with. However, I think trudging through the docs and/or wrapping the Loader API in something more usable (e.g., &lt;a href=&#34;https://www.philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/&#34;&gt;RxLoader&lt;/a&gt;) is the best option we have.&lt;/p&gt;
+
+&lt;p&gt;The alternative is to use singletons for data loading in our &lt;code&gt;Activity&lt;/code&gt;s, which, if you buy into my argument and analogy is silly for the same reason it&amp;rsquo;s silly to nuke a fly at a BBQ you&amp;rsquo;re hosting.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Misko Hevery, &amp;ldquo;father of AngularJS,&amp;rdquo; has a really nice explanation of the relationship between singletons and testing as a part of his testing guide &lt;a href=&#34;http://misko.hevery.com/code-reviewers-guide/flaw-brittle-global-state-singletons/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&amp;ldquo;Soley&amp;rdquo; is emphasized because otherwise the statement might feel like a contradiction. I&amp;rsquo;ve been saying recently that tests force us to design better applications, so how can it be that there&amp;rsquo;s a problem if the tests make us change the API of the SUT? There&amp;rsquo;s no problem the if we change the API of our classes to support testing, as long as that change introduces flexibility that can be used both by the application &lt;em&gt;and&lt;/em&gt; by the tests. A &lt;code&gt;setTestInstance&lt;/code&gt; method, as the name implies, is only used by tests. This seems like a sensible way of resolving the contradiction, but honestly, I need to think about this more to be sure.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Ibid.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Espresso Test Addiction: An Anti-pattern</title>
@@ -1386,34 +1541,6 @@ joining responsibilities is something that we do naturally. &lt;strong&gt;Findin
 &lt;ol&gt;
 &lt;li&gt;Of course, if you&amp;rsquo;re not building a product whose features are likely to change, then this argument for testing doesn&amp;rsquo;t apply.&lt;/li&gt;
 &lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Capital Intensive MVPs</title>
-      <link>https://www.philosophicalhacker.com/post/capital-intensive-mvps/</link>
-      <pubDate>Fri, 12 Aug 2016 08:21:54 -0400</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/capital-intensive-mvps/</guid>
-      <description>
-
-&lt;p&gt;According to Eric Reis, MVPs allow us to test our business&amp;rsquo; most important &amp;ldquo;hypotheses.&amp;rdquo; This is supposed to help us &amp;ldquo;fail faster,&amp;rdquo; but I&amp;rsquo;m finding that there are real differences in how much effort we have to put into our MVPs before we can validate our business hypotheses. In other words, some MVPs are more capital intensive than others. This is a big deal because you often can&amp;rsquo;t get favorable investment terms until you&amp;rsquo;ve shown that you&amp;rsquo;ve got product-market fit. You can&amp;rsquo;t do that without an MVP, and if you&amp;rsquo;re MVP is too difficult to build without capital, then you&amp;rsquo;re business will need exactly what it can&amp;rsquo;t have (under favorable terms): capital to create an MVP and validate its fundamental hypotheses.&lt;/p&gt;
-
-&lt;h3 id=&#34;expensive-solutions&#34;&gt;Expensive Solutions&lt;/h3&gt;
-
-&lt;p&gt;Talking to customers before building anything is probably a great idea. Customer interviews probably yield tons of insight on how to build something people want. That said, I suspect that customer interviews aren&amp;rsquo;t enough. These interviews can give us great insight vis-a-vis the particular problems are customers are facing. They can also give us a clue as to what the solution to these problems should look like, but until we&amp;rsquo;ve got a prototyped solution &lt;em&gt;to sell them&lt;/em&gt;, we won&amp;rsquo;t know if we&amp;rsquo;ve actually created a solution that&amp;rsquo;s good enough for them to pay for.&lt;/p&gt;
-
-&lt;p&gt;Some MVPs are easier to build than others, and some MVPs are so difficult to build that its not feasible to build them without capital, capital that you can&amp;rsquo;t get (under favorable terms) because you haven&amp;rsquo;t shown that you&amp;rsquo;ve got product-market fit.&lt;/p&gt;
-
-&lt;h3 id=&#34;high-customer-acquisition-costs&#34;&gt;High Customer Acquisition Costs&lt;/h3&gt;
-
-&lt;p&gt;Even if you&amp;rsquo;ve built an MVP, you still have to be able to verify that people are willing to pay for your solution &lt;em&gt;at a price that&amp;rsquo;s high enough for you to offset the cost of acquiring those customers in the first place&lt;/em&gt;. The difficulty of verifying this varies from MVP to MVP, and customer acquisition costs can be prohibitive, even if we&amp;rsquo;re just trying to validate our business assumptions with an MVP.&lt;/p&gt;
-
-&lt;p&gt;It&amp;rsquo;s much easier for me to get my SnapChatGramBook app in front of 100 dousche-bag teenagers than it is to get my military simulator in front of 20 procurement folks at various defense companies. More generally, if you&amp;rsquo;ve got to charge a lot for your product, it&amp;rsquo;s going to take more money to get people to pay for it, and again, the costs may be prohibitive.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;In some ways, it feels like the lean startup movement has been a barrier to me realizing this. We&amp;rsquo;re taught that the &amp;ldquo;holy grail&amp;rdquo; of a startup&amp;rsquo;s journey is product-market fit and so we focus much of our thinking on finding that fit. I&amp;rsquo;m finding, however, that there really is important prior question to the question &amp;ldquo;Am I building something people want?&amp;rdquo; That question is &amp;ldquo;Do I have enough capital to find out whether I can build a viable business building something people want?&amp;rdquo;&lt;/p&gt;
 </description>
     </item>
     
