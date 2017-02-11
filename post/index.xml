@@ -6,8 +6,96 @@
     <description>Recent content in Post-rsses on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 04 Feb 2017 13:20:35 -0500</lastBuildDate>
+    <lastBuildDate>Thu, 09 Feb 2017 08:28:19 -0500</lastBuildDate>
     <atom:link href="https://www.philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Why Android Testing is so Hard: Historical Edition</title>
+      <link>https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/</link>
+      <pubDate>Thu, 09 Feb 2017 08:28:19 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;As a profession, we also tend to be abysmally ignorant of our own history.&lt;/p&gt;
+
+&lt;p&gt;David West, Object Thinking&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Almost two years ago, I wrote a &lt;a href=&#34;https://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;couple&lt;/a&gt; &lt;a href=&#34;https://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/&#34;&gt;articles&lt;/a&gt; that attempted to answer the question, &amp;ldquo;Why is testing Android apps so hard?&amp;rdquo; In those posts, I suggested that the standard architecture of Android applications is what makes testing difficult. This explanation of the difficulty of testing android apps raises a deeper, more historical question: why did an architecture that makes testing difficult became the default way of building Android apps in the first place?&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s the question I want to speculate about in this post. I think there were three things that contributed to a less-than-ideal testing situation on Android: performance concerns, confusion about the purpose of app component classes, and the newness of TDD and automated testing at the time of Android&amp;rsquo;s initial release.&lt;/p&gt;
+
+&lt;h3 id=&#34;performance&#34;&gt;Performance&lt;/h3&gt;
+
+&lt;p&gt;To some extent, there&amp;rsquo;s an inverse relationship between testable code and performant code. As Michael Feathers points out, testable code requires layers of abstraction.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip;one pervasive problem in legacy code bases is that there often aren’t any layers of abstraction; the most important code in the system often sits intermingled with low-level API calls. We’ve already seen how this can make testing difficult&amp;hellip;&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Layers of abstraction, as Chet Haase points out, have a performance cost, a cost that we need to particularly aware of as Android developers:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If there is some section of code that is executed rarely&amp;hellip;,but which would benefit from a clearer style, then a more traditional layer of abstraction could be the right decision. But if analysis shows that you are re-executing some code path often and causing lots of memory churn in the process, consider these strategies for avoiding excess allocations&amp;hellip;&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Although &amp;ldquo;#perfmatters&amp;rdquo; in 2017, performance was a much larger concern when Android was first getting off the ground, which means that the design of the Android APIs and the early practices/architectures for building Android apps was extremely performance sensitive. Its possible that building the layers of abstraction to support testing just wasn&amp;rsquo;t practical in those days.&lt;/p&gt;
+
+&lt;p&gt;The first Android phone, &lt;a href=&#34;https://www.google.com/shopping/product/1556749025834621307/specs?sourceid=chrome-psyapi2&amp;amp;ion=1&amp;amp;espv=2&amp;amp;ie=UTF-8&amp;amp;q=tmobile+g1+android&amp;amp;oq=tmobile+g1+android&amp;amp;aqs=chrome..69i57j0l5.2528j0j4&amp;amp;sa=X&amp;amp;ved=0ahUKEwjilvOU0YXSAhVG8CYKHTp2BrAQuC8IjgE&#34;&gt;the G1&lt;/a&gt;, had &lt;em&gt;192 MB of RAM&lt;/em&gt; and a &lt;em&gt;528MHZ&lt;/em&gt; processor. Obviously, we&amp;rsquo;ve come a long way since then, and in many cases, we can now afford the additional layers of abstraction that testability requires.&lt;/p&gt;
+
+&lt;p&gt;One of the more interesting things I&amp;rsquo;ve heard lately that indicates how heavily performance concerns weighed on the design of Android and on the early days of Android development in the trenches comes from Ficus Kirkpatrick, one of the founding members of the Android team, in a recent episode of Android Developers backstage:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip;A lot these things like enums and this philosophy of extreme frugality when it comes to CPU cycles or memory&amp;hellip;that&amp;rsquo;s an interesting lens to look at a lot the early Android decisions. I look at a lot of these engineers almost like they were raised during the depression and they learned to scrape the bottom of the pot.&lt;sup&gt;3&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;There&amp;rsquo;s a great discussion after this point in the podcast about the tradeoff between performance and development speed. Chet Haase and Tor Norbye push pretty hard on performance concerns while Ficus Fitzpatrick, who is now at Facebook, seems more sympathetic towards trading performance for development speed.&lt;/p&gt;
+
+&lt;p&gt;Who is right &amp;ndash; or whether there was ultimately an unresolved disagreement in the end &amp;ndash; doesn&amp;rsquo;t matter for our purposes. What matters is that their conversation, along with the &lt;a href=&#34;https://plus.google.com/105051985738280261832/posts/YDykw2hstUu&#34;&gt;hoopla&lt;/a&gt; &lt;a href=&#34;https://twitter.com/jakewharton/status/551876948469620737?lang=en&#34;&gt;about&lt;/a&gt; &lt;a href=&#34;https://www.youtube.com/watch?v=5MzayZXtSiQ&#34;&gt;enums&lt;/a&gt;, shows clearly that the folks at Android are still very concerned about performance and this might make them less interested in promoting patterns whose abstractions have some performance overhead, even if that overhead facilitates testing.&lt;/p&gt;
+
+&lt;h3 id=&#34;misunderstanding-android-components&#34;&gt;Misunderstanding Android Components&lt;/h3&gt;
+
+&lt;p&gt;Another reason that the testing situation on Android is so bad may be that we&amp;rsquo;ve fundamentally misunderstood the purpose of Android&amp;rsquo;s app component classes (viz., &lt;code&gt;Activity&lt;/code&gt;, &lt;code&gt;Service&lt;/code&gt;, &lt;code&gt;BroadcastReceiver&lt;/code&gt;, and &lt;code&gt;ContentProvider&lt;/code&gt;). For a long time, I thought that these classes were supposed to facilitate &lt;em&gt;application development&lt;/em&gt;. Not so, says Diane Hackborne:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;hellip;With its Java language APIs and fairly high-level concepts, it can look like a typical application framework that is there to say how applications should be doing their work.  But for the most part, it is not.&lt;/p&gt;
+
+&lt;p&gt;It is probably better to call the core Android APIs a &amp;ldquo;system framework.&amp;rdquo;  For the most part, the platform APIs we provide are there to define how an application interacts with the operating system; but for anything going on purely within the app, these APIs are often just not relevant.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This same idea gets reiterated by Chet Haase in his &lt;em&gt;Developing for Android&lt;/em&gt; medium blog post series:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Application components (activities, services, providers, receivers) are interfaces for your application to interact with the operating system; don’t take them as a recommendation of the facilities you should architect your entire application around.&lt;sup&gt;4&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I think by know its well-known &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;that putting logic in activities and other app component classes makes testing difficult&lt;/a&gt; because of the lack of proper dependency injection. Because many of us believed that we were supposed to be building our applications around these components, we over-used them, worsening the testability situation in our apps.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-rise-of-android-and-unit-testing&#34;&gt;The Rise of Android and Unit Testing&lt;/h3&gt;
+
+&lt;p&gt;Here&amp;rsquo;s one more thing that probably contributed to the sad testing situation on Android: TDD was on the rise at the same time Android was. The first release of Android was in September of 2008. &lt;em&gt;TDD by Example&lt;/em&gt; one of the earliest books written on TDD-style unit testing was written a mere 3 years earlier.&lt;/p&gt;
+
+&lt;p&gt;The importance of automated testing is likely much more widely accepted now than it was then. Perceived importance of testability likely factored into design decisions around the Android SDK and the Android community&amp;rsquo;s willingness to develop practices and architectures that supported testing.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Michael Feathers, &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, 350-351.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Chet Haase, &lt;em&gt;&lt;a href=&#34;https://medium.com/google-developers/developing-for-android-ii-bb9a51f8c8b9#.p49q9k3uj&#34;&gt;Developing for Android II The Rules: Memory&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&amp;ldquo;In the Beginning,&amp;rdquo; &lt;a href=&#34;http://androidbackstage.blogspot.com/2016/10/episode-56-in-beginning.html&#34;&gt;&lt;em&gt;Android Developers Backstage&lt;/em&gt;&lt;/a&gt;, ~25:00.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Haase, &lt;em&gt;&lt;a href=&#34;https://medium.com/google-developers/developing-for-android-vii-the-rules-framework-concerns-d0210e52eee3#.yegpenynu&#34;&gt;Developing for Android VII The Rules: Framework&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Why I Avoid Singletons for Android Data Loading</title>
@@ -1495,52 +1583,6 @@ joining responsibilities is something that we do naturally. &lt;strong&gt;Findin
 &lt;/blockquote&gt;
 
 &lt;p&gt;This is interesting, and it points to an issue related to getting stuck down a rabbit-hole of refactoring. I think a part of the reason this rabbit-hole happens, especially during Android development, is because we don&amp;rsquo;t have the tests in place to make very small steps. (Although, I wouldn&amp;rsquo;t be surprised if it happened more often in my case due to lack of discipline.) An inability to make small changes is a huge bummer because if something breaks, your search space for tracking down the bug is going to be large in proportion to the number of changes you&amp;rsquo;ve made.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>TDD and Startups</title>
-      <link>https://www.philosophicalhacker.com/post/tdd-and-startups/</link>
-      <pubDate>Sun, 16 Oct 2016 13:32:57 -0400</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/tdd-and-startups/</guid>
-      <description>
-
-&lt;p&gt;Kent Beck introduces &lt;em&gt;TDD by Example&lt;/em&gt; with a little story meant to show the business value of automated testing:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Early one Friday, the boss came to Ward Cunningham to introduce him to Peter, a prospective customer for WyCash, the bond portfolio management system the company was selling. Peter said&amp;hellip;&amp;ldquo;I&amp;rsquo;m starting a new bond fund, and my strategy requires that I handle bonds in different currencies.” The boss turned to Ward, “Well, can we do it?&amp;rdquo;&amp;hellip;The trick now was to make space for the new functionality without breaking anything that already worked. What would happen if Ward just ran the tests? After the addition of a few unimplemented operations to Currency, the bulk of the tests passed. By the end of the day, all of the tests were passing. Ward checked the code into the build and went to the boss. “We can do it,” he said confidently. Let&amp;rsquo;s think a bit about this story. In two days, the potential market was multiplied several fold, multiplying the value of WyCash several fold. The ability to create so much business value so quickly was no accident, however.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This little parable actually reminded me of the way that Steve Freeman and Nat Pryce talk about the business value of automated testing in &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;We’ve found that we need two technical foundations if we want to grow a system reliably and to cope with the unanticipated changes that always happen. First, we need constant testing to catch regression errors, so we can add new features without breaking existing ones. For systems of any interesting size, frequent manual testing is just impractical&amp;hellip;Second, we need to keep the code as simple as possible, so it’s easier to understand and modify&amp;hellip;The test suites in the feedback loops protect us against our own mistakes as we improve (and therefore change) the code.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I think these two snippets are making similar points: automated tests can create immense business value because it allows deep changes to be made to an existing system while preserving confidence that the system will continue working as expected. I think this ability is especially important for startups who are trying to find product-market fit or beat out a competitor.&lt;/p&gt;
-
-&lt;p&gt;I sometimes suspect that Facebook&amp;rsquo;s success over Friendster and MySpace is partially due to the fact that they had the automated tests in place to experiment a ton with the features of Facebook and that these experiments let them iterate faster (Zuckerberg actually talks about this in &lt;a href=&#34;https://www.youtube.com/watch?v=Lb4IcGF5iTQ&#34;&gt;his &amp;ldquo;How to Build the Future&amp;rdquo; episode&lt;/a&gt;). Iterating faster, according to Eric Reis in &lt;em&gt;The Lean Startup&lt;/em&gt;, isn&amp;rsquo;t just the key to maximizing chances of building something people want. It&amp;rsquo;s also a great way to gain a competitive edge:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;The reason to build a new team to pursue an idea is that you believe you can accelerate through the Build-Measure-Learn feedback loop faster than anyone else can. If that’s true, it makes no difference what the competition knows. If it’s not true, a startup has much bigger problems&amp;hellip;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I actually think this is one of the most under-rated arguments for TDD. When considering whether to write tests, I suspect a lot of developers think, &amp;ldquo;Well, I can get it working without tests, so why bother writing them?&amp;rdquo; Unfortunately, this overlooks the key issue, which, if Beck, Freeman and Pryce, and Reis are right, is this: &amp;ldquo;How can I structure my system so that I can make the biggest possible changes while maintaining confidence that the functionality is correct?&amp;rdquo;&lt;sup&gt;1&lt;/sup&gt; If TDD folks are right, moreover, the answer to this key question is of course to do TDD.&lt;/p&gt;
-
-&lt;p&gt;If this is right, then it means that a comment that Beck makes later on in the first part of TDD by Example may need refinement. He says:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;For TDD to make economic sense, you&amp;rsquo;ll need to be able to either write twice as many lines per day as before, or write half as many lines for the same functionality. You&amp;rsquo;ll have to measure and see what effect TDD has on your own practice. Be sure to factor debugging, integrating, and explaining time into your metrics, though.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This remark may in fact be consistent with the idea that there&amp;rsquo;s immense value in the flexible architectures that emerge as a result of TDD. Its hard to tell exactly what Beck is saying here. Beck&amp;rsquo;s intent aside, I think this passage should have made it clearer that there&amp;rsquo;s a lot of value in being able to change code confidently, and this may make TDD worth it even if we wind up writing more code when we factor in the code we need to write tests.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Of course, if you&amp;rsquo;re not building a product whose features are likely to change, then this argument for testing doesn&amp;rsquo;t apply.&lt;/li&gt;
-&lt;/ol&gt;
 </description>
     </item>
     

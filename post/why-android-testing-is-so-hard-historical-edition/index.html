@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" Why Android Testing is so Hard: Historical Edition &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2017-02-09T08:28:19-05:00" />
+
+    
+    <meta property="og:article:tag" content="android" />
+    
+    <meta property="og:article:tag" content="testing" />
+    
+    
+
+  <title>
+     Why Android Testing is so Hard: Historical Edition &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://www.philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="https://www.philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="https://www.philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.17" />
+
+    <link rel="canonical" href="https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="https://www.philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+  
+  <header class="main-header post-head" style="background-image: url(https://www.philosophicalhacker.com/images/time.jpg)">
+  
+  <nav class="main-nav overlay clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">Why Android Testing is so Hard: Historical Edition</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2017-02-09T08:28:19-05:00">
+            Feb 9, 2017
+          </time>
+        
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+         <strong>&middot; 5 minute read</strong>
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<blockquote>
+<p>As a profession, we also tend to be abysmally ignorant of our own history.</p>
+
+<p>David West, Object Thinking</p>
+</blockquote>
+
+<hr />
+
+<p>Almost two years ago, I wrote a <a href="https://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">couple</a> <a href="https://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">articles</a> that attempted to answer the question, &ldquo;Why is testing Android apps so hard?&rdquo; In those posts, I suggested that the standard architecture of Android applications is what makes testing difficult. This explanation of the difficulty of testing android apps raises a deeper, more historical question: why did an architecture that makes testing difficult became the default way of building Android apps in the first place?</p>
+
+<p>That&rsquo;s the question I want to speculate about in this post. I think there were three things that contributed to a less-than-ideal testing situation on Android: performance concerns, confusion about the purpose of app component classes, and the newness of TDD and automated testing at the time of Android&rsquo;s initial release.</p>
+
+<h3 id="performance">Performance</h3>
+
+<p>To some extent, there&rsquo;s an inverse relationship between testable code and performant code. As Michael Feathers points out, testable code requires layers of abstraction.</p>
+
+<blockquote>
+<p>&hellip;one pervasive problem in legacy code bases is that there often aren’t any layers of abstraction; the most important code in the system often sits intermingled with low-level API calls. We’ve already seen how this can make testing difficult&hellip;<sup>1</sup></p>
+</blockquote>
+
+<p>Layers of abstraction, as Chet Haase points out, have a performance cost, a cost that we need to particularly aware of as Android developers:</p>
+
+<blockquote>
+<p>If there is some section of code that is executed rarely&hellip;,but which would benefit from a clearer style, then a more traditional layer of abstraction could be the right decision. But if analysis shows that you are re-executing some code path often and causing lots of memory churn in the process, consider these strategies for avoiding excess allocations&hellip;<sup>2</sup></p>
+</blockquote>
+
+<p>Although &ldquo;#perfmatters&rdquo; in 2017, performance was a much larger concern when Android was first getting off the ground, which means that the design of the Android APIs and the early practices/architectures for building Android apps was extremely performance sensitive. Its possible that building the layers of abstraction to support testing just wasn&rsquo;t practical in those days.</p>
+
+<p>The first Android phone, <a href="https://www.google.com/shopping/product/1556749025834621307/specs?sourceid=chrome-psyapi2&amp;ion=1&amp;espv=2&amp;ie=UTF-8&amp;q=tmobile+g1+android&amp;oq=tmobile+g1+android&amp;aqs=chrome..69i57j0l5.2528j0j4&amp;sa=X&amp;ved=0ahUKEwjilvOU0YXSAhVG8CYKHTp2BrAQuC8IjgE">the G1</a>, had <em>192 MB of RAM</em> and a <em>528MHZ</em> processor. Obviously, we&rsquo;ve come a long way since then, and in many cases, we can now afford the additional layers of abstraction that testability requires.</p>
+
+<p>One of the more interesting things I&rsquo;ve heard lately that indicates how heavily performance concerns weighed on the design of Android and on the early days of Android development in the trenches comes from Ficus Kirkpatrick, one of the founding members of the Android team, in a recent episode of Android Developers backstage:</p>
+
+<blockquote>
+<p>&hellip;A lot these things like enums and this philosophy of extreme frugality when it comes to CPU cycles or memory&hellip;that&rsquo;s an interesting lens to look at a lot the early Android decisions. I look at a lot of these engineers almost like they were raised during the depression and they learned to scrape the bottom of the pot.<sup>3</sup></p>
+</blockquote>
+
+<p>There&rsquo;s a great discussion after this point in the podcast about the tradeoff between performance and development speed. Chet Haase and Tor Norbye push pretty hard on performance concerns while Ficus Fitzpatrick, who is now at Facebook, seems more sympathetic towards trading performance for development speed.</p>
+
+<p>Who is right &ndash; or whether there was ultimately an unresolved disagreement in the end &ndash; doesn&rsquo;t matter for our purposes. What matters is that their conversation, along with the <a href="https://plus.google.com/105051985738280261832/posts/YDykw2hstUu">hoopla</a> <a href="https://twitter.com/jakewharton/status/551876948469620737?lang=en">about</a> <a href="https://www.youtube.com/watch?v=5MzayZXtSiQ">enums</a>, shows clearly that the folks at Android are still very concerned about performance and this might make them less interested in promoting patterns whose abstractions have some performance overhead, even if that overhead facilitates testing.</p>
+
+<h3 id="misunderstanding-android-components">Misunderstanding Android Components</h3>
+
+<p>Another reason that the testing situation on Android is so bad may be that we&rsquo;ve fundamentally misunderstood the purpose of Android&rsquo;s app component classes (viz., <code>Activity</code>, <code>Service</code>, <code>BroadcastReceiver</code>, and <code>ContentProvider</code>). For a long time, I thought that these classes were supposed to facilitate <em>application development</em>. Not so, says Diane Hackborne:</p>
+
+<blockquote>
+<p>&hellip;With its Java language APIs and fairly high-level concepts, it can look like a typical application framework that is there to say how applications should be doing their work.  But for the most part, it is not.</p>
+
+<p>It is probably better to call the core Android APIs a &ldquo;system framework.&rdquo;  For the most part, the platform APIs we provide are there to define how an application interacts with the operating system; but for anything going on purely within the app, these APIs are often just not relevant.</p>
+</blockquote>
+
+<p>This same idea gets reiterated by Chet Haase in his <em>Developing for Android</em> medium blog post series:</p>
+
+<blockquote>
+<p>Application components (activities, services, providers, receivers) are interfaces for your application to interact with the operating system; don’t take them as a recommendation of the facilities you should architect your entire application around.<sup>4</sup></p>
+</blockquote>
+
+<p>I think by know its well-known <a href="/post/why-we-should-stop-putting-logic-in-activities/">that putting logic in activities and other app component classes makes testing difficult</a> because of the lack of proper dependency injection. Because many of us believed that we were supposed to be building our applications around these components, we over-used them, worsening the testability situation in our apps.</p>
+
+<h3 id="the-rise-of-android-and-unit-testing">The Rise of Android and Unit Testing</h3>
+
+<p>Here&rsquo;s one more thing that probably contributed to the sad testing situation on Android: TDD was on the rise at the same time Android was. The first release of Android was in September of 2008. <em>TDD by Example</em> one of the earliest books written on TDD-style unit testing was written a mere 3 years earlier.</p>
+
+<p>The importance of automated testing is likely much more widely accepted now than it was then. Perceived importance of testability likely factored into design decisions around the Android SDK and the Android community&rsquo;s willingness to develop practices and architectures that supported testing.</p>
+
+<hr />
+
+<h3 id="notes">Notes:</h3>
+
+<ol>
+<li><p>Michael Feathers, <em>Working Effectively with Legacy Code</em>, 350-351.</p></li>
+
+<li><p>Chet Haase, <em><a href="https://medium.com/google-developers/developing-for-android-ii-bb9a51f8c8b9#.p49q9k3uj">Developing for Android II The Rules: Memory</a></em></p></li>
+
+<li><p>&ldquo;In the Beginning,&rdquo; <a href="http://androidbackstage.blogspot.com/2016/10/episode-56-in-beginning.html"><em>Android Developers Backstage</em></a>, ~25:00.</p></li>
+
+<li><p>Haase, <em><a href="https://medium.com/google-developers/developing-for-android-vii-the-rules-framework-concerns-d0210e52eee3#.yegpenynu">Developing for Android VII The Rules: Framework</a></em></p></li>
+</ol>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+    
+
+    <section>
+  <h3>We're hiring mid-senior Android developers at <a href="http://www.unikey.com/">Unikey</a>. Email me if you want to work for a Startup in the smart lock space in Orlando</h2>
+  <h4>kmatthew[dot]dupree[at][google'semailservice][dot]com</h3>
+</section>
+
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Why%20Android%20Testing%20is%20so%20Hard%3a%20Historical%20Edition&amp;url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhy-android-testing-is-so-hard-historical-edition%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhy-android-testing-is-so-hard-historical-edition%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhy-android-testing-is-so-hard-historical-edition%2f&amp;description=Why%20Android%20Testing%20is%20so%20Hard%3a%20Historical%20Edition"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhy-android-testing-is-so-hard-historical-edition%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/post\/why-android-testing-is-so-hard-historical-edition\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+
