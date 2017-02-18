@@ -9,6 +9,140 @@
     <atom:link href="https://www.philosophicalhacker.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Towards Godless Android Development: How and Why I Kill God Objects</title>
+      <link>https://www.philosophicalhacker.com/post/towards-godless-android-development-how-and-why-i-kill-god-objects/</link>
+      <pubDate>Sat, 18 Feb 2017 09:27:03 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/towards-godless-android-development-how-and-why-i-kill-god-objects/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;God is dead&amp;hellip;and also Context is dead.&lt;/p&gt;
+
+&lt;p&gt;&amp;ndash;Friedrich Nietszche (probably)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Godlessness in the context of OO-programming &amp;ndash; unlike godlessness in a broader context &amp;ndash; is &lt;em&gt;uncontroversially&lt;/em&gt; a good thing. Some may want gods in school or gods in government, but &amp;ndash; all other things being equal &amp;ndash; no one really wants gods in their programs.&lt;/p&gt;
+
+&lt;p&gt;In android development specifically, we have a god that we all know and love to hate: &lt;code&gt;Context&lt;/code&gt;.&lt;sup&gt;1&lt;/sup&gt; This post is about why and how I kill off the &lt;code&gt;Context&lt;/code&gt; god in my apps. The reasons and methods for killing off &lt;code&gt;Context&lt;/code&gt; can of course be applied to other kinds of &amp;ldquo;god-slaying.&amp;rdquo;&lt;/p&gt;
+
+&lt;h3 id=&#34;why-i-kill-context&#34;&gt;Why I Kill Context&lt;/h3&gt;
+
+&lt;p&gt;Although &lt;code&gt;Context&lt;/code&gt; is a god object and I understand that there are disadvantages of working with god objects, this isn&amp;rsquo;t the main reason I started killing off contexts. Killing &lt;code&gt;Context&lt;/code&gt; is actually something that happened pretty naturally as a result of doing TDD. To see how this could happen, remember that when we&amp;rsquo;re doing TDD, we&amp;rsquo;re engaged in an exercise of wishful thinking: we&amp;rsquo;re writing the interfaces that we want to exist for the objects we&amp;rsquo;re testing. Here&amp;rsquo;s Freeman and Pryce on this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;We like to start by writing a test as if its implementation already exists, and then filling in whatever is needed to make it work—what Abelson and Sussman call “programming by wishful thinking”&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If we take this way of thinking seriously, a way of thinking that&amp;rsquo;s closely related to the idea that &lt;a href=&#34;https://www.philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/&#34;&gt;we shouldn&amp;rsquo;t mock types we don&amp;rsquo;t own&lt;/a&gt;, we wind up with dependencies for our objects that are expressed in the domain of that object, on the one hand, and an adapter layer, on the other. Again, here&amp;rsquo;s Freeman and Pryce:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If we don’t want to mock an external API, how can we test the code that drives it? We will have used TDD to design interfaces for the services our objects need—which will be defined in terms of our objects’ domain, not the external library.&lt;sup&gt;3&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;When I write the ideal interface for my objects first in a test, I find that none of my classes ever really want a &lt;code&gt;Context&lt;/code&gt;. What my objects really want is a way to get localized strings or a way to get a persistent key-value store, things that we usually obtain indirectly through a &lt;code&gt;Context&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;When I pass in an object that clearly describes that object&amp;rsquo;s role with respect to the object being tested instead of passing in a &lt;code&gt;Context&lt;/code&gt;, it makes it easier for me to understand my class.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s an example. Let&amp;rsquo;s say you need to implement the following:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Show a “rate dialog” to a user if they’ve used the app three times. The user can opt to rate the app, request to be reminded to rate the app, or decline to rate the app. If the user opts to rate the app, take them to the google play store and don’t show the rate dialog again. If the user opts to be reminded to rate the app, reshow the dialog after three days have passed. If the user declines to rate the app, never show the dialog again.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This functionality might make us a little nervous, so we let &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-should-we-unit-test/&#34;&gt;fear drive us to write a test first&lt;/a&gt;.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@RunWith&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;MockitoJUnitRunner&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;AppRaterPresenterTests&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Mock&lt;/span&gt; AskAppRateView askAppRateView&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Mock&lt;/span&gt; AppUsageStore appUsageStore&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;showsRateDialogIfUsedThreeTimes&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;  
+
+    AskAppRatePresenter askAppRatePresenter &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; AskAppRatePresenter&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;appUsageStore&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    when&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;appUsageStore&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getNumberOfUsages&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;thenReturn&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(3);&lt;/span&gt;
+
+    askAppRatePresenter&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onAttach&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;askAppRateView&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;askAppRateView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayAsk&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;When I&amp;rsquo;m writing this test and designing my ideal interface for &lt;code&gt;AskAppRatePresenter&lt;/code&gt;, I&amp;rsquo;m &lt;em&gt;not&lt;/em&gt; thinking about &lt;em&gt;how&lt;/em&gt; the number of app usages are stored. They could be stored through &lt;code&gt;SharedPreferences&lt;/code&gt; or through a database or through realm or&amp;hellip; Because of this, I don&amp;rsquo;t make the &lt;code&gt;AskAppRatePresenter&lt;/code&gt; ask for a &lt;code&gt;Context&lt;/code&gt;. All I really care about is that the &lt;code&gt;AskAppRatePresenter&lt;/code&gt; has a way of getting the number of times the app has been used.&lt;sup&gt;4&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;This actually makes it easier for me to read the code later. If I see that a &lt;code&gt;Context&lt;/code&gt; is being injected into an object, I don&amp;rsquo;t really have any strong idea what it might be used for. Its a god. It could be used for any number of things. However, if I see that a &lt;code&gt;AppUsageStore&lt;/code&gt; is being passed in, then I&amp;rsquo;ll be much further towards understanding what the &lt;code&gt;AskAppRatePresenter&lt;/code&gt; does.&lt;sup&gt;5&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;how-i-kill-context&#34;&gt;How I Kill Context&lt;/h3&gt;
+
+&lt;p&gt;Once we have the test written and failing, we can start to implement what we need to make it pass. Obviously, we&amp;rsquo;ll need a &lt;code&gt;Context&lt;/code&gt; in the implementation, but that can be a detail that the &lt;code&gt;AskAppRatePresenter&lt;/code&gt; doesn&amp;rsquo;t know about. There are two pretty obvious ways of doing this. One is to use a &lt;code&gt;Context&lt;/code&gt; passed into the constructor to get the &lt;code&gt;SharedPreferences&lt;/code&gt; that stores the info we retrieve from a &lt;code&gt;AppUsageStore&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;SharedPreferencesAppUsageStore&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; AppUsageStore &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; SharedPreferences sharedPreferences&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+
+    SharedPreferencesAppUsageStore&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Context context&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      sharedPreferences &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; context&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getSharedPreferences&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;usage&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Context&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;MODE_PRIVATE&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;getNumberOfUsages&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; sharedPreferences&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getInt&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;numusages&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The other way is to make the &lt;code&gt;Activity&lt;/code&gt; that hosts the presenter implement the &lt;code&gt;AppUsageStore&lt;/code&gt; interface and pass a reference to the &lt;code&gt;Activity&lt;/code&gt; into &lt;code&gt;AskAppRatePresenter&lt;/code&gt;&amp;rsquo;s constructor:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MainActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Activity &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; AppUsageStore&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; AskAppRateView &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+      AskAppRatePresenter askAppRatePresenter &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; AskAppRatePresenter&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+      askAppRatePresenter&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onAttach&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;getNumberOfUsages&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; getSharedPreferences&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;usage&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Context&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;MODE_PRIVATE&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
+          &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getInt&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;usage&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;So, the general recipe for killing a &lt;code&gt;Context&lt;/code&gt; &amp;ndash; or other gods in general &amp;ndash; is as follows:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Create an interface that represents what your class really wants from a &lt;code&gt;Context&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Create a class that implements this interface; that class may already be a &lt;code&gt;Context&lt;/code&gt; (e.g., an &lt;code&gt;Activity&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Inject that class into your class.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;If you follow the above recipe consistently, none of your interesting code will actually interact with a &lt;code&gt;Context&lt;/code&gt;. That&amp;rsquo;ll all happen in an adapter layer. When you get to this point, you&amp;rsquo;ll be able to do work on your interesting code without having any gods interfere with your ability to understand your code.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Context&lt;/code&gt; is a god object. We all know that &lt;a href=&#34;https://en.wikipedia.org/wiki/God_object&#34;&gt;god objects are an anti-pattern&lt;/a&gt;, so it might seem like &lt;code&gt;Context&lt;/code&gt; was a mistake. But that&amp;rsquo;s not obvious to me. Here&amp;rsquo;s why. First, as I pointed out in &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/&#34;&gt;my last post&lt;/a&gt;, performance was a huge concern in the early days of Android. Neat abstractions are a computational luxury that may not have been affordable at the time. Second, according to Diane Hackborne, app components are most accurately described as specific interactions with the Android OS. These aren&amp;rsquo;t your typical objects because they are instantiated by the framework and they are the entry point to a large portion of the Android SDK. These two circumstances suggest that making context a god may not have been a bad choice.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Steve Freeman and Nat Pryce, &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;, 141.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Ibid., 121-122&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Interestingly, through doing TDD, we&amp;rsquo;ve stumbled into code that follows &lt;a href=&#34;https://en.wikipedia.org/wiki/Interface_segregation_principle&#34;&gt;the interface segregation principle&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;This suggests that there&amp;rsquo;s an inverse relationship between the complexity of an injected class and ease with which we can understand the class being injected. In other words, the more complicated a class&amp;rsquo;s dependencies are, the harder it is to understand the class itself.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Why Android Testing is so Hard: Historical Edition</title>
       <link>https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/</link>
       <pubDate>Thu, 09 Feb 2017 08:28:19 -0500</pubDate>
@@ -1837,176 +1971,6 @@ The following code should make you nervous:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Using the Transform api from the Gradle plugin proved to be a dead end because I needed my Transform implementation to load classes that depend on the android SDK and depending on the Android SDK from a gradle build script is not well supported.&lt;/li&gt;
 &lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>How to Safely move Logic out of Activities</title>
-      <link>https://www.philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/</link>
-      <pubDate>Thu, 16 Jun 2016 16:58:30 -0400</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/</guid>
-      <description>
-
-&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;my last post&lt;/a&gt;, I argued that we should stop putting our app logic in &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s because it makes both unit testing &lt;em&gt;and&lt;/em&gt; functional testing our apps more difficult. In this post, I&amp;rsquo;ll try to suggest a method of safely removing app logic from our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s, drawing on a central idea discussed in Michael Feathers&amp;rsquo; &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;: characterization tests.&lt;/p&gt;
-
-&lt;p&gt;In the first section, I briefly introduce the idea of characterization tests. In the second section, I walk through some of the complications that arise when you&amp;rsquo;re trying to write characterization tests for &lt;code&gt;Activity&lt;/code&gt;/&lt;code&gt;Fragment&lt;/code&gt;s. Source code examples are excerpts from &lt;a href=&#34;https://github.com/kmdupr33/iosched/tree/refactor/characterization_tests&#34;&gt;my fork of the Google IO app&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;brief-intro-characterization-tests&#34;&gt;Brief Intro Characterization Tests&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&amp;hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&amp;hellip;Cover and Modify is a different way of making changes. The idea behind it is that it is possible to work with a safety net when we change software.&lt;/p&gt;
-
-&lt;p&gt;Michael Feathers, &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, pg. 32&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Characterization tests are tests that form the &amp;ldquo;safety net&amp;rdquo; that Feathers refers to in the above quotation. The purpose of characterization tests is, as the name implies, to &lt;em&gt;characterize&lt;/em&gt; the &lt;em&gt;current behavior&lt;/em&gt; of the system. These tests help us ensure that when we refactor our code, we are preserving the current behavior of the system. For every change we make, the result of running our characterization tests will tell us whether we&amp;rsquo;ve accidentally changed the behavior of our app.&lt;/p&gt;
-
-&lt;p&gt;Usually, writing a characterization tests is a pretty simple process. According to Feathers:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;ol&gt;
-&lt;li&gt;Write tests for the area where you will make your changes. Write as many cases as you feel you need to understand the behavior of the code.&lt;/li&gt;
-&lt;li&gt;After doing this, take a look at the specific things you are going to change, and attempt to write tests for those.&lt;/li&gt;
-&lt;li&gt;If you are attempting to extract or move some functionality, write tests that verify the existence and connection of those behaviors on a case-by-case basis. Verify that you are exercising the code that you are going to move and that it is connected properly. Exercise conversions.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Pg. 218&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/net.jpg&#34; alt=&#34;safety net&#34; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Image Credit: Cea on &lt;a href=&#34;https://www.flickr.com/photos/centralasian/3896333282/in/photolist-6WiJ93-i2ZU8-AL26v-NqLkJ-57Gmup-4QiXwQ-67j8Sw-fuf5d1-5DJrYY-9YjbZP-7UJ75S-piX5fr-jzCox-8s9BdN-uST4Hi-tw8VdM-5yxEvF-2QSfpF-onBRex-6Aj5cU-3Jyy7k-8YYKtq-8TRZ33-as2Fdq-rhXdJ8-oTXJh5-aNqeHH-hcEk7d-7ACDg-6EcoYB-mmgBPF-mz68zf-sFGHZq-6EhPsd-dor5Cp-6EcFhV-coe1tY-EDaP5-9Yn6dW-2zCxU-8YiQA1-7dQsZA-8Fq6BQ-n1F765-7dQssm-6wskCt-C44Dg-6EepXT-6EesLa-C4543&#34;&gt;Flickr Creative Commons&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&#34;characterization-tests-for-activities-and-fragments&#34;&gt;Characterization Tests for Activities and Fragments&lt;/h3&gt;
-
-&lt;p&gt;Unfortunately, writing characterization tests for &lt;code&gt;Activity&lt;/code&gt;/&lt;code&gt;Fragment&lt;/code&gt;s is not as simple as writing characterization tests in the general case. In fact, writing characterization tests for any object instantiated by the Android OS is not easy (think &lt;code&gt;Activity&lt;/code&gt;, &lt;code&gt;Fragment&lt;/code&gt;, &lt;code&gt;Service&lt;/code&gt;, &lt;code&gt;BroadcastReceiver&lt;/code&gt;, etc.). In this section, I explore two things that make writing characterization tests for &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s challenging. I also suggest ways to work around these challenges.&lt;/p&gt;
-
-&lt;h4 id=&#34;law-of-demeter-violations&#34;&gt;Law of Demeter Violations&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s have dependencies. Some of those dependencies are only accessible if we violate the law of demeter. For example, the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; needs to get a hold of a &lt;code&gt;ContentResolver&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onAttach&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Activity activity&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onAttach&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;activity&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Register content observers with the content resolver.&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mContentObservers &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        Iterator&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Map&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Entry&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Uri&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; ThrottledContentObserver&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; observers &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-                mContentObservers&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;entrySet&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;iterator&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;while&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;observers&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;hasNext&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            Map&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Entry&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Uri&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; ThrottledContentObserver&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; entry &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; observers&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;next&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            activity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getContentResolver&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;registerContentObserver&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
-&lt;/span&gt;                    entry&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getKey&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; entry&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getValue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Characterizing the behavior of this method is challenging because law of demeter violations force us to make our mocks return mocks so that we can verify the interactions with the &lt;code&gt;Fragment&lt;/code&gt;&amp;rsquo;s dependencies:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeOnAttach&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Actor actor&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Asserter asserter&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Arrange&lt;/span&gt;
-    mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;configure&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mFragmentManager&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0,&lt;/span&gt; mModel&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; QueryEnum&lt;span style=&#34;color: #666666&#34;&gt;[]{},&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; UserActionEnum&lt;span style=&#34;color: #666666&#34;&gt;[]{});&lt;/span&gt;
-
-
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Activity activity &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Activity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; ContentResolver contentResolver &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ContentResolver&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    when&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;activity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getContentResolver&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;thenReturn&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;contentResolver&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Act&lt;/span&gt;
-    actor&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;act&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;activity&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Assert&lt;/span&gt;
-    asserter&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;doAssert&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;contentResolver&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeOnAttachIfRegisteredContentObservers&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-    characterizeOnAttach&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Actor&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;act&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Activity activity&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;registerContentObserverOnUri&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Uri&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;EMPTY&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; queriesToRun&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-            mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onAttach&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;activity&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Asserter&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;doAssert&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ContentResolver contentResolver&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// ...&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;contentResolver&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;registerContentObserver&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;eq&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Uri&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;EMPTY&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;),&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;              eq&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;),&lt;/span&gt; notNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ThrottledContentObserver&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Typically, we don&amp;rsquo;t want to write tests with mocks returning mocks since this suggests that our design may smell. In this case, we are merely trying to characterize the already existing behavior of our &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt;. Once we refactor, we should have a design that doesn&amp;rsquo;t require this, but in the mean-time, we need this characterization test to make sure that we are preserving app behavior during our refactor.&lt;/p&gt;
-
-&lt;h4 id=&#34;nearly-impossible-di&#34;&gt;(Nearly) Impossible DI&lt;/h4&gt;
-
-&lt;p&gt;&lt;code&gt;Fragment&lt;/code&gt;s and &lt;code&gt;Activity&lt;/code&gt;s get their dependencies via an accessor method. &lt;code&gt;getLoaderManager&lt;/code&gt;, &lt;code&gt;getContentResolver&lt;/code&gt;, or &lt;code&gt;getFragmentManager&lt;/code&gt; are a few examples of such accessor methods. Here&amp;rsquo;s a method that uses one of these accessors:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 1 &lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 2 &lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 3 &lt;/span&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 4 &lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 5 &lt;/span&gt;    mLoaderIdlingResource &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 6 &lt;/span&gt;            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; LoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getClass&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;/&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; getId&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; getLoaderManager&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 7 &lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 8 &lt;/span&gt;    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Load data queries if any.&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 9 &lt;/span&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mInitialQueriesToLoad &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;10 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        LoaderManager manager &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; getLoaderManager&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;11 &lt;/span&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0;&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt; mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt; i&lt;span style=&#34;color: #666666&#34;&gt;++)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;12 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            manager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mInitialQueriesToLoad&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;].&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;13 &lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;14 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;15 &lt;/span&gt;        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// No data query to load, update the view.&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;16 &lt;/span&gt;        mUpdatableView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayData&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mModel&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;17 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;18 &lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;If we&amp;rsquo;re characterizing a method like this one, we need to verify that the &lt;code&gt;Fragment&lt;/code&gt; calls the correct methods on the dependencies returned by these accessor methods. Verifying the interaction of an object with its dependencies means that we need to be able to swap out those dependencies with mocks.&lt;/p&gt;
-
-&lt;p&gt;One way of doing this would be to have a special subclass of the &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt; you&amp;rsquo;d like to test. This sub-class could override the accessors to return mocks. Our characterization tests could then instantiate these special subclasses and use the mocks returned by the accessors to verify the interactions.&lt;/p&gt;
-
-&lt;p&gt;This isn&amp;rsquo;t a great solution. For reasons that I hope are clear, using this solution would force us to repeatedly subclass every &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt; in our app to return mock accessors.&lt;/p&gt;
-
-&lt;p&gt;A better solution is to use mockito spies. Like mocks returning mocks, we typically don&amp;rsquo;t use spies in our tests because it suggests a smelly design. However, in this case, spies help us write characterization tests without having make a non-trivial changes to the code we are trying to characterize or without having to repeatedly subclass all of our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s to return mocks. Here&amp;rsquo;s an example of how spies help us do this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;characterizeOnActivityCreatedIfInitialQueriesToLoad&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; ExploreModel&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ExploreQueryEnum&lt;/span&gt; sessions &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; ExploreModel&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;ExploreQueryEnum&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;SESSIONS&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-    mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;configure&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mFragmentManager&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0,&lt;/span&gt; mModel&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; QueryEnum&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;sessions&lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; UserActionEnum&lt;span style=&#34;color: #666666&#34;&gt;[]{});&lt;/span&gt;
-
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; LoaderManager loaderManager &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    when&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getLoaderManager&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;thenReturn&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderManager&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;
-    mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onActivityCreated&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-
-    assertNotNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mPresenterFragSpy&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getLoaderIdlingResource&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loaderManager&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;initLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;eq&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;sessions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getId&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()),&lt;/span&gt; isNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;),&lt;/span&gt; notNull&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Using a spy, we&amp;rsquo;re able to stub out the &lt;code&gt;getLoaderManager&lt;/code&gt; method to return a mock &lt;code&gt;LoaderManager&lt;/code&gt;. We can then verify that &lt;code&gt;onActivityCreated&lt;/code&gt; calls the right methods on the &lt;code&gt;LoaderManager&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;Safely moving logic out of large &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s can be a lot of work, but its less work than manually verifying that we haven&amp;rsquo;t broken anything every time we make a change to the &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt; we are refactoring.&lt;/p&gt;
-
-&lt;p&gt;Even if we recognize that writing these characterization tests is better than manual verification, writing them can be pretty soul-sucking. Keep in mind that we don&amp;rsquo;t need to move all of the logic out at once, so we don&amp;rsquo;t need to write all characterization tests at once.&lt;/p&gt;
-
-&lt;p&gt;Instead, we can identify various responsibilities that are carried out by our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s and plan to extract classes to handle those responsibilities. Once we have a clear picture of the class we want to extract from the &lt;code&gt;Activity&lt;/code&gt; or &lt;code&gt;Fragment&lt;/code&gt;, we can write characterization tests that will serve as a safety net for that single extraction, rather than attempting to write characterization tests for all the non-trivial methods in the &lt;code&gt;Activity&lt;/code&gt;/&lt;code&gt;Fragment&lt;/code&gt; we are refactoring.&lt;/p&gt;
 </description>
     </item>
     
