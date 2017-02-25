@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" What Unit Tests are Trying to Tell us about Activities: Pt. 1 &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt1/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2017-02-25T09:33:51-05:00" />
+
+    
+    <meta property="og:article:tag" content="android" />
+    
+    <meta property="og:article:tag" content="testing" />
+    
+    <meta property="og:article:tag" content="architecture" />
+    
+    
+
+  <title>
+     What Unit Tests are Trying to Tell us about Activities: Pt. 1 &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://www.philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="https://www.philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="https://www.philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.17" />
+
+    <link rel="canonical" href="https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt1/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="https://www.philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+  
+  <header class="main-header post-head" style="background-image: url(https://www.philosophicalhacker.com/images/broken-brick.jpg)">
+  
+  <nav class="main-nav overlay clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">What Unit Tests are Trying to Tell us about Activities: Pt. 1</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2017-02-25T09:33:51-05:00">
+            Feb 25, 2017
+          </time>
+        
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/architecture/">#architecture</a></span>
+         
+         <strong>&middot; 5 minute read</strong>
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<p><code>Activity</code>s and <code>Fragment</code>s, perhaps by <a href="/post/why-android-testing-is-so-hard-historical-edition/">some strange historical accidents</a>, have been seen as <em>the optimal</em> building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&rsquo;s call this idea &ndash; the idea that <code>Activity</code>s and <code>Fragment</code>s are the best building blocks for our apps &ndash; &ldquo;android-centric&rdquo; architecture.</p>
+
+<p>This series of posts is about the connection between the testability of android-centric architecture and the other problems that are now leading Android developers to reject it; it&rsquo;s about how our unit tests are trying to tell us that <code>Activity</code>s and <code>Fragment</code>s don&rsquo;t make the best building blocks for our apps because they force us to write code with <em>tight coupling</em> and <em>low cohesion</em>.</p>
+
+<p>In this first part of the series, I want to say a little about why I think android-centric architecture has been dominant for so long and to provide a little background on why I think unit tests have insightful things to say about rejecting android-centric architecture.</p>
+
+<h3 id="what-is-android-centric-architecture">What is Android-Centric Architecture?</h3>
+
+<p>An android-centric architecture is one in which each screen the user sees is <em>ultimately</em> backed by a class whose main purpose is to interact with the android operating system. As we&rsquo;ll see later, Diane Hackborne and Chet Haase have both recently stated that <code>Activity</code>s are an example of such a class. Since <code>Fragment</code>s are very similar to <code>Activity</code>s, I consider an app where each screen is backed by a <code>Fragment</code> to also have an android-centric architecture, even if there&rsquo;s only one <code>Activity</code> in the app.</p>
+
+<p>MVP and VIPER and RIBLETS and&hellip;are a thing now in the Android community. However, these suggestions aren&rsquo;t <em>necessarily</em> a full rejection of android-centric architecture. Although there may be <code>Presenter</code>s or <code>Interactors</code>s or whatever involved, these objects are often still built on top of <code>Activity</code>s and <code>Fragment</code>s; they could still get instantiated by and delegate to android-centric components, one for each screen the user sees.</p>
+
+<p>An app that doesn&rsquo;t follow android-centric architecture has one <code>Activity</code> and no <code>Fragment</code>s. Router and Controller type classes are POJOs.</p>
+
+<h3 id="why-android-centric-architecture">Why Android-Centric Architecture?</h3>
+
+<p>I suspect that a part of the reason why we buy into android-centric architecture is that Google hasn&rsquo;t really been clear on what <code>Activity</code>s and <code>Fragment</code>s are for until relatively recently. On channels less official and visible than the Android docs, <a href="https://medium.com/google-developers/developing-for-android-vii-the-rules-framework-concerns-d0210e52eee3#.1o25pxfat">Chet Haase</a> and <a href="https://plus.google.com/+DianneHackborn/posts/FXCCYxepsDU">Diane Hackborne</a> have both suggested that <code>Activity</code>s aren&rsquo;t really the kind of things with which you want to build your application.</p>
+
+<p>Here&rsquo;s Hackborne:</p>
+
+<blockquote>
+<p>…With its Java language APIs and fairly high-level concepts, it can look like a typical application framework that is there to say how applications should be doing their work. But for the most part, it is not.</p>
+
+<p>It is probably better to call the core Android APIs a “system framework.” For the most part, the platform APIs we provide are there to define how an application interacts with the operating system; but for anything going on purely within the app, these APIs are often just not relevant.</p>
+</blockquote>
+
+<p>and here&rsquo;s Haase:</p>
+
+<blockquote>
+<p>Application components (activities, services, providers, receivers) are interfaces for your application to interact with the operating system; don’t take them as a recommendation of the facilities you should architect your entire application around.</p>
+</blockquote>
+
+<p>Hackborne and Haase almost explicitly reject android-centric architecture. I say &ldquo;almost&rdquo;, as they both don&rsquo;t seem to denounce the use of <code>Fragment</code>s as building blocks for our apps. However, there&rsquo;s a tension between the idea <code>Activity</code>s are not suitable app components and that <code>Fragment</code>s are, and that tension is as strong as the the many similarities between the two components.</p>
+
+<p>It might even be fair to say that Google has actually suggested an android-centric architecture through the previous <a href="https://github.com/google/iosched">Google I/O app samples</a> and the android documentation. The &ldquo;app components&rdquo; section of the Android docs is a particularly good example of this. <a href="https://developer.android.com/guide/components/index.html">The section introduction</a> tells the reader that they&rsquo;ll learn &ldquo;how you can build the components [including <code>Activity</code>s and <code>Fragment</code>s] that define the <em>building blocks</em> of your app.&rdquo;</p>
+
+<p>Over the past couple of years, many Android developers &ndash; myself included &ndash; are starting to realize that <code>Activity</code>s and <code>Fragment</code>s often are not helpful building blocks for their applications. Companies like <a href="https://medium.com/square-corner-blog/advocating-against-android-fragments-81fd0b462c97">Square</a>, <a href="https://eng.lyft.com/building-single-activity-apps-using-scoop-763d4271b41#.mshtjz99n">Lyft</a>, and <a href="https://eng.uber.com/new-rider-app/">Uber</a> are moving away from android-centric architecture. Two common complaints stand out: as the app gets more complicated, the code is <em>difficult to understand</em> and <em>too rigid to handle their varying use-cases.</em></p>
+
+<h3 id="what-does-testing-have-to-do-with-this">What does Testing have to do with this?</h3>
+
+<p>The connection between testability and understandable, flexible code is well expressed in this quotation from <em>Growing Object Oriented Software Guided by Tests</em>:</p>
+
+<blockquote>
+<p>for a class to be easy to unit-test, the class must…be loosely coupled and highly cohesive &ndash; in other words, well-designed.</p>
+</blockquote>
+
+<p>Coupling and cohesion have direct bearing on how understandable and flexible your code is, so if this quote is right and if unit testing <code>Activity</code>s and <code>Fragment</code>s is difficult &ndash; and you likely know that even if you haven&rsquo;t read <a href="/post/why-we-should-stop-putting-logic-in-activities/">my</a> <a href="https://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">posts</a> suggesting as much &ndash; then writing unit tests would have shown us, before Google and painful experiences did, that <code>Activity</code>s and <code>Fragment</code>s aren&rsquo;t the building blocks we want for constructing our applications.</p>
+
+<h3 id="next-time">Next Time&hellip;</h3>
+
+<p>In the next post, I&rsquo;ll try and fail to write an example test against an <code>Activity</code> and show exactly how the tight coupling and low cohesion of <code>Activity</code>s makes testing difficult. Next, I&rsquo;ll test drive the same functionality, and we&rsquo;ll end up with testable code. In the following post, I&rsquo;ll show how the resulting code is loosely coupled and highly cohesive and talk about some of the benefits of these properties, including how they open up novel solutions to common problems on Android, like runtime permissions and intermittent connectivity.</p>
+
+<!-- Misko Hevery quote -->
+
+<!-- Joshua Block quote -->
+
+<hr />
+
+<p>Image Credit: Maret Hosemann, &ldquo;Der Bruch,&rdquo; <a href="https://creativecommons.org/licenses/by/2.0/legalcode">Creative Commons 2.0</a></p>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+    
+
+    <section>
+  <h3>We're hiring mid-senior Android developers at <a href="http://www.unikey.com/">Unikey</a>. Email me if you want to work for a Startup in the smart lock space in Orlando</h2>
+  <h4>kmatthew[dot]dupree[at][google'semailservice][dot]com</h3>
+</section>
+
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=What%20Unit%20Tests%20are%20Trying%20to%20Tell%20us%20about%20Activities%3a%20Pt.%201&amp;url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhat-unit-tests-are-trying-to-tell-us-about-activities-pt1%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhat-unit-tests-are-trying-to-tell-us-about-activities-pt1%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhat-unit-tests-are-trying-to-tell-us-about-activities-pt1%2f&amp;description=What%20Unit%20Tests%20are%20Trying%20to%20Tell%20us%20about%20Activities%3a%20Pt.%201"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhat-unit-tests-are-trying-to-tell-us-about-activities-pt1%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/post\/what-unit-tests-are-trying-to-tell-us-about-activities-pt1\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+

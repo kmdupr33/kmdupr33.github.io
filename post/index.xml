@@ -6,8 +6,78 @@
     <description>Recent content in Post-rsses on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 18 Feb 2017 09:27:03 -0500</lastBuildDate>
+    <lastBuildDate>Sat, 25 Feb 2017 09:33:51 -0500</lastBuildDate>
     <atom:link href="https://www.philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>What Unit Tests are Trying to Tell us about Activities: Pt. 1</title>
+      <link>https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt1/</link>
+      <pubDate>Sat, 25 Feb 2017 09:33:51 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt1/</guid>
+      <description>
+
+&lt;p&gt;&lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s, perhaps by &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/&#34;&gt;some strange historical accidents&lt;/a&gt;, have been seen as &lt;em&gt;the optimal&lt;/em&gt; building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&amp;rsquo;s call this idea &amp;ndash; the idea that &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s are the best building blocks for our apps &amp;ndash; &amp;ldquo;android-centric&amp;rdquo; architecture.&lt;/p&gt;
+
+&lt;p&gt;This series of posts is about the connection between the testability of android-centric architecture and the other problems that are now leading Android developers to reject it; it&amp;rsquo;s about how our unit tests are trying to tell us that &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s don&amp;rsquo;t make the best building blocks for our apps because they force us to write code with &lt;em&gt;tight coupling&lt;/em&gt; and &lt;em&gt;low cohesion&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;In this first part of the series, I want to say a little about why I think android-centric architecture has been dominant for so long and to provide a little background on why I think unit tests have insightful things to say about rejecting android-centric architecture.&lt;/p&gt;
+
+&lt;h3 id=&#34;what-is-android-centric-architecture&#34;&gt;What is Android-Centric Architecture?&lt;/h3&gt;
+
+&lt;p&gt;An android-centric architecture is one in which each screen the user sees is &lt;em&gt;ultimately&lt;/em&gt; backed by a class whose main purpose is to interact with the android operating system. As we&amp;rsquo;ll see later, Diane Hackborne and Chet Haase have both recently stated that &lt;code&gt;Activity&lt;/code&gt;s are an example of such a class. Since &lt;code&gt;Fragment&lt;/code&gt;s are very similar to &lt;code&gt;Activity&lt;/code&gt;s, I consider an app where each screen is backed by a &lt;code&gt;Fragment&lt;/code&gt; to also have an android-centric architecture, even if there&amp;rsquo;s only one &lt;code&gt;Activity&lt;/code&gt; in the app.&lt;/p&gt;
+
+&lt;p&gt;MVP and VIPER and RIBLETS and&amp;hellip;are a thing now in the Android community. However, these suggestions aren&amp;rsquo;t &lt;em&gt;necessarily&lt;/em&gt; a full rejection of android-centric architecture. Although there may be &lt;code&gt;Presenter&lt;/code&gt;s or &lt;code&gt;Interactors&lt;/code&gt;s or whatever involved, these objects are often still built on top of &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s; they could still get instantiated by and delegate to android-centric components, one for each screen the user sees.&lt;/p&gt;
+
+&lt;p&gt;An app that doesn&amp;rsquo;t follow android-centric architecture has one &lt;code&gt;Activity&lt;/code&gt; and no &lt;code&gt;Fragment&lt;/code&gt;s. Router and Controller type classes are POJOs.&lt;/p&gt;
+
+&lt;h3 id=&#34;why-android-centric-architecture&#34;&gt;Why Android-Centric Architecture?&lt;/h3&gt;
+
+&lt;p&gt;I suspect that a part of the reason why we buy into android-centric architecture is that Google hasn&amp;rsquo;t really been clear on what &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s are for until relatively recently. On channels less official and visible than the Android docs, &lt;a href=&#34;https://medium.com/google-developers/developing-for-android-vii-the-rules-framework-concerns-d0210e52eee3#.1o25pxfat&#34;&gt;Chet Haase&lt;/a&gt; and &lt;a href=&#34;https://plus.google.com/+DianneHackborn/posts/FXCCYxepsDU&#34;&gt;Diane Hackborne&lt;/a&gt; have both suggested that &lt;code&gt;Activity&lt;/code&gt;s aren&amp;rsquo;t really the kind of things with which you want to build your application.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s Hackborne:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;…With its Java language APIs and fairly high-level concepts, it can look like a typical application framework that is there to say how applications should be doing their work. But for the most part, it is not.&lt;/p&gt;
+
+&lt;p&gt;It is probably better to call the core Android APIs a “system framework.” For the most part, the platform APIs we provide are there to define how an application interacts with the operating system; but for anything going on purely within the app, these APIs are often just not relevant.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;and here&amp;rsquo;s Haase:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Application components (activities, services, providers, receivers) are interfaces for your application to interact with the operating system; don’t take them as a recommendation of the facilities you should architect your entire application around.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Hackborne and Haase almost explicitly reject android-centric architecture. I say &amp;ldquo;almost&amp;rdquo;, as they both don&amp;rsquo;t seem to denounce the use of &lt;code&gt;Fragment&lt;/code&gt;s as building blocks for our apps. However, there&amp;rsquo;s a tension between the idea &lt;code&gt;Activity&lt;/code&gt;s are not suitable app components and that &lt;code&gt;Fragment&lt;/code&gt;s are, and that tension is as strong as the the many similarities between the two components.&lt;/p&gt;
+
+&lt;p&gt;It might even be fair to say that Google has actually suggested an android-centric architecture through the previous &lt;a href=&#34;https://github.com/google/iosched&#34;&gt;Google I/O app samples&lt;/a&gt; and the android documentation. The &amp;ldquo;app components&amp;rdquo; section of the Android docs is a particularly good example of this. &lt;a href=&#34;https://developer.android.com/guide/components/index.html&#34;&gt;The section introduction&lt;/a&gt; tells the reader that they&amp;rsquo;ll learn &amp;ldquo;how you can build the components [including &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s] that define the &lt;em&gt;building blocks&lt;/em&gt; of your app.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;Over the past couple of years, many Android developers &amp;ndash; myself included &amp;ndash; are starting to realize that &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s often are not helpful building blocks for their applications. Companies like &lt;a href=&#34;https://medium.com/square-corner-blog/advocating-against-android-fragments-81fd0b462c97&#34;&gt;Square&lt;/a&gt;, &lt;a href=&#34;https://eng.lyft.com/building-single-activity-apps-using-scoop-763d4271b41#.mshtjz99n&#34;&gt;Lyft&lt;/a&gt;, and &lt;a href=&#34;https://eng.uber.com/new-rider-app/&#34;&gt;Uber&lt;/a&gt; are moving away from android-centric architecture. Two common complaints stand out: as the app gets more complicated, the code is &lt;em&gt;difficult to understand&lt;/em&gt; and &lt;em&gt;too rigid to handle their varying use-cases.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;what-does-testing-have-to-do-with-this&#34;&gt;What does Testing have to do with this?&lt;/h3&gt;
+
+&lt;p&gt;The connection between testability and understandable, flexible code is well expressed in this quotation from &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;for a class to be easy to unit-test, the class must…be loosely coupled and highly cohesive &amp;ndash; in other words, well-designed.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Coupling and cohesion have direct bearing on how understandable and flexible your code is, so if this quote is right and if unit testing &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s is difficult &amp;ndash; and you likely know that even if you haven&amp;rsquo;t read &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;my&lt;/a&gt; &lt;a href=&#34;https://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;posts&lt;/a&gt; suggesting as much &amp;ndash; then writing unit tests would have shown us, before Google and painful experiences did, that &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s aren&amp;rsquo;t the building blocks we want for constructing our applications.&lt;/p&gt;
+
+&lt;h3 id=&#34;next-time&#34;&gt;Next Time&amp;hellip;&lt;/h3&gt;
+
+&lt;p&gt;In the next post, I&amp;rsquo;ll try and fail to write an example test against an &lt;code&gt;Activity&lt;/code&gt; and show exactly how the tight coupling and low cohesion of &lt;code&gt;Activity&lt;/code&gt;s makes testing difficult. Next, I&amp;rsquo;ll test drive the same functionality, and we&amp;rsquo;ll end up with testable code. In the following post, I&amp;rsquo;ll show how the resulting code is loosely coupled and highly cohesive and talk about some of the benefits of these properties, including how they open up novel solutions to common problems on Android, like runtime permissions and intermittent connectivity.&lt;/p&gt;
+
+&lt;!-- Misko Hevery quote --&gt;
+
+&lt;!-- Joshua Block quote --&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Image Credit: Maret Hosemann, &amp;ldquo;Der Bruch,&amp;rdquo; &lt;a href=&#34;https://creativecommons.org/licenses/by/2.0/legalcode&#34;&gt;Creative Commons 2.0&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Towards Godless Android Development: How and Why I Kill God Objects</title>
@@ -1627,26 +1697,6 @@ joining responsibilities is something that we do naturally. &lt;strong&gt;Findin
 &lt;p&gt;Sometimes all of this feels a bit wonky to me. I think it feels this way because git modules are still fundamentally weird. In an ideal world, we&amp;rsquo;d develop our shared code in separate repositories and we&amp;rsquo;d test that shared code with automated tests instead of testing it by running the project that consumes that shared library.&lt;/p&gt;
 
 &lt;p&gt;However, sometimes we need to take out a tech loan. Sometimes we need to live with a wonky submodule setup for a bit. Fortunately, git provides us the tools needed to handle the additional complexity that comes along with using git submodules, and if we want to be able to work on a project and its shared code simultaneously, git submodules are appropriate. If we&amp;rsquo;re just trying to share code, we should use simpler dependency management solutions.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>3 Ways of &#39;Getting to Green&#39;</title>
-      <link>https://www.philosophicalhacker.com/post/3-ways-of-getting-to-green/</link>
-      <pubDate>Sun, 16 Oct 2016 22:38:44 -0400</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/3-ways-of-getting-to-green/</guid>
-      <description>&lt;p&gt;A part of the TDD work flow is getting a failing test to pass as quickly as possible. This makes sense if we think about how &lt;a href=&#34;http://www.philosophicalhacker.com/post/the-goal-of-refactoring-during-tdd/&#34;&gt;TDD is supposed to help us take smaller steps when we&amp;rsquo;re writing programs&lt;/a&gt;. Beck goes over three ways of getting a test to pass quickly in the fist part of &lt;em&gt;TDD By Example&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;The first method is to fake it. Just hard code whatever values you need to to get the tests to pass.&lt;/p&gt;
-
-&lt;p&gt;The second method is try for the simplest possible implementation.&lt;/p&gt;
-
-&lt;p&gt;The third method is something Beck calls &amp;ldquo;triangulation&amp;rdquo;, and its only used if you&amp;rsquo;re not sure how to proceed. When you triangulate on an implementation, you start by writing a second test. This second test will force you to generalize the hard-coded implementation you wrote to get your test to pass. Writing this second test, moreover, is supposed to help you think through how to generalize your implementation:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&amp;hellip;Triangulation provides a chance to think about the problem from a slightly different direction. What axes of variability are you trying to support in your design? Make some of them vary, and the answer [i.e., the general implementation] may become clearer.&lt;/p&gt;
-&lt;/blockquote&gt;
 </description>
     </item>
     
