@@ -9,6 +9,70 @@
     <atom:link href="https://www.philosophicalhacker.com/tags/testing/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Some Resources for Learning how to Test Android Apps</title>
+      <link>https://www.philosophicalhacker.com/post/some-resources-for-learning-how-to-test-android-apps/</link>
+      <pubDate>Fri, 03 Mar 2017 08:34:09 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/some-resources-for-learning-how-to-test-android-apps/</guid>
+      <description>
+
+&lt;p&gt;Someone recently asked me how I &amp;ldquo;know so much&amp;rdquo; about testing android apps. After disabusing them of the notion that I know a lot about testing, I said that I&amp;rsquo;d write up a blog post of some helpful resources I&amp;rsquo;ve found and send it to them. This is that blog post.&lt;/p&gt;
+
+&lt;p&gt;The resources are divided into books, articles, talks, and podcasts. I&amp;rsquo;ve marked resources that I think are essential with a &amp;ldquo;*&amp;rdquo;.&lt;/p&gt;
+
+&lt;h2 id=&#34;books&#34;&gt;Books:&lt;/h2&gt;
+
+&lt;h3 id=&#34;working-effectively-with-legacy-code&#34;&gt;Working Effectively with Legacy Code *&lt;/h3&gt;
+
+&lt;p&gt;If you&amp;rsquo;re working on already existing Android app and you&amp;rsquo;re trying to figure out how to get tests in place, I can&amp;rsquo;t recommend this book enough. &lt;a href=&#34;https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052&#34;&gt;The book&lt;/a&gt; has a lot of fantastic theory on &lt;a href=&#34;www.philosophicalhacker.com/post/what-makes-android-apps-testable/&#34;&gt;what makes code testable in general&lt;/a&gt;. It also has a bunch of great tips for conservative refactorings you can do to safely get your codebase to a more testable state.&lt;/p&gt;
+
+&lt;h3 id=&#34;growing-object-oriented-software-guided-by-tests&#34;&gt;Growing Object Oriented Software Guided by Tests&lt;/h3&gt;
+
+&lt;p&gt;If you&amp;rsquo;re working on a greenfield project, &lt;a href=&#34;https://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627&#34;&gt;this book&lt;/a&gt; is a great way to see how tests positively influence the architecture of your application and help you move towards more object oriented code. It also has some very practical tips on some trickier cases like testing persistence, etc.&lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s also a nice appendix in the book that talks about the history of &amp;ldquo;mocking&amp;rdquo; and what Fowler would call the &amp;ldquo;mockist&amp;rdquo; style of TDD. The underlying philosophy behind Mockito makes a lot more sense once you&amp;rsquo;ve read this.&lt;/p&gt;
+
+&lt;h3 id=&#34;tdd-by-example&#34;&gt;TDD By Example *&lt;/h3&gt;
+
+&lt;p&gt;This is &lt;a href=&#34;https://www.amazon.com/Test-Driven-Development-Kent-Beck/dp/0321146530/ref=pd_sbs_14_t_1?_encoding=UTF8&amp;amp;psc=1&amp;amp;refRID=GBD9CHYJGZ7Y5YEB07CH&#34;&gt;the book by the guy popularized TDD&lt;/a&gt;. Since I had already read &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt; and &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt; before picking this up, there wasn&amp;rsquo;t a ton new for me to glean. However, since this is written by Kent Beck, I consider it essential reading. One thing I found interesting was how non-dogmatic Beck was in advocating for TDD. I also did learn &lt;a href=&#34;www.philosophicalhacker.com/post/what-should-we-unit-test/&#34;&gt;a neat heuristic for determining when I should be writing tests or doing TDD&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;xunit-test-patterns&#34;&gt;xUnit Test Patterns&lt;/h3&gt;
+
+&lt;p&gt;I&amp;rsquo;m nearly finished with &lt;a href=&#34;https://www.amazon.com/xUnit-Test-Patterns-Refactoring-Code/dp/0131495054&#34;&gt;this one&lt;/a&gt;. Some of it feels a bit repetitive, but there are some great insights about writing readable tests. There&amp;rsquo;s also a really nice discussion about the tradeoff between easy fixture management and test performance.&lt;/p&gt;
+
+&lt;h2 id=&#34;articles&#34;&gt;Articles:&lt;/h2&gt;
+
+&lt;h3 id=&#34;mocks-aren-t-stubs&#34;&gt;Mocks Aren&amp;rsquo;t Stubs *&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;Great Martin Fowler article&lt;/a&gt; that gives a taxonomy of test doubles. Mockito has us all confused about this, but Fowler does a great job of teasing apart the various concepts that are mingled in Mockito&amp;rsquo;s &amp;ldquo;mocks.&amp;rdquo; It also contains a wonderful discussion of two different styles of TDD, with special attention paid to the influence the styles have on the architecture that emerges from doing that particular style of TDD.&lt;/p&gt;
+
+&lt;h3 id=&#34;page-object-pattern&#34;&gt;Page Object Pattern&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://martinfowler.com/bliki/PageObject.html&#34;&gt;Martin Fowler&lt;/a&gt; named a neat pattern for ensuring that your UI tests aren&amp;rsquo;t brittle. Its identical with Jake Wharton&amp;rsquo;s &amp;ldquo;robot pattern&amp;rdquo; linked below.&lt;/p&gt;
+
+&lt;h3 id=&#34;misko-hevery-s-testability-guide&#34;&gt;Misko Hevery&amp;rsquo;s Testability Guide&lt;/h3&gt;
+
+&lt;p&gt;Misko Hevery, in case you don&amp;rsquo;t know, is a Google engineer and the father of Angular. He&amp;rsquo;s also the author of an excellent &lt;a href=&#34;http://misko.hevery.com/code-reviewers-guide/&#34;&gt;Testability Guide&lt;/a&gt;. In the guide, you learn why GOF Singletons and static access in general aren&amp;rsquo;t great for tests or your architecture. This guide actually inspired my post &lt;a href=&#34;https://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/&#34;&gt;&amp;ldquo;Why Static References to Application Contexts Aren&amp;rsquo;t the Best Idea&amp;rdquo;&lt;/a&gt;. You&amp;rsquo;ll also see some good rules about constructors and scope and how they relate to testability.&lt;/p&gt;
+
+&lt;h2 id=&#34;talks&#34;&gt;Talks:&lt;/h2&gt;
+
+&lt;h4 id=&#34;jake-wharton-on-the-robot-pattern&#34;&gt;Jake Wharton on The Robot Pattern *&lt;/h4&gt;
+
+&lt;p&gt;Jake Wharton basically renamed Fowler&amp;rsquo;s Page Object Pattern and &lt;a href=&#34;https://realm.io/news/kau-jake-wharton-testing-robots/&#34;&gt;he has a nice talk&lt;/a&gt; explaining how to apply the pattern to espresso tests.&lt;/p&gt;
+
+&lt;h2 id=&#34;podcasts&#34;&gt;Podcasts:&lt;/h2&gt;
+
+&lt;h3 id=&#34;is-tdd-dead&#34;&gt;Is TDD Dead? *&lt;/h3&gt;
+
+&lt;p&gt;This is &lt;a href=&#34;https://martinfowler.com/articles/is-tdd-dead/&#34;&gt;a fantastic five part discussion&lt;/a&gt; between Martin Fowler, Kent Beck, and DHH. Highlights include a discussion of what we should test, the role of QA in a TDD world, the role of mocks in writing tests, and, of course, whether TDD leads to better code.&lt;/p&gt;
+
+&lt;h3 id=&#34;fragmented-episode-7&#34;&gt;Fragmented episode 7&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://fragmentedpodcast.com/episodes/7&#34;&gt;Great episode of Fragmented&lt;/a&gt; with Jake Wharton. The discussion around Roboelectric and what we should test is good. That discussion partially inspired &lt;a href=&#34;www.philosophicalhacker.com/post/why-i-dont-use-roboletric/&#34;&gt;&amp;ldquo;Why I Don&amp;rsquo;t Use Roboelectric.&amp;rdquo;&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>What Unit Tests are Trying to Tell us about Activities: Pt. 1</title>
       <link>https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt1/</link>
       <pubDate>Sat, 25 Feb 2017 09:33:51 -0500</pubDate>
@@ -1587,26 +1651,6 @@ joining responsibilities is something that we do naturally. &lt;strong&gt;Findin
 
 &lt;li&gt;&lt;p&gt;The context of this quote actually has more to do with a/b testing that regression testing, but regression testing plays a big role in Facebook&amp;rsquo;s ability to move quickly. Facebook has invested heavily in automated testing by, for example, employing Kent Beck, the guy who popularized TDD.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>3 Ways of &#39;Getting to Green&#39;</title>
-      <link>https://www.philosophicalhacker.com/post/3-ways-of-getting-to-green/</link>
-      <pubDate>Sun, 16 Oct 2016 22:38:44 -0400</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/3-ways-of-getting-to-green/</guid>
-      <description>&lt;p&gt;A part of the TDD work flow is getting a failing test to pass as quickly as possible. This makes sense if we think about how &lt;a href=&#34;http://www.philosophicalhacker.com/post/the-goal-of-refactoring-during-tdd/&#34;&gt;TDD is supposed to help us take smaller steps when we&amp;rsquo;re writing programs&lt;/a&gt;. Beck goes over three ways of getting a test to pass quickly in the fist part of &lt;em&gt;TDD By Example&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;The first method is to fake it. Just hard code whatever values you need to to get the tests to pass.&lt;/p&gt;
-
-&lt;p&gt;The second method is try for the simplest possible implementation.&lt;/p&gt;
-
-&lt;p&gt;The third method is something Beck calls &amp;ldquo;triangulation&amp;rdquo;, and its only used if you&amp;rsquo;re not sure how to proceed. When you triangulate on an implementation, you start by writing a second test. This second test will force you to generalize the hard-coded implementation you wrote to get your test to pass. Writing this second test, moreover, is supposed to help you think through how to generalize your implementation:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&amp;hellip;Triangulation provides a chance to think about the problem from a slightly different direction. What axes of variability are you trying to support in your design? Make some of them vary, and the answer [i.e., the general implementation] may become clearer.&lt;/p&gt;
-&lt;/blockquote&gt;
 </description>
     </item>
     
