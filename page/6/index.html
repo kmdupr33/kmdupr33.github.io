@@ -307,6 +307,8 @@
     
         
     
+        
+    
 
     
         
@@ -330,6 +332,36 @@
 </nav>
 
     </div>
+
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/06/16/introduction-to-rxjava-for-android-the-talk/">Introduction to RxJava for Android: The Talk</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Earlier today, I gave my Intro To RxJava talk. I&rsquo;m not thrilled at how clear I was at explaining certain aspects of RxJava, but here&rsquo;s the video nonetheless. My talk starts at 28:32. Hopefully, I&rsquo;ll do a better job when I finish the written version of this talk.
+If you want to hear a hilarious take down of the design of the new Pizza Hut app, check out Ian&rsquo;s talk that happens before mine. <a class="read-more" href="/2015/06/16/introduction-to-rxjava-for-android-the-talk/">&raquo;</a></p>
+    </section>
+    <footer class="post-meta">
+        
+        
+        
+        
+            
+        
+        on
+            
+                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="https://www.philosophicalhacker.com/tags/rxjava/">#rxjava</a>,
+            
+        
+        <time class="post-date" datetime="2015-06-17T01:48:45Z">
+            17 Jun 2015
+        </time>
+    </footer>
+</article>
 
     
         
@@ -640,45 +672,6 @@
         
         <time class="post-date" datetime="2015-05-01T11:30:24Z">
             1 May 2015
-        </time>
-    </footer>
-</article>
-
-    
-        
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">Why Android Unit Testing Is So Hard (Pt. 2)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p><p><strong>Edit:</strong> In <a href="http://philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">the post that concludes this series</a>, I point out that making unit testable Android apps does not require us to remove compile-time dependencies on the Android SDK and that attempting to do so is impractical anyway. Ignore anything in this post that suggests otherwise.</p>
-
-<hr />
-
-<p>In my <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">last post</a>, I showed that even the (intelligent) engineers over at Google have written some Android code that is simply untestable. More specifically, I showed that there’s no way to unit test the <code>SessionDetailActivity</code>’s <code>onStop()</code> method. I also gave a specific diagnosis for the untestability of <code>onStop()</code>: we can’t complete the arrange- and assert-steps of a test against <code>onStop()</code> because there is no way to alter the pre-act-state, nor is there a way to access the post-act-state for a test of <code>onStop()</code>. I ended the last post by claiming that some properties of the Android SDK, along with the standard way we are encouraged to structure our android apps, encourage us to write code that is difficult/impossible to unit test and by promising that I’d elaborate more on that claim in this post.</p>
-
-<p>Before I do that, let me say again that showing that the difficulty of testing Android applications is caused by the standard structure of android apps is important for the overarching goal of this series of articles. This series is an attempt to argue that we should consider restructuring our applications so that they do not explicitly depend on the Android SDK and its an attempt to present a robust architecture that will enhance the testability of Android applications. You can read the introduction to this series <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">here</a>. With that said, I can move on to trying to demonstrate the central claim of this post.</p>
-
-<p>There’s a standard way of developing android applications. Sample code and open source code alike both place an app’s business logic within Android app component classes, namely, Activities, Services, and Fragments. Going forward, I’m going to refer to this practice as “the standard way.” Here’s the central claim of this post: As long as we follow the “standard way”, we’re going to write code that’s either difficult or impossible to unit test. In other words, the untestable code that I pointed out in my last article is not a fluke. The standard way prevents us from unit testing key pieces of our applications.</p>
-
-<p></p> <a class="read-more" href="/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">&raquo;</a></p>
-    </section>
-    <footer class="post-meta">
-        
-        
-        
-        
-            
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-04-24T11:44:49Z">
-            24 Apr 2015
         </time>
     </footer>
 </article>

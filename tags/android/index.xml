@@ -9,6 +9,111 @@
     <atom:link href="https://www.philosophicalhacker.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Why Im Skeptical about Kotlin Coroutines for Android Development</title>
+      <link>https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/</link>
+      <pubDate>Sun, 19 Mar 2017 00:34:58 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/</guid>
+      <description>
+
+&lt;p&gt;A few weeks ago, the folks working on Kotlin announced the 1.1 release. Kotlin&amp;rsquo;s 1.1 release has experiment support for coroutines. Here&amp;rsquo;s the elevator pitch for coroutines from their blog post announcing the release:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Asynchronous programming is taking over the world, and the only thing that is holding us back is that non-blocking code adds considerable complexity to our systems. Kotlin now offers means to tame this complexity by making coroutines first-class citizens in the language through the single primitive: suspending functions. Such a function (or lambda) represents a computation that can be suspended (without blocking any threads) and resumed later.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Coroutines are neat and they may actually be very useful in many cases, but I&amp;rsquo;m not actually sure how useful they&amp;rsquo;ll be in Android development. This post is about why I&amp;rsquo;m skeptical that coroutines really matter for Android development. Here&amp;rsquo;s the short answer: I suspect that RxJava actually gives us a better way of &amp;ldquo;taming asynchronous complexity&amp;rdquo; than coroutines do.&lt;/p&gt;
+
+&lt;h3 id=&#34;observables-give-us-an-apt-model-for-many-problems-in-android-development&#34;&gt;Observables give us an apt model for many problems in Android development&lt;/h3&gt;
+
+&lt;p&gt;In order to see why I&amp;rsquo;m skeptical about coroutines, let&amp;rsquo;s start by noting that streams give us an &lt;em&gt;explicit&lt;/em&gt; way of modeling many problems in Android development. When you really start getting into rxjava, it changes &lt;em&gt;the way you think&lt;/em&gt; about your problems. You start to think with &lt;code&gt;Observable&lt;/code&gt;s and you realize that most of your problems are about how to compose your &lt;code&gt;Observable&lt;/code&gt;s with various operators to get the data you&amp;rsquo;re actually interested in.&lt;/p&gt;
+
+&lt;p&gt;When you&amp;rsquo;ve stumbled upon a good way to model your problems, your life gets easier and you get to be continually amazed at how many problems your model helps you solve. Something like this happened when we started using functional programming to work with collections:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Richard Waters&amp;hellip;developed a program that automatically analyzes traditional Fortran programs, viewing them in terms of maps, filters, and accumulations. He found that fully 90 percent of the code in the Fortran Scientific Subroutine Package fits neatly into this paradigm.&lt;/p&gt;
+
+&lt;p&gt;-Abelson et. al, Structure and Interpretation of Computer Programs&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;What&amp;rsquo;s interesting is that when you find a good way to explicitly model your problems in code, you actually start to think with that model, &lt;em&gt;even if you aren&amp;rsquo;t actively using it in code.&lt;/em&gt; For example, suppose I&amp;rsquo;m looking at the following code:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; ints &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{0,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;2};&lt;/span&gt;
+&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; sum &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0;&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0;&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt; ints&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt; i&lt;span style=&#34;color: #666666&#34;&gt;++)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  ints&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*=&lt;/span&gt; ints&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;];&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; anInt &lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; ints&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  sum &lt;span style=&#34;color: #666666&#34;&gt;+=&lt;/span&gt; anInt&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+System&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;out&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;println&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;sum&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I think about this code by thinking in terms of maps and reduces, even if I&amp;rsquo;m not working with a Java &lt;code&gt;Stream&lt;/code&gt; that has those methods. The same is true about &lt;code&gt;Observable&lt;/code&gt;: its such a good way of modeling the problems that I face that I think in terms of it, even if I&amp;rsquo;m not lucky enough to use RxJava.&lt;/p&gt;
+
+&lt;p&gt;Coroutines, on the other hand, dont give us any model of what we&amp;rsquo;re trying to accomplish with our asynchronous data at all. Rather, coroutines just give us a way to write code that feels &lt;em&gt;imperative,&lt;/em&gt; even if it is asynchronous. Here&amp;rsquo;s an example from the blog post announcing coroutines:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// launches new coroutine in UI context&lt;/span&gt;
+launch(UI) {
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// wait for async overlay to complete&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;val&lt;/span&gt; image = asyncOverlay().await()
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// and then show it in UI&lt;/span&gt;
+    showImage(image)
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;asyncOverlay&lt;/code&gt; does some async work, but we get to avoid writing callbacks. The code just &amp;ldquo;stops&amp;rdquo; while waiting for that async work to complete &lt;em&gt;without blocking the main thread&lt;/em&gt;. Its neat, but, again, there&amp;rsquo;s no modeling of problems that&amp;rsquo;s happening here.&lt;/p&gt;
+
+&lt;h3 id=&#34;observable-is-a-better-abstraction-of-synchronicity&#34;&gt;Observable is a better abstraction of synchronicity&lt;/h3&gt;
+
+&lt;p&gt;RxJava does more than just allow us to model asynchronous events and data. It actually allows us to abstract over synchronicity when we&amp;rsquo;re thinking about streams or collections of data. Ordered synchronous and asynchronous data have the same API. If we want to model sequential data in our code, when we&amp;rsquo;re using RxJava, we don&amp;rsquo;t &lt;em&gt;necessarily&lt;/em&gt; have to care whether that data arrives synchronously or asynchronously. Here&amp;rsquo;s &lt;a href=&#34;http://reactivex.io/intro.html&#34;&gt;the reactivex.io site&amp;rsquo;s&lt;/a&gt; pitch on this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The ReactiveX Observable model allows you to treat streams of asynchronous events with the same sort of simple, composable operations that you use for collections of data items like arrays. It frees you from tangled webs of callbacks, and thereby makes your code more readable and less prone to bugs.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Here&amp;rsquo;s something that I regularly do that demonstrates this delightful abstraction:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;clicksObservable
+  &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;flatMapSingle&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;click &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; githubApi&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;listRepos&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;flatMap&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repos &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;fromIterable&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repos&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;filter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repo &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; isMine&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repo&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repo &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt; displayInList&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repo&lt;span style=&#34;color: #666666&#34;&gt;)})&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I start with a stream of clicks and wind up with a list view that displays only the repos that aren&amp;rsquo;t mine. Along the way, I work with an &lt;code&gt;Iterable&lt;/code&gt; of repos, but I can easily turn that &lt;code&gt;Iterable&lt;/code&gt; into an &lt;code&gt;Observable&lt;/code&gt; and then it doesn&amp;rsquo;t even matter whether the repos are in memory or retrieved asynchronously. The &lt;code&gt;Observable&lt;/code&gt; cascade doesn&amp;rsquo;t get broken and the periods line up beautifully.&lt;/p&gt;
+
+&lt;p&gt;Coroutines, on the other hand, don&amp;rsquo;t let us abstract over synchronous and asynchronous data like this. For synchronous data/operations, we use normal functions. For asynchronous data, we need to use suspecting functions wrapped in blocks that start coroutines.&lt;/p&gt;
+
+&lt;h3 id=&#34;observables-lets-us-work-at-a-higher-level-of-abstraction&#34;&gt;Observables lets us work at a higher level of abstraction&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;Observable&lt;/code&gt;s do more than just model our problems and abstract over synchronicity. They do this in a way that lets us work at a higher level of abstraction than imperative code. I can write a map an array imperatively like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; ints &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{0,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;2};&lt;/span&gt;    
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0;&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt; ints&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt; i&lt;span style=&#34;color: #666666&#34;&gt;++)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  ints&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*=&lt;/span&gt; ints&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;];&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Or I can do it declaratively like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;fromArray&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ints&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;map&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;aInt &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; aInt &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt; aInt&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Coroutines, in my opinion, when used to handle problems that are well modeled by &lt;code&gt;Observable&lt;/code&gt;s are merely the for loops of the asynchronous world.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;None of this is meant to suggest that coroutines aren&amp;rsquo;t useful full stop. That&amp;rsquo;s nonsense. They have their uses. I just double that they are going to be nearly as essential to Android development as RxJava.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>What Unit Tests are Trying to Tell us About Activities Pt 2</title>
       <link>https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/</link>
       <pubDate>Fri, 10 Mar 2017 22:32:02 -0500</pubDate>
@@ -1724,88 +1829,6 @@ productFlavors &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 
 &lt;li&gt;&lt;p&gt;Of course, using mockito to accomplish this isn&amp;rsquo;t absolutely necessary.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;</description>
-    </item>
-    
-    <item>
-      <title>Why we Should Probably Write More Tests for Our Android Apps</title>
-      <link>https://www.philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/</link>
-      <pubDate>Mon, 07 Nov 2016 07:36:45 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/</guid>
-      <description>
-
-&lt;p&gt;This past weekend, I had the privilege of speaking about writing testable Android apps &lt;a href=&#34;https://devfestflorida.org/speakers/12/&#34;&gt;at Florida DevFest&lt;/a&gt;. This post is a written version of one of the major points I made in my presentation.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s start off with two descriptions of attitudes towards testing. The first comes from Kaushik Goupal (he&amp;rsquo;s describing an attitude, not endorsing it):&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Testing seems to be like going to gym. Everyone feels like &amp;ldquo;yeah. I should be testing. I should be going to the gym everyday.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Koushik Goupal, Fragmented Episode 13 12:01&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The second comes from &lt;em&gt;Pragmatic Programmer&lt;/em&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Your signature should come to be recognized as an indicator of quality. People should see your name on a piece of code and expect it to be solid, well written, tested, and documented. A really professional job. Written by a real professional. A Pragmatic Programmer.&lt;/p&gt;
-
-&lt;p&gt;Andrew Hunt and Dave Thomas, Pragmatic Programmer&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Which attitude is right? Is automated testing a nice-to-have or is it an integral part of a software engineer&amp;rsquo;s work. I think that its the latter. Here&amp;rsquo;s why.&lt;/p&gt;
-
-&lt;h3 id=&#34;for-most-of-us-good-code-is-changeable-code&#34;&gt;For most of us, Good Code is Changeable Code&lt;/h3&gt;
-
-&lt;p&gt;Dan North, the &amp;ldquo;BDD&amp;rdquo; creator and core contributor of rspec, has an interesting perspective on what we&amp;rsquo;re doing as software engineers. He says,&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;goal of software delivery is to minimise the lead time to business impact. Everything else is detail.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This view is a bit too strong in my opinion, but it does get one thing right: good code is changeable code. Suppose you ship an app that is performant and beautiful and that many of your users love it. Your boss says, &amp;ldquo;this is great, but lets add a feature and change this other behavior.&amp;rdquo; If you&amp;rsquo;re response is, &amp;ldquo;Well, the code is spaghetti. Its hard to understand and I&amp;rsquo;m not confident that I won&amp;rsquo;t break things when I make changes,&amp;rdquo; you&amp;rsquo;re boss is going to be disappointed.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;For most of us, I don&amp;rsquo;t think that claim will seem controversial. If you&amp;rsquo;re working on a pet project or a prototype that isn&amp;rsquo;t going to need to survive multiple iterations, I&amp;rsquo;m not really including you in the &amp;ldquo;us&amp;rdquo; here.&lt;/p&gt;
-
-&lt;h3 id=&#34;for-most-of-us-changeable-code-is-tested-code&#34;&gt;For most of us, Changeable Code is Tested Code&lt;/h3&gt;
-
-&lt;p&gt;Say you agree that good code is changeable code. What does that have to do with tests? Well, for most of us, tests are the only practical way of minimizing the time it takes to change our software.&lt;/p&gt;
-
-&lt;p&gt;When I say &amp;ldquo;us&amp;rdquo; here, I&amp;rsquo;m talking about professional software engineers of average intelligence who are working on fairly large projects. I&amp;rsquo;m not that smart, so I make mistakes when I write code, especially if the codebase I&amp;rsquo;m working on is large. If you&amp;rsquo;re much smarter than me and/or you&amp;rsquo;re working on a smaller project, this argument doesn&amp;rsquo;t really apply.&lt;/p&gt;
-
-&lt;p&gt;There&amp;rsquo;s two reasons why changeable code is tested code.&lt;/p&gt;
-
-&lt;p&gt;First, writing unit tests for your code actually helps you write better code. I think this is an under-appreciated benefit of writing unit tests for your code. Steve Freeman and Nat Pryce have a nice way of explaining why this is true:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;for a class to be easy to unit-test, the class must…be loosely coupled and highly cohesive —in other words, well-designed.&lt;/p&gt;
-
-&lt;p&gt;Steve Freeman and Nat Pryce, Growing Object Oriented Software Guided by Tests&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I think its uncontroversial that loose coupling and high cohesion are properties that make it easier to change code.&lt;/p&gt;
-
-&lt;p&gt;Second, writing tests (unit or otherwise) allow us to make changes without having to worry that we&amp;rsquo;ve broken something. Mark Zuckerberg painted a really powerful picture of this in his recent &amp;ldquo;How to build the Future Interview:&amp;rdquo;&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;We invest in this huge testing framework…engineers here have the power to try out an idea and ship it to maybe 10,000 people or 100,000 people.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Imagine that. Engineers can build a feature and ship it with confidence.&lt;sup&gt;2&lt;/sup&gt; That&amp;rsquo;s possible because of automated testing.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;If good code is changeable code and if changeable code is tested code, then we should probably write more automated tests for our Android apps. Automated tests aren&amp;rsquo;t a nice to have. They&amp;rsquo;re integral to writing good apps.&lt;/p&gt;
-
-&lt;p&gt;One quick caveat: A lot of folks seem to think that there&amp;rsquo;s less reason to write tests when you&amp;rsquo;re working with a startup because you&amp;rsquo;re trying to move quickly. I can imagine extreme circumstances where that might make sense, but once you get the hang of writing tests and writing testable software, writing tests don&amp;rsquo;t take that long. Because of this, I think that refraining from writing tests as a startup can often be an exercise in short-term thinking. In fact, I &lt;a href=&#34;http://www.philosophicalhacker.com/post/tdd-and-startups/&#34;&gt;think the argument for automated testing in a startup&lt;/a&gt; is even more compelling than it is for developers working on an established product.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;I actually suspect that the business value of writing well-architected, readable code ultimately reduces to the value of being able to change code in response to users needs, but that point isn&amp;rsquo;t essential to the argument I&amp;rsquo;m making.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;The context of this quote actually has more to do with a/b testing that regression testing, but regression testing plays a big role in Facebook&amp;rsquo;s ability to move quickly. Facebook has invested heavily in automated testing by, for example, employing Kent Beck, the guy who popularized TDD.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
     </item>
     
   </channel>

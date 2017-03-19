@@ -9,6 +9,111 @@
     <atom:link href="https://www.philosophicalhacker.com/tags/rxjava/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Why Im Skeptical about Kotlin Coroutines for Android Development</title>
+      <link>https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/</link>
+      <pubDate>Sun, 19 Mar 2017 00:34:58 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/</guid>
+      <description>
+
+&lt;p&gt;A few weeks ago, the folks working on Kotlin announced the 1.1 release. Kotlin&amp;rsquo;s 1.1 release has experiment support for coroutines. Here&amp;rsquo;s the elevator pitch for coroutines from their blog post announcing the release:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Asynchronous programming is taking over the world, and the only thing that is holding us back is that non-blocking code adds considerable complexity to our systems. Kotlin now offers means to tame this complexity by making coroutines first-class citizens in the language through the single primitive: suspending functions. Such a function (or lambda) represents a computation that can be suspended (without blocking any threads) and resumed later.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Coroutines are neat and they may actually be very useful in many cases, but I&amp;rsquo;m not actually sure how useful they&amp;rsquo;ll be in Android development. This post is about why I&amp;rsquo;m skeptical that coroutines really matter for Android development. Here&amp;rsquo;s the short answer: I suspect that RxJava actually gives us a better way of &amp;ldquo;taming asynchronous complexity&amp;rdquo; than coroutines do.&lt;/p&gt;
+
+&lt;h3 id=&#34;observables-give-us-an-apt-model-for-many-problems-in-android-development&#34;&gt;Observables give us an apt model for many problems in Android development&lt;/h3&gt;
+
+&lt;p&gt;In order to see why I&amp;rsquo;m skeptical about coroutines, let&amp;rsquo;s start by noting that streams give us an &lt;em&gt;explicit&lt;/em&gt; way of modeling many problems in Android development. When you really start getting into rxjava, it changes &lt;em&gt;the way you think&lt;/em&gt; about your problems. You start to think with &lt;code&gt;Observable&lt;/code&gt;s and you realize that most of your problems are about how to compose your &lt;code&gt;Observable&lt;/code&gt;s with various operators to get the data you&amp;rsquo;re actually interested in.&lt;/p&gt;
+
+&lt;p&gt;When you&amp;rsquo;ve stumbled upon a good way to model your problems, your life gets easier and you get to be continually amazed at how many problems your model helps you solve. Something like this happened when we started using functional programming to work with collections:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Richard Waters&amp;hellip;developed a program that automatically analyzes traditional Fortran programs, viewing them in terms of maps, filters, and accumulations. He found that fully 90 percent of the code in the Fortran Scientific Subroutine Package fits neatly into this paradigm.&lt;/p&gt;
+
+&lt;p&gt;-Abelson et. al, Structure and Interpretation of Computer Programs&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;What&amp;rsquo;s interesting is that when you find a good way to explicitly model your problems in code, you actually start to think with that model, &lt;em&gt;even if you aren&amp;rsquo;t actively using it in code.&lt;/em&gt; For example, suppose I&amp;rsquo;m looking at the following code:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; ints &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{0,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;2};&lt;/span&gt;
+&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; sum &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0;&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0;&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt; ints&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt; i&lt;span style=&#34;color: #666666&#34;&gt;++)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  ints&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*=&lt;/span&gt; ints&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;];&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; anInt &lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; ints&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  sum &lt;span style=&#34;color: #666666&#34;&gt;+=&lt;/span&gt; anInt&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+System&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;out&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;println&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;sum&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I think about this code by thinking in terms of maps and reduces, even if I&amp;rsquo;m not working with a Java &lt;code&gt;Stream&lt;/code&gt; that has those methods. The same is true about &lt;code&gt;Observable&lt;/code&gt;: its such a good way of modeling the problems that I face that I think in terms of it, even if I&amp;rsquo;m not lucky enough to use RxJava.&lt;/p&gt;
+
+&lt;p&gt;Coroutines, on the other hand, dont give us any model of what we&amp;rsquo;re trying to accomplish with our asynchronous data at all. Rather, coroutines just give us a way to write code that feels &lt;em&gt;imperative,&lt;/em&gt; even if it is asynchronous. Here&amp;rsquo;s an example from the blog post announcing coroutines:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// launches new coroutine in UI context&lt;/span&gt;
+launch(UI) {
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// wait for async overlay to complete&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;val&lt;/span&gt; image = asyncOverlay().await()
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// and then show it in UI&lt;/span&gt;
+    showImage(image)
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;asyncOverlay&lt;/code&gt; does some async work, but we get to avoid writing callbacks. The code just &amp;ldquo;stops&amp;rdquo; while waiting for that async work to complete &lt;em&gt;without blocking the main thread&lt;/em&gt;. Its neat, but, again, there&amp;rsquo;s no modeling of problems that&amp;rsquo;s happening here.&lt;/p&gt;
+
+&lt;h3 id=&#34;observable-is-a-better-abstraction-of-synchronicity&#34;&gt;Observable is a better abstraction of synchronicity&lt;/h3&gt;
+
+&lt;p&gt;RxJava does more than just allow us to model asynchronous events and data. It actually allows us to abstract over synchronicity when we&amp;rsquo;re thinking about streams or collections of data. Ordered synchronous and asynchronous data have the same API. If we want to model sequential data in our code, when we&amp;rsquo;re using RxJava, we don&amp;rsquo;t &lt;em&gt;necessarily&lt;/em&gt; have to care whether that data arrives synchronously or asynchronously. Here&amp;rsquo;s &lt;a href=&#34;http://reactivex.io/intro.html&#34;&gt;the reactivex.io site&amp;rsquo;s&lt;/a&gt; pitch on this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The ReactiveX Observable model allows you to treat streams of asynchronous events with the same sort of simple, composable operations that you use for collections of data items like arrays. It frees you from tangled webs of callbacks, and thereby makes your code more readable and less prone to bugs.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Here&amp;rsquo;s something that I regularly do that demonstrates this delightful abstraction:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;clicksObservable
+  &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;flatMapSingle&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;click &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; githubApi&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;listRepos&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;flatMap&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repos &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;fromIterable&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repos&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;filter&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repo &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; isMine&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repo&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;subscribe&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repo &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt; displayInList&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;repo&lt;span style=&#34;color: #666666&#34;&gt;)})&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I start with a stream of clicks and wind up with a list view that displays only the repos that aren&amp;rsquo;t mine. Along the way, I work with an &lt;code&gt;Iterable&lt;/code&gt; of repos, but I can easily turn that &lt;code&gt;Iterable&lt;/code&gt; into an &lt;code&gt;Observable&lt;/code&gt; and then it doesn&amp;rsquo;t even matter whether the repos are in memory or retrieved asynchronously. The &lt;code&gt;Observable&lt;/code&gt; cascade doesn&amp;rsquo;t get broken and the periods line up beautifully.&lt;/p&gt;
+
+&lt;p&gt;Coroutines, on the other hand, don&amp;rsquo;t let us abstract over synchronous and asynchronous data like this. For synchronous data/operations, we use normal functions. For asynchronous data, we need to use suspecting functions wrapped in blocks that start coroutines.&lt;/p&gt;
+
+&lt;h3 id=&#34;observables-lets-us-work-at-a-higher-level-of-abstraction&#34;&gt;Observables lets us work at a higher level of abstraction&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;Observable&lt;/code&gt;s do more than just model our problems and abstract over synchronicity. They do this in a way that lets us work at a higher level of abstraction than imperative code. I can write a map an array imperatively like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; ints &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{0,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1,&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;2};&lt;/span&gt;    
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0;&lt;/span&gt; i &lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt; ints&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt; i&lt;span style=&#34;color: #666666&#34;&gt;++)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  ints&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*=&lt;/span&gt; ints&lt;span style=&#34;color: #666666&#34;&gt;[&lt;/span&gt;i&lt;span style=&#34;color: #666666&#34;&gt;];&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Or I can do it declaratively like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;Observable&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;fromArray&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ints&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;map&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;aInt &lt;span style=&#34;color: #666666&#34;&gt;-&amp;gt;&lt;/span&gt; aInt &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt; aInt&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Coroutines, in my opinion, when used to handle problems that are well modeled by &lt;code&gt;Observable&lt;/code&gt;s are merely the for loops of the asynchronous world.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;None of this is meant to suggest that coroutines aren&amp;rsquo;t useful full stop. That&amp;rsquo;s nonsense. They have their uses. I just double that they are going to be nearly as essential to Android development as RxJava.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava</title>
       <link>https://www.philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</link>
       <pubDate>Sat, 23 Jul 2016 15:43:29 -0400</pubDate>

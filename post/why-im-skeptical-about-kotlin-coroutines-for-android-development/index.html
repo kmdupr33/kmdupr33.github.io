@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  	<meta property="og:title" content=" Why Im Skeptical about Kotlin Coroutines for Android Development &middot;  Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/" />
+
+    
+  	<meta property="og:type" content="article" />
+
+    <meta property="og:article:published_time" content="2017-03-19T00:34:58-04:00" />
+
+    
+    <meta property="og:article:tag" content="android" />
+    
+    <meta property="og:article:tag" content="rxjava" />
+    
+    <meta property="og:article:tag" content="kotlin" />
+    
+    <meta property="og:article:tag" content="coroutines" />
+    
+    
+
+  <title>
+     Why Im Skeptical about Kotlin Coroutines for Android Development &middot;  Philosophical Hacker
+  </title>
+
+    <meta name="description" content="Articles on android development" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://www.philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="https://www.philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+
+    
+      
+          <link href="https://www.philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.17" />
+
+    <link rel="canonical" href="https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+</head>
+
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="https://www.philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+<header class="main-header post-head no-cover">
+  <nav class="main-nav clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">Why Im Skeptical about Kotlin Coroutines for Android Development</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2017-03-19T00:34:58-04:00">
+            Mar 19, 2017
+          </time>
+        
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/rxjava/">#rxjava</a></span>
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/kotlin/">#kotlin</a></span>
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/coroutines/">#coroutines</a></span>
+         
+         <strong>&middot; 5 minute read</strong>
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<p>A few weeks ago, the folks working on Kotlin announced the 1.1 release. Kotlin&rsquo;s 1.1 release has experiment support for coroutines. Here&rsquo;s the elevator pitch for coroutines from their blog post announcing the release:</p>
+
+<blockquote>
+<p>Asynchronous programming is taking over the world, and the only thing that is holding us back is that non-blocking code adds considerable complexity to our systems. Kotlin now offers means to tame this complexity by making coroutines first-class citizens in the language through the single primitive: suspending functions. Such a function (or lambda) represents a computation that can be suspended (without blocking any threads) and resumed later.</p>
+</blockquote>
+
+<p>Coroutines are neat and they may actually be very useful in many cases, but I&rsquo;m not actually sure how useful they&rsquo;ll be in Android development. This post is about why I&rsquo;m skeptical that coroutines really matter for Android development. Here&rsquo;s the short answer: I suspect that RxJava actually gives us a better way of &ldquo;taming asynchronous complexity&rdquo; than coroutines do.</p>
+
+<h3 id="observables-give-us-an-apt-model-for-many-problems-in-android-development">Observables give us an apt model for many problems in Android development</h3>
+
+<p>In order to see why I&rsquo;m skeptical about coroutines, let&rsquo;s start by noting that streams give us an <em>explicit</em> way of modeling many problems in Android development. When you really start getting into rxjava, it changes <em>the way you think</em> about your problems. You start to think with <code>Observable</code>s and you realize that most of your problems are about how to compose your <code>Observable</code>s with various operators to get the data you&rsquo;re actually interested in.</p>
+
+<p>When you&rsquo;ve stumbled upon a good way to model your problems, your life gets easier and you get to be continually amazed at how many problems your model helps you solve. Something like this happened when we started using functional programming to work with collections:</p>
+
+<blockquote>
+<p>Richard Waters&hellip;developed a program that automatically analyzes traditional Fortran programs, viewing them in terms of maps, filters, and accumulations. He found that fully 90 percent of the code in the Fortran Scientific Subroutine Package fits neatly into this paradigm.</p>
+
+<p>-Abelson et. al, Structure and Interpretation of Computer Programs</p>
+</blockquote>
+
+<p>What&rsquo;s interesting is that when you find a good way to explicitly model your problems in code, you actually start to think with that model, <em>even if you aren&rsquo;t actively using it in code.</em> For example, suppose I&rsquo;m looking at the following code:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #B00040">int</span><span style="color: #666666">[]</span> ints <span style="color: #666666">=</span> <span style="color: #666666">{0,</span> <span style="color: #666666">1,</span> <span style="color: #666666">2};</span>
+<span style="color: #B00040">int</span> sum <span style="color: #666666">=</span> <span style="color: #666666">0;</span>
+<span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span><span style="color: #B00040">int</span> i <span style="color: #666666">=</span> <span style="color: #666666">0;</span> i <span style="color: #666666">&lt;</span> ints<span style="color: #666666">.</span><span style="color: #7D9029">length</span><span style="color: #666666">;</span> i<span style="color: #666666">++)</span> <span style="color: #666666">{</span>
+  ints<span style="color: #666666">[</span>i<span style="color: #666666">]</span> <span style="color: #666666">*=</span> ints<span style="color: #666666">[</span>i<span style="color: #666666">];</span>
+<span style="color: #666666">}</span>
+<span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span><span style="color: #B00040">int</span> anInt <span style="color: #666666">:</span> ints<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+  sum <span style="color: #666666">+=</span> anInt<span style="color: #666666">;</span>
+<span style="color: #666666">}</span>
+System<span style="color: #666666">.</span><span style="color: #7D9029">out</span><span style="color: #666666">.</span><span style="color: #7D9029">println</span><span style="color: #666666">(</span>sum<span style="color: #666666">);</span>
+</pre></div>
+
+
+<p>I think about this code by thinking in terms of maps and reduces, even if I&rsquo;m not working with a Java <code>Stream</code> that has those methods. The same is true about <code>Observable</code>: its such a good way of modeling the problems that I face that I think in terms of it, even if I&rsquo;m not lucky enough to use RxJava.</p>
+
+<p>Coroutines, on the other hand, dont give us any model of what we&rsquo;re trying to accomplish with our asynchronous data at all. Rather, coroutines just give us a way to write code that feels <em>imperative,</em> even if it is asynchronous. Here&rsquo;s an example from the blog post announcing coroutines:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">// launches new coroutine in UI context</span>
+launch(UI) {
+    <span style="color: #408080; font-style: italic">// wait for async overlay to complete</span>
+    <span style="color: #008000; font-weight: bold">val</span> image = asyncOverlay().await()
+    <span style="color: #408080; font-style: italic">// and then show it in UI</span>
+    showImage(image)
+}
+</pre></div>
+
+
+<p><code>asyncOverlay</code> does some async work, but we get to avoid writing callbacks. The code just &ldquo;stops&rdquo; while waiting for that async work to complete <em>without blocking the main thread</em>. Its neat, but, again, there&rsquo;s no modeling of problems that&rsquo;s happening here.</p>
+
+<h3 id="observable-is-a-better-abstraction-of-synchronicity">Observable is a better abstraction of synchronicity</h3>
+
+<p>RxJava does more than just allow us to model asynchronous events and data. It actually allows us to abstract over synchronicity when we&rsquo;re thinking about streams or collections of data. Ordered synchronous and asynchronous data have the same API. If we want to model sequential data in our code, when we&rsquo;re using RxJava, we don&rsquo;t <em>necessarily</em> have to care whether that data arrives synchronously or asynchronously. Here&rsquo;s <a href="http://reactivex.io/intro.html">the reactivex.io site&rsquo;s</a> pitch on this:</p>
+
+<blockquote>
+<p>The ReactiveX Observable model allows you to treat streams of asynchronous events with the same sort of simple, composable operations that you use for collections of data items like arrays. It frees you from tangled webs of callbacks, and thereby makes your code more readable and less prone to bugs.</p>
+</blockquote>
+
+<p>Here&rsquo;s something that I regularly do that demonstrates this delightful abstraction:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>clicksObservable
+  <span style="color: #666666">.</span><span style="color: #7D9029">flatMapSingle</span><span style="color: #666666">(</span>click <span style="color: #666666">-&gt;</span> githubApi<span style="color: #666666">.</span><span style="color: #7D9029">listRepos</span><span style="color: #666666">())</span>
+  <span style="color: #666666">.</span><span style="color: #7D9029">flatMap</span><span style="color: #666666">(</span>repos <span style="color: #666666">-&gt;</span> Observable<span style="color: #666666">.</span><span style="color: #7D9029">fromIterable</span><span style="color: #666666">(</span>repos<span style="color: #666666">))</span>
+  <span style="color: #666666">.</span><span style="color: #7D9029">filter</span><span style="color: #666666">(</span>repo <span style="color: #666666">-&gt;</span> isMine<span style="color: #666666">(</span>repo<span style="color: #666666">))</span>
+  <span style="color: #666666">.</span><span style="color: #7D9029">subscribe</span><span style="color: #666666">(</span>repo <span style="color: #666666">-&gt;</span> <span style="color: #666666">{</span> displayInList<span style="color: #666666">(</span>repo<span style="color: #666666">)})</span>
+</pre></div>
+
+
+<p>I start with a stream of clicks and wind up with a list view that displays only the repos that aren&rsquo;t mine. Along the way, I work with an <code>Iterable</code> of repos, but I can easily turn that <code>Iterable</code> into an <code>Observable</code> and then it doesn&rsquo;t even matter whether the repos are in memory or retrieved asynchronously. The <code>Observable</code> cascade doesn&rsquo;t get broken and the periods line up beautifully.</p>
+
+<p>Coroutines, on the other hand, don&rsquo;t let us abstract over synchronous and asynchronous data like this. For synchronous data/operations, we use normal functions. For asynchronous data, we need to use suspecting functions wrapped in blocks that start coroutines.</p>
+
+<h3 id="observables-lets-us-work-at-a-higher-level-of-abstraction">Observables lets us work at a higher level of abstraction</h3>
+
+<p><code>Observable</code>s do more than just model our problems and abstract over synchronicity. They do this in a way that lets us work at a higher level of abstraction than imperative code. I can write a map an array imperatively like this:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #B00040">int</span><span style="color: #666666">[]</span> ints <span style="color: #666666">=</span> <span style="color: #666666">{0,</span> <span style="color: #666666">1,</span> <span style="color: #666666">2};</span>    
+<span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span><span style="color: #B00040">int</span> i <span style="color: #666666">=</span> <span style="color: #666666">0;</span> i <span style="color: #666666">&lt;</span> ints<span style="color: #666666">.</span><span style="color: #7D9029">length</span><span style="color: #666666">;</span> i<span style="color: #666666">++)</span> <span style="color: #666666">{</span>
+  ints<span style="color: #666666">[</span>i<span style="color: #666666">]</span> <span style="color: #666666">*=</span> ints<span style="color: #666666">[</span>i<span style="color: #666666">];</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>Or I can do it declaratively like this:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>Observable<span style="color: #666666">.</span><span style="color: #7D9029">fromArray</span><span style="color: #666666">(</span>ints<span style="color: #666666">).</span><span style="color: #7D9029">map</span><span style="color: #666666">(</span>aInt <span style="color: #666666">-&gt;</span> aInt <span style="color: #666666">*</span> aInt<span style="color: #666666">)</span>
+</pre></div>
+
+
+<p>Coroutines, in my opinion, when used to handle problems that are well modeled by <code>Observable</code>s are merely the for loops of the asynchronous world.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>None of this is meant to suggest that coroutines aren&rsquo;t useful full stop. That&rsquo;s nonsense. They have their uses. I just double that they are going to be nearly as essential to Android development as RxJava.</p>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+    
+
+    <section>
+  <h3>We're hiring mid-senior Android developers at <a href="http://www.unikey.com/">Unikey</a>. Email me if you want to work for a Startup in the smart lock space in Orlando</h2>
+  <h4>kmatthew[dot]dupree[at][google'semailservice][dot]com</h3>
+</section>
+
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Why%20Im%20Skeptical%20about%20Kotlin%20Coroutines%20for%20Android%20Development&amp;url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhy-im-skeptical-about-kotlin-coroutines-for-android-development%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhy-im-skeptical-about-kotlin-coroutines-for-android-development%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhy-im-skeptical-about-kotlin-coroutines-for-android-development%2f&amp;description=Why%20Im%20Skeptical%20about%20Kotlin%20Coroutines%20for%20Android%20Development"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fwhy-im-skeptical-about-kotlin-coroutines-for-android-development%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/post\/why-im-skeptical-about-kotlin-coroutines-for-android-development\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+    <div class="rc-scout" style="text-align: center;"></div>
+    <footer class="site-footer clearfix">
+        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+        
+        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+        
+    </footer>
+    </div>
+    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.js"></script>
+    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/index.js"></script>
+    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+    
+</body>
+</html>
+
