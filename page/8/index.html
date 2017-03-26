@@ -19,19 +19,40 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  	<meta property="og:title" content=" Philosophical Hacker" />
+    
+
+
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:image" content="https://www.philosophicalhacker.com/images/cropped-thinker.jpg"/>
+
+
+
+<meta name="twitter:title" content="Philosophical Hacker"/>
+<meta name="twitter:description" content="Articles on android development"/>
+<meta name="twitter:site" content="@philosohacker"/>
+
+
+
+  	<meta property="og:title" content="Philosophical Hacker" />
   	<meta property="og:site_name" content="Philosophical Hacker" />
   	<meta property="og:url" content="https://www.philosophicalhacker.com/" />
+    
+    
+        
+            <meta property="og:image" content="https://www.philosophicalhacker.com/images/cropped-thinker.jpg"/>
+        
+    
 
     
     <meta property="og:type" content="website" />
+    <meta property="og:description" content="Articles on android development" />
     
 
-  <title>
-     Philosophical Hacker
-  </title>
+    <title>Philosophical Hacker</title>
 
+    
     <meta name="description" content="Articles on android development" />
+    
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,6 +64,7 @@
     <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/nav.css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
 
+    
 
     
       
@@ -50,7 +72,7 @@
         <link href="https://www.philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
       
     
-    <meta name="generator" content="Hugo 0.17" />
+    <meta name="generator" content="Hugo 0.19" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/" />
     
@@ -67,6 +89,55 @@
     </script>
   
 
+
+    
+      
+    
+    <script type="application/ld+json">
+    {
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Person",
+        "name": ,
+        
+        "url": ,
+        "sameAs": [
+            
+            
+             
+             
+             
+             
+             
+            
+        ]
+    },
+    "url": https://www.philosophicalhacker.com/,
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": https://www.philosophicalhacker.com/
+    },
+    "description": Articles on android development
+}
+  </script>
+    
+
+
+    
+
+    
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
 
     
 </head>
@@ -101,7 +172,7 @@
 
 
 
-  <header class="main-header tag-head" style="background-image: url(https://www.philosophicalhacker.com/images/cropped-thinker.jpg)">
+  <header class="main-header" style="background-image: url(https://www.philosophicalhacker.com/images/cropped-thinker.jpg)">
   
 
 
@@ -115,22 +186,24 @@
         <div class="main-header-content inner">
             
                 <a class="bloglogo" href="https://www.linkedin.com/in/k-matthew-dupree-44672178" target="_blank">
-                    <span class="icon-linkedin" style="color:white;font-size:2em"></span>
+                    <span class="icon-linkedin"></span>
                 </a>
             &nbsp;
             
             
+                        
             
                 <a class="bloglogo" href="https://twitter.com/philosohacker" target="_blank">
-                    <span class="icon-twitter" style="color:white;font-size:2em"></span>
+                    <span class="icon-twitter"></span>
                 </a>
             &nbsp;
             
             
                 <a class="bloglogo" href="https://www.facebook.com/philosophicalhacker" target="_blank">
-                    <span class="icon-facebook" style="color:white;font-size:2em"></span>
+                    <span class="icon-facebook"></span>
                 </a>
             &nbsp;
+            
             
             
             
@@ -309,11 +382,9 @@
     
         
     
-
+        
     
-        
-            
-        
+
     
 
     
@@ -335,19 +406,60 @@
         
 <article class="post post">
     <header class="post-header">
-        <h2 class="post-title"><a href="/2014/05/27/some-responses-to-your-comments-on-why-paul-graham-is-sort-of-wrong-about-philosophy/">A response to Your Comments on &#34;Why Paul Graham is (sort of) wrong about philosophy&#34;</a></h2>
+        <h2 class="post-title"><a href="/2014/10/03/an-alternative-multiproject-setup-for-android-studio/">An Alternative Multiproject Setup for Android Studio</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>First, I want to thank you guys for reading, criticizing, and commenting on my post. Given that there&rsquo;s so many other excellent things you could have been reading, I&rsquo;m honored that you spent a little time on what I&rsquo;ve written.
-Now, let&rsquo;s respond to some comments:
-Credentials A couple of comments came up about my &ldquo;credentials.&rdquo; Here&rsquo;s some info: I studied philosophy and religion as an undergrad at the University of Central Florida. <a class="read-more" href="/2014/05/27/some-responses-to-your-comments-on-why-paul-graham-is-sort-of-wrong-about-philosophy/">&raquo;</a></p>
+        
+            <p>Google&rsquo;s Gradle Plugin user guide recommends a method for configuring your gradle files to build multiple projects. That method has some shortcomings. In this post, I will briefly explain Google&rsquo;s recommended configuration, note its shortcomings, and recommend a different way to configure your gradle files to support multi-project setups in Android Studio.
+The Google Way 
+This picture illustrates how Google suggests we handle multi-project setups: our main &ldquo;app&rdquo; module is supposed to depend on library modules that reside within the project directory. <a class="read-more" href="/2014/10/03/an-alternative-multiproject-setup-for-android-studio/">&raquo;</a></p>
+        
     </section>
     <footer class="post-meta">
         
         
+            
+            
+        
+
+        
+        
+        on
+            
+                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="https://www.philosophicalhacker.com/tags/android-studio/">#android studio</a>,
+            
+                <a href="https://www.philosophicalhacker.com/tags/multiproject-setups/">#multiproject setups</a>,
+            
+        
+        <time class="post-date" datetime="2014-10-03T03:02:54Z">
+            3 Oct 2014
+        </time>
+    </footer>
+</article>
+
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2014/05/27/some-responses-to-your-comments-on-why-paul-graham-is-sort-of-wrong-about-philosophy/">A response to Your Comments on &#34;Why Paul Graham is (sort of) wrong about philosophy&#34;</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p>First, I want to thank you guys for reading, criticizing, and commenting on my post. Given that there&rsquo;s so many other excellent things you could have been reading, I&rsquo;m honored that you spent a little time on what I&rsquo;ve written.
+Now, let&rsquo;s respond to some comments:
+Credentials A couple of comments came up about my &ldquo;credentials.&rdquo; Here&rsquo;s some info: I studied philosophy and religion as an undergrad at the University of Central Florida. <a class="read-more" href="/2014/05/27/some-responses-to-your-comments-on-why-paul-graham-is-sort-of-wrong-about-philosophy/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
         
         
             
+            
+        
+
+        
         
         on
             
@@ -369,18 +481,22 @@ Credentials A couple of comments came up about my &ldquo;credentials.&rdquo; Her
         <h2 class="post-title"><a href="/2014/05/26/why-paul-graham-is-sort-of-wrong-about-philosophy/">Why Paul Graham is (sort of) Wrong About Philosophy</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>A couple years ago, Paul Graham wrote an essay about philosophy. The essay, on my reading, makes three central claims:
+        
+            <p>A couple years ago, Paul Graham wrote an essay about philosophy. The essay, on my reading, makes three central claims:
  Philosophy has largely been driven by our failure to realize that our words are imprecise.
  This failure is the result of failing to search for useful knowledge.
  We can do philosophy better if we filter out thoughts that don’t meet a usefulness criterion.
   While I agree with a lot of what Graham says about philosophy in his essay, I think Graham is wrong on some of the more important points he makes. <a class="read-more" href="/2014/05/26/why-paul-graham-is-sort-of-wrong-about-philosophy/">&raquo;</a></p>
+        
     </section>
     <footer class="post-meta">
         
         
-        
-        
             
+            
+        
+
+        
         
         on
             
@@ -402,14 +518,18 @@ Credentials A couple of comments came up about my &ldquo;credentials.&rdquo; Her
         <h2 class="post-title"><a href="/2014/05/22/how-to-break-into-a-mobile-dev-career-in-10-months-or-less/">How to Break into a Mobile Dev Career in 10 months or less</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>A little less than a year ago, I decided that the philosophy professor scam was too risky for my wife and I. Instead, I decided to pursue a career in app development (and maybe do a tech startup). About 10 months after that decision, I got two internships at two companies as an Android Developer.¹ Hopefully, one of these internships will turn in to a full-time gig (and I have some reason to think that this will happen). <a class="read-more" href="/2014/05/22/how-to-break-into-a-mobile-dev-career-in-10-months-or-less/">&raquo;</a></p>
+        
+            <p>A little less than a year ago, I decided that the philosophy professor scam was too risky for my wife and I. Instead, I decided to pursue a career in app development (and maybe do a tech startup). About 10 months after that decision, I got two internships at two companies as an Android Developer.¹ Hopefully, one of these internships will turn in to a full-time gig (and I have some reason to think that this will happen). <a class="read-more" href="/2014/05/22/how-to-break-into-a-mobile-dev-career-in-10-months-or-less/">&raquo;</a></p>
+        
     </section>
     <footer class="post-meta">
         
         
-        
-        
             
+            
+        
+
+        
         
         on
             
@@ -433,14 +553,18 @@ Credentials A couple of comments came up about my &ldquo;credentials.&rdquo; Her
         <h2 class="post-title"><a href="/2014/05/21/why-ill-probably-try-to-manipulate-you-2/">Why I&#39;ll Probably Try to Manipulate You</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>I became a hippie when I was a freshman in college. When I say I became a hippie, I don&rsquo;t mean that I wore tie dye t-shirts all the time, smoked a lot of weed, and listened to &ldquo;All you need is love&rdquo; all day. I was a hippie even though I owned zero tie dye t-shirts, wasn&rsquo;t cool enough to get invited to the weed parties, and had never heard that famous Beatles song that more conventional hippies love. <a class="read-more" href="/2014/05/21/why-ill-probably-try-to-manipulate-you-2/">&raquo;</a></p>
+        
+            <p>I became a hippie when I was a freshman in college. When I say I became a hippie, I don&rsquo;t mean that I wore tie dye t-shirts all the time, smoked a lot of weed, and listened to &ldquo;All you need is love&rdquo; all day. I was a hippie even though I owned zero tie dye t-shirts, wasn&rsquo;t cool enough to get invited to the weed parties, and had never heard that famous Beatles song that more conventional hippies love. <a class="read-more" href="/2014/05/21/why-ill-probably-try-to-manipulate-you-2/">&raquo;</a></p>
+        
     </section>
     <footer class="post-meta">
         
         
-        
-        
             
+            
+        
+
+        
         
         on
             
@@ -468,14 +592,18 @@ Credentials A couple of comments came up about my &ldquo;credentials.&rdquo; Her
         <h2 class="post-title"><a href="/2014/04/24/should-the-idea-person-get-extra-equity/">Should the Idea Person get Extra Equity?</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>As I mentioned in my last post, I have some ideas for a startup, and I&rsquo;m excited to start working on them.¹ Unfortunately, doing a startup raises a lot of questions that I, as a former wannabe philosophy professor, haven&rsquo;t really considered. Since its probably not a good idea to dive in to a venture that I don&rsquo;t really understand, it seems like I should spend some time wrestling with what we might call &ldquo;startup questions. <a class="read-more" href="/2014/04/24/should-the-idea-person-get-extra-equity/">&raquo;</a></p>
+        
+            <p>As I mentioned in my last post, I have some ideas for a startup, and I&rsquo;m excited to start working on them.¹ Unfortunately, doing a startup raises a lot of questions that I, as a former wannabe philosophy professor, haven&rsquo;t really considered. Since its probably not a good idea to dive in to a venture that I don&rsquo;t really understand, it seems like I should spend some time wrestling with what we might call &ldquo;startup questions. <a class="read-more" href="/2014/04/24/should-the-idea-person-get-extra-equity/">&raquo;</a></p>
+        
     </section>
     <footer class="post-meta">
         
         
-        
-        
             
+            
+        
+
+        
         
         on
             
@@ -505,16 +633,20 @@ Credentials A couple of comments came up about my &ldquo;credentials.&rdquo; Her
         <h2 class="post-title"><a href="/2014/04/22/why-im-glad-my-dream-job-didnt-work-out/">Why I&#39;m Glad my Dream Job Didn&#39;t work out</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>For the past 5 years of my life, I&rsquo;ve dreamed of having a job where I would get paid to think about interesting and important ideas and to try to get young people to be so passionate about those ideas that they would want to fight anyone who disagrees with them.
+        
+            <p>For the past 5 years of my life, I&rsquo;ve dreamed of having a job where I would get paid to think about interesting and important ideas and to try to get young people to be so passionate about those ideas that they would want to fight anyone who disagrees with them.
 For the past 5 years, I hoped I was going to be a philosophy professor
 I say &ldquo;hoped&rdquo; because I&rsquo;ve always realized that philosophy professors have a sweet gig and a scandalous job description. <a class="read-more" href="/2014/04/22/why-im-glad-my-dream-job-didnt-work-out/">&raquo;</a></p>
+        
     </section>
     <footer class="post-meta">
         
         
-        
-        
             
+            
+        
+
+        
         
         on
             
@@ -542,21 +674,23 @@ I say &ldquo;hoped&rdquo; because I&rsquo;ve always realized that philosophy pro
 </nav>
 
 
+
 </main>
 
-    <div class="rc-scout" style="text-align: center;"></div>
-    <footer class="site-footer clearfix">
-        <section class="copyright"><a href="">Philosophical Hacker</a> </section>
-        
-        <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
-        
-    </footer>
-    </div>
-    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.js"></script>
-    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.fitvids.js"></script>
-    <script type="text/javascript" src="https://www.philosophicalhacker.com/js/index.js"></script>
-    <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+<div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
+<footer class="site-footer clearfix">
+    <section class="copyright"><a href="">Philosophical Hacker</a> </section>
     
-</body>
-</html>
+    <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+    
+</footer>
+</div>
+<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.js"></script>
+<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.fitvids.js"></script>
+<script type="text/javascript" src="https://www.philosophicalhacker.com/js/index.js"></script>
 
+<script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+
+</body>
+
+</html>

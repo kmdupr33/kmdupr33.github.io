@@ -1,12 +1,97 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Philosophical Hacker</title>
+    <title>Android on Philosophical Hacker</title>
     <link>https://www.philosophicalhacker.com/tags/android/index.xml</link>
-    <description>Recent content on Philosophical Hacker</description>
+    <description>Recent content in Android on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <atom:link href="https://www.philosophicalhacker.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Why Cryptography?</title>
+      <link>https://www.philosophicalhacker.com/post/why-cryptography-for-android-developers/</link>
+      <pubDate>Sat, 25 Mar 2017 23:59:53 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/why-cryptography-for-android-developers/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;We as engineers somewhere have a level somewhere where everything beneath that is a black box&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;Jake Wharton, Fragmented Episode 7, 1:12:00&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;For a while now, anything security or crypto related on Android has been a black box for me. For example, when I read &lt;a href=&#34;https://developer.android.com/training/articles/keystore.html&#34;&gt;the docs&lt;/a&gt; on Android&amp;rsquo;s &lt;code&gt;KeyStore&lt;/code&gt; class or hear about Android&amp;rsquo;s Fingerprint authentication functionality &lt;a href=&#34;http://fragmentedpodcast.com/episodes/74/&#34;&gt;on Fragmented&lt;/a&gt;, I often feel like I&amp;rsquo;m just barely understanding what&amp;rsquo;s being said. Recently, that&amp;rsquo;s started to change, as I&amp;rsquo;ve started taking &lt;a href=&#34;https://www.coursera.org/learn/crypto/&#34;&gt;a Crypto course on Coursera&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;This post is the first of several attempts to solidify the concepts I learn in that course by telling you about them and about how those concepts relate to Android development.&lt;sup&gt;1&lt;/sup&gt; Hopefully, by the end of all of this, we&amp;rsquo;ll both understand things like the &lt;code&gt;KeyStore&lt;/code&gt; and HTTPS connections on Android a little better. This first post, however, isn&amp;rsquo;t going to be very Android heavy, as I merely want to try to introduce cryptography by motivating why we need a &lt;em&gt;science&lt;/em&gt; of cryptography in the first place. Let&amp;rsquo;s get to it.&lt;/p&gt;
+
+&lt;h3 id=&#34;why-cryptography&#34;&gt;Why Cryptography?&lt;/h3&gt;
+
+&lt;p&gt;So, why do we need cryptography? This isn&amp;rsquo;t the same as asking we need encryption. That&amp;rsquo;s obvious and uninteresting: sometimes we want to communicate with others without other people knowing what we&amp;rsquo;re saying. I don&amp;rsquo;t want people to know my credit card number when I buy something on Amazon, for example.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;m asking why we need cryptography, &lt;em&gt;a disciplined study of codes&lt;/em&gt;? Why do the &lt;code&gt;KeyStore&lt;/code&gt; docs or HTTPS seem so mysterious and complicated? Why can&amp;rsquo;t we just roll our own intuitive, simple mechanism for encrypting information so that it can only be read by our intended recipient?&lt;/p&gt;
+
+&lt;p&gt;Interestingly, people have been trying &lt;em&gt;and failing&lt;/em&gt; to securely encrypt information for 1000s of years. Moreover, many of those attempts were not grounded in any kind of rigorous way of thinking about codes. In other words, they were simple, intuitive methods of encrypting information; they were attempts at encryption without cryptography.&lt;/p&gt;
+
+&lt;p&gt;So that&amp;rsquo;s why we need cryptography: our intuitive, simple methods of encryption provide no &lt;em&gt;guarantee&lt;/em&gt; of security; security is hard.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-bad-cipher&#34;&gt;A Bad Cipher&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look at an example. Suppose we want to encrypt a message using a substitution cipher. A substitution cipher works by substituting letters in a message with other letters to generate an encrypted message. Here&amp;rsquo;s a test of some code that does exactly that:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;encryptsShortText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    Map&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Character&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Character&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; key &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; HashMap&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Character&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Character&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;(26);&lt;/span&gt;
+    key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;j&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;q&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;s&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;h&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;y&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;p&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;t&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;g&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;x&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;l&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;u&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;f&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;d&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;w&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;m&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;n&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;v&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;e&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;e&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;v&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;n&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;m&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;w&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;d&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;f&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;u&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;l&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;x&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;g&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;t&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;p&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;y&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;h&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;s&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;q&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;j&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;i&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;r&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; key&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;put&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;r&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;i&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt; 
+    Cipher cipher &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; SubstitutionCipher&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;key&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String cipherText &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; cipher&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;encrypt&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;hello world&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    assertEquals&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;svool dliow&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; cipherText&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The specific key we used for this substitution cipher just &amp;ldquo;reverses&amp;rdquo; the alphabet, but we could use any of the &lt;code&gt;26!&lt;/code&gt; possible keys for the substitution cipher to encrypt messages. The fact that there are &lt;code&gt;26!&lt;/code&gt; possible ways of encrypting a message using this cipher may make it seem like substitution ciphers are pretty effective.&lt;/p&gt;
+
+&lt;p&gt;However, that&amp;rsquo;s not true at all. In fact, someone can decrypt a message without even searching through the &lt;code&gt;26!&lt;/code&gt; possible keys to find the correct one to decrypt a message. Interestingly, the problem is &lt;em&gt;not&lt;/em&gt; that we need more than &lt;code&gt;26!&lt;/code&gt; possible keys.&lt;/p&gt;
+
+&lt;p&gt;Rather, the problem is that an attacker could exploit the fact that the usage of letters or groups of letters in the english language have predictable frequency. &amp;ldquo;E&amp;rdquo;, for example, occurs roughly 12.7% of the time in english. When the attacker analyzes a text and notices that a particular character is used roughly 12.7% of the time, he&amp;rsquo;ll know that that character is actually an &amp;ldquo;E&amp;rdquo;. The pair &amp;ldquo;th&amp;rdquo;, to take another example, has a well known frequency. She can repeat this process for all letters until she discovers the key.&lt;/p&gt;
+
+&lt;h3 id=&#34;towards-cryptography&#34;&gt;Towards Cryptography&lt;/h3&gt;
+
+&lt;p&gt;So, the intuitive way of thinking about codes is likely to lead to weeping and gnashing of teeth. What we need instead is a &lt;em&gt;precise&lt;/em&gt; way of stating how secure our encryption mechanisms are and a way of &lt;em&gt;proving&lt;/em&gt; that our mechanisms satisfy our desired level of security. Talking with precision and communicating proofs requires special language, so next time, we&amp;rsquo;ll bring on the fancy vocabulary and symbols!&lt;/p&gt;
+
+&lt;p&gt;&amp;ldquo;Hold off on the symbols,&amp;rdquo; some readers might think, &amp;ldquo;You haven&amp;rsquo;t shown that we need rigorous study of codes yet. Why assume the attacker knows anything at all about the message? In real life, an attacker would have a harder time decrypting a message, since they wouldn&amp;rsquo;t know anything about it ahead of time.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;This is wrong-headed for two reasons.&lt;/p&gt;
+
+&lt;p&gt;First, although an attacker may have a slightly more difficult time decrypting a text if they know absolutely nothing about it, they can actually work by trial and error until they arrive at a sensible decryption. With the above example, an attacker can say, &amp;ldquo;I don&amp;rsquo;t know what language this message is in, but I&amp;rsquo;ll run my algorithm on German, French, and English and see what crops up.&lt;/p&gt;
+
+&lt;p&gt;Second, in many situations, attackers will actually know a few things about the messages that are being sent back and forth. This is because computers must communicate according to well-known protocols.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;So we really do need a careful study of encryption. We need cryptography. What that means is that the means by which the messages are encrypted and decrypted must be known and studied by everyone to ensure that they are secure.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;d like to conclude by noting that all of this means that cryptography actually allows us to something pretty remarkable: someone who intercepts an encrypted message and knows both how it was encrypted &amp;ndash; because the guts of ciphers must be studied and known to be secure &amp;ndash; and what parts of the decrypted message are &amp;ndash; because computers must communicate using common protocols &amp;ndash; still can&amp;rsquo;t decrypt the rest of the message.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s really neat, and I hope it intrigues you in the same way that it does me: It&amp;rsquo;s a fact that makes me excited to work on making crypto the kind of thing that I don&amp;rsquo;t treat as a black box.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;This means that you shouldn&amp;rsquo;t take what I&amp;rsquo;m saying about security too seriously. I&amp;rsquo;m merely a student. Don&amp;rsquo;t try to build a secure system based on what I&amp;rsquo;m saying and then get mad it me when you find out its not secure.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Why Im Skeptical about Kotlin Coroutines for Android Development</title>
@@ -1648,187 +1733,6 @@ productFlavors &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 &lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://martinfowler.com/articles/injection.html&#34;&gt;Martin Fowler&amp;rsquo;s article&lt;/a&gt; is the definitive source on DI. He basically coined the phrase.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
-    </item>
-    
-    <item>
-      <title>What makes Android Apps Testable?</title>
-      <link>https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/</link>
-      <pubDate>Sat, 03 Dec 2016 18:16:18 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/</guid>
-      <description>&lt;p&gt;This post is a continuation of my attempt to reproduce &lt;a href=&#34;https://devfestflorida.org/schedule/day1?sessionId=113&#34;&gt;my recent DevFest talk&lt;/a&gt; in written form.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;penrose-steps-dr-jekyll-mr-hyde-and-android-testing&#34;&gt;Penrose Steps, Dr. Jekyll/Mr. Hyde, and Android Testing&lt;/h3&gt;
-
-&lt;p&gt;Let&amp;rsquo;s say you&amp;rsquo;re sold on the importance of testing. (If not, maybe check out &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/&#34;&gt;this article&lt;/a&gt;.) Let&amp;rsquo;s say you actually start using the junit dependency that&amp;rsquo;s been sitting in your build.gradle file and try to write your first test. I suspect that you&amp;rsquo;re going to find yourself in a kind of &amp;ldquo;penrose steps situation.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;The penrose steps, shown above, is an impossible structure. Penrose steps cannot exist in 3d space. What&amp;rsquo;s interesting about the 2d image of penrose steps, however, is that its not immediately obvious that what is being depicted is impossible.&lt;/p&gt;
-
-&lt;p&gt;Something similar can happen when we go to start writing tests for our code. We look at our code and we think, &amp;ldquo;I can totally write tests for this.&amp;rdquo; Upon further inspection, however, we realize. &amp;ldquo;Oh wait. This is actually impossible.&amp;rdquo; This penrose steps experience isn&amp;rsquo;t limited to Android developers:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Something nearly everyone notices when they try to write tests for existing code is just how poorly suited code is to testing.&lt;/p&gt;
-
-&lt;p&gt;&amp;ndash; Michael Feathers, Working Effectively with Legacy Code&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Testing support for Android has gotten a lot better in the past couple of years, but I think that actually attempting to use the testing tools that are now available for Android has helped us realize that our apps aren&amp;rsquo;t actually structured in a way that makes testing easy and in some cases, our architectures simply make it impossible to test our code.&lt;/p&gt;
-
-&lt;p&gt;This mismatch between our good intentions and our poorly structured apps can lead us to a kind of Dr. Jekyll and Mr. Hyde situation.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/dr-jekyll-poster.jpg&#34; alt=&#34;Dr Jekyll Poster&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Dr. Jekyll was a good dude, but he was messing with something he didn&amp;rsquo;t understand and that led him to transform into Mr. Hyde, the guy that does unspeakable things. Similarly, developers who want to test their code have good intentions, but if they don&amp;rsquo;t understand what makes code testable, they can do unspeakably (terrible) things to a codebase.&lt;/p&gt;
-
-&lt;p&gt;Case in point: &lt;a href=&#34;https://github.com/google/iosched/blob/2015/android/src/main/java/com/google/samples/apps/iosched/framework/PresenterFragmentImpl.java#L185&#34;&gt;The google 2015 I/O app&lt;/a&gt; contains a particularly egregious violation of the principle of single responsibility:&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PresenterFragmentImpl&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; Presenter&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; UpdatableView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;UserActionListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-        LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; cursorLoader &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; createLoader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; args&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderStarted&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                               Cursor data&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        processData&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; data&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This code snippet mixes production code and test code. That&amp;rsquo;s pretty unfortunate.&lt;/p&gt;
-
-&lt;h3 id=&#34;what-makes-software-testable&#34;&gt;What Makes Software Testable?&lt;/h3&gt;
-
-&lt;p&gt;To avoid Penrose steps and Dr. Jekyll scenarios while we&amp;rsquo;re trying to write tests for our Android apps, its helpful to have an answer to the question, &amp;ldquo;What makes Software Testable?&amp;rdquo; This picture suggests a metaphor for thinking about the answer to that question, a metaphor that I stole from Michal Feathers:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/seam.png&#34; alt=&#34;a seam in jeans pant leg&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;If we want to change the appearance of this piece of fabric, we have two options: we could just directly apply whatever changes we want to the pieces of fabric that are joined at the seam. Another option, however, is to undo the seam and replace one piece of fabric with another.&lt;/p&gt;
-
-&lt;p&gt;Similarly, when we want to change the behavior of code for testing purposes, we have two options: we can directly apply our changes to the particular source file or we can use what Feather&amp;rsquo;s calls a &amp;ldquo;seam&amp;rdquo; to change the code&amp;rsquo;s behavior. Here&amp;rsquo;s how Feathers defines a seam:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;A seam is a place where you can alter behavior in your program without editing in that place.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Perhaps the easiest way of fleshing out this concept of a seam to see what it feels like to try to write tests for code that has no seams. Say we wanted to write code for a piece of functionality in the Google I/O app:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/settings.png&#34; alt=&#34;settings screen&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;This toggle determines whether the google I/O calendar should be synced to the user&amp;rsquo;s personal calendar. Here&amp;rsquo;s the code for it:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onSharedPreferenceChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SharedPreferences sharedPrefs&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                            String key&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PREF_SYNC_CALENDAR&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;key&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        Intent intent&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;shouldSyncCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getActivity&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Add all calendar entries&lt;/span&gt;
-            intent &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Intent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ACTION_UPDATE_ALL_SESSIONS_CALENDAR&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Remove all calendar entries&lt;/span&gt;
-            intent &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Intent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ACTION_CLEAR_ALL_SESSIONS_CALENDAR&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-        intent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setClass&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getActivity&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; SessionCalendarService&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        getActivity&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;startService&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intent&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Let&amp;rsquo;s start writing our test for it:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onSharedPreferenceChangedRemovesSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Arrange&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Act&lt;/span&gt;
-    mSettingsFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onSharedPreferencesChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mMockSharedPreferences&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                                  PREF_SYNC_CALENDAR&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Assert&lt;/span&gt;
-
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;As the test method name implies, we want to test that &lt;code&gt;onSharedPreferencesChnaged&lt;/code&gt; removes the calendar sessions appropriately.&lt;sup&gt;2&lt;/sup&gt; We need to make sure the the &lt;code&gt;else&lt;/code&gt; branch of the above &lt;code&gt;if-else&lt;/code&gt; statement gets executed. To do that, we need to make sure that &lt;code&gt;SettingsUtils.shouldSyncCalendar(getActivity())&lt;/code&gt; returns false, but we can&amp;rsquo;t just go to the declaration of &lt;code&gt;SettingsUtils.shouldSyncCalendar&lt;/code&gt; and change the code so that it returns false. &lt;em&gt;We need to change behavior of our code without editing it &amp;ldquo;in place.&amp;rdquo;&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the thing: because &lt;code&gt;SettingsUtils.shouldSyncCalendar&lt;/code&gt; is a static method, we can&amp;rsquo;t actually do this. There is no seam for us to exploit here. &lt;em&gt;If you code doesn&amp;rsquo;t have seams, you&amp;rsquo;re going to find it difficult to arrange in your tests.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Notice, moreover, that we can&amp;rsquo;t assert in this test either. How can we assert that an Android &lt;code&gt;Service&lt;/code&gt; has been launched? There&amp;rsquo;s no straightforward way to do this, which is why &lt;a href=&#34;https://developer.android.com/reference/android/support/test/espresso/intent/Intents.html&#34;&gt;the Intent class&lt;/a&gt; exists within espresso. What we need here is to be able to change the behavior of &lt;code&gt;Context.startService&lt;/code&gt; so that it records that a service has been started, but we can&amp;rsquo;t. Obviously, we can&amp;rsquo;t edit the &lt;code&gt;Context.startService&lt;/code&gt; method and we have no control over the &lt;code&gt;Context&lt;/code&gt; returned by &lt;code&gt;getActivity&lt;/code&gt;. We&amp;rsquo;ll see why that would create a seam later, but the important thing to note here is that &lt;em&gt;if you code doesn&amp;rsquo;t have seams, you&amp;rsquo;re going to find it difficult to assert in your tests.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Suppose instead that the settings toggle code looked like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;CalendarUpdatingOnSharedPreferenceChangedListener&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onPreferenceChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;CalendarPreferences calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                             String key&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PREF_SYNC_CALENDAR&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;key&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;shouldSyncCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;                mSessUpdaterLauncher&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;launchAddAllSessionsUpdater&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mSessUpdaterLauncher&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;launchClearAllSessionsUpdate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Notice that we&amp;rsquo;ve replaced a static method call with an instance method call. Notice also that the details of how the &lt;code&gt;SessionCalendarService&lt;/code&gt; is started is hidden behind a call to &lt;code&gt;mSessUpdateerLauncher.launchClearAllSessionsUpdate()&lt;/code&gt;. These two changes let us arrange and assert in our unit test:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onPreferenceChangedClearedCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Arrange&lt;/span&gt;
-    CUOSPCListener listener
-            &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; CUOSPCListener&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mSessionUpdateLauncher&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; CalendarPreferences calendarPreferences
-            &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;CalendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    when&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;shouldSyncCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;thenReturn&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Act&lt;/span&gt;
-    listener&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onPreferenceChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                                 SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PREF_SYNC_CALENDAR&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Assert&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mSessionUpdateLauncher&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;launchClearAllSessionsUpdate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The changes we made to our code gave us seams that we exploited in our unit test. Using mockito&lt;sup&gt;3&lt;/sup&gt;, we changed the behavior of &lt;code&gt;calendarPreferences.shouldSyncCalendar()&lt;/code&gt; so that it returns false without going to the declaration of &lt;code&gt;CalendarPreferences.shouldSyncCalendar&lt;/code&gt; and editing it. We also used mockito to swap out a standard &lt;code&gt;SessionUpdaterLauncher&lt;/code&gt; with an implementation that records that a particular method has been called. This, of course, is what allows us to assert in our test with &lt;code&gt;verify&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The seams we&amp;rsquo;ve just created here are called &amp;ldquo;object seams,&amp;rdquo; and they&amp;rsquo;re something that I&amp;rsquo;ll cover more explicitly in &lt;a href=&#34;https://www.philosophicalhacker.com/post/object-seams-and-mvp-for-testability/&#34;&gt;my next post&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;If you&amp;rsquo;re sold on testing, but you don&amp;rsquo;t understand what makes code testable, you can wind up trying to do the impossible: test untestable code. You may also wind up doing terrible things to your code base to try to add tests. You can avoid these situations by understanding what makes code testable. Testable code has seams, and without those seams, you&amp;rsquo;re going to find it difficult to arrange and/or assert in your tests.&lt;/p&gt;
-
-&lt;h2 id=&#34;notes&#34;&gt;Notes:&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Thankfully, it looks like they may have fixed this in &lt;a href=&#34;https://github.com/google/iosched&#34;&gt;the 2016 version of the Google I/O app&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;This behavior may actually be too trivial to test in real life, but its makes for a simple example.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Of course, using mockito to accomplish this isn&amp;rsquo;t absolutely necessary.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;</description>
     </item>
     
   </channel>
