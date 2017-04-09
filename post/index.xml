@@ -6,8 +6,214 @@
     <description>Recent content in Posts on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Mar 2017 23:59:53 -0400</lastBuildDate>
+    <lastBuildDate>Sun, 09 Apr 2017 15:33:20 -0400</lastBuildDate>
     <atom:link href="https://www.philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Test Driving away Coupling in Activities</title>
+      <link>https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/</link>
+      <pubDate>Sun, 09 Apr 2017 15:33:20 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/</guid>
+      <description>
+
+&lt;p&gt;&lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s, perhaps by &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/&#34;&gt;some strange historical accidents&lt;/a&gt;, have been seen as &lt;em&gt;the optimal&lt;/em&gt; building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&amp;rsquo;s call this idea &amp;ndash; the idea that &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s are the best building blocks for our apps &amp;ndash; &amp;ldquo;android-centric&amp;rdquo; architecture.&lt;/p&gt;
+
+&lt;p&gt;This series of posts is about the connection between the testability of android-centric architecture and the other problems that are now leading Android developers to reject it; it&amp;rsquo;s about how our unit tests are trying to tell us that &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s &amp;ndash; like the cracking bricks in the above image &amp;ndash; don&amp;rsquo;t make the best building blocks for our apps because they tempt us to write code with &lt;em&gt;tight coupling&lt;/em&gt; and &lt;em&gt;low cohesion&lt;/em&gt;.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/&#34;&gt;Last time&lt;/a&gt;, we saw &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s tend to have low cohesion. This time, we&amp;rsquo;ll see how our tests can tell us that code within &lt;code&gt;Activity&lt;/code&gt;s have tight coupling. We&amp;rsquo;ll also see how test driving the functionality leads to a design that has looser coupling, which makes it easier to change the app and also opens up opportunities for removing duplication. As with the the other posts in the series, we&amp;rsquo;ll be discussing all of this using the Google I/O app as an example.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-target-code&#34;&gt;The Target Code&lt;/h3&gt;
+
+&lt;p&gt;The code that we want to test, the &amp;ldquo;target code&amp;rdquo;, does the following: when the user navigates to the map view that shows where all the Google I/O sessions are, it asks for their location. If they reject the permission, we show a toast notifying the user that they&amp;rsquo;ve disabled an app permission. Here&amp;rsquo;s a screenshot of this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/permission-denied-toast.png&#34; alt=&#34;permission denied toast&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the code that accomplishes this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onRequestPermissionsResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; requestCode&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@NonNull&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; permissions&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@NonNull&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; grantResults&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;requestCode &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; REQUEST_LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;[0])&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            grantResults&lt;span style=&#34;color: #666666&#34;&gt;[0]&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_GRANTED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission has been granted.&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mMapFragment &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            mMapFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setMyLocationEnabled&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission was denied. Display error message.&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;makeText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;string&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;map_permission_denied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LENGTH_SHORT&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;show&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onRequestPermissionsResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;requestCode&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; permissions&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            grantResults&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id=&#34;the-test-code&#34;&gt;The Test Code&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s take a stab at testing this. Here&amp;rsquo;s what that would look like:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;showsToastIfPermissionIsRejected&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    MapActivity mapActivity &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; MapActivity&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+
+    mapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onRequestPermissionsResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
+            MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;REQUEST_LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;
+                    PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_DENIED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+
+    assertToastDisplayed&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Hopefully, you&amp;rsquo;re wondering what the implementation of &lt;code&gt;assertToastDisplayed()&lt;/code&gt; looks like. Here&amp;rsquo;s the thing: there isn&amp;rsquo;t a straight forward implementation of that method. In order to implement without refactoring our code, we&amp;rsquo;d need to use a combination of roboelectric and powermock.&lt;/p&gt;
+
+&lt;p&gt;However, since we are trying to listen to our tests and &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-i-dont-use-roboletric/&#34;&gt;change the way we write code, rather than change the way we write tests&lt;/a&gt;, we are going to stop for a moment and think about what this test is trying to tell us:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Our presentation logic that lives inside of &lt;code&gt;MapActivity&lt;/code&gt; is tightly coupled with &lt;code&gt;Toast&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This coupling is what drives us to use roboelectric to give us mocked android behavior and  powermock to mock the static &lt;code&gt;Toast.makeText&lt;/code&gt; method. Instead, let&amp;rsquo;s listen to our test and remove the coupling.&lt;/p&gt;
+
+&lt;p&gt;To guide our refactoring, let&amp;rsquo;s write our test first. This will ensure that our &lt;em&gt;new&lt;/em&gt; classes are loosely coupled. We have to create a new class in this particular case in order to avoid Roboelectric, but ordinarily, we could just refactor already existing classes to reduce coupling.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displaysErrorWhenPermissionRejected&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    OnPermissionResultListener onPermissionResultListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; OnPermissionResultListener&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    onPermissionResultListener&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onPermissionResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
+            MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;REQUEST_LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_DENIED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+
+    verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We&amp;rsquo;ve introduced a &lt;code&gt;OnPermissionResultListener&lt;/code&gt; whose job is just to handle the result of request permission from a user. Here&amp;rsquo;s the code for that:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onPermissionResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; requestCode&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; permissions&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; grantResults&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;requestCode &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;REQUEST_LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;[0])&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            grantResults&lt;span style=&#34;color: #666666&#34;&gt;[0]&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_GRANTED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission has been granted.&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayPermittedView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission was denied. Display error message.&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The calls to &lt;code&gt;MapFragment&lt;/code&gt; and &lt;code&gt;Toast&lt;/code&gt; have been replaced with method calls on the &lt;code&gt;PermittedView&lt;/code&gt;, an object that gets passed in through the constructor. &lt;code&gt;PermittedView&lt;/code&gt; is an interface:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;interface&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PermittedView&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+
+    &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermittedView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And it gets implemented by the &lt;code&gt;MapActivity&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MapActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; BaseActivity
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; SlideableInfoFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Callback&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; MapFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Callbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;        ActivityCompat&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnRequestPermissionsResultCallback&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        OnPermissionResultListener&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PermittedView&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;makeText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;string&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;map_permission_denied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LENGTH_SHORT&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;show&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This may not the &lt;em&gt;best&lt;/em&gt; solution, but it gets us to a point where we can test things. This &lt;em&gt;required&lt;/em&gt; that &lt;code&gt;OnPermissionResultListener&lt;/code&gt; be loosely coupled with its &lt;code&gt;PermittedView&lt;/code&gt;. Loose coupling == definitely an improvement.&lt;/p&gt;
+
+&lt;h3 id=&#34;who-cares&#34;&gt;Who cares?&lt;/h3&gt;
+
+&lt;p&gt;At this point, some readers might be skeptical. &amp;ldquo;Is this definitely an improvement?,&amp;rdquo; they may wonder to themselves. Here are two reasons why this &lt;em&gt;design&lt;/em&gt; is better.&lt;/p&gt;
+
+&lt;p&gt;(Neither reason I give, you&amp;rsquo;ll notice is &amp;ldquo;the design is better because its testable.&amp;rdquo; That would be circular reasoning.)&lt;/p&gt;
+
+&lt;h4 id=&#34;easier-changes&#34;&gt;Easier Changes&lt;/h4&gt;
+
+&lt;p&gt;First, its going to be easier to change this code now that it consists of loosely coupled components, and here&amp;rsquo;s the kicker: the code that we&amp;rsquo;ve just tested from the Google I/O app &lt;em&gt;actually did change&lt;/em&gt;, and with the tests that we have in place, making those changes will be easier. The code I tested was from &lt;a href=&#34;https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/map/MapActivity.java&#34;&gt;an older commit&lt;/a&gt;. Later on, the folks working on the I/O app decided to replace the &lt;code&gt;Toast&lt;/code&gt; with a &lt;code&gt;Snackbar&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/permission-denied-snackbar.png&#34; alt=&#34;snackbar permission rejected&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Its a small change, but because we&amp;rsquo;ve separated &lt;code&gt;OnPermissionResultListener&lt;/code&gt; from &lt;code&gt;PermittedView&lt;/code&gt;, we can make the change on the &lt;code&gt;MapActivity&lt;/code&gt;s implementation of &lt;code&gt;PermittedView&lt;/code&gt; without having to think at all about the &lt;code&gt;OnPermissionResultListener&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s what that change would have looked like, using their little &lt;code&gt;PermissionUtils&lt;/code&gt; class they wrote for displaying &lt;code&gt;SnackBar&lt;/code&gt;s.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    PermissionsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayConditionalPermissionDenialSnackbar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;string&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;map_permission_denied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt;
+            REQUEST_LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Again, notice that we can make this change without thinking about the &lt;code&gt;OnPermissionResultListener&lt;/code&gt; at all. This is actually exactly what Larry Constantine was talking about when he first defined the concept of coupling back in the 70s:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;what we are striving for is loosely coupled systems…in which one can study (or debug, or maintain) any one module without having to know very much about any other modules in the system&lt;/p&gt;
+
+&lt;p&gt;–Edward Yourdon and Larry Constantine, Structured Design&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&#34;reducing-duplication&#34;&gt;Reducing Duplication&lt;/h4&gt;
+
+&lt;p&gt;Here&amp;rsquo;s another interesting reason to why the fact that our tests have forced us to remove coupling is a good thing: coupling often leads to duplication. Here&amp;rsquo;s Kent Beck on this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Dependency is the key problem in software development at all scales…if dependency is the problem, duplication is the symptom.&lt;/p&gt;
+
+&lt;p&gt;-Kent Beck, TDD By Example, pg 7.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If this is true, when we remove coupling, we will often see opportunities to reduce duplication. Indeed, this is precisely what we find in this case. It turns out that there is  another classes whose &lt;code&gt;onRequestPermissionsResult&lt;/code&gt; is nearly identical to the one in &lt;code&gt;MapActivity&lt;/code&gt;: &lt;a href=&#34;https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/welcome/AccountFragment.java#L139&#34;&gt;&lt;code&gt;AccountFragment&lt;/code&gt;&lt;/a&gt;. Our tests drove us to create two classes &lt;code&gt;OnPermissionResultListener&lt;/code&gt; and &lt;code&gt;PermittedView&lt;/code&gt; that &amp;ndash; without much modification &amp;ndash; can be reused in these other classes.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;So, when we have a hard time testing our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s, its often because our tests are trying to tell us that our code is tightly coupled. The test&amp;rsquo;s warning about coupling often come in the form of an inability to make an assertion against the code we&amp;rsquo;re trying to test.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;When we listen to our tests, instead of changing them by using Roboelectric our powermock, we&amp;rsquo;re lead to change in our code in a way that makes it less coupled, which makes it easier to make changes and opens up opportunities to reduce duplication.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;It could also show up as an inability to get your target code into the right state for testing. That&amp;rsquo;s what we saw &lt;a href=&#34;&#34;&gt;in this post&lt;/a&gt;, for example.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Why Cryptography?</title>
@@ -1609,162 +1815,6 @@ joining responsibilities is something that we do naturally. &lt;strong&gt;Findin
 &lt;li&gt;&lt;p&gt;&amp;ldquo;Growing Object Oriented Software Guided by Tests,&amp;rdquo; 319.&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;I actually think following these two pieces of advice leads to a virtuous circle: if you only mock types you own, then you have to define types in the language of your application. This makes your test less coupled to implementation details, as stubbing these types in the arrange step of your unit test will actually just feel like you&amp;rsquo;re declaratively specifying preconditions in the language of your application. Conversely, there&amp;rsquo;s a vicious cycle caused by mocking types you don&amp;rsquo;t own. You&amp;rsquo;re tests are going to be more tied to implementation details and because mocking types we don&amp;rsquo;t own winds up being complicated, its especially painful to change tests when implementation details need to change.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Build Variants and Link Seams</title>
-      <link>https://www.philosophicalhacker.com/post/build-variants-and-link-seams/</link>
-      <pubDate>Sun, 18 Dec 2016 15:39:11 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/build-variants-and-link-seams/</guid>
-      <description>
-
-&lt;p&gt;&lt;em&gt;This post is just another installment in a series of posts that are a written version of &lt;a href=&#34;https://devfestflorida.org/schedule/day1?sessionId=113&#34;&gt;my Florida dev fest talk&lt;/a&gt;. &lt;a href=&#34;https://www.philosophicalhacker.com/post/object-seams-and-mvp-for-testability/&#34;&gt;Last time&lt;/a&gt;, we talked about object seams and how they make our apps more testable. This time, we&amp;rsquo;ll talk about how link seams help you write more testable apps and how build variants are used to create link seams.&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;what-are-link-seams&#34;&gt;What are link seams?&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;“[code] contains calls to code in other files. Linkers…resolve each of the calls so that you can have a complete program at runtime…you can usually exploit [this] to substitute pieces of your program”&lt;/p&gt;
-
-&lt;p&gt;-Michael Feathers&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The above quotation is Feathers&amp;rsquo; definition of a link seam. Recall that a seam is just something that allows us to change the behavior of a particular piece of code without modifying that code in that place.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s try to clarify this concept of a link seam by looking at one way of solving the &amp;ldquo;dr. jekyll/mr. hyde&amp;rdquo; smell I mentioned in &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/&#34;&gt;my first post&lt;/a&gt; in this series. Hopefully, this picture will help jog your memory of that smell:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/dr-jekyll-poster.jpg&#34; alt=&#34;Dr. Jekyll and Mr. Hyde&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the smelly code that used to live in the Google I/O app:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PresenterFragmentImpl&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; Presenter&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; UpdatableView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;UserActionListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-        LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; cursorLoader &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; createLoader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; args&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderStarted&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                               Cursor data&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        processData&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; data&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The two highlighted lines point to a smell: this code mixes testing responsibilities in with production code. Idling resources, in case you didn&amp;rsquo;t know, are used to tell espresso when it can continue executing tests. They&amp;rsquo;re used to avoid having to place &lt;code&gt;sleep&lt;/code&gt; calls all over your tests.&lt;/p&gt;
-
-&lt;p&gt;Now, we &lt;em&gt;could&lt;/em&gt; actually solve this issue by using link seams. As we&amp;rsquo;ll see later, using link seams to solve this problem directly is probably a bad idea, but its a useful example for introducing link seams and showing why they might be useful.&lt;/p&gt;
-
-&lt;p&gt;Before we see how this is possible, let&amp;rsquo;s step back and remember that build variants are a thing. Build variants create special source sets that will get loaded onto the classpath whenever we are building a particular variant apk.&lt;/p&gt;
-
-&lt;p&gt;The typical example of build variants are &amp;ldquo;free&amp;rdquo; and &amp;ldquo;paid&amp;rdquo; versions of your app, but those variants wouldn&amp;rsquo;t solve our problem. Our problem is this:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;The app needs to be in a state we can use for testing that&amp;rsquo;ll have a way of telling espresso to wait for some long-running operation to complete.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;We also want a normal state for the app that we&amp;rsquo;d use for production that doesn&amp;rsquo;t care about espresso at all.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;So, let&amp;rsquo;s say we created build variants for these to two states. Suppose we had a &amp;ldquo;mock&amp;rdquo; build variant that we wanted to use for testing and a &amp;ldquo;prod&amp;rdquo; version that we wanted to use for production. If we had those variants, we&amp;rsquo;d have special source sets and our project structure would look something like this:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/sourcesets-testable-apps-3.png&#34; alt=&#34;debug and mock source sets&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;If we had these different source sets, we could create two different &lt;code&gt;PresenterFragmentImpl.java&lt;/code&gt; files. One would live in the &lt;code&gt;mock&lt;/code&gt; build variant. The other would live in the &lt;code&gt;prod&lt;/code&gt; variant. Common functionality could be abstracted to a superclass that lives in the &lt;code&gt;main&lt;/code&gt; sourceset.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;If we&amp;rsquo;ve got things setup this way, then when the &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; gets instantiated, we&amp;rsquo;ll have different implementations depending on whether we&amp;rsquo;re building a &lt;code&gt;prod&lt;/code&gt; or &lt;code&gt;mock&lt;/code&gt; build variant. In that case, we can change the behavior of our program while also leaving the code that instantiates and uses our &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; alone:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; PresenterFragmentImpl &lt;span style=&#34;color: #0000FF&#34;&gt;addPresenterFragment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; uVResId&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                                  Model model&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                                  QueryEnum&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; queries&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                                            UserActionEnum&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; actions&lt;span style=&#34;color: #666666&#34;&gt;){&lt;/span&gt;
-&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;presenter &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Create, set up and add the presenter.&lt;/span&gt;
-    presenter &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; PresenterFragmentImpl&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; presenter&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;What we&amp;rsquo;ve done perfectly fits the definition of a link seam: we&amp;rsquo;ve manipulated the classpath to link together different files in such a way that we can modify the behavior of the code that instantiates and uses &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; without actually modifying the source files that create and use &lt;code&gt;PresenterFragmentImpl&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;what-should-they-be-used-for&#34;&gt;What should they be used for?&lt;/h3&gt;
-
-&lt;p&gt;Now that we (hopefully) have an idea of what link seams are, we can ask, &amp;ldquo;How &lt;em&gt;should&lt;/em&gt; we use link seams to make our Android apps testable?&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;I think link seams are most appropriately used for espresso tests.&lt;sup&gt;2&lt;/sup&gt; However, there are a lot of &lt;em&gt;disadvantages&lt;/em&gt; with the way I was using link seams above. I don&amp;rsquo;t want to really spend any time on why I think this, but basically it boils down to this: once your object graph / dependency situation starts getting more complicated, your seams can wind up looking very messy.&lt;/p&gt;
-
-&lt;p&gt;In order to understand a better way to exploit link seams, it helps to be familiar with Feathers&amp;rsquo; concept of an &amp;ldquo;enabling point.&amp;rdquo; Feathers defines an enabling point as follows:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Every seam has an enabling point, a place where you can make the decision to use one behavior or another.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The enabling point for object seams is the point where those objects are instantiated, which is why dependency injection creates seams. If you instantiate a dependency within the client object, that client is tightly coupled with a particular implementation of that dependency. You can&amp;rsquo;t change the behavior of that object without changing the source code of the class. Inverting the control of dependency implementation selection, on the other hand, creates an object seam whose enabling point is the point at which the dependency of a particular object is instantiated.&lt;/p&gt;
-
-&lt;p&gt;The enabling point for link seams created by build variants is the point when we make the decision to run &lt;code&gt;assembleMockDebug&lt;/code&gt; or &lt;code&gt;assembleProdDebug&lt;/code&gt;. That&amp;rsquo;s the point at which we choose which behavior the app is going to have.&lt;/p&gt;
-
-&lt;p&gt;Instead of using link seams directly to make our code testable, I think, we&amp;rsquo;re better off using link seams as an &lt;em&gt;enabling point&lt;/em&gt; for object seams. As we said &lt;a href=&#34;https://www.philosophicalhacker.com/post/object-seams-and-mvp-for-testability/&#34;&gt;last time&lt;/a&gt;, object seams are often created via dependency injection. So, what I&amp;rsquo;m suggesting is that we&amp;rsquo;re better off setting up our code so that the different build variants choose how our dependency injection gets setup.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s flesh suggestion out by seeing how it would apply to the above example. Instead of having a &lt;code&gt;PresenterFragmentImpl&lt;/code&gt; for each sourceset, we&amp;rsquo;d have a different factory for each sourceset.&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// prod sourcest&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;FragFactory&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; PresenterFragmentImpl &lt;span style=&#34;color: #0000FF&#34;&gt;make&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; PresenterFragmentImpl&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// mock sourcest&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;FragFactory&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; PresenterFragmentImpl &lt;span style=&#34;color: #0000FF&#34;&gt;make&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; MockPresenterFragmentImpl&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Then, instead of directly instantiating a &lt;code&gt;PresenterFragmentImpl&lt;/code&gt;, we&amp;rsquo;d get one from a factory.&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; PresenterFragmentImpl &lt;span style=&#34;color: #0000FF&#34;&gt;addPresenterFragment&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; uVResId&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                                  Model model&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                                  QueryEnum&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; queries&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                                  UserActionEnum&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; actions&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;presenter &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-      &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Create, set up and add the presenter.&lt;/span&gt;
-      presenter &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mFragFactory&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;make&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...        &lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; presenter&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Getting the instance from a factory actually allows us the ability to change our apps behavior at run time instead of compile time, which can be very useful. &lt;a href=&#34;https://speakerdeck.com/jakewharton/android-apps-with-dagger-devoxx-2013?slide=168&#34;&gt;Square, for example, has a &amp;ldquo;mock mode&amp;rdquo;&lt;/a&gt; in their applications for testing where they can pull out a navigation drawer and tell the app to stub network responses instead of hitting their servers. The app restarts and does exactly that. This allows the stubbing code they wrote to be useful both for automated and manual testing.&lt;/p&gt;
-
-&lt;p&gt;Mock mode is neat, but there&amp;rsquo;s a more important reason for using link seams as an enabling point for object seams: it opens us up to the possibility of using some kind of dependency injection library for managing the different states we want the app to be in for testing purposes. For example, we can set up our dagger modules differently depending on what build variant is being built and clients can consume all of the appropriate dependencies exposed by dagger.&lt;sup&gt;3&lt;/sup&gt; Solutions like this give us a clean way of managing our seams.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;Link seams are ways of changing the behavior of a particular piece of code without editing that code in place by exploiting the way that files are linked together. With android, we do this via build variants. Link seams are useful for espresso tests, but shouldn&amp;rsquo;t be used directly to put the app into a testable state. Instead, link seams should be used as an enabling point for object seams. This enables us to put our apps into a more testable state at run time (e.g., square&amp;rsquo;s mock mode) and it helps us keep our seams clean, especially if we use a DI library.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;If you already have a free and paid build variant, for example, and you&amp;rsquo;re worried about how you would create mock and prod variants of those variants, you should look into &lt;a href=&#34;http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Multi-flavor-variants&#34;&gt;flavor dimensions&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;However, if you&amp;rsquo;re trying to get unit tests around a particularly gnarly class whose dependencies aren&amp;rsquo;t injected, it may be appropriate to use link seams.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Turns out there&amp;rsquo;s actually &lt;a href=&#34;https://google.github.io/dagger/testing.html&#34;&gt;a guide in the dagger 2 docs&lt;/a&gt; that specifically addresses how to do this.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
     </item>

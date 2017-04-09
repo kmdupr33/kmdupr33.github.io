@@ -9,6 +9,212 @@
     <atom:link href="https://www.philosophicalhacker.com/tags/architecture/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Test Driving away Coupling in Activities</title>
+      <link>https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/</link>
+      <pubDate>Sun, 09 Apr 2017 15:33:20 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/</guid>
+      <description>
+
+&lt;p&gt;&lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s, perhaps by &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/&#34;&gt;some strange historical accidents&lt;/a&gt;, have been seen as &lt;em&gt;the optimal&lt;/em&gt; building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&amp;rsquo;s call this idea &amp;ndash; the idea that &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s are the best building blocks for our apps &amp;ndash; &amp;ldquo;android-centric&amp;rdquo; architecture.&lt;/p&gt;
+
+&lt;p&gt;This series of posts is about the connection between the testability of android-centric architecture and the other problems that are now leading Android developers to reject it; it&amp;rsquo;s about how our unit tests are trying to tell us that &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s &amp;ndash; like the cracking bricks in the above image &amp;ndash; don&amp;rsquo;t make the best building blocks for our apps because they tempt us to write code with &lt;em&gt;tight coupling&lt;/em&gt; and &lt;em&gt;low cohesion&lt;/em&gt;.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/&#34;&gt;Last time&lt;/a&gt;, we saw &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s tend to have low cohesion. This time, we&amp;rsquo;ll see how our tests can tell us that code within &lt;code&gt;Activity&lt;/code&gt;s have tight coupling. We&amp;rsquo;ll also see how test driving the functionality leads to a design that has looser coupling, which makes it easier to change the app and also opens up opportunities for removing duplication. As with the the other posts in the series, we&amp;rsquo;ll be discussing all of this using the Google I/O app as an example.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-target-code&#34;&gt;The Target Code&lt;/h3&gt;
+
+&lt;p&gt;The code that we want to test, the &amp;ldquo;target code&amp;rdquo;, does the following: when the user navigates to the map view that shows where all the Google I/O sessions are, it asks for their location. If they reject the permission, we show a toast notifying the user that they&amp;rsquo;ve disabled an app permission. Here&amp;rsquo;s a screenshot of this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/permission-denied-toast.png&#34; alt=&#34;permission denied toast&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the code that accomplishes this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onRequestPermissionsResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; requestCode&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@NonNull&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; permissions&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@NonNull&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; grantResults&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;requestCode &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; REQUEST_LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;[0])&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            grantResults&lt;span style=&#34;color: #666666&#34;&gt;[0]&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_GRANTED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission has been granted.&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mMapFragment &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            mMapFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setMyLocationEnabled&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission was denied. Display error message.&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;makeText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;string&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;map_permission_denied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LENGTH_SHORT&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;show&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onRequestPermissionsResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;requestCode&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; permissions&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            grantResults&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id=&#34;the-test-code&#34;&gt;The Test Code&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s take a stab at testing this. Here&amp;rsquo;s what that would look like:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;showsToastIfPermissionIsRejected&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    MapActivity mapActivity &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; MapActivity&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+
+    mapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onRequestPermissionsResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
+            MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;REQUEST_LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;
+                    PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_DENIED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+
+    assertToastDisplayed&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Hopefully, you&amp;rsquo;re wondering what the implementation of &lt;code&gt;assertToastDisplayed()&lt;/code&gt; looks like. Here&amp;rsquo;s the thing: there isn&amp;rsquo;t a straight forward implementation of that method. In order to implement without refactoring our code, we&amp;rsquo;d need to use a combination of roboelectric and powermock.&lt;/p&gt;
+
+&lt;p&gt;However, since we are trying to listen to our tests and &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-i-dont-use-roboletric/&#34;&gt;change the way we write code, rather than change the way we write tests&lt;/a&gt;, we are going to stop for a moment and think about what this test is trying to tell us:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Our presentation logic that lives inside of &lt;code&gt;MapActivity&lt;/code&gt; is tightly coupled with &lt;code&gt;Toast&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This coupling is what drives us to use roboelectric to give us mocked android behavior and  powermock to mock the static &lt;code&gt;Toast.makeText&lt;/code&gt; method. Instead, let&amp;rsquo;s listen to our test and remove the coupling.&lt;/p&gt;
+
+&lt;p&gt;To guide our refactoring, let&amp;rsquo;s write our test first. This will ensure that our &lt;em&gt;new&lt;/em&gt; classes are loosely coupled. We have to create a new class in this particular case in order to avoid Roboelectric, but ordinarily, we could just refactor already existing classes to reduce coupling.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displaysErrorWhenPermissionRejected&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    OnPermissionResultListener onPermissionResultListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; OnPermissionResultListener&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    onPermissionResultListener&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onPermissionResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
+            MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;REQUEST_LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_DENIED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+
+    verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We&amp;rsquo;ve introduced a &lt;code&gt;OnPermissionResultListener&lt;/code&gt; whose job is just to handle the result of request permission from a user. Here&amp;rsquo;s the code for that:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onPermissionResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; requestCode&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; permissions&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; grantResults&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;requestCode &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;REQUEST_LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;[0])&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            grantResults&lt;span style=&#34;color: #666666&#34;&gt;[0]&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_GRANTED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission has been granted.&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayPermittedView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission was denied. Display error message.&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The calls to &lt;code&gt;MapFragment&lt;/code&gt; and &lt;code&gt;Toast&lt;/code&gt; have been replaced with method calls on the &lt;code&gt;PermittedView&lt;/code&gt;, an object that gets passed in through the constructor. &lt;code&gt;PermittedView&lt;/code&gt; is an interface:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;interface&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PermittedView&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+
+    &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermittedView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And it gets implemented by the &lt;code&gt;MapActivity&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MapActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; BaseActivity
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; SlideableInfoFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Callback&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; MapFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Callbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;        ActivityCompat&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnRequestPermissionsResultCallback&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        OnPermissionResultListener&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PermittedView&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;makeText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;string&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;map_permission_denied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LENGTH_SHORT&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;show&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This may not the &lt;em&gt;best&lt;/em&gt; solution, but it gets us to a point where we can test things. This &lt;em&gt;required&lt;/em&gt; that &lt;code&gt;OnPermissionResultListener&lt;/code&gt; be loosely coupled with its &lt;code&gt;PermittedView&lt;/code&gt;. Loose coupling == definitely an improvement.&lt;/p&gt;
+
+&lt;h3 id=&#34;who-cares&#34;&gt;Who cares?&lt;/h3&gt;
+
+&lt;p&gt;At this point, some readers might be skeptical. &amp;ldquo;Is this definitely an improvement?,&amp;rdquo; they may wonder to themselves. Here are two reasons why this &lt;em&gt;design&lt;/em&gt; is better.&lt;/p&gt;
+
+&lt;p&gt;(Neither reason I give, you&amp;rsquo;ll notice is &amp;ldquo;the design is better because its testable.&amp;rdquo; That would be circular reasoning.)&lt;/p&gt;
+
+&lt;h4 id=&#34;easier-changes&#34;&gt;Easier Changes&lt;/h4&gt;
+
+&lt;p&gt;First, its going to be easier to change this code now that it consists of loosely coupled components, and here&amp;rsquo;s the kicker: the code that we&amp;rsquo;ve just tested from the Google I/O app &lt;em&gt;actually did change&lt;/em&gt;, and with the tests that we have in place, making those changes will be easier. The code I tested was from &lt;a href=&#34;https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/map/MapActivity.java&#34;&gt;an older commit&lt;/a&gt;. Later on, the folks working on the I/O app decided to replace the &lt;code&gt;Toast&lt;/code&gt; with a &lt;code&gt;Snackbar&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/permission-denied-snackbar.png&#34; alt=&#34;snackbar permission rejected&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Its a small change, but because we&amp;rsquo;ve separated &lt;code&gt;OnPermissionResultListener&lt;/code&gt; from &lt;code&gt;PermittedView&lt;/code&gt;, we can make the change on the &lt;code&gt;MapActivity&lt;/code&gt;s implementation of &lt;code&gt;PermittedView&lt;/code&gt; without having to think at all about the &lt;code&gt;OnPermissionResultListener&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s what that change would have looked like, using their little &lt;code&gt;PermissionUtils&lt;/code&gt; class they wrote for displaying &lt;code&gt;SnackBar&lt;/code&gt;s.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    PermissionsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayConditionalPermissionDenialSnackbar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;string&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;map_permission_denied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt;
+            REQUEST_LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Again, notice that we can make this change without thinking about the &lt;code&gt;OnPermissionResultListener&lt;/code&gt; at all. This is actually exactly what Larry Constantine was talking about when he first defined the concept of coupling back in the 70s:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;what we are striving for is loosely coupled systems…in which one can study (or debug, or maintain) any one module without having to know very much about any other modules in the system&lt;/p&gt;
+
+&lt;p&gt;–Edward Yourdon and Larry Constantine, Structured Design&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&#34;reducing-duplication&#34;&gt;Reducing Duplication&lt;/h4&gt;
+
+&lt;p&gt;Here&amp;rsquo;s another interesting reason to why the fact that our tests have forced us to remove coupling is a good thing: coupling often leads to duplication. Here&amp;rsquo;s Kent Beck on this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Dependency is the key problem in software development at all scales…if dependency is the problem, duplication is the symptom.&lt;/p&gt;
+
+&lt;p&gt;-Kent Beck, TDD By Example, pg 7.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If this is true, when we remove coupling, we will often see opportunities to reduce duplication. Indeed, this is precisely what we find in this case. It turns out that there is  another classes whose &lt;code&gt;onRequestPermissionsResult&lt;/code&gt; is nearly identical to the one in &lt;code&gt;MapActivity&lt;/code&gt;: &lt;a href=&#34;https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/welcome/AccountFragment.java#L139&#34;&gt;&lt;code&gt;AccountFragment&lt;/code&gt;&lt;/a&gt;. Our tests drove us to create two classes &lt;code&gt;OnPermissionResultListener&lt;/code&gt; and &lt;code&gt;PermittedView&lt;/code&gt; that &amp;ndash; without much modification &amp;ndash; can be reused in these other classes.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;So, when we have a hard time testing our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s, its often because our tests are trying to tell us that our code is tightly coupled. The test&amp;rsquo;s warning about coupling often come in the form of an inability to make an assertion against the code we&amp;rsquo;re trying to test.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;When we listen to our tests, instead of changing them by using Roboelectric our powermock, we&amp;rsquo;re lead to change in our code in a way that makes it less coupled, which makes it easier to make changes and opens up opportunities to reduce duplication.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;It could also show up as an inability to get your target code into the right state for testing. That&amp;rsquo;s what we saw &lt;a href=&#34;&#34;&gt;in this post&lt;/a&gt;, for example.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>What Unit Tests are Trying to Tell us About Activities Pt 2</title>
       <link>https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/</link>
       <pubDate>Fri, 10 Mar 2017 22:32:02 -0500</pubDate>

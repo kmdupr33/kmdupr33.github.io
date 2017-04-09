@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    
+
+
+    
+        
+        <meta name="twitter:card" content="summary_large_image"/>
+        <meta name="twitter:image" content="https://www.philosophicalhacker.com/images/broken-brick.jpg"/>
+    
+
+
+
+<meta name="twitter:title" content="Test Driving away Coupling in Activities"/>
+<meta name="twitter:description" content=""/>
+<meta name="twitter:site" content="@philosohacker"/>
+
+
+
+  	<meta property="og:title" content="Test Driving away Coupling in Activities &middot; Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/" />
+    
+    
+       <meta property="og:image" content="https://www.philosophicalhacker.com/images/broken-brick.jpg"/>
+    
+
+    
+    <meta property="og:description" content="" />
+  	<meta property="og:type" content="article" />
+    <meta property="og:image" content="https://www.philosophicalhacker.com/images/broken-brick.jpg" />
+    <meta property="article:published_time" content="2017-04-09T15:33:20-04:00" />
+
+    
+    <meta property="article:tag" content="android" />
+    
+    <meta property="article:tag" content="testing" />
+    
+    <meta property="article:tag" content="architecture" />
+    
+    
+
+    <title>Test Driving away Coupling in Activities &middot; Philosophical Hacker</title>
+
+    
+    <meta name="description" content="" />
+    
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://www.philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="https://www.philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+    
+
+    
+      
+          <link href="https://www.philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.19" />
+
+    <link rel="canonical" href="https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+      
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": 
+    },
+    "author": {
+        "@type": "Person",
+        "name": ,
+        
+        "url": ,
+        "sameAs": [
+            
+            
+             
+             
+             
+             
+             
+            
+        ]
+    },
+    "headline": Test Driving away Coupling in Activities,
+    "name": Test Driving away Coupling in Activities,
+    "wordCount": 1266,
+    "timeRequired": "PT6M",
+    "inLanguage": {
+      "@type": "Language",
+      "alternateName": en
+    },
+    "url": https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/,
+    "datePublished": 2017-04-09T15:33Z,
+    "dateModified": 2017-04-09T15:33Z,
+    
+    "image": {
+        "@type": "ImageObject",
+        "url": https://www.philosophicalhacker.com/images/broken-brick.jpg,
+        "width": 3000,
+        "height": 1445
+    },
+    
+    "keywords": android, testing, architecture,
+    "description": ,
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/
+    }
+}
+    </script>
+    
+
+
+    
+
+    
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+
+    
+</head>
+
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="https://www.philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+
+
+
+
+  
+  <header class="main-header post-head" style="background-image: url(https://www.philosophicalhacker.com/images/broken-brick.jpg)">
+  
+  <nav class="main-nav overlay clearfix">
+
+
+  
+  
+      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+  
+  </nav>
+</header>
+
+
+
+<main class="content" role="main">
+
+
+
+
+  <article class="post post">
+
+    <header class="post-header">
+        <h1 class="post-title">Test Driving away Coupling in Activities</h1>
+        <small></small>
+
+        <section class="post-meta">
+        
+          <time class="post-date" datetime="2017-04-09T15:33:20-04:00">
+            Apr 9, 2017
+          </time>
+        
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span>
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span>
+         
+          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/architecture/">#architecture</a></span>
+         
+         <strong>&middot; 6 minute read</strong>
+        </section>
+    </header>
+
+    <section class="post-content">
+      
+
+<p><code>Activity</code>s and <code>Fragment</code>s, perhaps by <a href="/post/why-android-testing-is-so-hard-historical-edition/">some strange historical accidents</a>, have been seen as <em>the optimal</em> building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&rsquo;s call this idea &ndash; the idea that <code>Activity</code>s and <code>Fragment</code>s are the best building blocks for our apps &ndash; &ldquo;android-centric&rdquo; architecture.</p>
+
+<p>This series of posts is about the connection between the testability of android-centric architecture and the other problems that are now leading Android developers to reject it; it&rsquo;s about how our unit tests are trying to tell us that <code>Activity</code>s and <code>Fragment</code>s &ndash; like the cracking bricks in the above image &ndash; don&rsquo;t make the best building blocks for our apps because they tempt us to write code with <em>tight coupling</em> and <em>low cohesion</em>.</p>
+
+<hr />
+
+<p><a href="/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/">Last time</a>, we saw <code>Activity</code>s and <code>Fragment</code>s tend to have low cohesion. This time, we&rsquo;ll see how our tests can tell us that code within <code>Activity</code>s have tight coupling. We&rsquo;ll also see how test driving the functionality leads to a design that has looser coupling, which makes it easier to change the app and also opens up opportunities for removing duplication. As with the the other posts in the series, we&rsquo;ll be discussing all of this using the Google I/O app as an example.</p>
+
+<h3 id="the-target-code">The Target Code</h3>
+
+<p>The code that we want to test, the &ldquo;target code&rdquo;, does the following: when the user navigates to the map view that shows where all the Google I/O sessions are, it asks for their location. If they reject the permission, we show a toast notifying the user that they&rsquo;ve disabled an app permission. Here&rsquo;s a screenshot of this:</p>
+
+<p><img src="/images/permission-denied-toast.png" alt="permission denied toast" /></p>
+
+<p>Here&rsquo;s the code that accomplishes this:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
+<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onRequestPermissionsResult</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">final</span> <span style="color: #B00040">int</span> requestCode<span style="color: #666666">,</span>
+        <span style="color: #AA22FF">@NonNull</span> <span style="color: #008000; font-weight: bold">final</span> String<span style="color: #666666">[]</span> permissions<span style="color: #666666">,</span>
+        <span style="color: #AA22FF">@NonNull</span> <span style="color: #008000; font-weight: bold">final</span> <span style="color: #B00040">int</span><span style="color: #666666">[]</span> grantResults<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+
+    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>requestCode <span style="color: #666666">!=</span> REQUEST_LOCATION_PERMISSION<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        <span style="color: #008000; font-weight: bold">return</span><span style="color: #666666">;</span>
+    <span style="color: #666666">}</span>
+
+    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>permissions<span style="color: #666666">.</span><span style="color: #7D9029">length</span> <span style="color: #666666">==</span> <span style="color: #666666">1</span> <span style="color: #666666">&amp;&amp;</span>
+            LOCATION_PERMISSION<span style="color: #666666">.</span><span style="color: #7D9029">equals</span><span style="color: #666666">(</span>permissions<span style="color: #666666">[0])</span> <span style="color: #666666">&amp;&amp;</span>
+            grantResults<span style="color: #666666">[0]</span> <span style="color: #666666">==</span> PackageManager<span style="color: #666666">.</span><span style="color: #7D9029">PERMISSION_GRANTED</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        <span style="color: #408080; font-style: italic">// Permission has been granted.</span>
+        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>mMapFragment <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
+            mMapFragment<span style="color: #666666">.</span><span style="color: #7D9029">setMyLocationEnabled</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">true</span><span style="color: #666666">);</span>
+        <span style="color: #666666">}</span>
+    <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
+<span style="background-color: #ffffcc">        <span style="color: #408080; font-style: italic">// Permission was denied. Display error message.</span>
+</span><span style="background-color: #ffffcc">        Toast<span style="color: #666666">.</span><span style="color: #7D9029">makeText</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">,</span> R<span style="color: #666666">.</span><span style="color: #7D9029">string</span><span style="color: #666666">.</span><span style="color: #7D9029">map_permission_denied</span><span style="color: #666666">,</span>
+</span><span style="background-color: #ffffcc">                Toast<span style="color: #666666">.</span><span style="color: #7D9029">LENGTH_SHORT</span><span style="color: #666666">).</span><span style="color: #7D9029">show</span><span style="color: #666666">();</span>
+</span>    <span style="color: #666666">}</span>
+    <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onRequestPermissionsResult</span><span style="color: #666666">(</span>requestCode<span style="color: #666666">,</span> permissions<span style="color: #666666">,</span>
+            grantResults<span style="color: #666666">);</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<h3 id="the-test-code">The Test Code</h3>
+
+<p>Let&rsquo;s take a stab at testing this. Here&rsquo;s what that would look like:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
+<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">showsToastIfPermissionIsRejected</span><span style="color: #666666">()</span>
+        <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
+    MapActivity mapActivity <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> MapActivity<span style="color: #666666">();</span>
+
+    mapActivity<span style="color: #666666">.</span><span style="color: #7D9029">onRequestPermissionsResult</span><span style="color: #666666">(</span>
+            MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">REQUEST_LOCATION_PERMISSION</span><span style="color: #666666">,</span>
+            <span style="color: #008000; font-weight: bold">new</span> String<span style="color: #666666">[]{</span>MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">LOCATION_PERMISSION</span><span style="color: #666666">},</span> <span style="color: #008000; font-weight: bold">new</span> <span style="color: #B00040">int</span><span style="color: #666666">[]{</span>
+                    PackageManager<span style="color: #666666">.</span><span style="color: #7D9029">PERMISSION_DENIED</span><span style="color: #666666">});</span>
+
+    assertToastDisplayed<span style="color: #666666">();</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>Hopefully, you&rsquo;re wondering what the implementation of <code>assertToastDisplayed()</code> looks like. Here&rsquo;s the thing: there isn&rsquo;t a straight forward implementation of that method. In order to implement without refactoring our code, we&rsquo;d need to use a combination of roboelectric and powermock.</p>
+
+<p>However, since we are trying to listen to our tests and <a href="/post/why-i-dont-use-roboletric/">change the way we write code, rather than change the way we write tests</a>, we are going to stop for a moment and think about what this test is trying to tell us:</p>
+
+<blockquote>
+<p>Our presentation logic that lives inside of <code>MapActivity</code> is tightly coupled with <code>Toast</code>.</p>
+</blockquote>
+
+<p>This coupling is what drives us to use roboelectric to give us mocked android behavior and  powermock to mock the static <code>Toast.makeText</code> method. Instead, let&rsquo;s listen to our test and remove the coupling.</p>
+
+<p>To guide our refactoring, let&rsquo;s write our test first. This will ensure that our <em>new</em> classes are loosely coupled. We have to create a new class in this particular case in order to avoid Roboelectric, but ordinarily, we could just refactor already existing classes to reduce coupling.</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
+<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displaysErrorWhenPermissionRejected</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
+
+    OnPermissionResultListener onPermissionResultListener <span style="color: #666666">=</span>
+            <span style="color: #008000; font-weight: bold">new</span> OnPermissionResultListener<span style="color: #666666">(</span>mPermittedView<span style="color: #666666">);</span>
+
+    onPermissionResultListener<span style="color: #666666">.</span><span style="color: #7D9029">onPermissionResult</span><span style="color: #666666">(</span>
+            MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">REQUEST_LOCATION_PERMISSION</span><span style="color: #666666">,</span>
+            <span style="color: #008000; font-weight: bold">new</span> String<span style="color: #666666">[]{</span>MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">LOCATION_PERMISSION</span><span style="color: #666666">},</span>
+            <span style="color: #008000; font-weight: bold">new</span> <span style="color: #B00040">int</span><span style="color: #666666">[]{</span>PackageManager<span style="color: #666666">.</span><span style="color: #7D9029">PERMISSION_DENIED</span><span style="color: #666666">});</span>
+
+    verify<span style="color: #666666">(</span>mPermittedView<span style="color: #666666">).</span><span style="color: #7D9029">displayPermissionDenied</span><span style="color: #666666">();</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>We&rsquo;ve introduced a <code>OnPermissionResultListener</code> whose job is just to handle the result of request permission from a user. Here&rsquo;s the code for that:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #B00040">void</span> <span style="color: #0000FF">onPermissionResult</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">final</span> <span style="color: #B00040">int</span> requestCode<span style="color: #666666">,</span>
+            <span style="color: #008000; font-weight: bold">final</span> String<span style="color: #666666">[]</span> permissions<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">final</span> <span style="color: #B00040">int</span><span style="color: #666666">[]</span> grantResults<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>requestCode <span style="color: #666666">!=</span> MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">REQUEST_LOCATION_PERMISSION</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        <span style="color: #008000; font-weight: bold">return</span><span style="color: #666666">;</span>
+    <span style="color: #666666">}</span>
+
+    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>permissions<span style="color: #666666">.</span><span style="color: #7D9029">length</span> <span style="color: #666666">==</span> <span style="color: #666666">1</span> <span style="color: #666666">&amp;&amp;</span>
+            MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">LOCATION_PERMISSION</span><span style="color: #666666">.</span><span style="color: #7D9029">equals</span><span style="color: #666666">(</span>permissions<span style="color: #666666">[0])</span> <span style="color: #666666">&amp;&amp;</span>
+            grantResults<span style="color: #666666">[0]</span> <span style="color: #666666">==</span> PackageManager<span style="color: #666666">.</span><span style="color: #7D9029">PERMISSION_GRANTED</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
+        <span style="color: #408080; font-style: italic">// Permission has been granted.</span>
+<span style="background-color: #ffffcc">        mPermittedView<span style="color: #666666">.</span><span style="color: #7D9029">displayPermittedView</span><span style="color: #666666">();</span>
+</span>
+    <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
+        <span style="color: #408080; font-style: italic">// Permission was denied. Display error message.</span>
+<span style="background-color: #ffffcc">        mPermittedView<span style="color: #666666">.</span><span style="color: #7D9029">displayPermissionDenied</span><span style="color: #666666">();</span>
+</span>    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>The calls to <code>MapFragment</code> and <code>Toast</code> have been replaced with method calls on the <code>PermittedView</code>, an object that gets passed in through the constructor. <code>PermittedView</code> is an interface:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">interface</span> <span style="color: #0000FF; font-weight: bold">PermittedView</span> <span style="color: #666666">{</span>
+    <span style="color: #B00040">void</span> <span style="color: #0000FF">displayPermissionDenied</span><span style="color: #666666">();</span>
+
+    <span style="color: #B00040">void</span> <span style="color: #0000FF">displayPermittedView</span><span style="color: #666666">();</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>And it gets implemented by the <code>MapActivity</code>:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MapActivity</span> <span style="color: #008000; font-weight: bold">extends</span> BaseActivity
+<span style="background-color: #ffffcc">        <span style="color: #008000; font-weight: bold">implements</span> SlideableInfoFragment<span style="color: #666666">.</span><span style="color: #7D9029">Callback</span><span style="color: #666666">,</span> MapFragment<span style="color: #666666">.</span><span style="color: #7D9029">Callbacks</span><span style="color: #666666">,</span>
+</span>        ActivityCompat<span style="color: #666666">.</span><span style="color: #7D9029">OnRequestPermissionsResultCallback</span><span style="color: #666666">,</span>
+<span style="background-color: #ffffcc">        OnPermissionResultListener<span style="color: #666666">.</span><span style="color: #7D9029">PermittedView</span> <span style="color: #666666">{</span>
+</span>    <span style="color: #AA22FF">@Override</span>
+    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displayPermissionDenied</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+        Toast<span style="color: #666666">.</span><span style="color: #7D9029">makeText</span><span style="color: #666666">(</span>MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">this</span><span style="color: #666666">,</span> R<span style="color: #666666">.</span><span style="color: #7D9029">string</span><span style="color: #666666">.</span><span style="color: #7D9029">map_permission_denied</span><span style="color: #666666">,</span>
+                Toast<span style="color: #666666">.</span><span style="color: #7D9029">LENGTH_SHORT</span><span style="color: #666666">).</span><span style="color: #7D9029">show</span><span style="color: #666666">();</span>
+    <span style="color: #666666">}</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>This may not the <em>best</em> solution, but it gets us to a point where we can test things. This <em>required</em> that <code>OnPermissionResultListener</code> be loosely coupled with its <code>PermittedView</code>. Loose coupling == definitely an improvement.</p>
+
+<h3 id="who-cares">Who cares?</h3>
+
+<p>At this point, some readers might be skeptical. &ldquo;Is this definitely an improvement?,&rdquo; they may wonder to themselves. Here are two reasons why this <em>design</em> is better.</p>
+
+<p>(Neither reason I give, you&rsquo;ll notice is &ldquo;the design is better because its testable.&rdquo; That would be circular reasoning.)</p>
+
+<h4 id="easier-changes">Easier Changes</h4>
+
+<p>First, its going to be easier to change this code now that it consists of loosely coupled components, and here&rsquo;s the kicker: the code that we&rsquo;ve just tested from the Google I/O app <em>actually did change</em>, and with the tests that we have in place, making those changes will be easier. The code I tested was from <a href="https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/map/MapActivity.java">an older commit</a>. Later on, the folks working on the I/O app decided to replace the <code>Toast</code> with a <code>Snackbar</code>:</p>
+
+<p><img src="/images/permission-denied-snackbar.png" alt="snackbar permission rejected" /></p>
+
+<p>Its a small change, but because we&rsquo;ve separated <code>OnPermissionResultListener</code> from <code>PermittedView</code>, we can make the change on the <code>MapActivity</code>s implementation of <code>PermittedView</code> without having to think at all about the <code>OnPermissionResultListener</code>.</p>
+
+<p>Here&rsquo;s what that change would have looked like, using their little <code>PermissionUtils</code> class they wrote for displaying <code>SnackBar</code>s.</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
+<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displayPermissionDenied</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+    PermissionsUtils<span style="color: #666666">.</span><span style="color: #7D9029">displayConditionalPermissionDenialSnackbar</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">,</span>
+            R<span style="color: #666666">.</span><span style="color: #7D9029">string</span><span style="color: #666666">.</span><span style="color: #7D9029">map_permission_denied</span><span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">new</span> String<span style="color: #666666">[]{</span>LOCATION_PERMISSION<span style="color: #666666">},</span>
+            REQUEST_LOCATION_PERMISSION<span style="color: #666666">);</span>
+<span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>Again, notice that we can make this change without thinking about the <code>OnPermissionResultListener</code> at all. This is actually exactly what Larry Constantine was talking about when he first defined the concept of coupling back in the 70s:</p>
+
+<blockquote>
+<p>what we are striving for is loosely coupled systems…in which one can study (or debug, or maintain) any one module without having to know very much about any other modules in the system</p>
+
+<p>–Edward Yourdon and Larry Constantine, Structured Design</p>
+</blockquote>
+
+<h4 id="reducing-duplication">Reducing Duplication</h4>
+
+<p>Here&rsquo;s another interesting reason to why the fact that our tests have forced us to remove coupling is a good thing: coupling often leads to duplication. Here&rsquo;s Kent Beck on this:</p>
+
+<blockquote>
+<p>Dependency is the key problem in software development at all scales…if dependency is the problem, duplication is the symptom.</p>
+
+<p>-Kent Beck, TDD By Example, pg 7.</p>
+</blockquote>
+
+<p>If this is true, when we remove coupling, we will often see opportunities to reduce duplication. Indeed, this is precisely what we find in this case. It turns out that there is  another classes whose <code>onRequestPermissionsResult</code> is nearly identical to the one in <code>MapActivity</code>: <a href="https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/welcome/AccountFragment.java#L139"><code>AccountFragment</code></a>. Our tests drove us to create two classes <code>OnPermissionResultListener</code> and <code>PermittedView</code> that &ndash; without much modification &ndash; can be reused in these other classes.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>So, when we have a hard time testing our <code>Activity</code>s and <code>Fragment</code>s, its often because our tests are trying to tell us that our code is tightly coupled. The test&rsquo;s warning about coupling often come in the form of an inability to make an assertion against the code we&rsquo;re trying to test.<sup>1</sup></p>
+
+<p>When we listen to our tests, instead of changing them by using Roboelectric our powermock, we&rsquo;re lead to change in our code in a way that makes it less coupled, which makes it easier to make changes and opens up opportunities to reduce duplication.</p>
+
+<h3 id="notes">Notes</h3>
+
+<ol>
+<li>It could also show up as an inability to get your target code into the right state for testing. That&rsquo;s what we saw <a href="">in this post</a>, for example.</li>
+</ol>
+
+    </section>
+
+
+  <footer class="post-footer">
+
+
+    
+
+    <section>
+  <h3>We're hiring mid-senior Android developers at <a href="http://www.unikey.com/">Unikey</a>. Email me if you want to work for a Startup in the smart lock space in Orlando</h2>
+  <h4>kmatthew[dot]dupree[at][google'semailservice][dot]com</h3>
+</section>
+
+
+    
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+
+
+    
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Test%20Driving%20away%20Coupling%20in%20Activities&nbsp;-&nbsp;Philosophical%20Hacker&amp;url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2ftest-driving-away-coupling-in-activities%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2ftest-driving-away-coupling-in-activities%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2ftest-driving-away-coupling-in-activities%2f&amp;description=Test%20Driving%20away%20Coupling%20in%20Activities"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2ftest-driving-away-coupling-in-activities%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+
+
+    
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/post\/test-driving-away-coupling-in-activities\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+  </footer>
+</article>
+
+</main>
+
+
+  <aside class="read-next">
+  
+  
+      <a class="read-next-story prev" style="no-cover" href="/post/why-cryptography-for-android-developers/">
+          <section class="post">
+              <h2>Why Cryptography?</h2>
+          </section>
+      </a>
+  
+</aside>
+
+
+
+<div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
+<footer class="site-footer clearfix">
+    <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+    
+    <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+    
+</footer>
+</div>
+<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.js"></script>
+<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.fitvids.js"></script>
+<script type="text/javascript" src="https://www.philosophicalhacker.com/js/index.js"></script>
+
+<script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+
+</body>
+
+</html>

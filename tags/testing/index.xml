@@ -9,6 +9,212 @@
     <atom:link href="https://www.philosophicalhacker.com/tags/testing/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Test Driving away Coupling in Activities</title>
+      <link>https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/</link>
+      <pubDate>Sun, 09 Apr 2017 15:33:20 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/</guid>
+      <description>
+
+&lt;p&gt;&lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s, perhaps by &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/&#34;&gt;some strange historical accidents&lt;/a&gt;, have been seen as &lt;em&gt;the optimal&lt;/em&gt; building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&amp;rsquo;s call this idea &amp;ndash; the idea that &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s are the best building blocks for our apps &amp;ndash; &amp;ldquo;android-centric&amp;rdquo; architecture.&lt;/p&gt;
+
+&lt;p&gt;This series of posts is about the connection between the testability of android-centric architecture and the other problems that are now leading Android developers to reject it; it&amp;rsquo;s about how our unit tests are trying to tell us that &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s &amp;ndash; like the cracking bricks in the above image &amp;ndash; don&amp;rsquo;t make the best building blocks for our apps because they tempt us to write code with &lt;em&gt;tight coupling&lt;/em&gt; and &lt;em&gt;low cohesion&lt;/em&gt;.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/&#34;&gt;Last time&lt;/a&gt;, we saw &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s tend to have low cohesion. This time, we&amp;rsquo;ll see how our tests can tell us that code within &lt;code&gt;Activity&lt;/code&gt;s have tight coupling. We&amp;rsquo;ll also see how test driving the functionality leads to a design that has looser coupling, which makes it easier to change the app and also opens up opportunities for removing duplication. As with the the other posts in the series, we&amp;rsquo;ll be discussing all of this using the Google I/O app as an example.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-target-code&#34;&gt;The Target Code&lt;/h3&gt;
+
+&lt;p&gt;The code that we want to test, the &amp;ldquo;target code&amp;rdquo;, does the following: when the user navigates to the map view that shows where all the Google I/O sessions are, it asks for their location. If they reject the permission, we show a toast notifying the user that they&amp;rsquo;ve disabled an app permission. Here&amp;rsquo;s a screenshot of this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/permission-denied-toast.png&#34; alt=&#34;permission denied toast&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the code that accomplishes this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onRequestPermissionsResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; requestCode&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@NonNull&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; permissions&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+        &lt;span style=&#34;color: #AA22FF&#34;&gt;@NonNull&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; grantResults&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;requestCode &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; REQUEST_LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;[0])&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            grantResults&lt;span style=&#34;color: #666666&#34;&gt;[0]&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_GRANTED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission has been granted.&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mMapFragment &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            mMapFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setMyLocationEnabled&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission was denied. Display error message.&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;makeText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;string&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;map_permission_denied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LENGTH_SHORT&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;show&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onRequestPermissionsResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;requestCode&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; permissions&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            grantResults&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id=&#34;the-test-code&#34;&gt;The Test Code&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s take a stab at testing this. Here&amp;rsquo;s what that would look like:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;showsToastIfPermissionIsRejected&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    MapActivity mapActivity &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; MapActivity&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+
+    mapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onRequestPermissionsResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
+            MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;REQUEST_LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;
+                    PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_DENIED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+
+    assertToastDisplayed&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Hopefully, you&amp;rsquo;re wondering what the implementation of &lt;code&gt;assertToastDisplayed()&lt;/code&gt; looks like. Here&amp;rsquo;s the thing: there isn&amp;rsquo;t a straight forward implementation of that method. In order to implement without refactoring our code, we&amp;rsquo;d need to use a combination of roboelectric and powermock.&lt;/p&gt;
+
+&lt;p&gt;However, since we are trying to listen to our tests and &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-i-dont-use-roboletric/&#34;&gt;change the way we write code, rather than change the way we write tests&lt;/a&gt;, we are going to stop for a moment and think about what this test is trying to tell us:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Our presentation logic that lives inside of &lt;code&gt;MapActivity&lt;/code&gt; is tightly coupled with &lt;code&gt;Toast&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This coupling is what drives us to use roboelectric to give us mocked android behavior and  powermock to mock the static &lt;code&gt;Toast.makeText&lt;/code&gt; method. Instead, let&amp;rsquo;s listen to our test and remove the coupling.&lt;/p&gt;
+
+&lt;p&gt;To guide our refactoring, let&amp;rsquo;s write our test first. This will ensure that our &lt;em&gt;new&lt;/em&gt; classes are loosely coupled. We have to create a new class in this particular case in order to avoid Roboelectric, but ordinarily, we could just refactor already existing classes to reduce coupling.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displaysErrorWhenPermissionRejected&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+    OnPermissionResultListener onPermissionResultListener &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; OnPermissionResultListener&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+
+    onPermissionResultListener&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onPermissionResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
+            MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;REQUEST_LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_DENIED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
+
+    verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We&amp;rsquo;ve introduced a &lt;code&gt;OnPermissionResultListener&lt;/code&gt; whose job is just to handle the result of request permission from a user. Here&amp;rsquo;s the code for that:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onPermissionResult&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; requestCode&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; permissions&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;[]&lt;/span&gt; grantResults&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;requestCode &lt;span style=&#34;color: #666666&#34;&gt;!=&lt;/span&gt; MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;REQUEST_LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;length&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LOCATION_PERMISSION&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;permissions&lt;span style=&#34;color: #666666&#34;&gt;[0])&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;
+            grantResults&lt;span style=&#34;color: #666666&#34;&gt;[0]&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;==&lt;/span&gt; PackageManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PERMISSION_GRANTED&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission has been granted.&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayPermittedView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Permission was denied. Display error message.&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mPermittedView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The calls to &lt;code&gt;MapFragment&lt;/code&gt; and &lt;code&gt;Toast&lt;/code&gt; have been replaced with method calls on the &lt;code&gt;PermittedView&lt;/code&gt;, an object that gets passed in through the constructor. &lt;code&gt;PermittedView&lt;/code&gt; is an interface:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;interface&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PermittedView&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+
+    &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermittedView&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And it gets implemented by the &lt;code&gt;MapActivity&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MapActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; BaseActivity
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; SlideableInfoFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Callback&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; MapFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Callbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;        ActivityCompat&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;OnRequestPermissionsResultCallback&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        OnPermissionResultListener&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PermittedView&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;makeText&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;MapActivity&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;string&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;map_permission_denied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+                Toast&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LENGTH_SHORT&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;show&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This may not the &lt;em&gt;best&lt;/em&gt; solution, but it gets us to a point where we can test things. This &lt;em&gt;required&lt;/em&gt; that &lt;code&gt;OnPermissionResultListener&lt;/code&gt; be loosely coupled with its &lt;code&gt;PermittedView&lt;/code&gt;. Loose coupling == definitely an improvement.&lt;/p&gt;
+
+&lt;h3 id=&#34;who-cares&#34;&gt;Who cares?&lt;/h3&gt;
+
+&lt;p&gt;At this point, some readers might be skeptical. &amp;ldquo;Is this definitely an improvement?,&amp;rdquo; they may wonder to themselves. Here are two reasons why this &lt;em&gt;design&lt;/em&gt; is better.&lt;/p&gt;
+
+&lt;p&gt;(Neither reason I give, you&amp;rsquo;ll notice is &amp;ldquo;the design is better because its testable.&amp;rdquo; That would be circular reasoning.)&lt;/p&gt;
+
+&lt;h4 id=&#34;easier-changes&#34;&gt;Easier Changes&lt;/h4&gt;
+
+&lt;p&gt;First, its going to be easier to change this code now that it consists of loosely coupled components, and here&amp;rsquo;s the kicker: the code that we&amp;rsquo;ve just tested from the Google I/O app &lt;em&gt;actually did change&lt;/em&gt;, and with the tests that we have in place, making those changes will be easier. The code I tested was from &lt;a href=&#34;https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/map/MapActivity.java&#34;&gt;an older commit&lt;/a&gt;. Later on, the folks working on the I/O app decided to replace the &lt;code&gt;Toast&lt;/code&gt; with a &lt;code&gt;Snackbar&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/permission-denied-snackbar.png&#34; alt=&#34;snackbar permission rejected&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Its a small change, but because we&amp;rsquo;ve separated &lt;code&gt;OnPermissionResultListener&lt;/code&gt; from &lt;code&gt;PermittedView&lt;/code&gt;, we can make the change on the &lt;code&gt;MapActivity&lt;/code&gt;s implementation of &lt;code&gt;PermittedView&lt;/code&gt; without having to think at all about the &lt;code&gt;OnPermissionResultListener&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s what that change would have looked like, using their little &lt;code&gt;PermissionUtils&lt;/code&gt; class they wrote for displaying &lt;code&gt;SnackBar&lt;/code&gt;s.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;displayPermissionDenied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    PermissionsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;displayConditionalPermissionDenialSnackbar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
+            R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;string&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;map_permission_denied&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; String&lt;span style=&#34;color: #666666&#34;&gt;[]{&lt;/span&gt;LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;},&lt;/span&gt;
+            REQUEST_LOCATION_PERMISSION&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Again, notice that we can make this change without thinking about the &lt;code&gt;OnPermissionResultListener&lt;/code&gt; at all. This is actually exactly what Larry Constantine was talking about when he first defined the concept of coupling back in the 70s:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;what we are striving for is loosely coupled systems…in which one can study (or debug, or maintain) any one module without having to know very much about any other modules in the system&lt;/p&gt;
+
+&lt;p&gt;–Edward Yourdon and Larry Constantine, Structured Design&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&#34;reducing-duplication&#34;&gt;Reducing Duplication&lt;/h4&gt;
+
+&lt;p&gt;Here&amp;rsquo;s another interesting reason to why the fact that our tests have forced us to remove coupling is a good thing: coupling often leads to duplication. Here&amp;rsquo;s Kent Beck on this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Dependency is the key problem in software development at all scales…if dependency is the problem, duplication is the symptom.&lt;/p&gt;
+
+&lt;p&gt;-Kent Beck, TDD By Example, pg 7.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If this is true, when we remove coupling, we will often see opportunities to reduce duplication. Indeed, this is precisely what we find in this case. It turns out that there is  another classes whose &lt;code&gt;onRequestPermissionsResult&lt;/code&gt; is nearly identical to the one in &lt;code&gt;MapActivity&lt;/code&gt;: &lt;a href=&#34;https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/welcome/AccountFragment.java#L139&#34;&gt;&lt;code&gt;AccountFragment&lt;/code&gt;&lt;/a&gt;. Our tests drove us to create two classes &lt;code&gt;OnPermissionResultListener&lt;/code&gt; and &lt;code&gt;PermittedView&lt;/code&gt; that &amp;ndash; without much modification &amp;ndash; can be reused in these other classes.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;So, when we have a hard time testing our &lt;code&gt;Activity&lt;/code&gt;s and &lt;code&gt;Fragment&lt;/code&gt;s, its often because our tests are trying to tell us that our code is tightly coupled. The test&amp;rsquo;s warning about coupling often come in the form of an inability to make an assertion against the code we&amp;rsquo;re trying to test.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;When we listen to our tests, instead of changing them by using Roboelectric our powermock, we&amp;rsquo;re lead to change in our code in a way that makes it less coupled, which makes it easier to make changes and opens up opportunities to reduce duplication.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;It could also show up as an inability to get your target code into the right state for testing. That&amp;rsquo;s what we saw &lt;a href=&#34;&#34;&gt;in this post&lt;/a&gt;, for example.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>What Unit Tests are Trying to Tell us About Activities Pt 2</title>
       <link>https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/</link>
       <pubDate>Fri, 10 Mar 2017 22:32:02 -0500</pubDate>
@@ -1675,187 +1881,6 @@ joining responsibilities is something that we do naturally. &lt;strong&gt;Findin
 &lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://martinfowler.com/articles/injection.html&#34;&gt;Martin Fowler&amp;rsquo;s article&lt;/a&gt; is the definitive source on DI. He basically coined the phrase.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
-    </item>
-    
-    <item>
-      <title>What makes Android Apps Testable?</title>
-      <link>https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/</link>
-      <pubDate>Sat, 03 Dec 2016 18:16:18 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/</guid>
-      <description>&lt;p&gt;This post is a continuation of my attempt to reproduce &lt;a href=&#34;https://devfestflorida.org/schedule/day1?sessionId=113&#34;&gt;my recent DevFest talk&lt;/a&gt; in written form.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;penrose-steps-dr-jekyll-mr-hyde-and-android-testing&#34;&gt;Penrose Steps, Dr. Jekyll/Mr. Hyde, and Android Testing&lt;/h3&gt;
-
-&lt;p&gt;Let&amp;rsquo;s say you&amp;rsquo;re sold on the importance of testing. (If not, maybe check out &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/&#34;&gt;this article&lt;/a&gt;.) Let&amp;rsquo;s say you actually start using the junit dependency that&amp;rsquo;s been sitting in your build.gradle file and try to write your first test. I suspect that you&amp;rsquo;re going to find yourself in a kind of &amp;ldquo;penrose steps situation.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;The penrose steps, shown above, is an impossible structure. Penrose steps cannot exist in 3d space. What&amp;rsquo;s interesting about the 2d image of penrose steps, however, is that its not immediately obvious that what is being depicted is impossible.&lt;/p&gt;
-
-&lt;p&gt;Something similar can happen when we go to start writing tests for our code. We look at our code and we think, &amp;ldquo;I can totally write tests for this.&amp;rdquo; Upon further inspection, however, we realize. &amp;ldquo;Oh wait. This is actually impossible.&amp;rdquo; This penrose steps experience isn&amp;rsquo;t limited to Android developers:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Something nearly everyone notices when they try to write tests for existing code is just how poorly suited code is to testing.&lt;/p&gt;
-
-&lt;p&gt;&amp;ndash; Michael Feathers, Working Effectively with Legacy Code&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Testing support for Android has gotten a lot better in the past couple of years, but I think that actually attempting to use the testing tools that are now available for Android has helped us realize that our apps aren&amp;rsquo;t actually structured in a way that makes testing easy and in some cases, our architectures simply make it impossible to test our code.&lt;/p&gt;
-
-&lt;p&gt;This mismatch between our good intentions and our poorly structured apps can lead us to a kind of Dr. Jekyll and Mr. Hyde situation.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/dr-jekyll-poster.jpg&#34; alt=&#34;Dr Jekyll Poster&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Dr. Jekyll was a good dude, but he was messing with something he didn&amp;rsquo;t understand and that led him to transform into Mr. Hyde, the guy that does unspeakable things. Similarly, developers who want to test their code have good intentions, but if they don&amp;rsquo;t understand what makes code testable, they can do unspeakably (terrible) things to a codebase.&lt;/p&gt;
-
-&lt;p&gt;Case in point: &lt;a href=&#34;https://github.com/google/iosched/blob/2015/android/src/main/java/com/google/samples/apps/iosched/framework/PresenterFragmentImpl.java#L185&#34;&gt;The google 2015 I/O app&lt;/a&gt; contains a particularly egregious violation of the principle of single responsibility:&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;PresenterFragmentImpl&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Fragment
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;implements&lt;/span&gt; Presenter&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; UpdatableView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;UserActionListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-        LoaderManager&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoaderCallbacks&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreateLoader&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Bundle args&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; cursorLoader &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; createLoader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;id&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; args&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderStarted&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; cursorLoader&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-    &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Loader&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Cursor&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                               Cursor data&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        processData&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; data&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mLoaderIdlingResource&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoaderFinished&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;loader&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This code snippet mixes production code and test code. That&amp;rsquo;s pretty unfortunate.&lt;/p&gt;
-
-&lt;h3 id=&#34;what-makes-software-testable&#34;&gt;What Makes Software Testable?&lt;/h3&gt;
-
-&lt;p&gt;To avoid Penrose steps and Dr. Jekyll scenarios while we&amp;rsquo;re trying to write tests for our Android apps, its helpful to have an answer to the question, &amp;ldquo;What makes Software Testable?&amp;rdquo; This picture suggests a metaphor for thinking about the answer to that question, a metaphor that I stole from Michal Feathers:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/seam.png&#34; alt=&#34;a seam in jeans pant leg&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;If we want to change the appearance of this piece of fabric, we have two options: we could just directly apply whatever changes we want to the pieces of fabric that are joined at the seam. Another option, however, is to undo the seam and replace one piece of fabric with another.&lt;/p&gt;
-
-&lt;p&gt;Similarly, when we want to change the behavior of code for testing purposes, we have two options: we can directly apply our changes to the particular source file or we can use what Feather&amp;rsquo;s calls a &amp;ldquo;seam&amp;rdquo; to change the code&amp;rsquo;s behavior. Here&amp;rsquo;s how Feathers defines a seam:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;A seam is a place where you can alter behavior in your program without editing in that place.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Perhaps the easiest way of fleshing out this concept of a seam to see what it feels like to try to write tests for code that has no seams. Say we wanted to write code for a piece of functionality in the Google I/O app:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/settings.png&#34; alt=&#34;settings screen&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;This toggle determines whether the google I/O calendar should be synced to the user&amp;rsquo;s personal calendar. Here&amp;rsquo;s the code for it:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onSharedPreferenceChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SharedPreferences sharedPrefs&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                            String key&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PREF_SYNC_CALENDAR&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;key&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        Intent intent&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;shouldSyncCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getActivity&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Add all calendar entries&lt;/span&gt;
-            intent &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Intent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ACTION_UPDATE_ALL_SESSIONS_CALENDAR&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-            &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Remove all calendar entries&lt;/span&gt;
-            intent &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Intent&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;ACTION_CLEAR_ALL_SESSIONS_CALENDAR&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-
-        intent&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setClass&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getActivity&lt;span style=&#34;color: #666666&#34;&gt;(),&lt;/span&gt; SessionCalendarService&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-        getActivity&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;startService&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;intent&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Let&amp;rsquo;s start writing our test for it:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onSharedPreferenceChangedRemovesSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Arrange&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Act&lt;/span&gt;
-    mSettingsFragment&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onSharedPreferencesChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mMockSharedPreferences&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                                  PREF_SYNC_CALENDAR&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//Assert&lt;/span&gt;
-
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;As the test method name implies, we want to test that &lt;code&gt;onSharedPreferencesChnaged&lt;/code&gt; removes the calendar sessions appropriately.&lt;sup&gt;2&lt;/sup&gt; We need to make sure the the &lt;code&gt;else&lt;/code&gt; branch of the above &lt;code&gt;if-else&lt;/code&gt; statement gets executed. To do that, we need to make sure that &lt;code&gt;SettingsUtils.shouldSyncCalendar(getActivity())&lt;/code&gt; returns false, but we can&amp;rsquo;t just go to the declaration of &lt;code&gt;SettingsUtils.shouldSyncCalendar&lt;/code&gt; and change the code so that it returns false. &lt;em&gt;We need to change behavior of our code without editing it &amp;ldquo;in place.&amp;rdquo;&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the thing: because &lt;code&gt;SettingsUtils.shouldSyncCalendar&lt;/code&gt; is a static method, we can&amp;rsquo;t actually do this. There is no seam for us to exploit here. &lt;em&gt;If you code doesn&amp;rsquo;t have seams, you&amp;rsquo;re going to find it difficult to arrange in your tests.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Notice, moreover, that we can&amp;rsquo;t assert in this test either. How can we assert that an Android &lt;code&gt;Service&lt;/code&gt; has been launched? There&amp;rsquo;s no straightforward way to do this, which is why &lt;a href=&#34;https://developer.android.com/reference/android/support/test/espresso/intent/Intents.html&#34;&gt;the Intent class&lt;/a&gt; exists within espresso. What we need here is to be able to change the behavior of &lt;code&gt;Context.startService&lt;/code&gt; so that it records that a service has been started, but we can&amp;rsquo;t. Obviously, we can&amp;rsquo;t edit the &lt;code&gt;Context.startService&lt;/code&gt; method and we have no control over the &lt;code&gt;Context&lt;/code&gt; returned by &lt;code&gt;getActivity&lt;/code&gt;. We&amp;rsquo;ll see why that would create a seam later, but the important thing to note here is that &lt;em&gt;if you code doesn&amp;rsquo;t have seams, you&amp;rsquo;re going to find it difficult to assert in your tests.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Suppose instead that the settings toggle code looked like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;CalendarUpdatingOnSharedPreferenceChangedListener&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onPreferenceChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;CalendarPreferences calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                             String key&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PREF_SYNC_CALENDAR&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;equals&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;key&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;shouldSyncCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;                mSessUpdaterLauncher&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;launchAddAllSessionsUpdater&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mSessUpdaterLauncher&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;launchClearAllSessionsUpdate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Notice that we&amp;rsquo;ve replaced a static method call with an instance method call. Notice also that the details of how the &lt;code&gt;SessionCalendarService&lt;/code&gt; is started is hidden behind a call to &lt;code&gt;mSessUpdateerLauncher.launchClearAllSessionsUpdate()&lt;/code&gt;. These two changes let us arrange and assert in our unit test:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onPreferenceChangedClearedCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Arrange&lt;/span&gt;
-    CUOSPCListener listener
-            &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; CUOSPCListener&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mSessionUpdateLauncher&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; CalendarPreferences calendarPreferences
-            &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; mock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;CalendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    when&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;shouldSyncCalendar&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;thenReturn&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Act&lt;/span&gt;
-    listener&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onPreferenceChanged&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;calendarPreferences&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt;
-                                 SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;PREF_SYNC_CALENDAR&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Assert&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    verify&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mSessionUpdateLauncher&lt;span style=&#34;color: #666666&#34;&gt;).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;launchClearAllSessionsUpdate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The changes we made to our code gave us seams that we exploited in our unit test. Using mockito&lt;sup&gt;3&lt;/sup&gt;, we changed the behavior of &lt;code&gt;calendarPreferences.shouldSyncCalendar()&lt;/code&gt; so that it returns false without going to the declaration of &lt;code&gt;CalendarPreferences.shouldSyncCalendar&lt;/code&gt; and editing it. We also used mockito to swap out a standard &lt;code&gt;SessionUpdaterLauncher&lt;/code&gt; with an implementation that records that a particular method has been called. This, of course, is what allows us to assert in our test with &lt;code&gt;verify&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The seams we&amp;rsquo;ve just created here are called &amp;ldquo;object seams,&amp;rdquo; and they&amp;rsquo;re something that I&amp;rsquo;ll cover more explicitly in &lt;a href=&#34;https://www.philosophicalhacker.com/post/object-seams-and-mvp-for-testability/&#34;&gt;my next post&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;If you&amp;rsquo;re sold on testing, but you don&amp;rsquo;t understand what makes code testable, you can wind up trying to do the impossible: test untestable code. You may also wind up doing terrible things to your code base to try to add tests. You can avoid these situations by understanding what makes code testable. Testable code has seams, and without those seams, you&amp;rsquo;re going to find it difficult to arrange and/or assert in your tests.&lt;/p&gt;
-
-&lt;h2 id=&#34;notes&#34;&gt;Notes:&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Thankfully, it looks like they may have fixed this in &lt;a href=&#34;https://github.com/google/iosched&#34;&gt;the 2016 version of the Google I/O app&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;This behavior may actually be too trivial to test in real life, but its makes for a simple example.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Of course, using mockito to accomplish this isn&amp;rsquo;t absolutely necessary.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;</description>
     </item>
     
   </channel>
