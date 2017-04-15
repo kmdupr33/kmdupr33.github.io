@@ -9,6 +9,164 @@
     <atom:link href="https://www.philosophicalhacker.com/tags/testing/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Android Testing Calisthenics: Domain Objects</title>
+      <link>https://www.philosophicalhacker.com/post/android-testing-calisthenics-domain-objects/</link>
+      <pubDate>Fri, 14 Apr 2017 23:17:38 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/android-testing-calisthenics-domain-objects/</guid>
+      <description>
+
+&lt;p&gt;Imagine that you&amp;rsquo;ve never run a single mile in your life. You know that exercising is good for your health, so you decide that you&amp;rsquo;re going to take up running. Strangely, however, you also decide that you&amp;rsquo;re going to begin your journey towards physical fitness by running a marathon tomorrow.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s obviously a bad idea.&lt;/p&gt;
+
+&lt;p&gt;Less obviously, deciding to go from no experience with testing to writing tests for an already existing Android app is also a bad idea. Adding test coverage to an already existing Android application is a marathon-level testing project. It&amp;rsquo;d be more sensible to start with something smaller and work your way up.&lt;/p&gt;
+
+&lt;p&gt;This post invites you to embrace this sensible idea. It&amp;rsquo;s a series of exercises designed slowly introduce you to the challenge of testing Android applications. Before we do that though, I want to say a little about why I think Android testing is one of the hardest kinds of testing you can do.&lt;/p&gt;
+
+&lt;h3 id=&#34;android-a-marathon-level-testing-project&#34;&gt;Android: A Marathon-Level Testing Project&lt;/h3&gt;
+
+&lt;p&gt;I&amp;rsquo;ve been reading through Gerard Meszaros&amp;rsquo; &lt;em&gt;xUnit Testing Patterns&lt;/em&gt;. The other day I stumbled upon this passage:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Some kinds of tests are harder to write than others. This difficulty arises partly because the techniques are more involved and partly because they are less well known&amp;hellip;The following common kinds of tests are listed in approximate order of difficulty, from easiest to most difficult.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Simple entity objects&lt;/li&gt;
+&lt;li&gt;Stateless service objects&lt;/li&gt;
+&lt;li&gt;Stateful service objects&lt;/li&gt;
+&lt;li&gt;User Interface, database, and multi-threaded logic&lt;/li&gt;
+&lt;li&gt;Object-oriented legacy software (software built without tests)&lt;/li&gt;
+&lt;li&gt;Non-object-oriented legacy software&lt;sup&gt;1&lt;/sup&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I&amp;rsquo;ve talked &lt;a href=&#34;https://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;a&lt;/a&gt; &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/&#34;&gt;lot&lt;/a&gt; about why Android unit testing is so hard, but this passage struck me. As it read it, it occurred to me that testing Android code is combination of the hardest thing on that list with the 3rd hardest thing on that list. Android apps don&amp;rsquo;t tend to be object oriented and they involve a lot of user interface, database, and multi-threaded code.&lt;/p&gt;
+
+&lt;p&gt;So, those who attempt to add tests to already existing Android apps are really doing something difficult. I&amp;rsquo;m not the only one saying that. Meszaros suggests the same thing (by implication) in the above passage.&lt;/p&gt;
+
+&lt;h3 id=&#34;calisthenics&#34;&gt;Calisthenics&lt;/h3&gt;
+
+&lt;p&gt;Instead of starting with the hardest possible target to test, let&amp;rsquo;s work our way up. This github project has some exercises to get you ready. If you want, you can checkout the project and switch between the challenge and solution branches as you work through them. Throughout the remainder of the post, I&amp;rsquo;ll present a testing challenge and the solution to that challenge. If you really want to ready for testing Android apps, I&amp;rsquo;d suggest you try to work through the challenge and check your solution with the ones that I suggest.&lt;/p&gt;
+
+&lt;h4 id=&#34;domain-object&#34;&gt;Domain Object&lt;/h4&gt;
+
+&lt;p&gt;The easiest thing to test, according to Meszaros, is a simple domain object. We don&amp;rsquo;t typically deal with domain objects in Android development since Android apps tend not to be object oriented, but this is still a helpful starting point for learning testing.&lt;/p&gt;
+
+&lt;p&gt;To come up with our challenge, we can think back to the business rule we discovered while &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt1/&#34;&gt;we were looking at the google I/O conference app a couple weeks back&lt;/a&gt;: A user cannot remove the keynote session from her schedule. Instead of encoding this business rule in the UI, suppose we had an actual domain object that enforced it:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Schedule&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Session session&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isKeynote&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throw&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; UnsupportedOperationException&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+        sessions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This is a simple, not-so-scary piece of code. Because &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-should-we-unit-test/&#34;&gt;the code doesn&amp;rsquo;t scare us&lt;/a&gt;, we might not write a test for it in real life, but we&amp;rsquo;re just getting our feet wet with testing, so let&amp;rsquo;s give it a go. Here&amp;rsquo;s the stubs of the test methods you&amp;rsquo;ll need to fill in:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;ScheduleTest&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;removesNonKeynoteSession&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+
+  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;throwsOnRemoveKeyNote&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In the first method, you want to check that &lt;code&gt;Schedule&lt;/code&gt; actually removes non-keynote sessions. In the second method, you want to check that &lt;code&gt;Schedule&lt;/code&gt; throws an exception if you try to remove a keynote session. Give it a go! When you scroll down, you&amp;rsquo;ll see how I&amp;rsquo;ve filled in these methods.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Here&amp;rsquo;s how I wrote &lt;code&gt;removesNonKeynoteSession&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;removesNonKeynoteSession&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    Schedule schedule &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Schedule&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Session session &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Session&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    assertFalse&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;get&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And here&amp;rsquo;s how I wrote &lt;code&gt;throwsOnRemoveKeynote&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;expected &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; UnsupportedOperationException&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;throwsOnRemoveKeyNote&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    Schedule schedule &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Schedule&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Session session &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Session&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Already we&amp;rsquo;re seeing a pattern in these two tests. This pattern turns out to be core to testing. Each test method consists of three stages: arrange, act, assert. In the arrange stage, we get our domain object into the appropriate state for our test. In the case of &lt;code&gt;throwsOnRemoveKeyNote&lt;/code&gt;, the arrange steps consist of these highlighted lines:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;removesNonKeynoteSession&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    Schedule schedule &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Schedule&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Session session &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Session&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;    schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    assertFalse&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;get&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;().&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;contains&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;));&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Remember: we&amp;rsquo;re trying to test that the &lt;code&gt;Schedule&lt;/code&gt; allow us to remove a non-keynote session. To test that, we need a &lt;code&gt;Schedule&lt;/code&gt; that has a non-keynote &lt;code&gt;Session&lt;/code&gt; added to it, and that&amp;rsquo;s precisely what we&amp;rsquo;re doing in these three lines.&lt;/p&gt;
+
+&lt;p&gt;The second stage in our test is the act stage. This is when we actually exercise the code we&amp;rsquo;re trying to test. In this case, we&amp;rsquo;re testing that &lt;code&gt;schedule.remove&lt;/code&gt; works correctly, so we call that method.&lt;/p&gt;
+
+&lt;p&gt;The last stage is &amp;ldquo;assert,&amp;rdquo; where we&amp;rsquo;re actually making sure that, given the conditions we setup in the arrange stage and given that the target code has actually executed in the act stage, that target code has done what we wanted it to do. In this case, we expect that the &lt;code&gt;Session&lt;/code&gt; removed should no longer show up in the list of sessions on a certain schedule. This is what we&amp;rsquo;re doing by calling &lt;code&gt;assertFalse(schedule.get().contains(session))&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To double check your understanding of the three stages of a test, why not try to identify which lines correspond to which stage in &lt;code&gt;throwsOnRemoveKeyNote&lt;/code&gt;. Again, scroll down when you&amp;rsquo;re ready.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Arrange:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;expected &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; UnsupportedOperationException&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;throwsOnRemoveKeyNote&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    Schedule schedule &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Schedule&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Session session &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Session&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;    schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Act is when we call &lt;code&gt;schedule.remove()&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Assert:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;&lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;expected &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; UnsupportedOperationException&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;throwsOnRemoveKeyNote&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;throws&lt;/span&gt; Exception &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;    Schedule schedule &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Schedule&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; Session session &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Session&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;add&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+    schedule&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;remove&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;session&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;(When we pass &lt;code&gt;UnsupportedOperationException.class&lt;/code&gt; as the value for &lt;code&gt;expected&lt;/code&gt;)&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Hopefully that wasn&amp;rsquo;t too difficult. Hopefully that was a helpful exercise. Next time, we&amp;rsquo;ll make things a bit more difficult. Until then, feedback and questions are welcome!&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Gerard Meszaros, &lt;em&gt;xUnit Test Patterns&lt;/em&gt;, 247-248.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Test Driving away Coupling in Activities</title>
       <link>https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/</link>
       <pubDate>Sun, 09 Apr 2017 15:33:20 -0400</pubDate>
@@ -1780,105 +1938,6 @@ joining responsibilities is something that we do naturally. &lt;strong&gt;Findin
 &lt;li&gt;&lt;p&gt;However, if you&amp;rsquo;re trying to get unit tests around a particularly gnarly class whose dependencies aren&amp;rsquo;t injected, it may be appropriate to use link seams.&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Turns out there&amp;rsquo;s actually &lt;a href=&#34;https://google.github.io/dagger/testing.html&#34;&gt;a guide in the dagger 2 docs&lt;/a&gt; that specifically addresses how to do this.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Object Seams and MVP for Testability</title>
-      <link>https://www.philosophicalhacker.com/post/object-seams-and-mvp-for-testability/</link>
-      <pubDate>Fri, 09 Dec 2016 18:29:54 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/object-seams-and-mvp-for-testability/</guid>
-      <description>
-
-&lt;p&gt;In &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/&#34;&gt;my last post&lt;/a&gt;, a continuation of a written version of the talk I gave at Florida dev fest, I tried to give an answer to the question, &amp;ldquo;What makes apps testable?&amp;rdquo; The answer: seams. Seams make apps testable, and in this post, I want to talk about a particular kind of seam: object seams.&lt;/p&gt;
-
-&lt;p&gt;The key insight behind object seams in this:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;The fundamental thing to recognize is that when we look at a call in an object-oriented program, it does not define which method will actually be executed.&lt;/p&gt;
-
-&lt;p&gt;-Michael Feathers, Working Effectively with Legacy Code&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;When we use this fact to modify the behavior of a particular piece of code without editing the code in that place, then we&amp;rsquo;re using an object seam. The refactoring I showed in my last post was an example of exploiting an object seam, but we&amp;rsquo;re going to look at another example.&lt;/p&gt;
-
-&lt;p&gt;Before we do that, however, I want to point out that dependency injection is one of the key ways&lt;sup&gt;1&lt;/sup&gt; that we create object seams. There still seems to be some confusion about dependency injection, so let me quickly try to clarify: Dependency injection is pattern; its not dagger or any other library.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s a definition of dependency injection:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;The code that needs dependencies is not responsible for getting them&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;If that&amp;rsquo;s true of code that you&amp;rsquo;re writing, you&amp;rsquo;re using dependency injection.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;With this in mind, we&amp;rsquo;re now in a position to see something that I struggled to discover over a year ago when I wrote &lt;a href=&#34;https://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;my series on posts on why android unit testing is hard&lt;/a&gt;: the reason MVP makes our apps more testable is because MVP creates object seams via dependency injection.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s see an example of this. Here&amp;rsquo;s a video of some functionality in the 2015 Google I/O app. Notice that when I first open the app, I&amp;rsquo;m presented with some cards that ask my preferences on a few things. Once I return to the app, however, those cards are no longer present.&lt;/p&gt;
-
-
-&lt;div style=&#34;position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;&#34;&gt;
-  &lt;iframe src=&#34;//www.youtube.com/embed/RtGSl9h-SoE&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%;&#34; allowfullscreen frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
- &lt;/div&gt;
-
-
-&lt;p&gt;Here&amp;rsquo;s the relevant code for this functionality:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;setupCards&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;CollectionView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;Inventory&lt;/span&gt; inventory&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isAttendeeAtVenue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getContext&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(!&lt;/span&gt;ConfMessageCardUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;hasAnsweredConfMessageCardsPrompt&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getContext&lt;span style=&#34;color: #666666&#34;&gt;()))&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;            inventoryGroup
-            &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; InventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;GROUP_ID_MESSAGE_CARDS&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-            MessageData conferenceMessageOptIn &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; MessageCardHelper
-                    &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getConferenceOptInMessageData&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;getContext&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-            inventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addItemWithTag&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;conferenceMessageOptIn&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-            inventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setDisplayCols&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(1);&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            inventory&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addGroup&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;inventoryGroup&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// ...&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Take a look at the first two lines. Right away, we have a red flag: static methods. Every use of a static method is a missed opportunity to create an object seam. If we decide we need to unit test some of the code here, we&amp;rsquo;re going to have trouble arranging in our test code.&lt;/p&gt;
-
-&lt;p&gt;Look at that last line of code. In order to convince yourself that you really understand the concept of a seam, ask yourself, &amp;ldquo;Is there a seam at this line of code?&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;We can change the behavior of this particular line of code without editing the source file, so there is in fact a seam here. We can change the behavior of this line of code by passing in various subclasses of &lt;code&gt;CollectionView.Inventory&lt;/code&gt; to this method.&lt;/p&gt;
-
-&lt;p&gt;Ok, so we&amp;rsquo;ve got a mixed bag in terms of our seams. Let&amp;rsquo;s say we refactor this code to use MVP. Our presenter looks something like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;presentCards&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mIsAttendeeAtVenue&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(!&lt;/span&gt;mMsgSettings&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;hasAnsweredMessagePrompt&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;                mExploreView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addMessageOptInCard&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;
-            &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Stuff&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The view is one of the injected dependencies and we can easily verify that the appropriate method has been called in our tests. This is the main way in which MVP helps us write more testable code: all of the interaction with the UI can now be verified by swapping out the injected View with an implementation that records its interaction with the Presenter. In our case, this implementation is usually generated by mockito.&lt;/p&gt;
-
-&lt;p&gt;One other thing to notice here: we&amp;rsquo;ve replaced static method calls with calls to injected dependencies. This isn&amp;rsquo;t necessarily mandated by MVP, but its something that we need to do if want to make this code unit testable.&lt;/p&gt;
-
-&lt;p&gt;There&amp;rsquo;s another kind of seam that we haven&amp;rsquo;t explored yet: linking seams. Linking seams are created using build variants, and we&amp;rsquo;ll talk about those more in &lt;a href=&#34;https://www.philosophicalhacker.com/post/build-variants-and-link-seams/&#34;&gt;my next post&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;notes&#34;&gt;Notes:&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Another way is by using inheritance. Feathers&amp;rsquo; Extract and Override Method, Push Down Dependencies, and Pull Up Dependencies techniques are three interesting ways of creating object seams using inheritance.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://martinfowler.com/articles/injection.html&#34;&gt;Martin Fowler&amp;rsquo;s article&lt;/a&gt; is the definitive source on DI. He basically coined the phrase.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
     </item>
