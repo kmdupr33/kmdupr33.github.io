@@ -202,55 +202,42 @@
 
 
  <div class="site-wrapper">
-
-
-
-
-  
-  <header class="main-header post-head" style="background-image: url(https://www.philosophicalhacker.com/images/life-ring.jpg)">
-  
-  <nav class="main-nav overlay clearfix">
-
-
-  
-  
-      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
-  
-  </nav>
-</header>
-
-
-
-<main class="content" role="main">
-
-
-
-
-  <article class="post post">
-
-    <header class="post-header">
-        <h1 class="post-title">How to Safely move Logic out of Activities</h1>
-        <small></small>
-
-        <section class="post-meta">
+   
+    <header class="main-header post-head" style="background-image: url(https://www.philosophicalhacker.com/images/life-ring.jpg)">
         
-          <time class="post-date" datetime="2016-06-16T16:58:30-04:00">
+        <nav class="main-nav overlay clearfix">
+              
+                    <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a> 
+                </nav>
+            </header>
+
+
+
+            <main class="content" role="main">
+
+
+
+
+                <article class="post post">
+
+                    <header class="post-header">
+                        <h1 class="post-title">How to Safely move Logic out of Activities</h1>
+                        <small></small>
+
+                        <section class="post-meta">
+                            
+                            <time class="post-date" datetime=" 2016-06-16T16:58:30-04:00 ">
             Jun 16, 2016
-          </time>
-        
-         
-          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span>
-         
-          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span>
-         
-          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/refactoring/">#refactoring</a></span>
-         
-         <strong>&middot; 7 minute read</strong>
-        </section>
-    </header>
+          </time>  
+                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
+                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
+                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/refactoring/">#refactoring</a></span> 
+                            <strong>&middot; 7 minute read</strong>
+                        </section>
+                    </header>
 
-    <section class="post-content">
-      
+                    <section class="post-content">
+                        
 
 <p>In <a href="http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/">my last post</a>, I argued that we should stop putting our app logic in <code>Activity</code>s and <code>Fragment</code>s because it makes both unit testing <em>and</em> functional testing our apps more difficult. In this post, I&rsquo;ll try to suggest a method of safely removing app logic from our <code>Activity</code>s and <code>Fragment</code>s, drawing on a central idea discussed in Michael Feathers&rsquo; <em>Working Effectively with Legacy Code</em>: characterization tests.</p>
 
@@ -412,21 +399,13 @@
 
 <p>Instead, we can identify various responsibilities that are carried out by our <code>Activity</code>s and <code>Fragment</code>s and plan to extract classes to handle those responsibilities. Once we have a clear picture of the class we want to extract from the <code>Activity</code> or <code>Fragment</code>, we can write characterization tests that will serve as a safety net for that single extraction, rather than attempting to write characterization tests for all the non-trivial methods in the <code>Activity</code>/<code>Fragment</code> we are refactoring.</p>
 
-    </section>
+                    </section>
 
 
-  <footer class="post-footer">
+                    <footer class="post-footer">
 
 
-    
-
-    <section>
-  <h3>We're hiring mid-senior Android developers at <a href="http://www.unikey.com/">Unikey</a>. Email me if you want to work for a Startup in the smart lock space in Orlando</h2>
-  <h4>kmatthew[dot]dupree[at][google'semailservice][dot]com</h3>
-</section>
-
-
-    
+                         
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
 <div id="mc_embed_signup">
 <form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
@@ -440,9 +419,7 @@
 </form>
 </div>
 
-
-
-    
+ 
 <section class="share">
   <h4>Share this post</h4>
   <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=How%20to%20Safely%20move%20Logic%20out%20of%20Activities&nbsp;-&nbsp;Philosophical%20Hacker&amp;url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fhow-to-safely-move-logic-out-of-activities%2f"
@@ -463,9 +440,7 @@
   </a>
 </section>
 
-
-
-    
+ 
 
 <div id="disqus_thread"></div>
 <script type="text/javascript">
@@ -482,13 +457,12 @@
 
 
 
-  </footer>
-</article>
+                    </footer>
+                </article>
 
-</main>
+            </main>
 
-
-  <aside class="read-next">
+             <aside class="read-next">
   
       <a class="read-next-story" style="no-cover" href="/post/vice-a-regression-test-generation-library/">
           <section class="post">
@@ -505,10 +479,7 @@
       </a>
   
 </aside>
-
-
-
-<div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
+  <div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
 <footer class="site-footer clearfix">
     <section class="copyright"><a href="">Philosophical Hacker</a> </section>
     

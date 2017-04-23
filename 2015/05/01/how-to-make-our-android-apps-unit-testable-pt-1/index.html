@@ -193,51 +193,40 @@
 
 
  <div class="site-wrapper">
-
-
-
-
-<header class="main-header post-head no-cover">
-  <nav class="main-nav clearfix">
-
-
   
-  
-      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
-  
-  </nav>
-</header>
+            <header class="main-header post-head no-cover">
+                <nav class="main-nav clearfix">
+                      
+                    <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a> 
+                </nav>
+            </header>
 
 
 
-<main class="content" role="main">
+            <main class="content" role="main">
 
 
 
 
-  <article class="post post">
+                <article class="post post">
 
-    <header class="post-header">
-        <h1 class="post-title">How to Make Our Android Apps Unit Testable (Pt. 1)</h1>
-        <small></small>
+                    <header class="post-header">
+                        <h1 class="post-title">How to Make Our Android Apps Unit Testable (Pt. 1)</h1>
+                        <small></small>
 
-        <section class="post-meta">
-        
-          <time class="post-date" datetime="2015-05-01T11:30:24Z">
+                        <section class="post-meta">
+                            
+                            <time class="post-date" datetime=" 2015-05-01T11:30:24Z ">
             May 1, 2015
-          </time>
-        
-         
-          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span>
-         
-          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span>
-         
-         <strong>&middot; 5 minute read</strong>
-        </section>
-    </header>
+          </time>  
+                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
+                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
+                            <strong>&middot; 5 minute read</strong>
+                        </section>
+                    </header>
 
-    <section class="post-content">
-      <p>Unit testing Android apps is hard, and sometimes it can be impossible. For <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">the past two posts</a>, I’ve been explaining why android unit testing is so difficult. The main conclusion from <a href="http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">the last post</a> is that it is difficult/impossible to unit test our Android applications because of the way we are encouraged to structure them. Google seems to want us to put our business logic in app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s, etc.). This approach to writing Android applications is what I have been calling the “standard way.”</p>
+                    <section class="post-content">
+                        <p>Unit testing Android apps is hard, and sometimes it can be impossible. For <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">the past two posts</a>, I’ve been explaining why android unit testing is so difficult. The main conclusion from <a href="http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">the last post</a> is that it is difficult/impossible to unit test our Android applications because of the way we are encouraged to structure them. Google seems to want us to put our business logic in app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s, etc.). This approach to writing Android applications is what I have been calling the “standard way.”</p>
 
 <p>In this post, I outline an alternative approach to structuring Android applications that will make it easier to unit test them. As I pointed out in <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">the introduction to this series</a>, the approach that I suggest is a generalization of the approach that Square uses to <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html">remove Fragments from their applications</a>. Since this approach is inspired by the folks at Square, I will call it “the square way.”</p>
 
@@ -292,21 +281,13 @@ Let’s see how the square way would have us write this. Again, the square way r
 </ul>
 
 <hr />
-    </section>
+                    </section>
 
 
-  <footer class="post-footer">
+                    <footer class="post-footer">
 
 
-    
-
-    <section>
-  <h3>We're hiring mid-senior Android developers at <a href="http://www.unikey.com/">Unikey</a>. Email me if you want to work for a Startup in the smart lock space in Orlando</h2>
-  <h4>kmatthew[dot]dupree[at][google'semailservice][dot]com</h3>
-</section>
-
-
-    
+                         
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
 <div id="mc_embed_signup">
 <form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
@@ -320,9 +301,7 @@ Let’s see how the square way would have us write this. Again, the square way r
 </form>
 </div>
 
-
-
-    
+ 
 <section class="share">
   <h4>Share this post</h4>
   <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=How%20to%20Make%20Our%20Android%20Apps%20Unit%20Testable%20%28Pt.%201%29&nbsp;-&nbsp;Philosophical%20Hacker&amp;url=https%3a%2f%2fwww.philosophicalhacker.com%2f2015%2f05%2f01%2fhow-to-make-our-android-apps-unit-testable-pt-1%2f"
@@ -343,9 +322,7 @@ Let’s see how the square way would have us write this. Again, the square way r
   </a>
 </section>
 
-
-
-    
+ 
 
 <div id="disqus_thread"></div>
 <script type="text/javascript">
@@ -362,13 +339,12 @@ Let’s see how the square way would have us write this. Again, the square way r
 
 
 
-  </footer>
-</article>
+                    </footer>
+                </article>
 
-</main>
+            </main>
 
-
-  <aside class="read-next">
+             <aside class="read-next">
   
       <a class="read-next-story" style="no-cover" href="/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/">
           <section class="post">
@@ -385,10 +361,7 @@ Let’s see how the square way would have us write this. Again, the square way r
       </a>
   
 </aside>
-
-
-
-<div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
+  <div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
 <footer class="site-footer clearfix">
     <section class="copyright"><a href="">Philosophical Hacker</a> </section>
     

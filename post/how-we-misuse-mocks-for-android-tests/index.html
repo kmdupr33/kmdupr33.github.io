@@ -200,53 +200,41 @@
 
 
  <div class="site-wrapper">
-
-
-
-
-  
-  <header class="main-header post-head" style="background-image: url(https://www.philosophicalhacker.com//images/tools.jpg)">
-  
-  <nav class="main-nav overlay clearfix">
-
-
-  
-  
-      <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
-  
-  </nav>
-</header>
-
-
-
-<main class="content" role="main">
-
-
-
-
-  <article class="post post">
-
-    <header class="post-header">
-        <h1 class="post-title">How we Misuse Mocks for Android Tests</h1>
-        <small></small>
-
-        <section class="post-meta">
+   
+    <header class="main-header post-head" style="background-image: url(https://www.philosophicalhacker.com//images/tools.jpg)">
         
-          <time class="post-date" datetime="2016-12-27T08:21:42-05:00">
+        <nav class="main-nav overlay clearfix">
+              
+                    <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a> 
+                </nav>
+            </header>
+
+
+
+            <main class="content" role="main">
+
+
+
+
+                <article class="post post">
+
+                    <header class="post-header">
+                        <h1 class="post-title">How we Misuse Mocks for Android Tests</h1>
+                        <small></small>
+
+                        <section class="post-meta">
+                            
+                            <time class="post-date" datetime=" 2016-12-27T08:21:42-05:00 ">
             Dec 27, 2016
-          </time>
-        
-         
-          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span>
-         
-          <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span>
-         
-         <strong>&middot; 6 minute read</strong>
-        </section>
-    </header>
+          </time>  
+                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
+                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
+                            <strong>&middot; 6 minute read</strong>
+                        </section>
+                    </header>
 
-    <section class="post-content">
-      
+                    <section class="post-content">
+                        
 
 <p>Mocks are a pretty standard tool in our android developer tool belt. The extent to which we should use this tool for unit testing is a complicated and controversial issue.<sup>1</sup> Within the Android community specifically, I think that a part of the controversy is due to confusion over the intended use of mocks. More specifically, some android developers seem intent on mocking types they don&rsquo;t own and on verifying all interactions of a target class with a collaborator.</p>
 
@@ -325,21 +313,13 @@
 <li><p>I actually think following these two pieces of advice leads to a virtuous circle: if you only mock types you own, then you have to define types in the language of your application. This makes your test less coupled to implementation details, as stubbing these types in the arrange step of your unit test will actually just feel like you&rsquo;re declaratively specifying preconditions in the language of your application. Conversely, there&rsquo;s a vicious cycle caused by mocking types you don&rsquo;t own. You&rsquo;re tests are going to be more tied to implementation details and because mocking types we don&rsquo;t own winds up being complicated, its especially painful to change tests when implementation details need to change.</p></li>
 </ol>
 
-    </section>
+                    </section>
 
 
-  <footer class="post-footer">
+                    <footer class="post-footer">
 
 
-    
-
-    <section>
-  <h3>We're hiring mid-senior Android developers at <a href="http://www.unikey.com/">Unikey</a>. Email me if you want to work for a Startup in the smart lock space in Orlando</h2>
-  <h4>kmatthew[dot]dupree[at][google'semailservice][dot]com</h3>
-</section>
-
-
-    
+                         
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
 <div id="mc_embed_signup">
 <form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
@@ -353,9 +333,7 @@
 </form>
 </div>
 
-
-
-    
+ 
 <section class="share">
   <h4>Share this post</h4>
   <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=How%20we%20Misuse%20Mocks%20for%20Android%20Tests&nbsp;-&nbsp;Philosophical%20Hacker&amp;url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fhow-we-misuse-mocks-for-android-tests%2f"
@@ -376,9 +354,7 @@
   </a>
 </section>
 
-
-
-    
+ 
 
 <div id="disqus_thread"></div>
 <script type="text/javascript">
@@ -395,13 +371,12 @@
 
 
 
-  </footer>
-</article>
+                    </footer>
+                </article>
 
-</main>
+            </main>
 
-
-  <aside class="read-next">
+             <aside class="read-next">
   
       <a class="read-next-story" style="background-image: url(https://www.philosophicalhacker.com/images/the-scream.jpg)" href="/post/what-should-we-unit-test/">
           <section class="post">
@@ -418,10 +393,7 @@
       </a>
   
 </aside>
-
-
-
-<div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
+  <div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
 <footer class="site-footer clearfix">
     <section class="copyright"><a href="">Philosophical Hacker</a> </section>
     
