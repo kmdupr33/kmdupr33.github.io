@@ -6,8 +6,127 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 14 Apr 2017 23:17:38 -0400</lastBuildDate>
+    <lastBuildDate>Fri, 28 Apr 2017 17:39:22 -0400</lastBuildDate>
     <atom:link href="https://www.philosophicalhacker.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Setting up a Jenkins Pipeline for Android Testing</title>
+      <link>https://www.philosophicalhacker.com/post/setting-up-a-jenkins-pipeline-for-android-testing/</link>
+      <pubDate>Fri, 28 Apr 2017 17:39:22 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/setting-up-a-jenkins-pipeline-for-android-testing/</guid>
+      <description>
+
+&lt;p&gt;Some tests are fast. You can run 1000s of them in seconds. These are the tests that are the heart and soul of TDD, so you run them every chance you get.&lt;/p&gt;
+
+&lt;p&gt;There are other tests that aren&amp;rsquo;t so fast. Because they&amp;rsquo;re slow, you don&amp;rsquo;t want to run them often. You&amp;rsquo;ve got better things to do than to sit and wait for test results to come through.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, the less you run your slow tests, the less valuable they are. By moving your slow test runs off your machine and running them every time you make a change, you can make sure you&amp;rsquo;re getting the most value out of your slow tests.&lt;/p&gt;
+
+&lt;p&gt;This is one reason why I think CI is so important. At every job I&amp;rsquo;ve had, setting up a CI is one of the first things I&amp;rsquo;ve done, and now that Jenkins has gotten a little more sophisticated with its &amp;ldquo;Pipelines,&amp;rdquo; I thought I should document how I set things up somewhere.&lt;/p&gt;
+
+&lt;p&gt;My hope is that if my future self has a different job that requires him to setup Jenkins for Android Testing, he&amp;rsquo;ll find this useful. If your current self needs to setup Jenkins so that you can maximize the value of your slow tests, I hope you find this useful too.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-jenkinsfile&#34;&gt;The Jenkinsfile&lt;/h3&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 1 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;node&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;android&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 2 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    step&lt;span style=&#34;color: #666666&#34;&gt;([&lt;/span&gt;$class&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;StashNotifier&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 3 &lt;/span&gt;    checkout scm
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 4 &lt;/span&gt;    &lt;span style=&#34;color: #0000FF&#34;&gt;stage&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;Build&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 5 &lt;/span&gt;      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;try&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 6 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        sh &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;./gradlew --refresh-dependencies clean assemble&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 7 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        lock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;emulator&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 8 &lt;/span&gt;          sh &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;./gradlew connectedCheck&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 9 &lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;10 &lt;/span&gt;        currentBuild&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;result&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;SUCCESS&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;11 &lt;/span&gt;      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;catch&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;error&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;12 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        slackSend &lt;span style=&#34;color: #A0A000&#34;&gt;channel:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;#build-failures&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #A0A000&#34;&gt;color:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;bad&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #A0A000&#34;&gt;message:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;This build is broken ${env.BUILD_URL}&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #A0A000&#34;&gt;token:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;XXXXXXXXXXX&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;13 &lt;/span&gt;        currentBuild&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;result&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;FAILURE&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;14 &lt;/span&gt;      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;finally&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;15 &lt;/span&gt;        junit &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;**/test-results/**/*.xml&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;16 &lt;/span&gt;      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;17 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;18 &lt;/span&gt;    stage&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;Archive&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;19 &lt;/span&gt;      archiveArtifacts &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;app/build/outputs/apk/*&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;20 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;21 &lt;/span&gt;    step&lt;span style=&#34;color: #666666&#34;&gt;([&lt;/span&gt;$class&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;StashNotifier&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;])&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;22 &lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;There&amp;rsquo;s a couple of lines worth highlighting here.&lt;/p&gt;
+
+&lt;h4 id=&#34;1-node-android&#34;&gt;1 &lt;code&gt;node(&#39;android&#39;)&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;A node is a computer that can execute a Jenkins job. A single Jenkins &amp;ldquo;master&amp;rdquo; server can queue up jobs for many nodes, so you can run as many jobs as you have machines simultaneously.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;What&amp;rsquo;s interesting about this line is the parameter that &lt;code&gt;node()&lt;/code&gt; takes. The value of this parameter is a &amp;ldquo;label,&amp;rdquo; which is a way of telling Jenkins which types of nodes can run this job. With this line, I&amp;rsquo;m saying: &amp;ldquo;Only run this job on nodes that have the label &amp;lsquo;android&amp;rsquo;.&amp;rdquo; When managing your nodes through the Jenkins UI, you can specify which labels your node has, thereby limiting the execution of your jobs to particular nodes:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/changing-node-labels.png&#34; alt=&#34;Setting labels on a node&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;OSX machines are more expensive than the linux machines that can run our Android builds, so we currently use labels to ensure that android build jobs aren&amp;rsquo;t tying up the (more expensive) OSX machines.&lt;/p&gt;
+
+&lt;h4 id=&#34;2-step-class-stashnotifier&#34;&gt;2 &lt;code&gt;step([$class: &#39;StashNotifier&#39;])&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;Prs can be gated by your Jenkins build. In other words, you can set things up so that no one can merge a pr with failing tests or lint violations. This pr gating is made possible by this step and the &lt;a href=&#34;https://github.com/jenkinsci/stashnotifier-plugin&#34;&gt;Stash Notifier plugin that exposes it&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If someone can merge broken code into master in spite of failing tests, those tests aren&amp;rsquo;t as valuable as they could be.&lt;/p&gt;
+
+&lt;p&gt;Flaky tests are made especially painful by pr gating based on test results. I think this is a good thing, as flaky tests can be a subtle poison to your testing suite. By making their poison more explicitly felt through pr gates, we&amp;rsquo;ll be more motivated to fix them or delete them. Better that, then for people to start ignoring test results.&lt;/p&gt;
+
+&lt;h4 id=&#34;6-sh-gradlew-refresh-dependencies-clean-assemble&#34;&gt;6 &lt;code&gt;sh &#39;./gradlew --refresh-dependencies clean assemble&#39;&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;One way of thinking about a CI server is that it continuously runs what we might call &amp;ldquo;the integration test,&amp;rdquo; which we might express as follows:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;Given &lt;/span&gt;&lt;span style=&#34;color: #0000FF&#34;&gt;a working code base&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;When &lt;/span&gt;&lt;span style=&#34;color: #0000FF&#34;&gt;new code is merged in&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;Then &lt;/span&gt;&lt;span style=&#34;color: #0000FF&#34;&gt;we still have a working code base&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&amp;ldquo;working code base&amp;rdquo; here is fleshed out by the specific steps in a Jenkinsfile, but is often defined as follows:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;A working code base builds from a &lt;em&gt;fresh checkout&lt;/em&gt; and all the tests pass.&amp;rdquo;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The &amp;ldquo;fresh checkout&amp;rdquo; bit of the definition is often necessary to avoid the proverbial &amp;ldquo;but it builds on my machine&amp;rdquo; excuse.&lt;/p&gt;
+
+&lt;p&gt;Since developers and their computers are not invincible, a particular developer&amp;rsquo;s machine is not the source of truth for whether a build is broken. The CI server should be that source of truth, as it tells us whether its possible for a new developer to build a project on a new machine.&lt;/p&gt;
+
+&lt;p&gt;This is why &lt;code&gt;--refresh-dependencies&lt;/code&gt; and &lt;code&gt;clean&lt;/code&gt; are included in this line. &lt;code&gt;--refresh-dependencies&lt;/code&gt; is particularly important if you&amp;rsquo;re using SNAPSHOT dependencies, as I&amp;rsquo;ve run into cases where the build appears to be fine but is actually broken, and I couldn&amp;rsquo;t tell because the CI server was using a cached SNAPSHOT dependency.&lt;/p&gt;
+
+&lt;h4 id=&#34;7-lock-emulator&#34;&gt;7 &lt;code&gt;lock(&#39;emulator&#39;) {}&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;Suppose you have a quad-core node that builds Android jobs. Nodes often have an executor for each of their cores. This allows Jenkins to take full advantage of multi-core machines, as it can run a job for each core on a machine. A quad-core node, for example, could run 4 jobs simultaneously.&lt;/p&gt;
+
+&lt;p&gt;Now, suppose that two jobs for two branches get kicked off simultaneously. If there&amp;rsquo;s only one emulator available on a node, you could have a problem: one test run could try to access the emulator while the other is using it, thereby causing failures. Locks solve this problem.&lt;/p&gt;
+
+&lt;p&gt;This line of code grabs a lock on a resource labeled as &amp;ldquo;emulator,&amp;rdquo; and retains that lock until the code running inside its block has been completed. Any other jobs that try to run tests against the emulator while the lock is held by a particular job will have to wait, which ensures that you can take full advantage of the parallelism gained by adding additional nodes and executors.&lt;/p&gt;
+
+&lt;h4 id=&#34;12-slacksend-channel-failures-message-broken-build-env-build-url&#34;&gt;12 &lt;code&gt;slackSend channel: &#39;#failures&#39;, message: &amp;quot;Broken build ${env.BUILD_URL}&amp;quot;&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;If a build on the CI passes, great. That should be the status quo. With all the noise in our emails and slack channels, we don&amp;rsquo;t need a notification that says, in effect, &amp;ldquo;everything is &lt;em&gt;still&lt;/em&gt; working just fine.&amp;rdquo; Any source of information that provides us with useless information MOST of the time seems likely to be a source of information that we&amp;rsquo;ll pay less attention to over time.&lt;/p&gt;
+
+&lt;p&gt;This is why I only post build failures to a slack channel. A broken build is a big deal. Ideally, a developer will investigate a broken build immediately.&lt;/p&gt;
+
+&lt;p&gt;When broken builds aren&amp;rsquo;t investigated immediately, we lose the value of our tests and CI, which are supposed to give us feedback on our code while the changes are still fresh in our mind. It&amp;rsquo;s much easier to fix broken code immediately than it is to fix it 3+ days later when the changes we&amp;rsquo;ve made aren&amp;rsquo;t fresh in our mind.&lt;/p&gt;
+
+&lt;p&gt;All that to say, a slack notification seems appropriate for build failures.&lt;/p&gt;
+
+&lt;h4 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h4&gt;
+
+&lt;p&gt;I&amp;rsquo;ll conclude with an exhortation for my future self and for all the selves engaged in the noble struggle of Android dev:&lt;/p&gt;
+
+&lt;p&gt;Slugging around in the Jenkins web UI may not be as interesting as writing an elegant Observable cascade for loading data in your &lt;code&gt;Activity&lt;/code&gt;, but it&amp;rsquo;s necessary if you&amp;rsquo;re going to maximize the value of the tests you&amp;rsquo;ve already written. Take solace in the fact that you&amp;rsquo;re efforts are making your team more effective.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Actually, you can run more jobs than this. Each node can have multiple executors, and the folks at Jenkins recommend that you create an executor for each core on the node.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Android Testing Calisthenics: Domain Objects</title>
@@ -1806,86 +1925,6 @@ joining responsibilities is something that we do naturally. &lt;strong&gt;Findin
 &lt;li&gt;&lt;p&gt;&lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, Michael Feathers, 350-352. Emphasis mine.&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;To some extent, I&amp;rsquo;ve been hitting on this at various points. See &lt;a href=&#34;https://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Against Android Unit Tests&lt;/a&gt;, &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;Why we shouldn&amp;rsquo;t put logic in Activities&lt;/a&gt; and &lt;a href=&#34;post/object-seams-and-mvp-for-testability.md&#34;&gt;Object Seams and MVP&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>What Should we Unit Test?</title>
-      <link>https://www.philosophicalhacker.com/post/what-should-we-unit-test/</link>
-      <pubDate>Sun, 01 Jan 2017 16:41:45 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/what-should-we-unit-test/</guid>
-      <description>
-
-&lt;p&gt;When I go to work, I&amp;rsquo;m afraid of three things. I worry that&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;the new feature I&amp;rsquo;m implementing won&amp;rsquo;t work as expected&lt;/li&gt;
-&lt;li&gt;the code I&amp;rsquo;m tweaking will break functionality that used to work&lt;/li&gt;
-&lt;li&gt;the application isn&amp;rsquo;t architected in a way that makes it easy for me to adapt it to ever-changing business requirements&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Automated testing is supposed to help alleviate all three of these fears, but when we&amp;rsquo;re first getting started with automated testing, it can be difficult to know where to start. We might look at a piece of code and wonder to ourselves, &amp;ldquo;Should I write a test for this code?&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Cursory research on the question yields platitudes like &amp;ldquo;unit test your business logic,&amp;rdquo; but when I first got started, that didn&amp;rsquo;t really mean much to me&lt;sup&gt;1&lt;/sup&gt; and now that I have a bit more experience writing android unit tests, I find that answer to be too simplistic.&lt;/p&gt;
-
-&lt;p&gt;Over-zealous testing enthusiasts may shout a different answer at us: &amp;ldquo;YOU SHOULD TEST (ALMOST) EVERYTHING!&amp;rdquo; They may be right. They&amp;rsquo;re not over-zealous because of how much they want us to test. Rather, they&amp;rsquo;re over-zealous because that&amp;rsquo;s a very unhelpful answer to the question &amp;ldquo;Where should I &lt;em&gt;start&lt;/em&gt; testing?&amp;rdquo; Its simply not true that all tests are equally helpful, a fact that Kent Beck, the guy who popularized TDD, recently tweeted about:&lt;/p&gt;
-
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Being proud of 100% test coverage is like being proud of reading every word in the newspaper. Some are more important than others.&lt;/p&gt;&amp;mdash; Kent Beck (@KentBeck) &lt;a href=&#34;https://twitter.com/KentBeck/status/812703192437981184&#34;&gt;December 24, 2016&lt;/a&gt;&lt;/blockquote&gt;
-&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;I think that if we keep in mind the fears that lead us to write tests in the first place, we&amp;rsquo;ll have a much easier time figuring out what to test. This should come as no surprise. After all, Kent Beck&amp;rsquo;s answer to the question of what to test is this:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Write tests until fear is transformed into boredom.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This post is about the tests that fear drives us to write, tests that we should be spending most of our time writing.&lt;/p&gt;
-
-&lt;h3 id=&#34;when-new-functionality-is-complicated&#34;&gt;When new functionality is complicated&lt;/h3&gt;
-
-&lt;p&gt;Sometimes we write complicated code when simpler code could have done the trick. Sometimes, however, we can&amp;rsquo;t make our code any simpler. The problem we&amp;rsquo;re solving or the domain/rule we&amp;rsquo;re modeling is just complicated. When this happens, I get a little anxious. For example, suppose you had to implement the following functionality:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Show a &amp;ldquo;rate dialog&amp;rdquo; to a user if they&amp;rsquo;ve used the app three times. The user can opt to rate the app, request to be reminded to rate the app, or decline to rate the app. If the user opts to rate the app, take them to the google play store and don&amp;rsquo;t show the rate dialog again. If the user opts to be reminded to rate the app, reshow the dialog after three days have passed. If the user declines to rate the app, never show the dialog again.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This isn&amp;rsquo;t terribly complicated, but its enough to make me anxious that I&amp;rsquo;ve covered all my bases as I&amp;rsquo;m writing the code. This is the kind of thing I&amp;rsquo;d write a unit test for.&lt;/p&gt;
-
-&lt;h3 id=&#34;when-you-ve-got-old-code-that-breaks-often&#34;&gt;When you&amp;rsquo;ve got old code that breaks often&lt;/h3&gt;
-
-&lt;p&gt;Sometimes there are parts of a code base that are very brittle. I typically dread having to make changes in these parts of a codebase. Even worse: some brittle parts of the code base have to change often and this causes lots of bugs. Making changes in this kind of code is like leaving food and dirty dishes out a crappy apartment: it invites bugs.&lt;/p&gt;
-
-&lt;p&gt;Working on code that changes often and is often the source of bugs is maybe the scariest part of being a software engineer. You watch your co-workers trudge through the scary code and then they eventually find out the code that they changed introduced a bug. When you get assigned a ticket in that area, you have to pretend that you didn&amp;rsquo;t just see your co-worker get pwned by the code there. The fear is strong, so this is a great place to write tests.&lt;sup&gt;3&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;Unfortunately, brittle code isn&amp;rsquo;t typically code that going to be easily unit testable, so you may have to settle for a functional-level test. Alternatively, you could employ some very conservative refactoring to get the brittle code into a unit-testable state.&lt;sup&gt;4&lt;/sup&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;when-you-think-your-code-will-change&#34;&gt;When you think your code will change&lt;/h3&gt;
-
-&lt;p&gt;If you think you&amp;rsquo;re code will change, you&amp;rsquo;ve got a few reasons to write tests for it:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Tested code can be changed without introducing bugs.&lt;/li&gt;
-&lt;li&gt;Tested code has a more flexible architecture that makes it is easier to change.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;For some of us, all the code we write is susceptible to change. That&amp;rsquo;s why test zealots aren&amp;rsquo;t crazy in my mind. However, we can and should prioritize code that we think it is more likely to change in the near feature and make sure that we have tests around that code.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;If you let fear be your guide, you&amp;rsquo;ll write the tests you need to write. We&amp;rsquo;re writing tests because we&amp;rsquo;re afraid that if we don&amp;rsquo;t, new functionality won&amp;rsquo;t work as expected, that we&amp;rsquo;ll break stuff that used to work, or that we won&amp;rsquo;t be able to cope with changing business requirements. Keeping these fears in mind will lead us to write tests when we&amp;rsquo;re writing complicated new features, when we&amp;rsquo;re finding that our old code breaks often, and when we suspect that our code will need to change.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;I think this is partially because many of us in the android community don&amp;rsquo;t have a firm grasp of the meaning of the phrase &amp;ldquo;business logic.&amp;rdquo; People often give hand-wavy definitions of business logic during their presentations. (I&amp;rsquo;ve been guilty of giving such definitions myself.) Sometimes I&amp;rsquo;ll even hear someone give an example of business logic and I&amp;rsquo;ll think to myself, &amp;ldquo;That&amp;rsquo;s not really business logic.&amp;rdquo; (I thought this when I heard Jake Wharton&amp;rsquo;s example of business logic in &lt;a href=&#34;http://fragmentedpodcast.com/episodes/7/&#34;&gt;Fragmented Episode 7 on testing&lt;/a&gt;.) Another reason I think this platitude is unhelpful is that business logic, on whatever definition you fancy, is often mixed in with all other types of code in Android applications. This makes its hard to tease out the subset of the Android code that is properly called &amp;ldquo;business logic.&amp;rdquo;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;em&gt;TDD By Example&lt;/em&gt;, Kent Beck, 194. On this same page, Beck also reluctantly gives us a list of things to test: conditionals, loops, operations, and polymorphism.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;I&amp;rsquo;d love it if there was a tool that looked through my jira bug tickets, found the associated commits for addressing those tickets, and told me the classes and packages that needed to be changed to fix those bugs. I&amp;rsquo;d focus my efforts on writing tests for these buggy classes.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Michael Feathers talks about these conservative refactoring techniques in &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
     </item>

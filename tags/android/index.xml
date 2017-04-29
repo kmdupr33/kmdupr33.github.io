@@ -9,6 +9,125 @@
     <atom:link href="https://www.philosophicalhacker.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Setting up a Jenkins Pipeline for Android Testing</title>
+      <link>https://www.philosophicalhacker.com/post/setting-up-a-jenkins-pipeline-for-android-testing/</link>
+      <pubDate>Fri, 28 Apr 2017 17:39:22 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/setting-up-a-jenkins-pipeline-for-android-testing/</guid>
+      <description>
+
+&lt;p&gt;Some tests are fast. You can run 1000s of them in seconds. These are the tests that are the heart and soul of TDD, so you run them every chance you get.&lt;/p&gt;
+
+&lt;p&gt;There are other tests that aren&amp;rsquo;t so fast. Because they&amp;rsquo;re slow, you don&amp;rsquo;t want to run them often. You&amp;rsquo;ve got better things to do than to sit and wait for test results to come through.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, the less you run your slow tests, the less valuable they are. By moving your slow test runs off your machine and running them every time you make a change, you can make sure you&amp;rsquo;re getting the most value out of your slow tests.&lt;/p&gt;
+
+&lt;p&gt;This is one reason why I think CI is so important. At every job I&amp;rsquo;ve had, setting up a CI is one of the first things I&amp;rsquo;ve done, and now that Jenkins has gotten a little more sophisticated with its &amp;ldquo;Pipelines,&amp;rdquo; I thought I should document how I set things up somewhere.&lt;/p&gt;
+
+&lt;p&gt;My hope is that if my future self has a different job that requires him to setup Jenkins for Android Testing, he&amp;rsquo;ll find this useful. If your current self needs to setup Jenkins so that you can maximize the value of your slow tests, I hope you find this useful too.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-jenkinsfile&#34;&gt;The Jenkinsfile&lt;/h3&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 1 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;node&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;android&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 2 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    step&lt;span style=&#34;color: #666666&#34;&gt;([&lt;/span&gt;$class&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;StashNotifier&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 3 &lt;/span&gt;    checkout scm
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 4 &lt;/span&gt;    &lt;span style=&#34;color: #0000FF&#34;&gt;stage&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;Build&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 5 &lt;/span&gt;      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;try&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 6 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        sh &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;./gradlew --refresh-dependencies clean assemble&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 7 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        lock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;emulator&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 8 &lt;/span&gt;          sh &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;./gradlew connectedCheck&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 9 &lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;10 &lt;/span&gt;        currentBuild&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;result&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;SUCCESS&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;11 &lt;/span&gt;      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;catch&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;error&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;12 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        slackSend &lt;span style=&#34;color: #A0A000&#34;&gt;channel:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;#build-failures&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #A0A000&#34;&gt;color:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;bad&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #A0A000&#34;&gt;message:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;This build is broken ${env.BUILD_URL}&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #A0A000&#34;&gt;token:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;XXXXXXXXXXX&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;13 &lt;/span&gt;        currentBuild&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;result&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;FAILURE&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;14 &lt;/span&gt;      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;finally&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;15 &lt;/span&gt;        junit &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;**/test-results/**/*.xml&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;16 &lt;/span&gt;      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;17 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;18 &lt;/span&gt;    stage&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;Archive&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;19 &lt;/span&gt;      archiveArtifacts &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;app/build/outputs/apk/*&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;20 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;21 &lt;/span&gt;    step&lt;span style=&#34;color: #666666&#34;&gt;([&lt;/span&gt;$class&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;StashNotifier&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;])&lt;/span&gt;
+&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;22 &lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;There&amp;rsquo;s a couple of lines worth highlighting here.&lt;/p&gt;
+
+&lt;h4 id=&#34;1-node-android&#34;&gt;1 &lt;code&gt;node(&#39;android&#39;)&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;A node is a computer that can execute a Jenkins job. A single Jenkins &amp;ldquo;master&amp;rdquo; server can queue up jobs for many nodes, so you can run as many jobs as you have machines simultaneously.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;What&amp;rsquo;s interesting about this line is the parameter that &lt;code&gt;node()&lt;/code&gt; takes. The value of this parameter is a &amp;ldquo;label,&amp;rdquo; which is a way of telling Jenkins which types of nodes can run this job. With this line, I&amp;rsquo;m saying: &amp;ldquo;Only run this job on nodes that have the label &amp;lsquo;android&amp;rsquo;.&amp;rdquo; When managing your nodes through the Jenkins UI, you can specify which labels your node has, thereby limiting the execution of your jobs to particular nodes:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/changing-node-labels.png&#34; alt=&#34;Setting labels on a node&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;OSX machines are more expensive than the linux machines that can run our Android builds, so we currently use labels to ensure that android build jobs aren&amp;rsquo;t tying up the (more expensive) OSX machines.&lt;/p&gt;
+
+&lt;h4 id=&#34;2-step-class-stashnotifier&#34;&gt;2 &lt;code&gt;step([$class: &#39;StashNotifier&#39;])&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;Prs can be gated by your Jenkins build. In other words, you can set things up so that no one can merge a pr with failing tests or lint violations. This pr gating is made possible by this step and the &lt;a href=&#34;https://github.com/jenkinsci/stashnotifier-plugin&#34;&gt;Stash Notifier plugin that exposes it&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If someone can merge broken code into master in spite of failing tests, those tests aren&amp;rsquo;t as valuable as they could be.&lt;/p&gt;
+
+&lt;p&gt;Flaky tests are made especially painful by pr gating based on test results. I think this is a good thing, as flaky tests can be a subtle poison to your testing suite. By making their poison more explicitly felt through pr gates, we&amp;rsquo;ll be more motivated to fix them or delete them. Better that, then for people to start ignoring test results.&lt;/p&gt;
+
+&lt;h4 id=&#34;6-sh-gradlew-refresh-dependencies-clean-assemble&#34;&gt;6 &lt;code&gt;sh &#39;./gradlew --refresh-dependencies clean assemble&#39;&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;One way of thinking about a CI server is that it continuously runs what we might call &amp;ldquo;the integration test,&amp;rdquo; which we might express as follows:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;Given &lt;/span&gt;&lt;span style=&#34;color: #0000FF&#34;&gt;a working code base&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;When &lt;/span&gt;&lt;span style=&#34;color: #0000FF&#34;&gt;new code is merged in&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;Then &lt;/span&gt;&lt;span style=&#34;color: #0000FF&#34;&gt;we still have a working code base&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&amp;ldquo;working code base&amp;rdquo; here is fleshed out by the specific steps in a Jenkinsfile, but is often defined as follows:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;A working code base builds from a &lt;em&gt;fresh checkout&lt;/em&gt; and all the tests pass.&amp;rdquo;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The &amp;ldquo;fresh checkout&amp;rdquo; bit of the definition is often necessary to avoid the proverbial &amp;ldquo;but it builds on my machine&amp;rdquo; excuse.&lt;/p&gt;
+
+&lt;p&gt;Since developers and their computers are not invincible, a particular developer&amp;rsquo;s machine is not the source of truth for whether a build is broken. The CI server should be that source of truth, as it tells us whether its possible for a new developer to build a project on a new machine.&lt;/p&gt;
+
+&lt;p&gt;This is why &lt;code&gt;--refresh-dependencies&lt;/code&gt; and &lt;code&gt;clean&lt;/code&gt; are included in this line. &lt;code&gt;--refresh-dependencies&lt;/code&gt; is particularly important if you&amp;rsquo;re using SNAPSHOT dependencies, as I&amp;rsquo;ve run into cases where the build appears to be fine but is actually broken, and I couldn&amp;rsquo;t tell because the CI server was using a cached SNAPSHOT dependency.&lt;/p&gt;
+
+&lt;h4 id=&#34;7-lock-emulator&#34;&gt;7 &lt;code&gt;lock(&#39;emulator&#39;) {}&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;Suppose you have a quad-core node that builds Android jobs. Nodes often have an executor for each of their cores. This allows Jenkins to take full advantage of multi-core machines, as it can run a job for each core on a machine. A quad-core node, for example, could run 4 jobs simultaneously.&lt;/p&gt;
+
+&lt;p&gt;Now, suppose that two jobs for two branches get kicked off simultaneously. If there&amp;rsquo;s only one emulator available on a node, you could have a problem: one test run could try to access the emulator while the other is using it, thereby causing failures. Locks solve this problem.&lt;/p&gt;
+
+&lt;p&gt;This line of code grabs a lock on a resource labeled as &amp;ldquo;emulator,&amp;rdquo; and retains that lock until the code running inside its block has been completed. Any other jobs that try to run tests against the emulator while the lock is held by a particular job will have to wait, which ensures that you can take full advantage of the parallelism gained by adding additional nodes and executors.&lt;/p&gt;
+
+&lt;h4 id=&#34;12-slacksend-channel-failures-message-broken-build-env-build-url&#34;&gt;12 &lt;code&gt;slackSend channel: &#39;#failures&#39;, message: &amp;quot;Broken build ${env.BUILD_URL}&amp;quot;&lt;/code&gt;&lt;/h4&gt;
+
+&lt;p&gt;If a build on the CI passes, great. That should be the status quo. With all the noise in our emails and slack channels, we don&amp;rsquo;t need a notification that says, in effect, &amp;ldquo;everything is &lt;em&gt;still&lt;/em&gt; working just fine.&amp;rdquo; Any source of information that provides us with useless information MOST of the time seems likely to be a source of information that we&amp;rsquo;ll pay less attention to over time.&lt;/p&gt;
+
+&lt;p&gt;This is why I only post build failures to a slack channel. A broken build is a big deal. Ideally, a developer will investigate a broken build immediately.&lt;/p&gt;
+
+&lt;p&gt;When broken builds aren&amp;rsquo;t investigated immediately, we lose the value of our tests and CI, which are supposed to give us feedback on our code while the changes are still fresh in our mind. It&amp;rsquo;s much easier to fix broken code immediately than it is to fix it 3+ days later when the changes we&amp;rsquo;ve made aren&amp;rsquo;t fresh in our mind.&lt;/p&gt;
+
+&lt;p&gt;All that to say, a slack notification seems appropriate for build failures.&lt;/p&gt;
+
+&lt;h4 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h4&gt;
+
+&lt;p&gt;I&amp;rsquo;ll conclude with an exhortation for my future self and for all the selves engaged in the noble struggle of Android dev:&lt;/p&gt;
+
+&lt;p&gt;Slugging around in the Jenkins web UI may not be as interesting as writing an elegant Observable cascade for loading data in your &lt;code&gt;Activity&lt;/code&gt;, but it&amp;rsquo;s necessary if you&amp;rsquo;re going to maximize the value of the tests you&amp;rsquo;ve already written. Take solace in the fact that you&amp;rsquo;re efforts are making your team more effective.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Actually, you can run more jobs than this. Each node can have multiple executors, and the folks at Jenkins recommend that you create an executor for each core on the node.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Android Testing Calisthenics: Domain Objects</title>
       <link>https://www.philosophicalhacker.com/post/android-testing-calisthenics-domain-objects/</link>
       <pubDate>Fri, 14 Apr 2017 23:17:38 -0400</pubDate>
@@ -1753,93 +1872,6 @@ productFlavors &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
 &lt;li&gt;&lt;p&gt;I&amp;rsquo;d love it if there was a tool that looked through my jira bug tickets, found the associated commits for addressing those tickets, and told me the classes and packages that needed to be changed to fix those bugs. I&amp;rsquo;d focus my efforts on writing tests for these buggy classes.&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Michael Feathers talks about these conservative refactoring techniques in &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>How we Misuse Mocks for Android Tests</title>
-      <link>https://www.philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/</link>
-      <pubDate>Tue, 27 Dec 2016 08:21:42 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/</guid>
-      <description>
-
-&lt;p&gt;Mocks are a pretty standard tool in our android developer tool belt. The extent to which we should use this tool for unit testing is a complicated and controversial issue.&lt;sup&gt;1&lt;/sup&gt; Within the Android community specifically, I think that a part of the controversy is due to confusion over the intended use of mocks. More specifically, some android developers seem intent on mocking types they don&amp;rsquo;t own and on verifying all interactions of a target class with a collaborator.&lt;/p&gt;
-
-&lt;p&gt;It turns out that these two practices are not recommended by the folks who invented mocks because they have well-known have disadvantages. These disadvantages are precisely the ones that people seem to cite when they argue against mocks. There may be good arguments against mocks, but citing disadvantages of using them in a way that they aren&amp;rsquo;t meant to be used is about as compelling as arguing that we shouldn&amp;rsquo;t use hammers because they aren&amp;rsquo;t good for fastening screws.&lt;/p&gt;
-
-&lt;p&gt;In this post, we&amp;rsquo;ll look at two ways I&amp;rsquo;ve seen mocks misused. Hopefully, by pointing out the intended use of mocks, we&amp;rsquo;ll find them more useful for unit testing android applications.&lt;/p&gt;
-
-&lt;h3 id=&#34;too-many-verifications&#34;&gt;Too many verifications&lt;/h3&gt;
-
-&lt;p&gt;A common complaint about mocks is that they tie tests too closely with the implementation details of the target code. Since we want our tests to help us refactor those implementation details with confidence, this coupling ruins one of the major advantages of writing tests.&lt;/p&gt;
-
-&lt;p&gt;There are two things we can say in response to this complaint.&lt;/p&gt;
-
-&lt;p&gt;First, Steve Freeman and Nat Pryce, the folks who really pioneered the use of mocks in testing, are well aware that this can occur when using mocks. This is why they recommend that we &amp;ldquo;write few expectations&amp;rdquo; in our tests using mocks:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;A colleague, Romilly Cocking, when he first started working with us, was surprised by how few expectations we usually write in a unit test. Just like “everyone” has now learned to avoid too many assertions in a test, we try to avoid too many expectations. If we have more than a few, then either we’re trying to test too large a unit, or we’re locking down too many of the object’s interactions.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Second, whether a particular object&amp;rsquo;s interaction with a collaborator is an implementation detail depends on how we think about object-oriented programming and on the most compelling interpretation of OO I&amp;rsquo;m aware of, some interactions with collaborators aren&amp;rsquo;t really implementation details. Freeman puts this nicely &lt;a href=&#34;http://higherorderlogic.com/2013/01/some-mocks/&#34;&gt;here&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Some of us think about objects in terms of Alan Kay’s emphasis on message passing, others don’t. In my world, I’m interested in the protocols of how objects communicate, not what’s inside them, so testing based on interactions is a natural fit.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I think a compelling example of an object interacting with a collaborator in a way that isn&amp;rsquo;t an implementation detail is actually a &lt;code&gt;Presenter&lt;/code&gt; interacting with a &lt;code&gt;View&lt;/code&gt; in MVP. Take, for example, this &lt;code&gt;Presenter&lt;/code&gt; that we talked about in &lt;a href=&#34;https://www.philosophicalhacker.com/post/object-seams-and-mvp-for-testability/&#34;&gt;my post on MVP and object seams&lt;/a&gt;&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Presenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;presentCards&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mIsAttendeeAtVenue&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(!&lt;/span&gt;mMsgSettings&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;hasAnsweredMessagePrompt&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        mExploreView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;addMessageOptInCard&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;
-      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;In this snippet, the &lt;code&gt;Presenter&lt;/code&gt;&amp;rsquo;s responsibility is to display the appropriate cards depending on various factors. When we write a test that includes the line &lt;code&gt;verify(mExploreView).addMessageOptInCard()&lt;/code&gt;, we&amp;rsquo;re merely making sure that the &lt;code&gt;Presenter&lt;/code&gt; does its job. We&amp;rsquo;re concerned with the &amp;ldquo;what,&amp;rdquo; not with the &amp;ldquo;how.&amp;rdquo; If &lt;code&gt;mExploreView&lt;/code&gt; wants to change how it actually adds a message opt in card, we don&amp;rsquo;t care. If the implementation of &lt;code&gt;MessageSettings.hasAnsweredMessagePrompt&lt;/code&gt; changes, again, we don&amp;rsquo;t care.&lt;/p&gt;
-
-&lt;h3 id=&#34;mocking-types-we-don-t-own&#34;&gt;Mocking Types We Don&amp;rsquo;t Own&lt;/h3&gt;
-
-&lt;p&gt;Although the exceptions thrown by running android unit tests that exercise unmocked android dependencies suggests otherwise, we shouldn&amp;rsquo;t be in the business of mocking types we don&amp;rsquo;t own. Again, Freeman and Pryce are explicit about the disadvantages of doing this:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;We find that tests that mock external libraries often need to be complex to get the code into the right state for the functionality we need to exercise. The mess in such tests is telling us that the design isn’t right but, instead of fixing the problem by improving the code, we have to carry the extra complexity in both code and test. A second risk is that we have to be sure that the behavior we stub or mock matches what the external library will actually do.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This second risk is actually something that Jake Wharton has commented on explicitly in the context of using robolectric for Android testing:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;[With robolectric], you end up testing the wrong thing&amp;hellip;your test is testing the robolectric implementation of these lifecycles and these mechanisms&amp;hellip;the fact that you&amp;rsquo;re relying on those behaviors&amp;hellip;it&amp;rsquo;s going to devalue the actual test itself.&lt;/p&gt;
-
-&lt;p&gt;-Jake Wharton, Fragmented Podcast Episode 7 4:10&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The approach recommended by Freeman and Pryce &amp;ndash; and the approach that I strive to follow when writing tests for my code &amp;ndash; is to instead write an adapter layer that translates requests from our application to the third party library, which in this case is the Android SDK. The &lt;code&gt;View&lt;/code&gt; in MVP is often a part of this adapter layer, as it translates requests made in the language of our application into code that talks directly to the Android SDK.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;So, don&amp;rsquo;t make too many verifications on your mocks and don&amp;rsquo;t mock types you don&amp;rsquo;t own. Following this advice &amp;ndash; advice that&amp;rsquo;s given by the inventors of mocks &amp;ndash; will make your tests simpler and less tied to implementation details of the class you&amp;rsquo;re trying to test.&lt;sup&gt;3&lt;/sup&gt; If we follow this advice, I think we&amp;rsquo;ll find that mocks are a very apt tool for unit testing android applications.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;See &lt;a href=&#34;http://martinfowler.com/articles/mocksArentStubs.html&#34;&gt;&amp;ldquo;Mocks Aren&amp;rsquo;t Stubs&amp;rdquo;&lt;/a&gt; and &lt;a href=&#34;http://higherorderlogic.com/2013/01/some-mocks/&#34;&gt;&amp;ldquo;Some Mocks&amp;rdquo;&lt;/a&gt; for example.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&amp;ldquo;Growing Object Oriented Software Guided by Tests,&amp;rdquo; 319.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;I actually think following these two pieces of advice leads to a virtuous circle: if you only mock types you own, then you have to define types in the language of your application. This makes your test less coupled to implementation details, as stubbing these types in the arrange step of your unit test will actually just feel like you&amp;rsquo;re declaratively specifying preconditions in the language of your application. Conversely, there&amp;rsquo;s a vicious cycle caused by mocking types you don&amp;rsquo;t own. You&amp;rsquo;re tests are going to be more tied to implementation details and because mocking types we don&amp;rsquo;t own winds up being complicated, its especially painful to change tests when implementation details need to change.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
     </item>

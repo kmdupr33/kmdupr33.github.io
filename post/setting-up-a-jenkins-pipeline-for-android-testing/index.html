@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+    <style type="text/css">
+      #mc_embed_signup {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        background:#fff;
+        display: flex;
+        justify-content: center;
+        font:14px "Open Sans",Arial,sans-serif;
+      }
+      #mc_embed_signup input.button {
+        background: black;
+      }
+    </style>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    
+
+
+    
+        <meta name="twitter:card" content="summary"/>
+    
+
+
+
+<meta name="twitter:title" content="Setting up a Jenkins Pipeline for Android Testing"/>
+<meta name="twitter:description" content=""/>
+<meta name="twitter:site" content="@philosohacker"/>
+
+
+
+  	<meta property="og:title" content="Setting up a Jenkins Pipeline for Android Testing &middot; Philosophical Hacker" />
+  	<meta property="og:site_name" content="Philosophical Hacker" />
+  	<meta property="og:url" content="https://www.philosophicalhacker.com/post/setting-up-a-jenkins-pipeline-for-android-testing/" />
+    
+    
+        
+            <meta property="og:image" content="https://www.philosophicalhacker.com/images/cropped-thinker.jpg"/>
+        
+    
+
+    
+    <meta property="og:description" content="" />
+  	<meta property="og:type" content="article" />
+    <meta property="og:image" content="https://www.philosophicalhacker.com/" />
+    <meta property="article:published_time" content="2017-04-28T17:39:22-04:00" />
+
+    
+    <meta property="article:tag" content="android" />
+    
+    <meta property="article:tag" content="testing" />
+    
+    <meta property="article:tag" content="ci" />
+    
+    
+
+    <title>Setting up a Jenkins Pipeline for Android Testing &middot; Philosophical Hacker</title>
+
+    
+    <meta name="description" content="" />
+    
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://www.philosophicalhacker.com/images/favicon.ico">
+	  <link rel="apple-touch-icon" href="https://www.philosophicalhacker.com/images/apple-touch-icon.png" />
+
+    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/screen.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
+
+    
+
+    
+      
+          <link href="https://www.philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
+      
+      
+    
+    <meta name="generator" content="Hugo 0.19" />
+
+    <link rel="canonical" href="https://www.philosophicalhacker.com/post/setting-up-a-jenkins-pipeline-for-android-testing/" />
+    
+  
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  
+
+
+    
+      
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": 
+    },
+    "author": {
+        "@type": "Person",
+        "name": ,
+        
+        "url": ,
+        "sameAs": [
+            
+            
+             
+             
+             
+             
+             
+            
+        ]
+    },
+    "headline": Setting up a Jenkins Pipeline for Android Testing,
+    "name": Setting up a Jenkins Pipeline for Android Testing,
+    "wordCount": 1253,
+    "timeRequired": "PT6M",
+    "inLanguage": {
+      "@type": "Language",
+      "alternateName": en
+    },
+    "url": https://www.philosophicalhacker.com/post/setting-up-a-jenkins-pipeline-for-android-testing/,
+    "datePublished": 2017-04-28T17:39Z,
+    "dateModified": 2017-04-28T17:39Z,
+    
+    "keywords": android, testing, ci,
+    "description": ,
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": https://www.philosophicalhacker.com/post/setting-up-a-jenkins-pipeline-for-android-testing/
+    }
+}
+    </script>
+    
+
+
+    
+
+    
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63544399-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    
+
+    
+</head>
+
+<body class="nav-closed">
+
+  <div class="nav">
+    <h3 class="nav-title">Menu</h3>
+    <a href="#" class="nav-close">
+        <span class="hidden">Close</span>
+    </a>
+    <ul>
+        
+        
+        
+            
+            <li class="nav-opened" role="presentation">
+            	<a href="/">Home</a>
+            </li>
+        
+    </ul>
+    
+    
+    <a class="subscribe-button icon-feed" href="https://www.philosophicalhacker.com/index.xml">Subscribe</a>
+    
+</div>
+<span class="nav-cover"></span>
+
+
+ <div class="site-wrapper">
+  
+            <header class="main-header post-head no-cover">
+                <nav class="main-nav clearfix">
+                      
+                    <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a> 
+                </nav>
+            </header>
+
+
+
+            <main class="content" role="main">
+
+
+
+
+                <article class="post post">
+
+                    <header class="post-header">
+                        <h1 class="post-title">Setting up a Jenkins Pipeline for Android Testing</h1>
+                        <small></small>
+
+                        <section class="post-meta">
+                            
+                            <time class="post-date" datetime=" 2017-04-28T17:39:22-04:00 ">
+            Apr 28, 2017
+          </time>  
+                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
+                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
+                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/ci/">#ci</a></span> 
+                            <strong>&middot; 6 minute read</strong>
+                        </section>
+                    </header>
+
+                    <section class="post-content">
+                        
+
+<p>Some tests are fast. You can run 1000s of them in seconds. These are the tests that are the heart and soul of TDD, so you run them every chance you get.</p>
+
+<p>There are other tests that aren&rsquo;t so fast. Because they&rsquo;re slow, you don&rsquo;t want to run them often. You&rsquo;ve got better things to do than to sit and wait for test results to come through.</p>
+
+<p>Unfortunately, the less you run your slow tests, the less valuable they are. By moving your slow test runs off your machine and running them every time you make a change, you can make sure you&rsquo;re getting the most value out of your slow tests.</p>
+
+<p>This is one reason why I think CI is so important. At every job I&rsquo;ve had, setting up a CI is one of the first things I&rsquo;ve done, and now that Jenkins has gotten a little more sophisticated with its &ldquo;Pipelines,&rdquo; I thought I should document how I set things up somewhere.</p>
+
+<p>My hope is that if my future self has a different job that requires him to setup Jenkins for Android Testing, he&rsquo;ll find this useful. If your current self needs to setup Jenkins so that you can maximize the value of your slow tests, I hope you find this useful too.</p>
+
+<h3 id="the-jenkinsfile">The Jenkinsfile</h3>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 1 </span><span style="background-color: #ffffcc">node<span style="color: #666666">(</span><span style="color: #BA2121">&#39;android&#39;</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
+</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 2 </span><span style="background-color: #ffffcc">    step<span style="color: #666666">([</span>$class<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;StashNotifier&#39;</span><span style="color: #666666">])</span>
+</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 3 </span>    checkout scm
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 4 </span>    <span style="color: #0000FF">stage</span><span style="color: #666666">(</span><span style="color: #BA2121">&#39;Build&#39;</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 5 </span>      <span style="color: #008000; font-weight: bold">try</span> <span style="color: #666666">{</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 6 </span><span style="background-color: #ffffcc">        sh <span style="color: #BA2121">&#39;./gradlew --refresh-dependencies clean assemble&#39;</span>
+</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 7 </span><span style="background-color: #ffffcc">        lock<span style="color: #666666">(</span><span style="color: #BA2121">&#39;emulator&#39;</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
+</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 8 </span>          sh <span style="color: #BA2121">&#39;./gradlew connectedCheck&#39;</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 9 </span>        <span style="color: #666666">}</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">10 </span>        currentBuild<span style="color: #666666">.</span><span style="color: #7D9029">result</span> <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;SUCCESS&#39;</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">11 </span>      <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">catch</span><span style="color: #666666">(</span>error<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">12 </span><span style="background-color: #ffffcc">        slackSend <span style="color: #A0A000">channel:</span> <span style="color: #BA2121">&#39;#build-failures&#39;</span><span style="color: #666666">,</span> <span style="color: #A0A000">color:</span> <span style="color: #BA2121">&#39;bad&#39;</span><span style="color: #666666">,</span> <span style="color: #A0A000">message:</span> <span style="color: #BA2121">&quot;This build is broken ${env.BUILD_URL}&quot;</span><span style="color: #666666">,</span> <span style="color: #A0A000">token:</span> <span style="color: #BA2121">&#39;XXXXXXXXXXX&#39;</span>
+</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px">13 </span>        currentBuild<span style="color: #666666">.</span><span style="color: #7D9029">result</span> <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;FAILURE&#39;</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">14 </span>      <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">finally</span> <span style="color: #666666">{</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">15 </span>        junit <span style="color: #BA2121">&#39;**/test-results/**/*.xml&#39;</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">16 </span>      <span style="color: #666666">}</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">17 </span>    <span style="color: #666666">}</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">18 </span>    stage<span style="color: #666666">(</span><span style="color: #BA2121">&#39;Archive&#39;</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">19 </span>      archiveArtifacts <span style="color: #BA2121">&#39;app/build/outputs/apk/*&#39;</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">20 </span>    <span style="color: #666666">}</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">21 </span>    step<span style="color: #666666">([</span>$class<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;StashNotifier&#39;</span><span style="color: #666666">])</span>
+<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">22 </span><span style="color: #666666">}</span>
+</pre></div>
+
+
+<p>There&rsquo;s a couple of lines worth highlighting here.</p>
+
+<h4 id="1-node-android">1 <code>node('android')</code></h4>
+
+<p>A node is a computer that can execute a Jenkins job. A single Jenkins &ldquo;master&rdquo; server can queue up jobs for many nodes, so you can run as many jobs as you have machines simultaneously.<sup>1</sup></p>
+
+<p>What&rsquo;s interesting about this line is the parameter that <code>node()</code> takes. The value of this parameter is a &ldquo;label,&rdquo; which is a way of telling Jenkins which types of nodes can run this job. With this line, I&rsquo;m saying: &ldquo;Only run this job on nodes that have the label &lsquo;android&rsquo;.&rdquo; When managing your nodes through the Jenkins UI, you can specify which labels your node has, thereby limiting the execution of your jobs to particular nodes:</p>
+
+<p><img src="/images/changing-node-labels.png" alt="Setting labels on a node" /></p>
+
+<p>OSX machines are more expensive than the linux machines that can run our Android builds, so we currently use labels to ensure that android build jobs aren&rsquo;t tying up the (more expensive) OSX machines.</p>
+
+<h4 id="2-step-class-stashnotifier">2 <code>step([$class: 'StashNotifier'])</code></h4>
+
+<p>Prs can be gated by your Jenkins build. In other words, you can set things up so that no one can merge a pr with failing tests or lint violations. This pr gating is made possible by this step and the <a href="https://github.com/jenkinsci/stashnotifier-plugin">Stash Notifier plugin that exposes it</a>.</p>
+
+<p>If someone can merge broken code into master in spite of failing tests, those tests aren&rsquo;t as valuable as they could be.</p>
+
+<p>Flaky tests are made especially painful by pr gating based on test results. I think this is a good thing, as flaky tests can be a subtle poison to your testing suite. By making their poison more explicitly felt through pr gates, we&rsquo;ll be more motivated to fix them or delete them. Better that, then for people to start ignoring test results.</p>
+
+<h4 id="6-sh-gradlew-refresh-dependencies-clean-assemble">6 <code>sh './gradlew --refresh-dependencies clean assemble'</code></h4>
+
+<p>One way of thinking about a CI server is that it continuously runs what we might call &ldquo;the integration test,&rdquo; which we might express as follows:</p>
+
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">Given </span><span style="color: #0000FF">a working code base</span>
+<span style="color: #008000; font-weight: bold">When </span><span style="color: #0000FF">new code is merged in</span>
+<span style="color: #008000; font-weight: bold">Then </span><span style="color: #0000FF">we still have a working code base</span>
+</pre></div>
+
+
+<p>&ldquo;working code base&rdquo; here is fleshed out by the specific steps in a Jenkinsfile, but is often defined as follows:</p>
+
+<blockquote>
+<p>&ldquo;A working code base builds from a <em>fresh checkout</em> and all the tests pass.&rdquo;</p>
+</blockquote>
+
+<p>The &ldquo;fresh checkout&rdquo; bit of the definition is often necessary to avoid the proverbial &ldquo;but it builds on my machine&rdquo; excuse.</p>
+
+<p>Since developers and their computers are not invincible, a particular developer&rsquo;s machine is not the source of truth for whether a build is broken. The CI server should be that source of truth, as it tells us whether its possible for a new developer to build a project on a new machine.</p>
+
+<p>This is why <code>--refresh-dependencies</code> and <code>clean</code> are included in this line. <code>--refresh-dependencies</code> is particularly important if you&rsquo;re using SNAPSHOT dependencies, as I&rsquo;ve run into cases where the build appears to be fine but is actually broken, and I couldn&rsquo;t tell because the CI server was using a cached SNAPSHOT dependency.</p>
+
+<h4 id="7-lock-emulator">7 <code>lock('emulator') {}</code></h4>
+
+<p>Suppose you have a quad-core node that builds Android jobs. Nodes often have an executor for each of their cores. This allows Jenkins to take full advantage of multi-core machines, as it can run a job for each core on a machine. A quad-core node, for example, could run 4 jobs simultaneously.</p>
+
+<p>Now, suppose that two jobs for two branches get kicked off simultaneously. If there&rsquo;s only one emulator available on a node, you could have a problem: one test run could try to access the emulator while the other is using it, thereby causing failures. Locks solve this problem.</p>
+
+<p>This line of code grabs a lock on a resource labeled as &ldquo;emulator,&rdquo; and retains that lock until the code running inside its block has been completed. Any other jobs that try to run tests against the emulator while the lock is held by a particular job will have to wait, which ensures that you can take full advantage of the parallelism gained by adding additional nodes and executors.</p>
+
+<h4 id="12-slacksend-channel-failures-message-broken-build-env-build-url">12 <code>slackSend channel: '#failures', message: &quot;Broken build ${env.BUILD_URL}&quot;</code></h4>
+
+<p>If a build on the CI passes, great. That should be the status quo. With all the noise in our emails and slack channels, we don&rsquo;t need a notification that says, in effect, &ldquo;everything is <em>still</em> working just fine.&rdquo; Any source of information that provides us with useless information MOST of the time seems likely to be a source of information that we&rsquo;ll pay less attention to over time.</p>
+
+<p>This is why I only post build failures to a slack channel. A broken build is a big deal. Ideally, a developer will investigate a broken build immediately.</p>
+
+<p>When broken builds aren&rsquo;t investigated immediately, we lose the value of our tests and CI, which are supposed to give us feedback on our code while the changes are still fresh in our mind. It&rsquo;s much easier to fix broken code immediately than it is to fix it 3+ days later when the changes we&rsquo;ve made aren&rsquo;t fresh in our mind.</p>
+
+<p>All that to say, a slack notification seems appropriate for build failures.</p>
+
+<h4 id="conclusion">Conclusion</h4>
+
+<p>I&rsquo;ll conclude with an exhortation for my future self and for all the selves engaged in the noble struggle of Android dev:</p>
+
+<p>Slugging around in the Jenkins web UI may not be as interesting as writing an elegant Observable cascade for loading data in your <code>Activity</code>, but it&rsquo;s necessary if you&rsquo;re going to maximize the value of the tests you&rsquo;ve already written. Take solace in the fact that you&rsquo;re efforts are making your team more effective.</p>
+
+<h3 id="notes">Notes:</h3>
+
+<ol>
+<li>Actually, you can run more jobs than this. Each node can have multiple executors, and the folks at Jenkins recommend that you create an executor for each core on the node.</li>
+</ol>
+
+                    </section>
+
+
+                    <footer class="post-footer">
+
+
+                         
+<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
+<div id="mc_embed_signup">
+<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    
+    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
+    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+    </div>
+</form>
+</div>
+
+ 
+<section class="share">
+  <h4>Share this post</h4>
+  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=Setting%20up%20a%20Jenkins%20Pipeline%20for%20Android%20Testing&nbsp;-&nbsp;Philosophical%20Hacker&amp;url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fsetting-up-a-jenkins-pipeline-for-android-testing%2f"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+      <span class="hidden">Twitter</span>
+  </a>
+  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fsetting-up-a-jenkins-pipeline-for-android-testing%2f"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+      <span class="hidden">Facebook</span>
+  </a>
+  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fsetting-up-a-jenkins-pipeline-for-android-testing%2f&amp;description=Setting%20up%20a%20Jenkins%20Pipeline%20for%20Android%20Testing"
+      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
+      <span class="hidden">Pinterest</span>
+  </a>
+  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=https%3a%2f%2fwww.philosophicalhacker.com%2fpost%2fsetting-up-a-jenkins-pipeline-for-android-testing%2f"
+     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+      <span class="hidden">Google+</span>
+  </a>
+</section>
+
+ 
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'philosophicalhacker';
+  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/post\/setting-up-a-jenkins-pipeline-for-android-testing\/';
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+                    </footer>
+                </article>
+
+            </main>
+
+             <aside class="read-next">
+  
+  
+      <a class="read-next-story prev" style="background-image: url(https://www.philosophicalhacker.com/images/marathon.jpg)" href="/post/android-testing-calisthenics-domain-objects/">
+          <section class="post">
+              <h2>Android Testing Calisthenics: Domain Objects</h2>
+          </section>
+      </a>
+  
+</aside>
+  <div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
+<footer class="site-footer clearfix">
+    <section class="copyright"><a href="">Philosophical Hacker</a> </section>
+    
+    <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
+    
+</footer>
+</div>
+<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.js"></script>
+<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.fitvids.js"></script>
+<script type="text/javascript" src="https://www.philosophicalhacker.com/js/index.js"></script>
+
+<script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
+
+</body>
+
+</html>
