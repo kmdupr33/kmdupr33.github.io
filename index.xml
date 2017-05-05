@@ -6,8 +6,26 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 May 2017 08:57:08 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 17 Jul 2017 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.philosophicalhacker.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>An Introduction to RxJava</title>
+      <link>https://www.philosophicalhacker.com/talk/an-introduction-to-rxJava/</link>
+      <pubDate>Mon, 17 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/talk/an-introduction-to-rxJava/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>If Android Tests Could Talk</title>
+      <link>https://www.philosophicalhacker.com/talk/if-android-tests-could-talk/</link>
+      <pubDate>Mon, 17 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/talk/if-android-tests-could-talk/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Object Thinking&#39;s Intro</title>
@@ -564,6 +582,24 @@
 &lt;li&gt;It could also show up as an inability to get your target code into the right state for testing. That&amp;rsquo;s what we saw &lt;a href=&#34;&#34;&gt;in this post&lt;/a&gt;, for example.&lt;/li&gt;
 &lt;/ol&gt;
 </description>
+    </item>
+    
+    <item>
+      <title>Architectural Insights from Test Driven Android Development</title>
+      <link>https://www.philosophicalhacker.com/talk/architectural-insights-from-test-driven-android-development/</link>
+      <pubDate>Sat, 08 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/talk/architectural-insights-from-test-driven-android-development/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Reactive Extensions for Android App Development</title>
+      <link>https://www.philosophicalhacker.com/talk/reactive-extensions-for-android-app-development/</link>
+      <pubDate>Sat, 08 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/talk/reactive-extensions-for-android-app-development/</guid>
+      <description></description>
     </item>
     
     <item>
@@ -1398,525 +1434,6 @@ launch(UI) {
 &lt;li&gt;&lt;p&gt;&amp;ldquo;In the Beginning,&amp;rdquo; &lt;a href=&#34;http://androidbackstage.blogspot.com/2016/10/episode-56-in-beginning.html&#34;&gt;&lt;em&gt;Android Developers Backstage&lt;/em&gt;&lt;/a&gt;, ~25:00.&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Haase, &lt;em&gt;&lt;a href=&#34;https://medium.com/google-developers/developing-for-android-vii-the-rules-framework-concerns-d0210e52eee3#.yegpenynu&#34;&gt;Developing for Android VII The Rules: Framework&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Why I Avoid Singletons for Android Data Loading</title>
-      <link>https://www.philosophicalhacker.com/post/against-singletons-for-android-data-loading/</link>
-      <pubDate>Sat, 04 Feb 2017 13:20:35 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/against-singletons-for-android-data-loading/</guid>
-      <description>
-
-&lt;p&gt;Imagine for a moment that there&amp;rsquo;s an annoying fly buzzing around your guests at a BBQ you&amp;rsquo;re hosting. You and your guests swat at it a few times, but no one manages to nail the sucker. You run into the house to grab a fly swatter, but you find that even if you wait for the fly to settle down somewhere, you can&amp;rsquo;t quite smash it.&lt;/p&gt;
-
-&lt;p&gt;Frustrated and desperate, you decide to evacuate the party (and the state), get your hands on a nuke, and nuke the fly along with your backyard and neighborhood. Watching the mushroom cloud form from your fallout shelter, you raise glasses with your guests and say, &amp;ldquo;we got&amp;rsquo;em boys. Good work.&amp;rdquo;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Obviously, this is an absurd story. I&amp;rsquo;m telling this brief absurd story because there are parallels between singletons as a data loading solution and nukes as a fly swatter. Singletons for data loading, like nukes, are hard to test, leave a mess behind them, and are overkill. These parallels are the reasons that I try to avoid using singletons for data loading on Android. That&amp;rsquo;s what this post is about.&lt;/p&gt;
-
-&lt;h3 id=&#34;the-fly-data-loading-in-activities&#34;&gt;The Fly: Data Loading in Activities&lt;/h3&gt;
-
-&lt;p&gt;Before I dive into the reasons I try to avoid singletons for data loading in Activities, I want to clearly state the problem for which I think singletons are poorly suited.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the problem:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;Activity&lt;/code&gt;s are destroyed and re-created on configuration changes.&lt;/li&gt;
-&lt;li&gt;If we&amp;rsquo;ve performed an expensive operation to get the data displayed by that &lt;code&gt;Activity&lt;/code&gt;, we&amp;rsquo;ll want a way for the results of long-running operations to be cached across orientation changes.&lt;/li&gt;
-&lt;li&gt;If we need to perform an expensive operation to get data, the results of this operation must be held if there&amp;rsquo;s a configuration change while the operation is being performed and delivered once the &lt;code&gt;Activity&lt;/code&gt; has been re-created after the configuration change.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;I think singletons are a &lt;em&gt;sub-optimal&lt;/em&gt; solution for this specific problem. This is not a post about why singletons are bad, full stop. Let&amp;rsquo;s move on to why I think this.&lt;/p&gt;
-
-&lt;h3 id=&#34;hard-to-test&#34;&gt;Hard to Test&lt;/h3&gt;
-
-&lt;p&gt;Fortunately, nukes are hard to test. You&amp;rsquo;ve got to find a large area that you can pollute with radiation, and, depending on your place in the world order, you need to be prepared to handle varying degrees of fallout from the international community.&lt;/p&gt;
-
-&lt;p&gt;Unfortunately, singletons are also hard to test, and this counts as one strike against them as a data loading solution in my mind. Others have already noted in detail why testing with singletons is hard,&lt;sup&gt;1&lt;/sup&gt; but let&amp;rsquo;s look at a brief example to see why testing with singletons is hard.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s say you&amp;rsquo;re tasked with implementing a screen that loads data from a database like the explore sessions screen from the google I/O app:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/session-data-ss.png&#34; alt=&#34;Session list&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Because the fairly complicated logic governing whether the list of sessions should be preceded by various preference cards &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-should-we-unit-test/&#34;&gt;scares you a little&lt;/a&gt;, you decide to write tests for this screen. Since you know &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;you&amp;rsquo;re not going to have an easy time testing logic in an &lt;code&gt;Activity&lt;/code&gt;&lt;/a&gt;, you move the logic to a presenter:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;SessionsPresenter&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;  
-  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-  &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;present&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;shouldShowSessionNotificationsCard&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-      sessionsView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showSessionNotificationsCard&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;shouldShowConferenceMessagesCard&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-      sessionsView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showConferenceMessagesCard&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    SessionsStore&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getInstance&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt;
-&lt;/span&gt;      &lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;loadSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; SessionsStore&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoadCompleteListener&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onLoadComplete&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;List&lt;span style=&#34;color: #666666&#34;&gt;&amp;lt;&lt;/span&gt;Session&lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; sessions&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #ffffcc&#34;&gt;          &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;sessions&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;isEmpty&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            sessionsView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showNoSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;          &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;            sessionsView&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;showSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;sessions&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;/span&gt;          &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-      &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;      
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;In the first highlighted line, we&amp;rsquo;re accessing a singleton to load the sessions. In the following highlighted lines, we either show the sessions or something indicating that there are no sessions at this time.&lt;/p&gt;
-
-&lt;p&gt;The use of a singleton in this code makes this presenter difficult to test. When we&amp;rsquo;re writing a test for &lt;code&gt;SessionsPresenter&lt;/code&gt;, we need to be able to swap out the implementation of &lt;code&gt;SessionsStore&lt;/code&gt; with stubs that will return canned responses so that we can execute each branch of the if-statement highlighted above. This is not easy with a singleton in place.&lt;/p&gt;
-
-&lt;p&gt;Getting around this problem forces us to create additional methods that are only used by the tests. For example, to test the above code, we&amp;rsquo;d need to add &lt;code&gt;SessionStore.setTestInstance&lt;/code&gt; and set the test instance with a stub during our unit test:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;SessionsPresenterTests&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;  
-  &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Test&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;showsNoSessionsViewWhenNoSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;    
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-    SessionsStore&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setTestInstance&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; SessionsStore&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-      &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt;
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;loadSessions&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SessionsStore&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;LoadCompleteListener&lt;/span&gt; listener&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-        listener&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onLoadComplete&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Collections&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;emptyList&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;());&lt;/span&gt;
-      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-    &lt;span style=&#34;color: #666666&#34;&gt;});&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;When we need to change the API of the SUT &lt;em&gt;solely&lt;/em&gt;&lt;sup&gt;2&lt;/sup&gt; for the purpose of testing, our tests are telling us there&amp;rsquo;s a problem with our design.&lt;/p&gt;
-
-&lt;p&gt;Even with these added methods, however, we lose the ability to speed up our tests by running them in parallel.&lt;sup&gt;3&lt;/sup&gt; The likelihood that tests are run regularly is related to how long it takes to run them. Tests are often more likely to be useful the more often they are run, so placing an unneeded limit on how quickly our tests can run is not ideal.&lt;/p&gt;
-
-&lt;p&gt;At this point, some readers may point out that these problems are alleviated if we inject the singleton through the constructor and if we keep our &lt;code&gt;Activity&lt;/code&gt; as a dumb view that isn&amp;rsquo;t scary enough to test. The code for this suggestion might look something like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;SessionsActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Activity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle bundle&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;bundle&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; SessionsPresenter&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;SessionStore&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;getInstance&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()).&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;present&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;();&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This does alleviate the testing problems at the unit level. However, if we want to stub out what gets returned by the singleton &lt;code&gt;SessionStore&lt;/code&gt; for UI tests, we&amp;rsquo;ll still have to add a &lt;code&gt;SessionStore.setTestInstance&lt;/code&gt; method. Again, modifying the API of our classes for testing purposes is smelly.&lt;/p&gt;
-
-&lt;p&gt;If you&amp;rsquo;re using a &lt;code&gt;@Singleton&lt;/code&gt;-scoped dependency that you inject with dagger, then we can facilitate UI testing without adding a &lt;code&gt;setTestInstance&lt;/code&gt; method. This is the best version of the idea of using singletons for loading data in &lt;code&gt;Activity&lt;/code&gt;s. Even if I didn&amp;rsquo;t mind the fact that including dagger was a high price to pay for doing any data loading in an Android app, I still wouldn&amp;rsquo;t ever feel comfortable using &lt;code&gt;@Singleton&lt;/code&gt;-scoped dependencies for data loading for the following reasons.&lt;/p&gt;
-
-&lt;h3 id=&#34;leaves-a-mess-behind-them&#34;&gt;Leaves a mess behind them&lt;/h3&gt;
-
-&lt;p&gt;Data owned by your singleton will live &lt;em&gt;for the entire process&lt;/em&gt;, unless you do something to clean it up. We&amp;rsquo;re often worried about memory on Android devices. &lt;em&gt;Even if our app performs fairly well on devices with low-memory&lt;/em&gt;, irresponsible use of memory can lead to a sort of tragedy of the commons, where the user experience suffers overall.&lt;/p&gt;
-
-&lt;p&gt;Chet Haase in &lt;a href=&#34;https://medium.com/google-developers/developing-for-android-i-understanding-the-mobile-context-fd2351b131f8#.t0wde59q7&#34;&gt;&lt;em&gt;Developing for Android&lt;/em&gt;&lt;/a&gt; captures this well:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;if any of these apps consume more memory than they need to, then there will be less system memory left over for the others. When that happens, the system will evict app processes (shutting them down), forcing the user into a situation where apps are constantly re-launching when the user switches to them because they cannot stay present in the background due to memory pressure.&lt;/p&gt;
-
-&lt;p&gt;So overall: use as little memory as you can, because the entire system suffers if you don’t.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;If our apps are going to be good citizens on user&amp;rsquo;s devices, we ought to clean up the data owned by our singleton once we&amp;rsquo;re done using it. Singletons for loading data, along with the memory concerns on Android, place an extra burden on us as programmers. Strike two for singletons.&lt;/p&gt;
-
-&lt;p&gt;I can imagine cases and apps where the memory issue isn&amp;rsquo;t a big deal. I work at &lt;a href=&#34;http://www.unikey.com/&#34;&gt;a company where the minimum API level for our app is 20&lt;/a&gt;, so we definitely have less performance concerns than other companies. In cases where the data held by singletons really isn&amp;rsquo;t cause for concern, I could just never clean up the data held by the singleton, which definitely makes working with them easier. Still, there&amp;rsquo;s another reason I try to avoid singleton&amp;rsquo;s for data loading.&lt;/p&gt;
-
-&lt;h3 id=&#34;overkill&#34;&gt;Overkill&lt;/h3&gt;
-
-&lt;p&gt;Nuking a fly is absurd because its overkill. You just want to kill the fly. You don&amp;rsquo;t mean to obliterate the 3 mile radius around the fly.&lt;/p&gt;
-
-&lt;p&gt;Similarly, singletons are overkill. We don&amp;rsquo;t really need the data loaded for our &lt;code&gt;Activity&lt;/code&gt; to live for the entire process. This is precisely why we usually have to clean up some of the data when the &lt;code&gt;Activity&lt;/code&gt; is done using it.&lt;/p&gt;
-
-&lt;p&gt;Often what we really want is data that is cached across configuration changes, but the fact that the cached data within a singleton lives for the entire process makes implementing our retrieval of that data more complicated. Let me explain why.&lt;/p&gt;
-
-&lt;p&gt;Suppose I want to want to send two emails with two different attachments. Both times I go to attach an email, the same &lt;em&gt;type&lt;/em&gt; of Activity will be launched. Suppose this &lt;code&gt;Activity&lt;/code&gt; gets its data from a singleton-based data loader. If both of these &lt;code&gt;Activity&lt;/code&gt;s try to grab data from the Singleton, the user can wind up with stale data the second time they try to attach an email because the first &lt;code&gt;Activity&lt;/code&gt; has already populated the cache with data that was fresh at the time the first &lt;code&gt;Activity&lt;/code&gt; asked for it.&lt;/p&gt;
-
-&lt;p&gt;Of course, these are solvable problems. However, I think it&amp;rsquo;d be better if we didn&amp;rsquo;t have these problems in the first place. It turns out there&amp;rsquo;s already a solution for data loading that doesn&amp;rsquo;t have any of these problems/complications.&lt;/p&gt;
-
-&lt;h3 id=&#34;loaders-a-professional-fly-swatter&#34;&gt;Loaders: A Professional Fly Swatter&lt;/h3&gt;
-
-&lt;p&gt;&lt;code&gt;Loader&lt;/code&gt;s are designed for this exact problem. They don&amp;rsquo;t &amp;ldquo;overkill&amp;rdquo; by giving us data that lasts the entire process instead of what we need: data that survives configuration changes. Because of this, there&amp;rsquo;s no need for us to worry about stale data when multiple &lt;code&gt;Activitiy&lt;/code&gt;s need the same data. Moreover, we don&amp;rsquo;t have to worry about cleaning up data once its no long used. Finally, if we use them sensibly, &lt;code&gt;Loader&lt;/code&gt;s don&amp;rsquo;t pose any special challenges to testing.&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;m not denying that it can be difficult to get a handle on how &lt;code&gt;Loader&lt;/code&gt;s work. Nor am I saying that their API is a joy to work with. However, I think trudging through the docs and/or wrapping the Loader API in something more usable (e.g., &lt;a href=&#34;https://www.philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/&#34;&gt;RxLoader&lt;/a&gt;) is the best option we have.&lt;/p&gt;
-
-&lt;p&gt;The alternative is to use singletons for data loading in our &lt;code&gt;Activity&lt;/code&gt;s, which, if you buy into my argument and analogy is silly for the same reason it&amp;rsquo;s silly to nuke a fly at a BBQ you&amp;rsquo;re hosting.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Misko Hevery, &amp;ldquo;father of AngularJS,&amp;rdquo; has a really nice explanation of the relationship between singletons and testing as a part of his testing guide &lt;a href=&#34;http://misko.hevery.com/code-reviewers-guide/flaw-brittle-global-state-singletons/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&amp;ldquo;Soley&amp;rdquo; is emphasized because otherwise the statement might feel like a contradiction. I&amp;rsquo;ve been saying recently that tests force us to design better applications, so how can it be that there&amp;rsquo;s a problem if the tests make us change the API of the SUT? There&amp;rsquo;s no problem the if we change the API of our classes to support testing, as long as that change introduces flexibility that can be used both by the application &lt;em&gt;and&lt;/em&gt; by the tests. A &lt;code&gt;setTestInstance&lt;/code&gt; method, as the name implies, is only used by tests. This seems like a sensible way of resolving the contradiction, but honestly, I need to think about this more to be sure.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Ibid.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Espresso Test Addiction: An Anti-pattern</title>
-      <link>https://www.philosophicalhacker.com/post/espresso-test-addiction/</link>
-      <pubDate>Sat, 28 Jan 2017 09:19:38 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/espresso-test-addiction/</guid>
-      <description>
-
-&lt;blockquote&gt;
-&lt;p&gt;More than 1000 apps&amp;hellip;they have espresso tests for the first time using the test recorder&amp;hellip;espresso adoption has also grown since the introduction of [the espresso test recorder].&lt;/p&gt;
-
-&lt;p&gt;Android Developers Backstage, &lt;a href=&#34;http://androidbackstage.blogspot.com/2016/10/episode-57-espresso-test-recorder.html&#34;&gt;Episode 37 Espresso Test Recorder&lt;/a&gt;, 31:10&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Record-playback tools are almost always a bad idea for any kind of automation, since they resist changeability and obstruct useful abstractions. They are only worth having as a tool to generate fragments of scripts which you can then &lt;strong&gt;edit&lt;/strong&gt; as a proper programming language&amp;hellip;&lt;/p&gt;
-
-&lt;p&gt;Martin Fowler, &lt;a href=&#34;https://martinfowler.com/bliki/TestPyramid.html&#34;&gt;&amp;ldquo;Test Pyramid&amp;rdquo;&lt;/a&gt; (emphasis mine)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Espresso tests make a nice addition to our testing tool-belt. The espresso test recorder, moreover, makes getting started with testing and espresso very easy. As I&amp;rsquo;ve said before, &lt;a href=&#34;https://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/&#34;&gt;getting started with automated testing on Android is hard&lt;/a&gt;, so having nice tools and an clear on-boarding ramp for testing is a good thing.&lt;/p&gt;
-
-&lt;p&gt;Of course, we all know that its possible to have too much of a good thing, and I sometimes worry that espresso and espresso recorder are contributing to the formation of a UI testing addiction in the Android community. I worry, moreover, that this addiction that will probably lead to less testing in the long-run.&lt;/p&gt;
-
-&lt;p&gt;UI tests and test recorders are, of course, not new, so they have well-understood limitations. Moreover, lots of smart programmers have said smart things about how to best use these tools. This post reviews these limitations and best practices in general and suggests how we ought to apply those practices to Android development.&lt;/p&gt;
-
-&lt;h3 id=&#34;ui-tests-outside-the-android-community&#34;&gt;UI Tests Outside the Android Community&lt;/h3&gt;
-
-&lt;p&gt;Outside the Android community, the caution around writing too many UI tests is actually surprisingly loud and clear.&lt;/p&gt;
-
-&lt;p&gt;Mike Cohn, for example, expresses this caution with &lt;a href=&#34;https://www.mountaingoatsoftware.com/blog/the-forgotten-layer-of-the-test-automation-pyramid&#34;&gt;his testing pyramid suggestion&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;At the base of the test automation pyramid is unit testing. Unit testing should be the foundation of a solid test automation strategy and as such represents the largest part of the pyramid&amp;hellip;Automated user interface testing is placed at the top of the test automation pyramid &lt;strong&gt;because we want to do as little of it as possible.&lt;/strong&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Cohn warns us in this article (and the book the article is advertising) that if we don&amp;rsquo;t have a healthy test pyramid, then &amp;ldquo;all other testing ends up being performed through the user interface, resulting in tests that are expensive to run, expensive to write, and brittle.&amp;rdquo; This test pyramid suggestion is echoed by &lt;a href=&#34;https://martinfowler.com/bliki/TestPyramid.html&#34;&gt;Martin Fowler&lt;/a&gt; and by &lt;a href=&#34;https://testing.googleblog.com/2015/04/just-say-no-to-more-end-to-end-tests.html&#34;&gt;Google&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Michael Feathers, to take another example, also talks about the limitations of large tests, particularly with respect to how useful they are in helping us refactor with confidence:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Unit testing is one of the most important components in legacy code work. System-level regression tests are great, but small, localized tests are invaluable. They can give you feedback as you develop and allow you to refactor with much more safety.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;And later on, contrasting unit tests with larger tests, he says:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Larger tests tend to take longer to execute. This tends to make test runs rather frustrating. Tests that take too long to run end up not being run.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Finally, Gerard Meszaros in his &lt;em&gt;xUnit Test Patterns&lt;/em&gt; has an entire section explaining why over-using UI tests isn&amp;rsquo;t a great idea.&lt;sup&gt;3&lt;/sup&gt; Here&amp;rsquo;s one specific passage with a strong caution against using recorded UI tests in particular:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;In the last decade [1998-2008], more general-purpose test automation tools have become available for testing applications through their user interfaces. Some of these tools use scripting languages to define the tests; the sexier tools rely on the &amp;ldquo;robot user&amp;rdquo; or &amp;ldquo;record and playback&amp;rdquo; metaphor for test automation. Unfortunately, many of the early experiences with these latter tools left the testers and test managers less than satisfied. The cause was high test maintenance costs caused by the &amp;ldquo;fragile test&amp;rdquo; problem.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The gist of all of these quotes is that writing too many UI tests will likely result in a suite that is a) too slow to support development/refactoring, b) too difficult to maintain, as changes in the UI can break a large amount of tests.&lt;sup&gt;4&lt;/sup&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;but-what-about-the-robot-pattern&#34;&gt;But what about the &amp;ldquo;robot pattern?&amp;rdquo;&lt;/h3&gt;
-
-&lt;p&gt;At this point, some readers may wonder whether &amp;ldquo;&lt;a href=&#34;https://realm.io/news/kau-jake-wharton-testing-robots/&#34;&gt;the robot pattern&lt;/a&gt;&amp;rdquo; makes writing a ton of UI tests ok. The robot pattern, to refresh your memory, is a way of making your UI tests more resistant to change by hiding the details of view interaction behind &amp;ldquo;robot&amp;rdquo; objects. While the robot pattern does &lt;em&gt;mitigate&lt;/em&gt; the issue of brittle tests, over-relying on UI tests, even with the robot pattern, is still going to result in a sub-par testing suite. Here&amp;rsquo;s why.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s start by noting that the robot pattern is not new. The robot pattern is just &lt;a href=&#34;https://martinfowler.com/bliki/PageObject.html&#34;&gt;Martin Fowler&amp;rsquo;s page object pattern&lt;/a&gt;.&lt;sup&gt;5&lt;/sup&gt; So, when other software engineers outside the Android community suggest that too much UI testing is a bad idea, its not because they aren&amp;rsquo;t aware of the possibility of &amp;ldquo;the robot pattern.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;Next, we can note something obvious about the robot pattern: it does nothing to improve the &lt;em&gt;speed&lt;/em&gt; of UI tests. The lack of speed of UI tests is one of the main disadvantages of over-relying on them.&lt;/p&gt;
-
-&lt;p&gt;Finally, although the robot pattern does make UI tests resistant to small UI changes, it does not allow tests to gracefully adapt to larger UI changes. Suppose, for example, that a particular piece of functionality is moved to a different screen within our app. If this happens, we&amp;rsquo;ll need to update our tests &lt;em&gt;and&lt;/em&gt; our robots.&lt;/p&gt;
-
-&lt;p&gt;For the reasons, the robot pattern doesn&amp;rsquo;t change the fact that we&amp;rsquo;re often better off trying to find a way of testing functionality at the unit-level or integration-level.&lt;/p&gt;
-
-&lt;h3 id=&#34;how-to-use-espresso-tests-and-the-recorder&#34;&gt;How to use Espresso Tests and the Recorder&lt;/h3&gt;
-
-&lt;p&gt;Based on experiences and recommendations of &lt;em&gt;very&lt;/em&gt; experienced software engineers outside the Android community, here&amp;rsquo;s how I recommend we handle use espresso and recorder for UI tests:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;If there&amp;rsquo;s a way to test the functionality that you&amp;rsquo;re trying to test at the unit level, do so.&lt;/li&gt;
-&lt;li&gt;If you can&amp;rsquo;t do this, refactor so that you can test the functionality at the unit-level. Use the test recorder to record a UI test to support your refactoring to be sure that you didn&amp;rsquo;t break anything.&lt;sup&gt;6&lt;/sup&gt; After you&amp;rsquo;ve refactored your code to test the functionality at the unit-level, delete the recorded test.&lt;/li&gt;
-&lt;li&gt;If you&amp;rsquo;re &lt;em&gt;really&lt;/em&gt; interested in testing how the application works &lt;em&gt;as a whole&lt;/em&gt;, using a UI test is fine, but, as the epigraph opening this post suggests, &lt;em&gt;refactor&lt;/em&gt; your recorded tests to use the &amp;ldquo;robot pattern&amp;rdquo; to keep your UI tests resistant to small changes in the UI.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;Espresso and the test recorder are great tools, but don&amp;rsquo;t let them suck you into writing too many UI tests. That way lies madness&amp;hellip;and slow, fragile tests. These are tests that won&amp;rsquo;t be useful, and as a result, &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-should-we-unit-test/&#34;&gt;the fear that&amp;rsquo;s supposed to be alleviated by writing unit tests will return&lt;/a&gt;. I don&amp;rsquo;t want to work with code I&amp;rsquo;m afraid to change, so selfishly, I hope we&amp;rsquo;ll all do better here.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Michael Feathers, &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, 34-35.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Ibid., 35-36.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Gerard Meszaros, &lt;em&gt;xUnit Test Patterns&lt;/em&gt;, 299.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Poor defect localization is another disadvantage of UI tests that I&amp;rsquo;m not covering in detail here. Writing too many UI tests &lt;em&gt;can&lt;/em&gt; be a way of ignoring the design feedback your tests are trying to give you. (&lt;a href=&#34;https://www.philosophicalhacker.com/post/why-i-dont-use-roboletric/&#34;&gt;The same thing can happen when we write robolectric tests.&lt;/a&gt;) Unit testing android applications is hard because our Android apps often have bad architecture. Instead of listening to our tests that are telling us &amp;ldquo;your classes are tightly coupled and they violate the principle of single responsibility,&amp;rdquo; we just say, &amp;ldquo;forget unit tests. I&amp;rsquo;ll just test everything through the UI instead.&amp;rdquo;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;The key idea of this pattern, however, is definitely older than Fowler&amp;rsquo;s page object pattern. Gerard Meszaros talks about it in &lt;em&gt;xUnit Test Patterns&lt;/em&gt;, for example, which was published in 2007.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;This strategy is recommended by both Feathers and Meszaros.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Exploiting Android-Specific Seams for Testing and Flexibility</title>
-      <link>https://www.philosophicalhacker.com/post/exploiting-android-specific-seams-for-testing-and-flexibility/</link>
-      <pubDate>Sat, 21 Jan 2017 11:20:01 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/exploiting-android-specific-seams-for-testing-and-flexibility/</guid>
-      <description>
-
-&lt;p&gt;As I pointed out throughout my &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/&#34;&gt;series of posts on writing testable Android applications&lt;/a&gt;, the key to writing testable Android apps, is creating and exploiting seams. During these posts, I pointed out two types of seams that are available in any OO programming language and any programming environment. In this post, I want to highlight some Android-specific seams that we can leverage to make our applications more testable and flexible.&lt;/p&gt;
-
-&lt;h3 id=&#34;manifest-seams&#34;&gt;Manifest Seams&lt;/h3&gt;
-
-&lt;p&gt;Manifest seams allow you to change a manifest that&amp;rsquo;s used for a particular build variant without editing your main manifest in place. Changing your manifest, of course, results in different behavior for your app. These new behaviors can be used to make your app more testable. To flesh out the concept of a manifest seam, let&amp;rsquo;s look at using manifest seams to set up your app&amp;rsquo;s &amp;ldquo;mock mode.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;An application running in mock mode stubs out its interactions with external services for testing purposes.&lt;sup&gt;1&lt;/sup&gt; A nice example of mock mode in action is &lt;a href=&#34;https://github.com/JakeWharton/u2020&#34;&gt;Jake Wharton&amp;rsquo;s u2020 app&lt;/a&gt;. In his implementation of mock mode, Wharton uses an object seam, along with dagger, to swap out views within Activities so that in mock mode, the &lt;code&gt;MainActivity&lt;/code&gt;&amp;rsquo;s view will contain a debug drawer that can be used to configure the stubbing behavior for the app.&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MainActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Activity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Inject&lt;/span&gt; ViewContainer viewContainer&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-
-  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-
-    ViewGroup container &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; viewContainer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;forActivity&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;    
-
-    inflater&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;inflate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;main_activity&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; container&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    ButterKnife&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;bind&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; container&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;  
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This code gives u2020 users the ability to change mock behavior using the app&amp;rsquo;s UI without having to modify any production code. We could use manifest seams, however, to accomplish the same thing.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;Manifest seams are made possible via manifest merging and &lt;a href=&#34;https://developer.android.com/studio/build/manifest-merge.html#merge_rule_markers&#34;&gt;merge rule markers&lt;/a&gt;. To exploit a manifest seam for mock mode, we can use merge rule markers to tell the manifest merger to change the initial &lt;code&gt;Activity&lt;/code&gt; that&amp;rsquo;s launched for a particular build variant.&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;&amp;lt;!-- src/mock/AndroidManifest.xml --&amp;gt;&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;activity&lt;/span&gt;
-  &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;.StubConfigActivity&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;intent-filter&amp;gt;&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;action&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.action.MAIN&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;category&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.category.LAUNCHER&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/intent-filter&amp;gt;&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/activity&amp;gt;&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;activity&lt;/span&gt;
-  &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;.MainActivity&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;intent-filter&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;tools:node=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;remove&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;gt;&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;action&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.action.MAIN&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;category&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.category.LAUNCHER&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/intent-filter&amp;gt;&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/activity&amp;gt;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The resulting manifest for the mock build variant will have the &lt;code&gt;StubConfigActivity&lt;/code&gt; as its launching activity, rather than the &lt;code&gt;MainActivity&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;I think there are other interesting possibilities here that are worth exploring. For example, you could use merge rule markers to substitute out which actions and categories are on non-launcher &lt;code&gt;Activity&lt;/code&gt;&amp;rsquo;s intent-filter and thereby change which activities are started when we call &lt;code&gt;context.startActivity&lt;/code&gt; with implicit intents.&lt;/p&gt;
-
-&lt;h3 id=&#34;buildconfig-seams&#34;&gt;BuildConfig Seams&lt;/h3&gt;
-
-&lt;p&gt;BuildConfig seams allow us to change the values stored in the &lt;code&gt;BuildConfig&lt;/code&gt;&amp;rsquo;s constants depending on which build variant we&amp;rsquo;re building. By default, &lt;code&gt;BuildConfig&lt;/code&gt; contains some useful values like, &lt;code&gt;DEBUG&lt;/code&gt; and &lt;code&gt;FLAVOR&lt;/code&gt;, but we can actually create additional &lt;code&gt;BuildConfig&lt;/code&gt; constants via gradle. Let&amp;rsquo;s start by looking a simple example of creating a BuildConfig field:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;productFlavors &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  mock &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    buildConfigField&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;Boolean&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;MOCK&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;true&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;A simple use case for BuildConfig seams is setting up the base url for the api your app is hitting. This can make testing easier because you can point your app to a staging, sandbox, mock, or production servers without modifying production code.&lt;sup&gt;3&lt;/sup&gt; Leveraging a BuildConfig seam in this way might look something like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;defaultConfig &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  buildConfigField&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;String&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;API_BASE&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;\&amp;quot;api.awesomecompany.com\&amp;quot;&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-productFlavors &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  sandbox &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    buildConfigField&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;String&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;API_BASE&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;\&amp;quot;localhost:8080\&amp;quot;&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;You could then use the BuildConfig field like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; String &lt;span style=&#34;color: #0000FF&#34;&gt;buildGetAwesomenessApiUrl&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;http://&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; BuildConfig&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;API_BASE&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;/awesomenesss&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;For those of you who have read &lt;a href=&#34;https://www.philosophicalhacker.com/post/build-variants-and-link-seams/&#34;&gt;my post on link seams&lt;/a&gt;, BuildConfig seams may just look like a special case of using build variants to create link seams. In some sense, that&amp;rsquo;s true.&lt;/p&gt;
-
-&lt;p&gt;However, BuildConfig seams have an advantage over placing identically named files in different sourcesets for different build variants: you can set a BuildConfig field for the default configuration and override it for specific build variants. You can&amp;rsquo;t do this by placing identically named files in the &lt;code&gt;main&lt;/code&gt; and build-variant sourcesets folders because the compiler will complain that there&amp;rsquo;s two files with the same name.&lt;/p&gt;
-
-&lt;p&gt;There are other things to explore here as well. One use case I&amp;rsquo;ve found for BuildConfig seams is in &lt;em&gt;composing&lt;/em&gt; dagger configuration behavior for multi-dimensional product flavors by storing class names in BuildConfig fields and instantiating them via reflection. I&amp;rsquo;m not very confident that this is a sensible way to use BuildConfig seams, but its interesting anyway, and it might serve as a foundation for a better way to use BuildConfig seams.&lt;/p&gt;
-
-&lt;h3 id=&#34;resource-seams&#34;&gt;Resource Seams&lt;/h3&gt;
-
-&lt;p&gt;Resources from different build variants, like AndroidManifests, get merged. Unlike manifest merging, we don&amp;rsquo;t have merge rule markers that allow us to tweak how the resources are merged. However, we can still take advantage of the default merge behavior to change the behavior of our apps without editing production code in place. The default merge behavior, according to &lt;a href=&#34;https://developer.android.com/studio/write/add-resources.html#resource_merging&#34;&gt;the docs&lt;/a&gt;, is this:&lt;/p&gt;
-
-&lt;p&gt;build variant &amp;gt; build type &amp;gt; product flavor &amp;gt; main source set &amp;gt; library dependencies&lt;/p&gt;
-
-&lt;p&gt;This means that we can place resources in the main source set as a kind of default and override them for specific build variants. Again, this is something that we can&amp;rsquo;t do by placing identically named java files in different sourcesets.&lt;/p&gt;
-
-&lt;p&gt;BuildConfig seams and Resource seams obviously have some similarities, which makes choosing between them confusing. Off the cuff, we can say that using a BuildConfig field is easier than getting a resource value, so we may want to prefer BuildConfig seams when we don&amp;rsquo;t have access to a &lt;code&gt;Context&lt;/code&gt;. Stuffing all of our build variant specific values into a single BuildConfig class, however, isn&amp;rsquo;t going to scale well, so we may want to prefer Resource seams if we do have access to a &lt;code&gt;Context&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;Android developers have their own Android-specific seams that they can exploit for testing purposes. Manifest seams rely on manifest merging and merge rule markers. BuildConfig seams rely on the &lt;code&gt;productFlavor.buildConfigField&lt;/code&gt; method. Resource seams rely on Android&amp;rsquo;s default the resource merging behavior.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;If you don&amp;rsquo;t know why we&amp;rsquo;d want to do this, &lt;a href=&#34;https://android-developers.googleblog.com/2015/12/leveraging-product-flavors-in-android.html&#34;&gt;read this&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Manifest seams may be an inferior way of doing this, as Wharton&amp;rsquo;s strategy allows users to change mock behavior throughout their session with the app, while manifest seams, as we&amp;rsquo;ll see, only allow us to change this behavior when the app is first launched. My purpose here isn&amp;rsquo;t to say which approach is better. Its just to point out that manifest seams exist.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;I haven&amp;rsquo;t found much use for mock web servers. I can eliminate flaky tests without them, and they often slow tests down since the tests are still making network requests.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>TDD &gt; The Principle of Single Responsibility</title>
-      <link>https://www.philosophicalhacker.com/post/tdd-is-greater-than-the-principle-of-single-responsibility/</link>
-      <pubDate>Sat, 14 Jan 2017 10:54:43 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/tdd-is-greater-than-the-principle-of-single-responsibility/</guid>
-      <description>
-
-&lt;blockquote&gt;
-&lt;p&gt;The programmer, like the poet, works only slightly removed from pure thought-stuff. He builds his castles in the air, from air, creating by exertion of the imagination. Few media of creation are so flexible, so easy to polish and rework, so readily capable of &lt;strong&gt;realizing grand conceptual structures&amp;hellip;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Fred Brooks, The Mythical Man-Month&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Grand structures &amp;ndash; whether they are conceptual, programmatic, or physical &amp;ndash; require strong foundations. This is true in two senses.&lt;/p&gt;
-
-&lt;p&gt;In the first, obvious sense, strong foundations are required for a structure to withstand its own weight and the forces that want to knock it down. Structures without strong foundations often collapse.&lt;/p&gt;
-
-&lt;p&gt;In the second, less obvious sense, there&amp;rsquo;s another kind of foundation that&amp;rsquo;s crucial to a structure&amp;rsquo;s integrity: the epistemic foundations that guide the architect as she lays the foundation and builds her structure, the architect&amp;rsquo;s first principles. These epistemic foundations are even more fundamental to the structure&amp;rsquo;s integrity than the foundation the structure actually sits upon. An architect that doesn&amp;rsquo;t understand the foundational principles of her craft builds bad foundations, which leads to structures that collapse.&lt;/p&gt;
-
-&lt;p&gt;The principle of single responsibility is supposed to be this second kind of strong foundation for those of us that &amp;ldquo;build castles in the air.&amp;rdquo; Its a principle that&amp;rsquo;s supposed to help us build software with strong foundations, software that won&amp;rsquo;t topple under its own weight and under the weight of forces that want to knock it down.&lt;/p&gt;
-
-&lt;p&gt;I think that TDD actually serves as a better foundation for designing robust software. The epigraph I opened this article with actually provides a nice preview of why I think this: building abstractions is a big part of building good software, but without these abstractions, the principle of responsibility isn&amp;rsquo;t very helpful in guiding me. I often need something that pushes me to discover and build abstractions in the first place, and TDD does a better job of this than the principle of single responsibility.&lt;/p&gt;
-
-&lt;p&gt;In the rest of this post, I&amp;rsquo;ll unpack and attempt to justify that last statement.&lt;/p&gt;
-
-&lt;h3 id=&#34;abstraction-and-the-psr&#34;&gt;Abstraction and the PSR&lt;/h3&gt;
-
-&lt;p&gt;Imagine for a moment that Bill, another engineer shows you an app he&amp;rsquo;s working on. When you take a look at it, you notice that the app consists of a single class that &lt;em&gt;implements&lt;/em&gt; the entirety of your application. Until recently, if this happened to me, I would have immediately reached for the principle of single responsibility to explain what he did wrong.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Me:&lt;/strong&gt; Have you ever heard of the principle of single responsibility?&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Bill:&lt;/strong&gt; Yeah. Actually, that principle was guiding me as I wrote this class.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Me:&lt;/strong&gt; Really? Well, what is this class&amp;rsquo; responsibility?&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Bill:&lt;/strong&gt; Well, this class is responsible for running the app. This class didn&amp;rsquo;t seem to violate the PSR because the class fits Bob Martin&amp;rsquo;s definition of a class that follows the PSR. He says that &amp;ldquo;a class should only have one reason to change.&amp;rdquo;&lt;sup&gt;1&lt;/sup&gt; That&amp;rsquo;s true of this class. There&amp;rsquo;s only one reason it&amp;rsquo;ll change: if the app needs to behave differently, we&amp;rsquo;ll have to change this class. Also, the class passed Steve Freeman and Nat Pryce&amp;rsquo;s test for whether a class follows the PSR: I can state the class&amp;rsquo;s responsibility without any and&amp;rsquo;s, or&amp;rsquo;s, or but&amp;rsquo;s.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;This is an absurd conversation, but its an extreme case to demonstrate an important point: whether a class seems to satisfy the principle of single responsibility depends largely on whether we can &lt;em&gt;identify&lt;/em&gt; other responsibilities that our class is tackling. Bill&amp;rsquo;s position feels absurd because we, as experienced developers, can identify other non-trivial responsibilities that are handled by his God class.&lt;/p&gt;
-
-&lt;p&gt;However, here&amp;rsquo;s the kicker: its not always obvious that a class is handling multiple responsibilities. Bob Martin even says this in his chapter on the principle of single responsibility:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;The SRP is one of the simplest of the principles, and one of the hardest to get right. Con-
-joining responsibilities is something that we do naturally. &lt;strong&gt;Finding&lt;/strong&gt; and separating those responsibilities from one another is much of what software design is really about.&lt;sup&gt;3&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;If we keep in mind that the act of &lt;em&gt;naming&lt;/em&gt; another responsibility is already the first step creating an abstraction,&lt;sup&gt;4&lt;/sup&gt; we see that Michael Feathers gives us more evidence that finding and separating responsibilities is not a trivial exercise:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&amp;hellip;one pervasive problem in legacy code bases is that there often aren’t any layers of abstraction; the most important code in the system often sits intermingled with low-level API calls.&lt;sup&gt;5&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;To say that there are no layers of abstraction is to say that the programmer has failed to identify and separate responsibilities. In this particular example, the programmer has failed to identify domain-related responsibilities as separate from the responsibility of talking to some library or framework via low-level API calls.&lt;sup&gt;6&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s one more piece of evidence that identifying responsibilities is not trivial. Again, I&amp;rsquo;m trading here on the idea that identifying responsibilities is the beginning of creating abstractions. Creating abstractions, in turn, is a part of creating a higher-level vocabulary with which to write your programs. Apparently, Kent Beck has said something like this recently:&lt;/p&gt;
-
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Reading through my notes &amp;amp; saw this pretty quote: &amp;quot;You’re creating a vocabulary, not writing a program. Be a poet for a moment.&amp;quot; &lt;a href=&#34;https://twitter.com/KentBeck&#34;&gt;@KentBeck&lt;/a&gt;&lt;/p&gt;&amp;mdash; Jessica (@encompassky) &lt;a href=&#34;https://twitter.com/encompassky/status/813931671116451841&#34;&gt;December 28, 2016&lt;/a&gt;&lt;/blockquote&gt;
-&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;Think about how much careful thought, experience, and discovery goes into creating sensible vocabularies. David West has a great bit about this in his book &lt;em&gt;Object Thinking&lt;/em&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;When we discover new things, we invent (or borrow) new words to express our discovery. When we want to make critical distinctions between or among similar notions, we use specialized vocabularies. The use of special vocabularies is common in our professional lives because, as specialists, we need to become familiar with unique ideas and to make important distinctions that as laypersons we might not make.&lt;sup&gt;7&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;If we think of programming as naming responsibilities to create abstractions that make up a vocabulary, then the non-triviality of creating vocabularies in general has a direct bearing on the difficulty of identifying responsibilities while writing programs, which, if we take Kent Beck seriously, is just a particular kind of vocabulary construction.&lt;/p&gt;
-
-&lt;p&gt;So, whether a class seems to satisfy the principle of single responsibility depends on whether we can identify other responsibilities a class might be tackling. This isn&amp;rsquo;t a trivial task and the PSR doesn&amp;rsquo;t do anything to aid us in accomplishing it.&lt;/p&gt;
-
-&lt;h3 id=&#34;abstraction-and-tdd&#34;&gt;Abstraction and TDD&lt;/h3&gt;
-
-&lt;p&gt;TDD, on the other hand, actually puts pressure on us to identify responsibilities that may be hidden in the object we&amp;rsquo;re trying to test. This happens for two reasons.&lt;/p&gt;
-
-&lt;p&gt;One reason is that we can&amp;rsquo;t unit test a class at all if we won&amp;rsquo;t have a way of getting the object into the right state for a test and a way of verifying the object is in the correct state after we&amp;rsquo;ve exercised it. Often, doing this requires that we identify an object&amp;rsquo;s dependencies and interactions AS separate objects with separate responsibilities. Steve Freeman and Nat Pryce seem to say something like this without actually using the language of responsibility:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;…to construct an object for a unit test, we have to pass its dependencies to it, which means that we have to know what they are.&lt;sup&gt;8&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;There&amp;rsquo;s another quotation that supports my point here, albeit in a less direct way. Freeman and Pryce say, &amp;ldquo;for a class to be easy to unit-test, the class must…be loosely coupled and &lt;strong&gt;highly cohesive&lt;/strong&gt; —in other words, well-designed.&amp;rdquo; Cohesion, in Bob Martin&amp;rsquo;s mind, is closely linked with the idea of a class&amp;rsquo; responsibility, so this quote is almost a way of saying that unit testable classes are likely to follow the PSR.&lt;sup&gt;9&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;The second reason TDD helps us identify responsibilities is that a part of the TDD process is to eliminate duplication. Kent Beck actually has a nice summary of how this creates cohesion:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;The first feature goes in&amp;hellip;the second feature, a variation on the first, goes in. &lt;strong&gt;The duplication between the two features is put in one place, whereas the differences tend to go in different places (different methods or even different classes).&lt;/strong&gt;&lt;sup&gt;10&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Quotations from famous software engineers aside, if we think for a second about what would happen if Bill tried to unit test his God class, I think we&amp;rsquo;ll find some intuitive support for the idea that TDD exerts pressure to identify responsibilities.&lt;/p&gt;
-
-&lt;p&gt;For example, his app likely displays data in a format that&amp;rsquo;s different from how its stored in the database. When writing a test to verify that his God object massages the data into a more presentable format correctly, he&amp;rsquo;ll see that the database needs to have specific data pre-loaded in order for the test to pass. He could solve this problem by creating a sandbox database and pre-loading it with specific data, but it would be &lt;em&gt;easier&lt;/em&gt; to unit test his class if he identifies &amp;ldquo;getting data from the database&amp;rdquo; as a separate responsibility, creates a class for it, and injects that dependency into his God class.&lt;/p&gt;
-
-&lt;p&gt;Testing other pieces of functionality of his application will require the same process, which, theoretically, will involve more identifying and separating of responsibilities.&lt;sup&gt;11&lt;/sup&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;The PSR is supposed to serve as a foundational principle for helping us write good software. However, the PSR isn&amp;rsquo;t helpful if we fail to identify hidden responsibilities that our class may be assuming. Because identifying these responsibilities isn&amp;rsquo;t trivial and because the PSR does nothing to help us with this non-trivial task, the PSR alone isn&amp;rsquo;t very helpful.&lt;/p&gt;
-
-&lt;p&gt;TDD actually does a better job at helping us identify responsibilities. A class won&amp;rsquo;t be easy to unit test unless we&amp;rsquo;ve identified and injected its dependencies, and to identify a dependency is to identify a responsibility. Eliminating duplication, moreover, forces us to identify and create abstractions to co-locate common functionality so that it can be reused, and to identify an abstraction is to identify a responsibility.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Robert Martin, &lt;em&gt;Agile Software Development: Principles, Patterns, and Practices&lt;/em&gt;, 110. Excerpt &lt;a href=&#34;https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Steve Freeman and Nat Pryce, &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;, 96-97.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Robert Martin, &lt;em&gt;Agile Software Development: Principles, Patterns, and Practices&lt;/em&gt;, 114. Excerpt &lt;a href=&#34;https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view&#34;&gt;here&lt;/a&gt;. Emphasis mine.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Michael Feathers, &lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, 350-352.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Perhaps this is why &amp;ldquo;naming things&amp;rdquo; is one of the two things that are hard about computer science, &lt;a href=&#34;https://martinfowler.com/bliki/TwoHardThings.html&#34;&gt;according to Phil Karlton&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;I think that a part of the reason finding responsibilities can be difficult is because we have to think at a level of abstraction that is actually lower than the one we were using when we decided to create the class in the first place. When Bill created the &lt;code&gt;Application&lt;/code&gt; class, he did so because he thought, &amp;ldquo;I need a class that&amp;rsquo;ll run my application.&amp;rdquo; When he started writing database-related code in this class, he could continue to think &amp;ldquo;this code is just helping this class fulfill its responsibility of running the app,&amp;rdquo; and in a sense, he would be right, but he&amp;rsquo;d be thinking at the wrong level of abstraction. Dropping down a level, he&amp;rsquo;d see that his Application class displays UI &lt;em&gt;and&lt;/em&gt; talks to a database &lt;em&gt;and&lt;/em&gt;&amp;hellip;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;David West, &lt;em&gt;Object Thinking&lt;/em&gt;, 143-144.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Steve Freeman and Nat Pryce, &lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;, 43.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Ibid., 103-104.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Robert Martin, &lt;em&gt;Agile Software Development: Principles, Patterns, and Practices&lt;/em&gt;, 109. Excerpt &lt;a href=&#34;https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view&#34;&gt;here&lt;/a&gt;. Martin Actually sees the PSR as being first described using the language of cohesion. Personally, I prefer the vocabulary of cohesion to the PSR because a class can have cohesiveness in degrees. Somehow, the more gradient (vs. binary) way of thinking about class design along this dimension seems to fit better with the idea that identifying responsibilities is related to the level of abstraction we&amp;rsquo;re on when we&amp;rsquo;re thinking about a class, but my thoughts on this aren&amp;rsquo;t well formed enough to say more.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Kent Beck, &lt;em&gt;TDD By Example&lt;/em&gt;, 195.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Technically, this doesn&amp;rsquo;t fit the definition of TDD because the tests are written last, but there is a real sense in which the tests are driving the re-design of Bill&amp;rsquo;s app. This is why I say TDD is actually helping him design better classes.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
     </item>
