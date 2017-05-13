@@ -6,8 +6,139 @@
     <description>Recent content in Posts on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 28 Apr 2017 17:39:22 -0400</lastBuildDate>
+    <lastBuildDate>Fri, 12 May 2017 08:21:30 -0400</lastBuildDate>
     <atom:link href="https://www.philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Not Needing Dagger is a Code Smell (Pt. 1)</title>
+      <link>https://www.philosophicalhacker.com/post/not-needing-dagger-is-a-smell-pt-1/</link>
+      <pubDate>Fri, 12 May 2017 08:21:30 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/not-needing-dagger-is-a-smell-pt-1/</guid>
+      <description>
+
+&lt;blockquote&gt;
+&lt;p&gt;A code smell is a surface indication that usually corresponds to a deeper problem in the system&amp;hellip;smells don&amp;rsquo;t always indicate a problem&amp;hellip;You have to look deeper to see if there is an underlying problem there.&lt;/p&gt;
+
+&lt;p&gt;&amp;ndash;Martin Fowler&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Some people don&amp;rsquo;t think Dagger is very useful. I&amp;rsquo;m a bit suspicious of these people. An application that doesn&amp;rsquo;t need Dagger smells. It suggests that there &lt;em&gt;might&lt;/em&gt; be something wrong with the application&amp;rsquo;s architecture. More specifically, it suggests there are problems its object graph.&lt;/p&gt;
+
+&lt;p&gt;Before I talk about these problems, I want to provide an initial argument for thinking that there&amp;rsquo;s a connection between object-graph-related boilerplate and good application architecture. That&amp;rsquo;s what this first post is about.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-quick-qualifier&#34;&gt;A Quick Qualifier&lt;/h3&gt;
+
+&lt;p&gt;Notice &amp;ndash; in keeping with Fowler&amp;rsquo;s definition of a code smell &amp;ndash; I said that not needing dagger &amp;ldquo;suggests there &lt;em&gt;might&lt;/em&gt; be something wrong with the application&amp;rsquo;s architecture.&amp;rdquo; It&amp;rsquo;s perfectly possible to have a well-structured application that doesn&amp;rsquo;t need Dagger. Not needing Dagger is a smell that &amp;ldquo;doesn&amp;rsquo;t always indicate a problem.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;For example, you might have an application that&amp;rsquo;s so small you don&amp;rsquo;t really have any object-graph-related boilerplate. If you don&amp;rsquo;t have any of that boilerplate, why add a library whose purpose is to reduce that boilerplate?&lt;/p&gt;
+
+&lt;p&gt;Still, I think there&amp;rsquo;s a fair amount of applications that don&amp;rsquo;t need Dagger &lt;em&gt;because&lt;/em&gt; there are problems with the application&amp;rsquo;s object graph.&lt;/p&gt;
+
+&lt;h3 id=&#34;what-s-an-object-graph&#34;&gt;What&amp;rsquo;s an Object Graph?&lt;/h3&gt;
+
+&lt;p&gt;Its not very meaningful to say that an application has a problematic object graph if we don&amp;rsquo;t know what an object graph is. Let&amp;rsquo;s try to fix that now.&lt;/p&gt;
+
+&lt;p&gt;An object graph is a directed acyclic graph whose nodes are objects and whose arrows are dependency relationships. (Fun fact: directed acyclic graphs are also known as DAGs, which is where the name &amp;ldquo;Dagger&amp;rdquo; comes from.&lt;sup&gt;1&lt;/sup&gt;) Let&amp;rsquo;s look at an example.&lt;/p&gt;
+
+&lt;p&gt;Consider this piece of code Json parsing code from the &lt;code&gt;RemoteJsonHelper&lt;/code&gt; class in the &lt;a href=&#34;https://github.com/google/iosched/blob/e8c61e7e23f74aa6786696dad22e5136b423a334/server/src/main/java/com/google/samples/apps/iosched/server/schedule/input/fetcher/RemoteJsonHelper.java&#34;&gt;Google I/O app&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;JsonReader reader &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; JsonReader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; InputStreamReader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;stream&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Charset&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;forName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;There&amp;rsquo;s an object graph here. We have a set of Java objects: [&lt;code&gt;JsonReader&lt;/code&gt;, &lt;code&gt;InputStreamReader&lt;/code&gt;, &lt;code&gt;InputStream&lt;/code&gt;, &lt;code&gt;Charset&lt;/code&gt;]. We also have a set of directed dependency relationships between these objects. For example, to build an &lt;code&gt;InputStream&lt;/code&gt;, you have to build a &lt;code&gt;Charset&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;We represent this object graph by placing the class names of the instances of objects in the circles that represent our graph&amp;rsquo;s objects and placing arrows indicating the order in which our Java objects need to be constructed:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/object-graph.svg&#34; alt=&#34;object graph&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This object graph, translated to prose, says:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;To build a &lt;code&gt;JsonReader&lt;/code&gt;, build an &lt;code&gt;InputStreamReader&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;To build an &lt;code&gt;InputStreamReader&lt;/code&gt;, build a &lt;code&gt;Charset&lt;/code&gt; and an &lt;code&gt;InputStream&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;So, that&amp;rsquo;s a quick and dirty explanation of an object graph.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;what-s-object-graph-related-boilerplate&#34;&gt;What&amp;rsquo;s Object-Graph-Related Boilerplate?&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look at our example code again:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;JsonReader reader &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; JsonReader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; InputStreamReader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;stream&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Charset&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;forName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If we have to create a &lt;code&gt;JsonReader&lt;/code&gt; multiple times, we&amp;rsquo;re stuck with some boilerplate. The only dependency that really needs to change from time to time is the &lt;code&gt;InputStream&lt;/code&gt; dependency. We&amp;rsquo;ll always need a utf-8 &lt;code&gt;Charset&lt;/code&gt; and an &lt;code&gt;InputStreamReader&lt;/code&gt;. Unfortunately, we&amp;rsquo;re stuck writing some extra code to wire up our objects to give us a &lt;code&gt;JsonReader&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&amp;ldquo;But can&amp;rsquo;t we write a Factory?,&amp;rdquo; you might protest? Sure we can. This reduces the duplication of the boilerplate, but we still have to write some pretty uninteresting code to make this happen, and as the Dagger docs say:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;the worst classes in any application are the ones that take up space without doing much at all: the BarcodeDecoderFactory, the CameraServiceLoader, and the MutableContextWrapper. These classes are the clumsy duct tape that wires the interesting stuff together.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This is a pretty tame example of boilerplate. I&amp;rsquo;ll leave it to you to think about more intense examples of object-graph-related boilerplate.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-initial-argument&#34;&gt;The Initial Argument&lt;/h3&gt;
+
+&lt;p&gt;Alright. Now that we know what an object graph is, let&amp;rsquo;s sketch out my argument. Remember: what we&amp;rsquo;re trying to show here is that not needing Dagger is a smell.&lt;/p&gt;
+
+&lt;p&gt;To start off the argument, let&amp;rsquo;s think for a second about why Dagger exists. Smart engineers at Google said to themselves,&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If my application is well-structured, I wind up with a lot of boilerplate code that&amp;rsquo;s concerned with constructing the object-graph. Let me build a library so that I don&amp;rsquo;t have a bunch of boilerplate.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Guice was the first crack at a solution to this problem. The problem that it addressed must have been well-recognized by many other engineers, as it won &lt;a href=&#34;http://www.drdobbs.com/joltawards&#34;&gt;a Jolt Award&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Next, some smart engineers at Square &amp;mdash; some of whom worked previously at Google &amp;mdash; said basically the same thing to themselves:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If my application is well-structured, I wind up with a lot of boilerplate code that&amp;rsquo;s concerned with constructing the object-graph. Guice is neat, but its a bit heavy on the reflection. Let me build a library so that I don&amp;rsquo;t have a bunch of boilerplate without having to rely heavily on reflection.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;So, these engineers build Dagger 1. Again, the library was met with lots of love.&lt;/p&gt;
+
+&lt;p&gt;Finally, some other engineers &amp;mdash; mostly from Google, but some from Square, and some from Square that used to be at Google &amp;mdash; built Dagger 2 to further reduce the use of reflection in their object-graph related boilerplate destruction library.&lt;/p&gt;
+
+&lt;p&gt;All of these efforts and all of the love for the various iterations of Java DI libraries reinforce this conditional:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If my application is well-structured, I wind up with a lot of boilerplate code that&amp;rsquo;s concerned with constructing the object-graph.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This is remarkable because the contrapositive of the conditional that expresses the problem that Dagger solves is this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If I don&amp;rsquo;t have a lot of boilerplate code that&amp;rsquo;s concerned with constructing the object-graph, then my application is not well-structured.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Obviously, there&amp;rsquo;s going to be applications where the initial conditional is false. Like I said before, it&amp;rsquo;s possible that small, well-structured applications won&amp;rsquo;t lead to lots of boilerplate, so there will also be cases where the contrapositive is false.&lt;sup&gt;3&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;Still, I think that all of this suggests that for many non-trivial applications, written in Java, there&amp;rsquo;s a connection here between object-graph-related boilerplate and the quality of an application&amp;rsquo;s architecture: If your application is well-structured, you&amp;rsquo;re going to have some object-graph-related boiler plate.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;Admittedly, this is a pretty hand-wavy argument. Its just a sketch. Thinking about it a little more, it basically an appeal to the authority of expert developers at Google, Square, and the Jolt Award committee, along with a simple logic trick.&lt;/p&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t buy that the devs at Google and Square know what they&amp;rsquo;re doing, you won&amp;rsquo;t find this compelling. I think there&amp;rsquo;s probably a better argument for the claim that well-structured code leads to object-graph-related boilerplate, but the appeal to authority is easier to make. Hopefully, that&amp;rsquo;s enough to convince some people.&lt;/p&gt;
+
+&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Don&amp;rsquo;t believe me? Watch &lt;a href=&#34;http://jakewharton.com/android-apps-with-dagger-devoxx/&#34;&gt;Jake Wharton&amp;rsquo;s talk on Dagger 1.&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;If you want a more detailed and possibly incorrect explanation of what an object graph is, checkout &lt;a href=&#34;https://www.philosophicalhacker.com/note/what-is-an-object-graph/&#34;&gt;my note on the subject&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Its also completely possible that the object-graph related boilerplate has to do with the fact that Java is not a sufficiently powerful language for us to get our work done without boilerplate.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Setting up a Jenkins Pipeline for Android Testing</title>
@@ -1843,88 +1974,6 @@ joining responsibilities is something that we do naturally. &lt;strong&gt;Findin
 &lt;li&gt;&lt;p&gt;Kent Beck, &lt;em&gt;TDD By Example&lt;/em&gt;, 195.&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Technically, this doesn&amp;rsquo;t fit the definition of TDD because the tests are written last, but there is a real sense in which the tests are driving the re-design of Bill&amp;rsquo;s app. This is why I say TDD is actually helping him design better classes.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Why I Don&#39;t use Robolectric</title>
-      <link>https://www.philosophicalhacker.com/post/why-i-dont-use-roboletric/</link>
-      <pubDate>Fri, 06 Jan 2017 22:01:04 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/why-i-dont-use-roboletric/</guid>
-      <description>
-
-&lt;p&gt;The more that I learn about testing, the more suspicious of Robolectric I get. I&amp;rsquo;m honestly starting to think that many of the heros of unit testing (e.g., Kent Beck, Michael Feathers, Steve Freeman, and Nat Pryce) would be pretty suspicious of Robolectric. Here are my concerns:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Robolectric is &lt;em&gt;largely&lt;/em&gt;&lt;sup&gt;1&lt;/sup&gt; a set of mocks for a set of types we don&amp;rsquo;t own. Mocking types we don&amp;rsquo;t own is not recommended by the folks who invented mocks.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Robolectric turns TDD on its head by allowing us to ignore something our standard unit tests are trying to tell us: our logic is tightly coupled and muddled with Android-SDK-related implementation details. That&amp;rsquo;s why we have such a hard time writing standard unit tests. Instead of listening to the design feedback of standard unit tests, Robolectric asks us to use a giant mock instead.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;These concerns lead me to believe that Robolectric should be used sparingly, if at all. Let&amp;rsquo;s look at the concerns in detail. Along the way, I&amp;rsquo;ll be pulling in quotes from Feathers, Freeman, and Pryce to bolster my claim that the folks who are largely responsible for our practices of unit testing today would be suspicious of Robolectric.&lt;/p&gt;
-
-&lt;h3 id=&#34;mocking-types-we-don-t-own&#34;&gt;Mocking Types We Don&amp;rsquo;t Own&lt;/h3&gt;
-
-&lt;p&gt;I&amp;rsquo;ve already talked about how mocking types we don&amp;rsquo;t own can be a problem in &lt;a href=&#34;http://www.philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/&#34;&gt;my post on how we misuse mocks for Android development&lt;/a&gt;, so I won&amp;rsquo;t repeat those points in detail here. The gist of this worry is twofold:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;According to Steve Freeman and Nat Pryce, the folks who really popularized mocks, mocking types we don&amp;rsquo;t own partially defeats the purpose of mocking and testing because the process of testing is supposed to tell us something about the design of the code we&amp;rsquo;re mocking. Because we don&amp;rsquo;t own the types, we can&amp;rsquo;t actually do anything with the design feedback our tests are giving us.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Secondly, and perhaps more importantly, mocking types we don&amp;rsquo;t own forces us to ensure that the mocked versions of the types our tests depend on actually match the behavior of their un-mocked counterparts. This is a concern that&amp;rsquo;s shared both by Freeman and Pryce and by Jake Wharton.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;robolectric-turns-tdd-on-its-head&#34;&gt;Robolectric turns TDD on its head&lt;/h3&gt;
-
-&lt;p&gt;Obviously, Android developers aren&amp;rsquo;t the first ones who have tried testing code that relies on a framework. Typically, when folks outside the Android community are test driving code that depends on a framework, TDD encourages them to add a layer of abstraction between the framework and their code. This keeps the code loosely coupled and highly cohesive. The framework code stays at a layer below the application code.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s Freeman and Pryce on this:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&amp;hellip;we grow our systems a slice of functionality at a time. As the code scales up&amp;hellip;we use two principal heuristics to guide this structuring: Separation of Concerns&amp;hellip;[and] Higher Levels of Abstraction&amp;hellip;Applied consistently, these two forces will push the structure of an application towards something like Cockburn’s “ports and adapters” architecture [Cockburn08] , in which the code for the business domain is isolated from its dependencies on technical infrastructure, such as databases and user interfaces.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Higher levels of abstraction make our code more understandable and maintainable, and in order to achieve this in our design, we need to make sure our objects are &amp;ldquo;Context Independent,&amp;rdquo; which means that &amp;ldquo;each object has no build-in knowledge of the system in which it executes.&amp;rdquo;&lt;sup&gt;3&lt;/sup&gt; A few pages later in the next chapter, they go on to talk about how TDD specifically helps them drive towards this goal:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&amp;hellip;to construct an object for a unit test, we have to pass its dependencies to it, which means that we have to know what they are. This encourages context independence, since we have to be able to set up the target object’s environment before we can unit-test it—a unit test is just another context. We’ll notice that an object with implicit (or just too many) dependencies is painful to prepare for testing—and make a point of cleaning it up.&lt;sup&gt;4&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Many of the difficulties we have as Android developers in testing (and otherwise) arise because our systems don&amp;rsquo;t exhibit separation of concerns and higher levels of abstraction. Freeman and Pryce are saying that there&amp;rsquo;s a direct link between these properties and testability, a link that Feathers echos in his book:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;one pervasive problem in legacy code bases is that there often aren’t any layers of abstraction; the most important code in the system often sits intermingled with low-level API calls. We’ve already seen how this can make testing difficult, but the problems go beyond testing. &lt;strong&gt;Code is harder to understand when it is littered with wide interfaces containing dozens of unused methods.&lt;/strong&gt;&lt;sup&gt;5&lt;/sup&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The emphasis on the last sentence is mine. It&amp;rsquo;s meant to highlight that Feathers and Freeman and Pryce are in agreement on the link between testability, abstraction, and understandable code.&lt;/p&gt;
-
-&lt;p&gt;So, outside the Android community, its widely recognized that writing tests without any layers of abstraction between our application code and a framework is often impossible, so TDD exerts a positive influence on us to create layers of abstraction and because of this, we wind up with cleaner code.&lt;/p&gt;
-
-&lt;p&gt;Hopefully, now we can start to see why Robolectric actually turns TDD on its head. Let&amp;rsquo;s start by remembering something I noted at the outset of this post: unfortunately, most Android apps are written in a way that muddles and couples application code with Android-SDK-related implementation details. The natural direction TDD with pure unit tests is pushing us in is to &lt;strong&gt;move the code we want to test OUT of Android framework classes like Activities, Fragments, and Services;&lt;/strong&gt; its pushing us in a cleaner direction of separating our application-specific logic from the Android SDK.&lt;sup&gt;6&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;Robolectric, on the other hand, allows us to test our apps while leaving our application code mixed in with the Android SDK. Robolectric does this by &amp;ldquo;defanging the Android SDK&amp;rdquo; by mocking types we don&amp;rsquo;t own to make testing easier, but if we take traditional TDD seriously, &lt;strong&gt;this is exactly backwards&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;We don&amp;rsquo;t need to make testing easier by leaving our app code the same and changing the way we do testing. Instead, we need to make testing easier by listening to the tests and moving our application specific logic to a layer that&amp;rsquo;s higher than the Android SDK.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;So, there you have it. Those are the biggest reasons why I don&amp;rsquo;t use robolectric. If you&amp;rsquo;ve got some ideas on where robolectric may be appropriate, I&amp;rsquo;d love to hear them.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Jake Wharton has pointed out &lt;a href=&#34;https://www.reddit.com/r/androiddev/comments/5mimhe/why_i_dont_use_roboletric_philosophical_hacker/dc40feu/&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;fragmentedpodcast.com/episodes/7/&#34;&gt;here&lt;/a&gt; that some parts of Robolectric actually use real Android code, so I guess these parts wouldn&amp;rsquo;t really count as mocks.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;em&gt;Growing Object Oriented Software Guided by Tests&lt;/em&gt;, Steve Freeman and Nat Pryce, 93-94.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Ibid., 99-100.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Ibid., 103-104.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;em&gt;Working Effectively with Legacy Code&lt;/em&gt;, Michael Feathers, 350-352. Emphasis mine.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;To some extent, I&amp;rsquo;ve been hitting on this at various points. See &lt;a href=&#34;https://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Against Android Unit Tests&lt;/a&gt;, &lt;a href=&#34;https://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/&#34;&gt;Why we shouldn&amp;rsquo;t put logic in Activities&lt;/a&gt; and &lt;a href=&#34;post/object-seams-and-mvp-for-testability.md&#34;&gt;Object Seams and MVP&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
     </item>

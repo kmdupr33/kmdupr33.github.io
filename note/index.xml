@@ -6,8 +6,62 @@
     <description>Recent content in Notes on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 May 2017 08:57:08 -0400</lastBuildDate>
+    <lastBuildDate>Sat, 13 May 2017 16:12:32 -0400</lastBuildDate>
     <atom:link href="https://www.philosophicalhacker.com/note/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>What is an Object Graph?</title>
+      <link>https://www.philosophicalhacker.com/note/what-is-an-object-graph/</link>
+      <pubDate>Sat, 13 May 2017 16:12:32 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/note/what-is-an-object-graph/</guid>
+      <description>&lt;p&gt;When I hear the word &amp;ldquo;graph,&amp;rdquo; I always think of graphs on a cartesian coordinate system. That&amp;rsquo;s not what we&amp;rsquo;re talking about here. Perhaps the easiest way of introducing graphs is to look at a visual representation of one:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/graph.svg&#34; alt=&#34;graph&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;What are we looking at here? We see a set of objects represented by circles. The set is [6, 4, 5, 1, 3, 2].&lt;/p&gt;
+
+&lt;p&gt;We also see that a subset of those objects have some relationship to one another, which is represented by the lines. These relationships form another set of the related pairs. 6 and 4 are connected, so that&amp;rsquo;s one pair: (6,4). (4, 3) is another pair, since those two circles are connected. Etc.&lt;/p&gt;
+
+&lt;p&gt;We wind up with this set: [(6, 4), (4, 5), (4, 3), (5, 2), (5, 1), (3, 2)].&lt;/p&gt;
+
+&lt;p&gt;So, a graph is a set of objects that has at least one subset of objects which are interrelated.&lt;/p&gt;
+
+&lt;p&gt;Some graphs are directed graphs. Their visual representation is similar to ordinary, undirected graphs, except that they have arrows instead of lines connected the circles:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/directed-graph.svg&#34; alt=&#34;directed graph&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We have our same old set of objects ([6, 4, 5, 1, 3, 2]), but this time the pairs represented by the lines are ordered. (6, 4), not (4, 6) would be in the set of ordered pairs because of the direction of the arrow. (2, 1) wouldn&amp;rsquo;t make the cut, again because of the direction of the arrow. Etc.&lt;/p&gt;
+
+&lt;p&gt;We wind up with this set of ordered pairs: [(6, 4), (4, 5), (5, 1), (1, 2), (2, 5), (2, 3), (3, 4)].&lt;/p&gt;
+
+&lt;p&gt;Ok. Enough abstract stuff. Let&amp;rsquo;s reel this back in to programming.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve been saying graphs consist partially of sets of objects. This may be confusing because I don&amp;rsquo;t mean a programmer&amp;rsquo;s object. Sorry. English is messy sometimes.&lt;/p&gt;
+
+&lt;p&gt;Instead, I mean &amp;ldquo;object&amp;rdquo; as an abstraction over particular things. You could have a graph of people, tasks, or countries. These are all graphs of &amp;ldquo;objects.&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;You could also have a graph whose objects are a programmer&amp;rsquo;s objects. This graph would be directed, and the directed relationships between those objects could between dependency relationships: an arrow pointing from X to Y would signify that in order to build object Y, you first have to construct object X. In that case, you&amp;rsquo;d have an object graph.&lt;/p&gt;
+
+&lt;p&gt;Consider this piece of code Json parsing code from the &lt;a href=&#34;https://github.com/google/iosched/blob/e8c61e7e23f74aa6786696dad22e5136b423a334/server/src/main/java/com/google/samples/apps/iosched/server/schedule/input/fetcher/RemoteJsonHelper.java&#34;&gt;Google I/O app&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;JsonReader reader &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; JsonReader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; InputStreamReader&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;stream&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Charset&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;forName&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;There&amp;rsquo;s an object graph here. We have a set of Java objects: [&lt;code&gt;JsonReader&lt;/code&gt;, &lt;code&gt;InputStreamReader&lt;/code&gt;, &lt;code&gt;InputStream&lt;/code&gt;, &lt;code&gt;Charset&lt;/code&gt;]. We also have a set of directed dependency relationships between these objects. For example, to build an &lt;code&gt;InputStream&lt;/code&gt;, you have to build a &lt;code&gt;Charset&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;We might represent this object graph by placing the class names of the instances of objects in the circles that represent our graph&amp;rsquo;s objects and placing arrows indicating the order in which our Java objects need to be constructed:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/object-graph.svg&#34; alt=&#34;object graph&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Notice that the Java objects represented in this graph don&amp;rsquo;t have any circular dependencies. This means that there are no cycles in the graph. If you follow the direction of the arrows, there&amp;rsquo;s no way to go backwards. The graph is acyclic.&lt;/p&gt;
+
+&lt;p&gt;So, what we have here is a directed acyclic graph or a &amp;ldquo;DAG,&amp;rdquo; which &amp;ndash; fun fact &amp;ndash; is where the name &amp;ldquo;Dagger&amp;rdquo; comes from.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Object Thinking&#39;s Intro</title>
