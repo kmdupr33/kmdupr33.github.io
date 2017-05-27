@@ -9,6 +9,158 @@
     <atom:link href="https://www.philosophicalhacker.com/tags/kotlin/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>How to Abuse Kotlin Extension Functions</title>
+      <link>https://www.philosophicalhacker.com/post/how-to-abuse-kotlin-extension-functions/</link>
+      <pubDate>Fri, 26 May 2017 18:48:58 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/how-to-abuse-kotlin-extension-functions/</guid>
+      <description>
+
+&lt;p&gt;I&amp;rsquo;ve got a &amp;ldquo;sweet tooth,&amp;rdquo; which, in my case, is just a euphemism for me saying that I&amp;rsquo;m &lt;em&gt;addicted&lt;/em&gt; to sugar. I&amp;rsquo;m young now, but I know that this addiction won&amp;rsquo;t end well once my metabolism slows down, so I try go to the gym.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, when I leave the gym, I often think to myself, &amp;ldquo;I just worked out, so I can snag that Oreo McFlurry I&amp;rsquo;ve been craving all day.&amp;rdquo; When I do this, I abuse exercise: I take a good thing &amp;mdash; exercise &amp;mdash; and I use it to justify engaging in a bad habit &amp;mdash; consuming empty calories. Hold that thought.&lt;/p&gt;
+
+&lt;p&gt;I started using Kotlin this week. Overall, Kotlin is absolutely delightful, but heaping unqualified additional praise on an already hyped language doesn&amp;rsquo;t make good toilet reading, so let&amp;rsquo;s mix things up a bit.&lt;/p&gt;
+
+&lt;p&gt;I want to talk about a Kotlin language feature that I&amp;rsquo;m not thrilled about. I&amp;rsquo;m less than ecstatic about this feature because I think that its likely to be abused. Just as I can take something good like exercise and use it to justify a bad habit, we can take good Kotlin language features and use them to continue and exacerbate our bad Java coding habits into our Kotlin code.&lt;/p&gt;
+
+&lt;p&gt;More specifically, I&amp;rsquo;m worried about extension functions. I&amp;rsquo;m worried that extensions will make it easier for us to avoid creating clean abstractions in our code. Let&amp;rsquo;s look at this in detail so that we can avoid abusing extension functions.&lt;/p&gt;
+
+&lt;p&gt;First, we&amp;rsquo;ll look at the original intent of extension functions. Then, we&amp;rsquo;ll examine an example in &lt;a href=&#34;https://github.com/google/iosched&#34;&gt;the Google I/O codebase&lt;/a&gt; where I think extension functions are getting abused, and we&amp;rsquo;ll talk specifically about why I think we have a bona-fide example of abuse on our hands. Finally, I&amp;rsquo;ll talk about a better way of structuring the abusive code.&lt;/p&gt;
+
+&lt;h3 id=&#34;why-extensions-are-good-thing-sometimes&#34;&gt;Why Extensions are Good Thing (sometimes)&lt;/h3&gt;
+
+&lt;p&gt;Before we look at how extensions can be abused, let&amp;rsquo;s look at what they&amp;rsquo;re good for. &lt;a href=&#34;https://kotlinlang.org/docs/reference/extensions.html#motivation&#34;&gt;The &amp;ldquo;motivation&amp;rdquo; section of the docs on this feature&lt;/a&gt; is helpful here:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;In Java, we are used to classes named &amp;ldquo;*Utils&amp;rdquo;: FileUtils, StringUtils and so on. The famous java.util.Collections belongs to the same breed. And the unpleasant part about these Utils-classes is that&amp;hellip;class names are always getting in the way.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The example they have for this is brilliant:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;Collections&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;swap&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;list&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; 
+                Collections&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;binarySearch&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;list&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; Collections&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;max&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;otherList&lt;span style=&#34;color: #666666&#34;&gt;)),&lt;/span&gt; 
+                Collections&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;max&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;list&lt;span style=&#34;color: #666666&#34;&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Because of the code completion and improved readability, the kotlin folks rightly point out that we&amp;rsquo;d rather write:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;list&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;swap&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;list&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;binarySearch&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;otherList&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;max&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()),&lt;/span&gt; list&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;max&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;())&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;However, we can&amp;rsquo;t implement all possible list methods inside of the list class, so, in order to achieve this, we need to a way to write list methods outside of the list class. And that, boys and girls, is where extension functions come from.&lt;/p&gt;
+
+&lt;h3 id=&#34;an-example-extension-function-abuse&#34;&gt;An Example Extension Function Abuse&lt;/h3&gt;
+
+&lt;p&gt;In some cases, this seems like a great addition to the language. Where could we go wrong here? To answer this question, let&amp;rsquo;s look at some Google I/O code that could be refactored to use extension functions, but probably shouldn&amp;rsquo;t be.&lt;/p&gt;
+
+&lt;p&gt;The Google I/O code base contains a &lt;code&gt;SettingsUtils&lt;/code&gt; class. Its 484 lines long and has 33 methods. Yuck. Call sites of the methods on this class, moreover, don&amp;rsquo;t look great:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Ensure we don&amp;#39;t run this fragment again&lt;/span&gt;
+LOGD&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;TAG&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Marking attending flag.&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;setAttendeeAtVenue&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mActivity&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+SettingsUtils&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;markAnsweredLocalOrRemote&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;mActivity&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now, using an extension method on a &lt;code&gt;Context&lt;/code&gt; might make some of this code look a little better:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// PrefExtensions.kt&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;fun&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;Context&lt;/span&gt;.setAttendeeAtVenue(newValue: Boolean) {
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;val&lt;/span&gt; defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;)
+    defaultSharedPreferences.edit().putBoolean(BuildConfig.PREF_ATTENDEE_AT_VENUE, newValue).apply()
+}
+
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;fun&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;Context&lt;/span&gt;.markAnsweredLocalOrRemote(newValue: Boolean) {
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;val&lt;/span&gt; sp = PreferenceManager.getDefaultSharedPreferences(&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;)
+    sp.edit().putBoolean(PREF_ANSWERED_LOCAL_OR_REMOTE, newValue).apply()
+}
+
+&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// AttendingFragment.kt&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;fun&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;(v: View) {
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Ensure we don&amp;#39;t run this fragment again&lt;/span&gt;
+    LOGD(TAG, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Marking attending flag.&amp;quot;&lt;/span&gt;)
+    mActivity.setAttendeeAtVenue(&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;)
+    mActivity.markAnsweredLocalOrRemote(&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;)
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Even if you&amp;rsquo;re not crazy enough to add extension functions to &lt;a href=&#34;https://www.philosophicalhacker.com/post/towards-godless-android-development-how-and-why-i-kill-god-objects/&#34;&gt;a god object&lt;/a&gt;, you might be tempted to kotlinify this code by writing an extension function for &lt;code&gt;SharedPreferences&lt;/code&gt;. I still that that would be a mistake.&lt;/p&gt;
+
+&lt;h3 id=&#34;why-abuse&#34;&gt;Why Abuse?&lt;/h3&gt;
+
+&lt;p&gt;Extension functions, as their name implies, are good for &lt;em&gt;extending&lt;/em&gt; existing abstractions. They&amp;rsquo;re abused when we use them to palliate the use of a bad or entirely absent abstractions.&lt;/p&gt;
+
+&lt;p&gt;To see why this particular example is an abuse of extension functions, let&amp;rsquo;s back up a second and think back to the &lt;code&gt;SettingsUtil&lt;/code&gt; class. &lt;code&gt;Util*&lt;/code&gt; classes, in many cases, are substitutes for missing or poorly formed abstractions. That&amp;rsquo;s true in this case.&lt;/p&gt;
+
+&lt;p&gt;Is the attendee&amp;rsquo;s physical location in relation to the Google I/O conference a Setting? Not really.&lt;/p&gt;
+
+&lt;p&gt;Its implemented as a &lt;code&gt;SharedPreference&lt;/code&gt;, so it gets lumped in with all the other SharedPreference-related methods in &lt;code&gt;SettingsUtils&lt;/code&gt;, but these two methods are really part of something that&amp;rsquo;s different from a &lt;code&gt;SharedPreference&lt;/code&gt;. &lt;code&gt;SharedPreference&lt;/code&gt; is just an implementation detail. &lt;code&gt;SharedPreferences&lt;/code&gt; can be a bit annoying to get a hold of, so to make matters worse, this bag of methods lives in an utility class.&lt;/p&gt;
+
+&lt;p&gt;This has two consequences: First, &lt;code&gt;SettingsUtil&lt;/code&gt; and &lt;code&gt;AttendingFragment&lt;/code&gt; are harder to understand because they have low cohesion. Second, &lt;code&gt;SettingsUtil&lt;/code&gt; and &lt;code&gt;AttendingFragment&lt;/code&gt; are overly coupled, which will make testing and maintenance more difficult.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s look at cohesion-related consequences first. &lt;code&gt;SettingsUtil&lt;/code&gt; is a class that&amp;rsquo;s hard to grok because its just an random bag of 34 conceptually unrelated methods that all happen to rely on &lt;code&gt;SharedPreferences&lt;/code&gt; as an implementation detail. Because the purpose of &lt;code&gt;SettingsUtil&lt;/code&gt; is hard to understand, the purpose of &lt;code&gt;AttendingFragment&lt;/code&gt;, a class that relies on it is also obscured, albeit to a lesser degree.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the kicker: moving to extension functions doesn&amp;rsquo;t do anything to solve this problem.&lt;/p&gt;
+
+&lt;p&gt;Next, the coupling-related consequences. &lt;em&gt;Extensions are resolved statically.&lt;/em&gt; This means that code that depends on extension methods are &lt;em&gt;tightly coupled&lt;/em&gt; to a single implementation of an extension method.&lt;/p&gt;
+
+&lt;p&gt;Java&amp;rsquo;s static methods result in the same exact degree of coupling, and that&amp;rsquo;s the point here: moving to extension functions doesn&amp;rsquo;t really solve the deeper problem here. You&amp;rsquo;re code looks a little nicer, but its still tightly coupled.&lt;/p&gt;
+
+&lt;p&gt;So, on both counts, using extension functions in this case merely helps us put lipstick on a pig. As I said at the outset of this section, extension functions are better used when we want to extend an already existing abstraction.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-better-way&#34;&gt;A better way&lt;/h3&gt;
+
+&lt;p&gt;To solidify the idea that using a function extension in this case would be an abuse, let&amp;rsquo;s look at a better way of handling the above code. As far as I can tell, the missing abstraction here is an &lt;code&gt;Attendee&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;interface&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Attendee&lt;/span&gt; {
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;enum&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Attending&lt;/span&gt; {
+        IN_PERSON,
+        REMOTE,
+        UNKNOWN
+    }
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;fun&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;setAtVenue&lt;/span&gt;(newValue: Boolean)
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;fun&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;attending&lt;/span&gt;(): Attending
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It turns out that there are other &lt;code&gt;SettingsUtil&lt;/code&gt; methods that make sense to move to this interface. Conference attendees accept a code of conduct that is presented in the &lt;code&gt;ConductFragment&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;interface&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Attendee&lt;/span&gt; {
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;fun&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;acceptCodeOfConduct&lt;/span&gt;(newValue: Boolean)
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;fun&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;hasAcceptedCodeOfConduct&lt;/span&gt;(): Boolean
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now that we&amp;rsquo;ve filled out the methods on this interface, we can see that the call sites of &lt;code&gt;Attendee&lt;/code&gt; methods are simpler and more easily understood than their &lt;code&gt;SettingsUtils&lt;/code&gt; counter-parts:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// AttendingFragment.kt&lt;/span&gt;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;fun&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onClick&lt;/span&gt;(v: View) {
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Ensure we don&amp;#39;t run this fragment again&lt;/span&gt;
+    LOGD(TAG, &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;Marking attending flag.&amp;quot;&lt;/span&gt;)
+    attendee.setAtVenue(&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;true&lt;/span&gt;)    
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;// Notice we dont need to call SettingsUtils.markAnsweredLocalOrRemote.&lt;/span&gt;
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;With these changes, the &lt;code&gt;SettingsUtils&lt;/code&gt; class loses 5 methods, thereby getting a little more digestible. The &lt;code&gt;SharedPrefsAttendee&lt;/code&gt; implementation, as you can imagine, is short (24 kotlin lines) and easily grokked. Classes that use the &lt;code&gt;Attendee&lt;/code&gt; abstraction are a little clearer and a little simpler. They also aren&amp;rsquo;t tightly coupled with a specific implementation, which makes them easier to test and maintain.&lt;/p&gt;
+
+&lt;p&gt;So, don&amp;rsquo;t abuse Kotlin&amp;rsquo;s extension functions. They&amp;rsquo;re neat, but sometimes plain old OO techniques are a better choice. Identifying a missing or bad abstraction is often a better way to approach &lt;code&gt;*Util&lt;/code&gt; classes.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Why Im Skeptical about Kotlin Coroutines for Android Development</title>
       <link>https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/</link>
       <pubDate>Sun, 19 Mar 2017 00:34:58 -0400</pubDate>
