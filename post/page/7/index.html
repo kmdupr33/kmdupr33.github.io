@@ -229,6 +229,45 @@
 	   
 <article class="post post">
     <header class="post-header">
+        <h2 class="post-title"><a href="/2015/06/06/unit-testing-dynamically-constructed-views/">Unit Testing Dynamically Constructed Views</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p><p>Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&rsquo;ve fetched or in response to some input. The <code>SessionDetailActivity</code> in Google&rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the <code>SessionDetailActivity</code>&rsquo;s view hierarchy.</p>
+
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png" alt="IO Testing Talk-04" /></a></p>
+
+<p>In this screenshot, the &ldquo;Distribute,&rdquo; &ldquo;Android,&rdquo; and &ldquo;Games&rdquo; tags are added to the view hierarchy based on the tags associated with the &rdquo;Going global with Google Play&rdquo; IO session. In this post, I&rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the <code>SesisonDetailActivity</code>&rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards <a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">making Google&rsquo;s IOSched app unit testable</a>.</p>
+
+<p></p> <a class="read-more" href="/2015/06/06/unit-testing-dynamically-constructed-views/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
+        
+        
+            
+            
+        
+
+        
+        
+        on
+            
+                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
+            
+        
+        <time class="post-date" datetime="2015-06-06T11:08:03Z">
+            6 Jun 2015
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
         <h2 class="post-title"><a href="/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">Towards A Unit Testable Fork of Google&#39;s IOSched App</a></h2>
     </header>
     <section class="post-excerpt">
@@ -587,40 +626,6 @@
         
         <time class="post-date" datetime="2015-04-16T11:58:48Z">
             16 Apr 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/04/10/against-android-unit-tests/">Against Android Unit Tests</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p>Edit: Since I&rsquo;ve written this, I&rsquo;ve come to realize that making unit testable Android apps does not require us to remove compile-time dependencies on the Android SDK. I talk about this realization in the post that concludes this series.
-Even the best among us admit that they struggle with testing their Android apps. Jake Wharton has said explicitly that the Android platform has traditionally been very difficult to test.¹ In the inaugural episode of their (excellent) podcast, Don Felker and Kaushik Gopal have echoed similar sentiments. <a class="read-more" href="/2015/04/10/against-android-unit-tests/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-04-11T03:35:55Z">
-            11 Apr 2015
         </time>
     </footer>
 </article>
