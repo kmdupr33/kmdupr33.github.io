@@ -107,7 +107,7 @@ Pg. 90&lt;/blockquote&gt;
 
 &lt;p&gt;In this post, I want to say a little more about why think having and using a static reference to an application Context is &lt;em&gt;less-than-ideal&lt;/em&gt;. I emphasize &amp;ldquo;less-than-ideal&amp;rdquo; in the previous sentence as a way of highlighting what I&amp;rsquo;m not saying: I&amp;rsquo;m not saying that a kitten dies every time you use a static reference to an application Context. Once again, @codestandards is hilarious and relevant here:&lt;/p&gt;
 
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Please, for the sake of the kittens. &lt;a href=&#34;http://t.co/xaj7pNDVfH&#34;&gt;pic.twitter.com/xaj7pNDVfH&lt;/a&gt;&lt;/p&gt;&amp;mdash; Code Standards (@codestandards) &lt;a href=&#34;https://twitter.com/codestandards/status/570224843536277504&#34;&gt;February 24, 2015&lt;/a&gt;&lt;/blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Please, for the sake of the kittens. &lt;a href=&#34;http://t.co/xaj7pNDVfH&#34;&gt;pic.twitter.com/xaj7pNDVfH&lt;/a&gt;&lt;/p&gt;&amp;mdash; Code Standards (@codestandards) &lt;a href=&#34;https://twitter.com/codestandards/status/570224843536277504?ref_src=twsrc%5Etfw&#34;&gt;February 24, 2015&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
 &lt;p&gt;Instead, all I&amp;rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps. &lt;/p&gt;
@@ -156,7 +156,7 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;We often use a Context to get a hold of some other object we need. A particular object might need a Resources, SharedPreferences, or a PackageManager to exercise its responsibility. When we have a globally accessible application Context, we might be tempted to get a hold of these objects by doing something like this:This violates &lt;a href=&#34;https://en.wikipedia.org/wiki/Law_of_Demeter&#34;&gt;the Law of Demeter&lt;/a&gt;. I was actually just complaining the other day about how law of demeter violations make apps harder to unit test:&lt;/p&gt;
 
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Trying to make the IO app unit testable, but law of demeter violations are a problem. AS can help you can avoid this: &lt;a href=&#34;http://t.co/GX8GOvFUMp&#34;&gt;http://t.co/GX8GOvFUMp&lt;/a&gt;&lt;/p&gt;&amp;mdash; Matt Dupree (@philosohacker) &lt;a href=&#34;https://twitter.com/philosohacker/status/619470887536996352&#34;&gt;July 10, 2015&lt;/a&gt;&lt;/blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Trying to make the IO app unit testable, but law of demeter violations are a problem. AS can help you can avoid this: &lt;a href=&#34;http://t.co/GX8GOvFUMp&#34;&gt;http://t.co/GX8GOvFUMp&lt;/a&gt;&lt;/p&gt;&amp;mdash; Matt Dupree (@philosohacker) &lt;a href=&#34;https://twitter.com/philosohacker/status/619470887536996352?ref_src=twsrc%5Etfw&#34;&gt;July 10, 2015&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
 &lt;p&gt;But even if you don&amp;rsquo;t care about unit testing, law of demeter violations are generally considered to be a code smell.&lt;/p&gt;
@@ -180,7 +180,7 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 &lt;p&gt;Of course, if you&amp;rsquo;re doing your job right as a student of Android development, you&amp;rsquo;ll probably hate your app later regardless. As @codestandards says,&lt;/p&gt;
 
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;If the code you wrote a year ago doesn&amp;#39;t seem bad to you, you&amp;#39;re probably not learning enough.&lt;/p&gt;&amp;mdash; Code Standards (@codestandards) &lt;a href=&#34;https://twitter.com/codestandards/status/601373392059518976&#34;&gt;May 21, 2015&lt;/a&gt;&lt;/blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;If the code you wrote a year ago doesn&amp;#39;t seem bad to you, you&amp;#39;re probably not learning enough.&lt;/p&gt;&amp;mdash; Code Standards (@codestandards) &lt;a href=&#34;https://twitter.com/codestandards/status/601373392059518976?ref_src=twsrc%5Etfw&#34;&gt;May 21, 2015&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
 &lt;p&gt;If you&amp;rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&amp;rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&amp;rsquo;ve never been guilty of making the mistakes I demo in those items.
@@ -946,7 +946,7 @@ We try to make sure that we always create a valid object…Partially creating an
 
 &lt;p&gt;##&lt;/p&gt;
 
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;The secret... Dependency injection. &amp;quot;How to Make Our Android Apps Unit Testable (Pt. 1)&amp;quot; &lt;a href=&#34;http://t.co/srqzk34Aoi&#34;&gt;http://t.co/srqzk34Aoi&lt;/a&gt;&lt;/p&gt;&amp;mdash; Chris Arriola (@arriolachris) &lt;a href=&#34;https://twitter.com/arriolachris/status/599232312492982273&#34;&gt;May 15, 2015&lt;/a&gt;&lt;/blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;The secret... Dependency injection. &amp;quot;How to Make Our Android Apps Unit Testable (Pt. 1)&amp;quot; &lt;a href=&#34;http://t.co/srqzk34Aoi&#34;&gt;http://t.co/srqzk34Aoi&lt;/a&gt;&lt;/p&gt;&amp;mdash; Chris Arriola (@arriolachris) &lt;a href=&#34;https://twitter.com/arriolachris/status/599232312492982273?ref_src=twsrc%5Etfw&#34;&gt;May 15, 2015&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
 &lt;p&gt;Chris nailed it here. The Square Way is effective because it allows us make use of &lt;em&gt;true dependency injection&lt;/em&gt; for the classes the hold our business logic. I emphasize &amp;ldquo;true&amp;rdquo; in the previous sentence because &amp;ldquo;dependency injection,&amp;rdquo; in the minds of many Android developers is synonymous with Dagger. Dagger, however, will not make it as easy to unit test our code.&lt;/p&gt;
