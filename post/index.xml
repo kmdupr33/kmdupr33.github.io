@@ -6,8 +6,217 @@
     <description>Recent content in Posts on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 26 May 2017 18:48:58 -0400</lastBuildDate>
+    <lastBuildDate>Sun, 22 Oct 2017 09:09:04 -0400</lastBuildDate>
     <atom:link href="https://www.philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>React Native at an IoT Startup</title>
+      <link>https://www.philosophicalhacker.com/post/react-native-at-an-iot-startup/</link>
+      <pubDate>Sun, 22 Oct 2017 09:09:04 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/react-native-at-an-iot-startup/</guid>
+      <description>
+
+&lt;p&gt;If you saw a toilet seat in a movie theater, you&amp;rsquo;d probably think to yourself, &amp;ldquo;Wait a minute. You don&amp;rsquo;t use &lt;em&gt;that&lt;/em&gt; in &lt;em&gt;here&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Many of us have a similar reaction when we think of using react native at an IoT startup:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Wait a minute. React Native is fine for light-weight apps, but IoT companies need apps that make heavy use of the phone&amp;rsquo;s hardware, so don&amp;rsquo;t use it in this situation. &lt;strong&gt;Just don&amp;rsquo;t use that here.&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;My goal in this written version of &lt;a href=&#34;https://www.meetup.com/preview/React-Orlando/events/243834909&#34;&gt;my talk&lt;/a&gt; is to convince you that using react native with hardware-intensive applications is not like using a toilet seat in a movie theater. Along the way, I&amp;rsquo;ll go over why we (at &lt;a href=&#34;https://www.unikey.com/&#34;&gt;UniKey&lt;/a&gt;) adopted react native, how we used in our apps, the results we&amp;rsquo;ve achieved using it so far, and the trade-offs/challenges we&amp;rsquo;ve faced.&lt;/p&gt;
+
+&lt;h3 id=&#34;why&#34;&gt;Why&lt;/h3&gt;
+
+&lt;p&gt;I originally approached React Native a little over a year ago with loads of skepticism. I had heard all the horror stories of companies getting burned by first-generation cross-platform mobile dev tools, so I had a hostile view of cross-platform tools in general. React Native was no exception.&lt;/p&gt;
+
+&lt;p&gt;Eventually, I noticed that an increasing number of impressive companies had adopted react native and this caught my eye:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/who-is-using-react-native.png&#34; alt=&#34;who is using react native&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;My favorite app on this list is Skype. Microsoft owns Xamarin and they choose React Native for Skype. I think that speaks volumes.&lt;/p&gt;
+
+&lt;p&gt;With the increasingly impressive rooster of these companies in the back of my mind, I stumbled upon an opportunity to do some pro-bono work for a charity. They needed an iOS and Android app, and I decided that React Native would be a good choice for building their app. It was a simple food pantry app with a form, and React Native did the job very well:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/fed40.png&#34; alt=&#34;food pantry&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Fast forward 1 year, and we&amp;rsquo;re staring down the barrel of a pretty hairy deadline. UniKey partners with lock manufacturers to build smart lock products. We provide white-label apps, SDKs, and hardware reference designs so that partners can launch in months instead of years. What this means is that a core part of our value proposition is &lt;em&gt;speed&lt;/em&gt;, so the conversation around this deadline looked a lot like this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;The Market: Can you build this smart lock app in six weeks?&lt;/p&gt;
+
+&lt;p&gt;UniKey: That&amp;rsquo;s pretty aggressive, but we can probably do it.&lt;/p&gt;
+
+&lt;p&gt;The Market: Great. Also, build an SDK, fix these bugs, and build this other smart lock app.&lt;/p&gt;
+
+&lt;p&gt;UniKey: Well, hold on. That&amp;rsquo;s going to be a problem.&lt;/p&gt;
+
+&lt;p&gt;The Market: You offer the tools to help us launch in months instead of years right? Figure it out. K. Thx. Byeee.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;One of React Native&amp;rsquo;s core value propositions is to improve developer productivity by, among other things, sharing code between android and iOS. The productivity gain is something we &lt;em&gt;needed&lt;/em&gt;, but some folks were still skeptical or React Native in general and even I wanted to see proof of the React Native app working with our UniKey SDK before we struck out on the this path. So, we:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/keep-calm-and-hack.png&#34; alt=&#34;keep calm and hack&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I pitched my team on staying up all night to build a prototype React Native app with our SDK to prove that it was the way forward for hitting our deadline. They were down because they&amp;rsquo;re awesome and we built the thing in a night. That went a long way towards helping folks feel comfortable with the path we were taking.&lt;/p&gt;
+
+&lt;h3 id=&#34;how&#34;&gt;How&lt;/h3&gt;
+
+&lt;p&gt;So, that&amp;rsquo;s why we adopted react native at UniKey. Let&amp;rsquo;s talk about how we did it. Here&amp;rsquo;s a very basic diagram of the architecture for the apps:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/react-native-arch.png&#34; alt=&#34;React Native App Arch&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;At the top, we&amp;rsquo;ve got our UI code written in javascript with React Native. In the middle, we&amp;rsquo;ve got a bridge layer that mediates communication between the javascript layer and our UniKey SDK, which is the bottom layer in the diagram.&lt;/p&gt;
+
+&lt;p&gt;I want to quickly walk through some sample code of how this works in our white label apps. Let&amp;rsquo;s start by looking at this video demonstrating our lock configuration feature:&lt;/p&gt;
+
+&lt;video width=&#34;640&#34; height=&#34;480&#34; controls&gt;
+  &lt;source src=&#34;https://www.philosophicalhacker.com/videos/settings.mp4&#34; type=&#34;video/mp4&#34;&gt;
+&lt;/video&gt;
+
+&lt;p&gt;In this video, the app is connecting to a lock via bluetooth to configure its settings. Here&amp;rsquo;s some RN javascript code that does this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;import&lt;/span&gt; NativeServiceBridge from &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;./services&amp;quot;&lt;/span&gt;;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;default&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; ReaderDetails &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Component {
+  _componentWillAppear() {
+    getEmitter().addListener(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;readerSettingChange&amp;#39;&lt;/span&gt;,
+      settings =&amp;gt; {
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; (settings.length &lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0&lt;/span&gt;) {
+          &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.setState({ settings, progress&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt; });
+        }
+      });
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;const&lt;/span&gt; { reader } &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.props;
+    NativeServiceBridge.startConfigureReaderSettings(reader.id,
+      error =&amp;gt; {
+        error &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; console.error(&lt;span style=&#34;color: #BA2121&#34;&gt;`can&amp;#39;t configure settings`&lt;/span&gt;);
+      });
+  }
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The code is a little awkward, but its pretty simple. We have this &lt;code&gt;NativeServiceBridge&lt;/code&gt; that mediates communication between the JS side and that native side and we&amp;rsquo;re calling &lt;code&gt;startConfigureReaderSettings&lt;/code&gt; on that bridge. We also register an event listener to receive events when we receive settings from the lock (of course, these events are emitted by the &lt;code&gt;NativeServiceBridge&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The js here is the same regardless of Android or iOS. We documented the contract between the js and native side with esdoc and basically said, &amp;ldquo;Android guys, make your interface look like this and iOS guys, do the same.&amp;rdquo; If we did this over, we&amp;rsquo;d consider Walmart&amp;rsquo;s &lt;a href=&#34;http://www.electrode.io/site/native.html&#34;&gt;electrode&lt;/a&gt;, which generates this contract from a swagger file.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s drop down a level in our stack diagram and look at the code in the &lt;code&gt;NativeServiceBridge&lt;/code&gt;. You are here:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/native-service-bridge.jpeg&#34; alt=&#34;Native Service Bridge&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s some code:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;NativeServiceBridge&lt;/span&gt;(reactContext: ReactApplicationContext) 
+  : ReactContextBaseJavaModule(reactContext) {
+@ReactMethod &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;fun&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;startConfigureReaderSettings&lt;/span&gt;(uuid: String, callback: Callback) {  
+  UniKey.readerService()
+    .configure(deviceSettingsObservable, UUID.fromString(uuid))    
+    .subscribe({   
+      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;val&lt;/span&gt; writableSettings = createWritableSettings(it)    
+      eventEmitter.&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;get&lt;/span&gt;().emit(READER_SETTINGS_CHANGE_EVENT, writableSettings)  
+      }, 
+      {  callback(it.toString())  }, 
+      { callback(&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;)  }
+    )
+  }
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Highlights here are that we&amp;rsquo;re extending from the React Native type &lt;code&gt;ReactContextBaseJavaModule&lt;/code&gt;, that we&amp;rsquo;ve annotated our method with &lt;code&gt;@ReactMethod&lt;/code&gt;, and that we&amp;rsquo;re communicating with the js side through &lt;code&gt;Callback&lt;/code&gt; and &lt;code&gt;EventEmitter&lt;/code&gt;. We simply call the &lt;code&gt;UniKey.readerService.configure&lt;/code&gt; method on our SDK and we pass the results back to the js side.&lt;/p&gt;
+
+&lt;h3 id=&#34;results&#34;&gt;Results&lt;/h3&gt;
+
+&lt;p&gt;Overall, we were very pleased with how things turned out. We were able to hit our deadlines and our react native apps work well.&lt;/p&gt;
+
+&lt;p&gt;One of the things that I think allowed react native to work so well for us is that the bread and butter of the experience of our apps doesn&amp;rsquo;t actually need to communicate with the react native code at all. This image helps explain what I mean:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/unikey-to-phone-communication.jpeg&#34; alt=&#34;UniKey to phone communication&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Our apps aim to allow you to access your home or office in a way that is more convenient than the key. With our apps, you don&amp;rsquo;t even have to open the app in order to unlock the door. Because of this, our SDK does all the heavy-lifting with the hardware and doesn&amp;rsquo;t even need to talk to the React native code in order to perform its most important function. In other words, there&amp;rsquo;s no performance penalty in using react native for &amp;ldquo;passive entry&amp;rdquo; into a UniKey-powered smart lock.&lt;/p&gt;
+
+&lt;p&gt;What&amp;rsquo;s really interesting about our work with React Native is that because we white-label apps and create SDKs, we can actually easily create fully-native and react-native apps and compare them &lt;em&gt;side-by-side&lt;/em&gt; to see the results.&lt;/p&gt;
+
+&lt;p&gt;The side-by-side comparison is impressive. You might even have a hard time telling which app is native and which is react-native. You&amp;rsquo;ll notice that one of the videos is the same as the one we saw earlier. I &lt;em&gt;may&lt;/em&gt; have lied about whether that video was from a fully-native white-label app or a react-native one, so just look at the videos and see if you can guess which one is which.&lt;/p&gt;
+
+&lt;video width=&#34;640&#34; height=&#34;480&#34; controls&gt;
+  &lt;source src=&#34;https://www.philosophicalhacker.com/videos/settings.mp4&#34; type=&#34;video/mp4&#34;&gt;
+&lt;/video&gt;
+
+&lt;video width=&#34;640&#34; height=&#34;480&#34; controls&gt;
+  &lt;source src=&#34;https://www.philosophicalhacker.com/videos/rn-settings.mp4&#34; type=&#34;video/mp4&#34;&gt;
+&lt;/video&gt;
+
+&lt;h3 id=&#34;trade-offs&#34;&gt;Trade-offs&lt;/h3&gt;
+
+&lt;h4 id=&#34;performance-penalty-for-crossing-the-js-bridge&#34;&gt;Performance Penalty for Crossing the JS Bridge&lt;/h4&gt;
+
+&lt;p&gt;If you guessed right, it might be because the second video was a little slower than the first one to display the settings, and this leads into the first trade-off when working with react native: you do pay for sending commands across the javascript bridge. As the above videos suggest, that penalty is not very large, but it is there.&lt;/p&gt;
+
+&lt;p&gt;Again, for us, the trade-off mattered little since that extra ~.5 seconds is only needed for people who want to configure their lock. People who need to unlock their app can do so just as quickly as owners of the fully-native apps.&lt;/p&gt;
+
+&lt;h4 id=&#34;awkward-js-bridge-api&#34;&gt;Awkward JS Bridge API&lt;/h4&gt;
+
+&lt;p&gt;A related point is that because of the limitations on how your API between JS and native code works, you can wind up with some awkward APIs. We already saw this with the JS code snippet I mentioned earlier. Here&amp;rsquo;s the snippet again:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;import&lt;/span&gt; NativeServiceBridge from &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;./services&amp;quot;&lt;/span&gt;;
+&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;default&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; ReaderDetails &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Component {
+  _componentWillAppear() {
+    getEmitter().addListener(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;readerSettingChange&amp;#39;&lt;/span&gt;,
+      settings =&amp;gt; {
+        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; (settings.length &lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0&lt;/span&gt;) {
+          &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.setState({ settings, progress&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt; });
+        }
+      });
+    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;const&lt;/span&gt; { reader } &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.props;
+    NativeServiceBridge.startConfigureReaderSettings(reader.id,
+      error =&amp;gt; {
+        error &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; console.error(&lt;span style=&#34;color: #BA2121&#34;&gt;`can&amp;#39;t configure settings`&lt;/span&gt;);
+      });
+  }
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The weird thing about this code is that we are registering an event emitter &lt;em&gt;and&lt;/em&gt; passing in a callback to &lt;code&gt;startConfigureReaderSettings&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The reason we need to do this is that we actually need two callbacks from that one method call. One callback when new settings arrive over bluetooth (which may be called multiple times) and another callback when the configure operation has completed. Callbacks can only be called once in react native, so we also have to use an event emitter, which feels awkward compared to native APIs.&lt;/p&gt;
+
+&lt;h4 id=&#34;libraries-can-be-hit-or-miss&#34;&gt;Libraries can be hit or miss&lt;/h4&gt;
+
+&lt;p&gt;For us, the best example of this trade-off related to the library we used for navigation. &lt;a href=&#34;https://facebook.github.io/react-native/docs/navigation.html#react-navigation&#34;&gt;The react native docs&lt;/a&gt; suggest react-navigation is the solution for navigation on react native. Turns out that way leads to weeping and gnashing of teeth. There&amp;rsquo;s even &lt;a href=&#34;https://github.com/react-community/react-navigation/issues/2031&#34;&gt;a github issue&lt;/a&gt; hilariously titled, &amp;ldquo;This library just isn&amp;rsquo;t good.&amp;rdquo; Use &lt;a href=&#34;https://github.com/wix/react-native-navigation&#34;&gt;Wix&amp;rsquo;s navigation library instead&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;build-tools-less-flexible-and-poorly-documented&#34;&gt;Build Tools Less Flexible and Poorly Documented&lt;/h4&gt;
+
+&lt;p&gt;We white-label apps, so build tools and build variants are important to us. That&amp;rsquo;s a rougher game with react-native apps than native apps. With ordinary Android development, you can create build flavors like so:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;productFlavors &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+  partner1 &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+  partner2 &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
+  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The react native build tools can handle flavors to some extent, but if your flavors need different javascript entry points, then you&amp;rsquo;ll probably just have to disable the react-native gradle plugin because it doesn&amp;rsquo;t have a hook to change the js entry-point based on a product flavor.&lt;/p&gt;
+
+&lt;p&gt;On iOS, RN is better in this regard. You can change the js entry point based on a build variant (iOS scheme), but first you have to read a bash file and locate this comment and cryptic line:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;# Define entry file&lt;/span&gt;
+&lt;span style=&#34;color: #19177C&#34;&gt;ENTRY_FILE&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #BB6688; font-weight: bold&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color: #19177C&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;:-&lt;/span&gt;&lt;span style=&#34;color: #19177C&#34;&gt;index&lt;/span&gt;.ios.js&lt;span style=&#34;color: #BB6688; font-weight: bold&#34;&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You can pass the entry point into this script from the build phases section in your Xcode build settings, but none of this is really documented.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;So, there you have it: the how, why, results, and trade-offs of our usage of React Native at UniKey. If you&amp;rsquo;re working on an IoT product, I hope I&amp;rsquo;ve convinced you that using react native is more appropriate than using a toilet in a movie theater.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>How to Abuse Kotlin Extension Functions</title>
@@ -1868,132 +2077,6 @@ launch(UI) {
 &lt;li&gt;&lt;p&gt;The key idea of this pattern, however, is definitely older than Fowler&amp;rsquo;s page object pattern. Gerard Meszaros talks about it in &lt;em&gt;xUnit Test Patterns&lt;/em&gt;, for example, which was published in 2007.&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;This strategy is recommended by both Feathers and Meszaros.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Exploiting Android-Specific Seams for Testing and Flexibility</title>
-      <link>https://www.philosophicalhacker.com/post/exploiting-android-specific-seams-for-testing-and-flexibility/</link>
-      <pubDate>Sat, 21 Jan 2017 11:20:01 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/exploiting-android-specific-seams-for-testing-and-flexibility/</guid>
-      <description>
-
-&lt;p&gt;As I pointed out throughout my &lt;a href=&#34;https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/&#34;&gt;series of posts on writing testable Android applications&lt;/a&gt;, the key to writing testable Android apps, is creating and exploiting seams. During these posts, I pointed out two types of seams that are available in any OO programming language and any programming environment. In this post, I want to highlight some Android-specific seams that we can leverage to make our applications more testable and flexible.&lt;/p&gt;
-
-&lt;h3 id=&#34;manifest-seams&#34;&gt;Manifest Seams&lt;/h3&gt;
-
-&lt;p&gt;Manifest seams allow you to change a manifest that&amp;rsquo;s used for a particular build variant without editing your main manifest in place. Changing your manifest, of course, results in different behavior for your app. These new behaviors can be used to make your app more testable. To flesh out the concept of a manifest seam, let&amp;rsquo;s look at using manifest seams to set up your app&amp;rsquo;s &amp;ldquo;mock mode.&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;An application running in mock mode stubs out its interactions with external services for testing purposes.&lt;sup&gt;1&lt;/sup&gt; A nice example of mock mode in action is &lt;a href=&#34;https://github.com/JakeWharton/u2020&#34;&gt;Jake Wharton&amp;rsquo;s u2020 app&lt;/a&gt;. In his implementation of mock mode, Wharton uses an object seam, along with dagger, to swap out views within Activities so that in mock mode, the &lt;code&gt;MainActivity&lt;/code&gt;&amp;rsquo;s view will contain a debug drawer that can be used to configure the stubbing behavior for the app.&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;final&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;MainActivity&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Activity &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-
-  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Inject&lt;/span&gt; ViewContainer viewContainer&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-
-  &lt;span style=&#34;color: #AA22FF&#34;&gt;@Override&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;protected&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;Bundle savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;super&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;onCreate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;savedInstanceState&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-
-    ViewGroup container &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; viewContainer&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;forActivity&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;    
-
-    inflater&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;inflate&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;R&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;layout&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;main_activity&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; container&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    ButterKnife&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;bind&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; container&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;  
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This code gives u2020 users the ability to change mock behavior using the app&amp;rsquo;s UI without having to modify any production code. We could use manifest seams, however, to accomplish the same thing.&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;Manifest seams are made possible via manifest merging and &lt;a href=&#34;https://developer.android.com/studio/build/manifest-merge.html#merge_rule_markers&#34;&gt;merge rule markers&lt;/a&gt;. To exploit a manifest seam for mock mode, we can use merge rule markers to tell the manifest merger to change the initial &lt;code&gt;Activity&lt;/code&gt; that&amp;rsquo;s launched for a particular build variant.&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;&amp;lt;!-- src/mock/AndroidManifest.xml --&amp;gt;&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;activity&lt;/span&gt;
-  &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;.StubConfigActivity&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;intent-filter&amp;gt;&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;action&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.action.MAIN&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;category&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.category.LAUNCHER&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/intent-filter&amp;gt;&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/activity&amp;gt;&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;activity&lt;/span&gt;
-  &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;.MainActivity&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;intent-filter&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;tools:node=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;remove&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;gt;&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;action&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.action.MAIN&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;category&lt;/span&gt; &lt;span style=&#34;color: #7D9029&#34;&gt;android:name=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;android.intent.category.LAUNCHER&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;/&amp;gt;&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/intent-filter&amp;gt;&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;&amp;lt;/activity&amp;gt;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The resulting manifest for the mock build variant will have the &lt;code&gt;StubConfigActivity&lt;/code&gt; as its launching activity, rather than the &lt;code&gt;MainActivity&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;I think there are other interesting possibilities here that are worth exploring. For example, you could use merge rule markers to substitute out which actions and categories are on non-launcher &lt;code&gt;Activity&lt;/code&gt;&amp;rsquo;s intent-filter and thereby change which activities are started when we call &lt;code&gt;context.startActivity&lt;/code&gt; with implicit intents.&lt;/p&gt;
-
-&lt;h3 id=&#34;buildconfig-seams&#34;&gt;BuildConfig Seams&lt;/h3&gt;
-
-&lt;p&gt;BuildConfig seams allow us to change the values stored in the &lt;code&gt;BuildConfig&lt;/code&gt;&amp;rsquo;s constants depending on which build variant we&amp;rsquo;re building. By default, &lt;code&gt;BuildConfig&lt;/code&gt; contains some useful values like, &lt;code&gt;DEBUG&lt;/code&gt; and &lt;code&gt;FLAVOR&lt;/code&gt;, but we can actually create additional &lt;code&gt;BuildConfig&lt;/code&gt; constants via gradle. Let&amp;rsquo;s start by looking a simple example of creating a BuildConfig field:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;productFlavors &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  mock &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    buildConfigField&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;Boolean&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;MOCK&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;true&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;A simple use case for BuildConfig seams is setting up the base url for the api your app is hitting. This can make testing easier because you can point your app to a staging, sandbox, mock, or production servers without modifying production code.&lt;sup&gt;3&lt;/sup&gt; Leveraging a BuildConfig seam in this way might look something like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;defaultConfig &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  buildConfigField&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;String&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;API_BASE&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;\&amp;quot;api.awesomecompany.com\&amp;quot;&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-productFlavors &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  sandbox &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    buildConfigField&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;String&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;API_BASE&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;\&amp;quot;localhost:8080\&amp;quot;&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;You could then use the BuildConfig field like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; String &lt;span style=&#34;color: #0000FF&#34;&gt;buildGetAwesomenessApiUrl&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;http://&amp;quot;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; BuildConfig&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;API_BASE&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;/awesomenesss&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;;&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;For those of you who have read &lt;a href=&#34;https://www.philosophicalhacker.com/post/build-variants-and-link-seams/&#34;&gt;my post on link seams&lt;/a&gt;, BuildConfig seams may just look like a special case of using build variants to create link seams. In some sense, that&amp;rsquo;s true.&lt;/p&gt;
-
-&lt;p&gt;However, BuildConfig seams have an advantage over placing identically named files in different sourcesets for different build variants: you can set a BuildConfig field for the default configuration and override it for specific build variants. You can&amp;rsquo;t do this by placing identically named files in the &lt;code&gt;main&lt;/code&gt; and build-variant sourcesets folders because the compiler will complain that there&amp;rsquo;s two files with the same name.&lt;/p&gt;
-
-&lt;p&gt;There are other things to explore here as well. One use case I&amp;rsquo;ve found for BuildConfig seams is in &lt;em&gt;composing&lt;/em&gt; dagger configuration behavior for multi-dimensional product flavors by storing class names in BuildConfig fields and instantiating them via reflection. I&amp;rsquo;m not very confident that this is a sensible way to use BuildConfig seams, but its interesting anyway, and it might serve as a foundation for a better way to use BuildConfig seams.&lt;/p&gt;
-
-&lt;h3 id=&#34;resource-seams&#34;&gt;Resource Seams&lt;/h3&gt;
-
-&lt;p&gt;Resources from different build variants, like AndroidManifests, get merged. Unlike manifest merging, we don&amp;rsquo;t have merge rule markers that allow us to tweak how the resources are merged. However, we can still take advantage of the default merge behavior to change the behavior of our apps without editing production code in place. The default merge behavior, according to &lt;a href=&#34;https://developer.android.com/studio/write/add-resources.html#resource_merging&#34;&gt;the docs&lt;/a&gt;, is this:&lt;/p&gt;
-
-&lt;p&gt;build variant &amp;gt; build type &amp;gt; product flavor &amp;gt; main source set &amp;gt; library dependencies&lt;/p&gt;
-
-&lt;p&gt;This means that we can place resources in the main source set as a kind of default and override them for specific build variants. Again, this is something that we can&amp;rsquo;t do by placing identically named java files in different sourcesets.&lt;/p&gt;
-
-&lt;p&gt;BuildConfig seams and Resource seams obviously have some similarities, which makes choosing between them confusing. Off the cuff, we can say that using a BuildConfig field is easier than getting a resource value, so we may want to prefer BuildConfig seams when we don&amp;rsquo;t have access to a &lt;code&gt;Context&lt;/code&gt;. Stuffing all of our build variant specific values into a single BuildConfig class, however, isn&amp;rsquo;t going to scale well, so we may want to prefer Resource seams if we do have access to a &lt;code&gt;Context&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;Android developers have their own Android-specific seams that they can exploit for testing purposes. Manifest seams rely on manifest merging and merge rule markers. BuildConfig seams rely on the &lt;code&gt;productFlavor.buildConfigField&lt;/code&gt; method. Resource seams rely on Android&amp;rsquo;s default the resource merging behavior.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;If you don&amp;rsquo;t know why we&amp;rsquo;d want to do this, &lt;a href=&#34;https://android-developers.googleblog.com/2015/12/leveraging-product-flavors-in-android.html&#34;&gt;read this&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Manifest seams may be an inferior way of doing this, as Wharton&amp;rsquo;s strategy allows users to change mock behavior throughout their session with the app, while manifest seams, as we&amp;rsquo;ll see, only allow us to change this behavior when the app is first launched. My purpose here isn&amp;rsquo;t to say which approach is better. Its just to point out that manifest seams exist.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;I haven&amp;rsquo;t found much use for mock web servers. I can eliminate flaky tests without them, and they often slow tests down since the tests are still making network requests.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
     </item>
