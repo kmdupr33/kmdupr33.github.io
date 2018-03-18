@@ -80,14 +80,14 @@
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;default&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; ReaderDetails &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Component {
   _componentWillAppear() {
     getEmitter().addListener(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;readerSettingChange&amp;#39;&lt;/span&gt;,
-      settings =&amp;gt; {
+      settings &lt;span style=&#34;color: #666666&#34;&gt;=&amp;gt;&lt;/span&gt; {
         &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; (settings.length &lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0&lt;/span&gt;) {
           &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.setState({ settings, progress&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt; });
         }
       });
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;const&lt;/span&gt; { reader } &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.props;
     NativeServiceBridge.startConfigureReaderSettings(reader.id,
-      error =&amp;gt; {
+      error &lt;span style=&#34;color: #666666&#34;&gt;=&amp;gt;&lt;/span&gt; {
         error &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; console.error(&lt;span style=&#34;color: #BA2121&#34;&gt;`can&amp;#39;t configure settings`&lt;/span&gt;);
       });
   }
@@ -162,14 +162,14 @@
 &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;default&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; ReaderDetails &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Component {
   _componentWillAppear() {
     getEmitter().addListener(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;readerSettingChange&amp;#39;&lt;/span&gt;,
-      settings =&amp;gt; {
+      settings &lt;span style=&#34;color: #666666&#34;&gt;=&amp;gt;&lt;/span&gt; {
         &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; (settings.length &lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0&lt;/span&gt;) {
           &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.setState({ settings, progress&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt; });
         }
       });
     &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;const&lt;/span&gt; { reader } &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.props;
     NativeServiceBridge.startConfigureReaderSettings(reader.id,
-      error =&amp;gt; {
+      error &lt;span style=&#34;color: #666666&#34;&gt;=&amp;gt;&lt;/span&gt; {
         error &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; console.error(&lt;span style=&#34;color: #BA2121&#34;&gt;`can&amp;#39;t configure settings`&lt;/span&gt;);
       });
   }

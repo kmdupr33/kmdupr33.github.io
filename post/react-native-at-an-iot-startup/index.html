@@ -314,14 +314,14 @@
 <span style="color: #008000; font-weight: bold">export</span> <span style="color: #008000; font-weight: bold">default</span> <span style="color: #008000; font-weight: bold">class</span> ReaderDetails <span style="color: #008000; font-weight: bold">extends</span> Component {
   _componentWillAppear() {
     getEmitter().addListener(<span style="color: #BA2121">&#39;readerSettingChange&#39;</span>,
-      settings =&gt; {
+      settings <span style="color: #666666">=&gt;</span> {
         <span style="color: #008000; font-weight: bold">if</span> (settings.length <span style="color: #666666">&gt;</span> <span style="color: #666666">0</span>) {
           <span style="color: #008000; font-weight: bold">this</span>.setState({ settings, progress<span style="color: #666666">:</span> <span style="color: #008000; font-weight: bold">false</span> });
         }
       });
     <span style="color: #008000; font-weight: bold">const</span> { reader } <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">this</span>.props;
     NativeServiceBridge.startConfigureReaderSettings(reader.id,
-      error =&gt; {
+      error <span style="color: #666666">=&gt;</span> {
         error <span style="color: #666666">&amp;&amp;</span> console.error(<span style="color: #BA2121">`can&#39;t configure settings`</span>);
       });
   }
@@ -396,14 +396,14 @@
 <span style="color: #008000; font-weight: bold">export</span> <span style="color: #008000; font-weight: bold">default</span> <span style="color: #008000; font-weight: bold">class</span> ReaderDetails <span style="color: #008000; font-weight: bold">extends</span> Component {
   _componentWillAppear() {
     getEmitter().addListener(<span style="color: #BA2121">&#39;readerSettingChange&#39;</span>,
-      settings =&gt; {
+      settings <span style="color: #666666">=&gt;</span> {
         <span style="color: #008000; font-weight: bold">if</span> (settings.length <span style="color: #666666">&gt;</span> <span style="color: #666666">0</span>) {
           <span style="color: #008000; font-weight: bold">this</span>.setState({ settings, progress<span style="color: #666666">:</span> <span style="color: #008000; font-weight: bold">false</span> });
         }
       });
     <span style="color: #008000; font-weight: bold">const</span> { reader } <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">this</span>.props;
     NativeServiceBridge.startConfigureReaderSettings(reader.id,
-      error =&gt; {
+      error <span style="color: #666666">=&gt;</span> {
         error <span style="color: #666666">&amp;&amp;</span> console.error(<span style="color: #BA2121">`can&#39;t configure settings`</span>);
       });
   }
