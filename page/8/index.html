@@ -227,199 +227,6 @@
 	   
 <article class="post post">
     <header class="post-header">
-        <h2 class="post-title"><a href="/2015/06/12/an-introduction-to-rxjava-for-android/">An Introduction to RxJava for Android (Pt. 1)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>I&rsquo;m taking a brief break from talking about testing. I&rsquo;ll resume my discussion of how <a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">I&rsquo;m making Google&rsquo;s IOSched app unit testable</a> after I&rsquo;ve posted the content from <a href="http://www.meetup.com/University-Android/events/222048562/">my upcoming talk on RxJava</a>.</p>
-
-<p> <a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg" alt="rxjava_prezi_rxjava_def" /></a></p>
-
-<p></p> <a class="read-more" href="/2015/06/12/an-introduction-to-rxjava-for-android/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/rxjava/">#rxjava</a>,
-            
-        
-        <time class="post-date" datetime="2015-06-12T12:34:53Z">
-            12 Jun 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/06/07/developer-golf/">Developer Golf</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><h2 id="developer-golf-http-www-philosophicalhacker-com-wp-content-uploads-2015-06-developer-golf-png-http-www-philosophicalhacker-com-wp-content-uploads-2015-06-developer-golf-png"><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/06/Developer-golf.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/06/Developer-golf.png" alt="Developer golf" /></a></h2>
-
-<h2 id="what-is-developer-golf">What is Developer Golf?</h2>
-
-<p>Developer golf is a fun way to measure developer performance. It turns our job into a game of producing the most lines of high quality (bug free) code.</p>
-
-<p></p> <a class="read-more" href="/2015/06/07/developer-golf/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2015-06-07T13:16:29Z">
-            7 Jun 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/06/06/unit-testing-dynamically-constructed-views/">Unit Testing Dynamically Constructed Views</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&rsquo;ve fetched or in response to some input. The <code>SessionDetailActivity</code> in Google&rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the <code>SessionDetailActivity</code>&rsquo;s view hierarchy.</p>
-
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png" alt="IO Testing Talk-04" /></a></p>
-
-<p>In this screenshot, the &ldquo;Distribute,&rdquo; &ldquo;Android,&rdquo; and &ldquo;Games&rdquo; tags are added to the view hierarchy based on the tags associated with the &rdquo;Going global with Google Play&rdquo; IO session. In this post, I&rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the <code>SesisonDetailActivity</code>&rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards <a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">making Google&rsquo;s IOSched app unit testable</a>.</p>
-
-<p></p> <a class="read-more" href="/2015/06/06/unit-testing-dynamically-constructed-views/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-06-06T11:08:03Z">
-            6 Jun 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">Towards A Unit Testable Fork of Google&#39;s IOSched App</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>In my recent <a href="http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/">Against Android Unit Tests</a> series, I discussed the difficulties of unit testing android applications and proposed a different way of building applications that would enhance their unit testability. My proposal in that series was really largely a rough sketch of what it would take to make parts of Google&rsquo;s IOSched app unit testable.</p>
-
-<p>More recently, I&rsquo;ve started to fill in the details of that proposal by forking the IOSched repo and refactoring it to make it unit testable. In the next few posts, I&rsquo;ll be discussing some of the challenges that arose when attempting to make the <code>SessionDetailActivity</code> unit testable within the IOSched app. In this post, I want to provide a broad overview of the challenges I&rsquo;ll be discussing.</p>
-
-<p></p> <a class="read-more" href="/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-31T20:11:16Z">
-            31 May 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/29/making-the-most-of-android-studios-unit-testing-support/">An Introduction to Unit Testing on Android</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>Yesterday at IO Extended Orlando, I gave a talk on testing. What follows is a written version of the presentation I gave.</p>
-
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png" alt="IO Testing Talk-01" /></a></p>
-
-<p>Android 1.2 introduced unit testing support. Now, we can run junit tests on the jvm while we&rsquo;re developing our apps. During my talk, we&rsquo;ll discuss the following questions:</p>
-
-<ul>
-<li><p>Why should anyone care about this new feature?</p></li>
-
-<li><p>What the heck is unit testing anyways?</p></li>
-</ul>
-
-<p>Briefly, I&rsquo;ll also mention some of the challenges of writing unit tests for Android.</p>
-
-<p></p> <a class="read-more" href="/2015/05/29/making-the-most-of-android-studios-unit-testing-support/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-29T11:23:14Z">
-            29 May 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
         <h2 class="post-title"><a href="/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">What I&#39;ve Learned From Trying to Make An Android App Unit Testable</a></h2>
     </header>
     <section class="post-excerpt">
@@ -611,6 +418,192 @@
         
         <time class="post-date" datetime="2015-04-24T11:44:49Z">
             24 Apr 2015
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">Why Android Unit Testing is so Hard (Pt 1)</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p><p><strong>Edit:</strong> In <a href="http://philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">the post that concludes this series</a>, I point out that making unit testable Android apps does not require us to remove compile-time dependencies on the Android SDK and that attempting to do so is impractical anyway. Ignore anything in this post that suggests otherwise.</p>
+
+<hr />
+
+<p>Unit testing your Android apps can be extremely difficult. As I suggested in <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">the introduction to this series,</a> it seems clear that there’s widespread agreement on this. The many folks who responded to my introductory post, moreover, seemed to reinforce my claim that Android unit testing is tough:</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">What he said! RT <a href="https://twitter.com/philosohacker?ref_src=twsrc%5Etfw">@philosohacker</a>: New post on how we can better test our Android apps <a href="http://t.co/gQCJKIOrSN">http://t.co/gQCJKIOrSN</a></p>&mdash; Andy Dyer (@dammitandy) <a href="https://twitter.com/dammitandy/status/587629744188829699?ref_src=twsrc%5Etfw">April 13, 2015</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr"><a href="https://twitter.com/corey_latislaw?ref_src=twsrc%5Etfw">@corey_latislaw</a> Yay! Maybe I can finally figuring out how to test Android apps properly. Also, this. <a href="http://t.co/8gIqfoFVnL">http://t.co/8gIqfoFVnL</a></p>&mdash; Vinay Shenoy (@vinaysshenoy) <a href="https://twitter.com/vinaysshenoy/status/587608070131290112?ref_src=twsrc%5Etfw">April 13, 2015</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Fully agree: &quot;Against Android Unit Tests&quot;. Structure your code to have as little contact with the SDK as possible. <a href="http://t.co/rLZlpGrCD5">http://t.co/rLZlpGrCD5</a></p>&mdash; Pascal Hartig (@passy) <a href="https://twitter.com/passy/status/587336731260751875?ref_src=twsrc%5Etfw">April 12, 2015</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>So, Android unit testing is hard. That much is clear. Why Android unit testing is so difficult, however, is less clear. Its true that a part of the difficulty with Android unit testing has to do with the nonsense that you have to overcome to get Roboletric started so that you can run your tests at a decent speed, but I think that there’s a deeper reason why we are having a hard time testing our applications: the way that Google has written the Android SDK and the way that Google encourages us to structure our applications makes testing difficult and, in some cases, impossible.</p>
+
+<p>I realize that this is a bold claim, so I will spend the entire post trying to establish it. In the following post, I’ll try to say more about how the “standard” way of developing Android applications encourages us to write code that is difficult/impossible to write sensible unit tests against. These posts are a part of a series in which I’m exploring the viability of enhancing the testability of Android applications by restructuring them so that application code does not directly depend on the Android SDK. Showing why the standard architecture for Android development makes testing difficult will both motivate and inform my alternative proposal for structuring Android applications, a proposal that I will outline in the fourth post of the series.</p>
+
+<p></p> <a class="read-more" href="/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
+        
+        
+            
+            
+        
+
+        
+        
+        on
+            
+                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
+            
+        
+        <time class="post-date" datetime="2015-04-17T13:46:58Z">
+            17 Apr 2015
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/04/16/is-mark-zuckerberg-a-douche-bag/">Is Mark Zuckerberg a Douche-bag?</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p><p>Facebook has been catching a lot of heat in Europe lately. A <a href="http://www.law.kuleuven.be/icri/en/news/item/facebooks-revised-policies-and-terms-v1-2.pdf">61 page critical analysis of Facebook&rsquo;s data use policy</a> was recently produced by Katholieke Universiteit Leuven, Belgium&rsquo;s designated privacy watchdog. The report claimed that Facebook&rsquo;s Data Use Policy (DUP) was violating European privacy law, or, to put the claim more crudely (and less accurately), that Mark Zuckerberg is a douche-bag for creating Facebook.</p>
+
+<p>In this post, I present an <em>imaginary</em> (philosophical) dialog between Belgium and Mark Zuckerberg. <em>Imaginary</em> Zuckerberg will try to fend off the specific criticisms lodged by Belgium. I&rsquo;m hoping the dialog will kick off a discussion on whether imaginary Zuckerberg&rsquo;s defense was successful and what other responses Zuckerberg might have that could be philosophically compelling. In other words, I want this post to kick off a discussion in which we&rsquo;ll try to settle the question of whether Zuckerberg is a douche-bag.</p>
+
+<p></p> <a class="read-more" href="/2015/04/16/is-mark-zuckerberg-a-douche-bag/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
+        
+        
+            
+            
+        
+
+        
+        
+        
+        <time class="post-date" datetime="2015-04-16T11:58:48Z">
+            16 Apr 2015
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/04/10/against-android-unit-tests/">Against Android Unit Tests</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p>Edit: Since I&rsquo;ve written this, I&rsquo;ve come to realize that making unit testable Android apps does not require us to remove compile-time dependencies on the Android SDK. I talk about this realization in the post that concludes this series.
+Even the best among us admit that they struggle with testing their Android apps. Jake Wharton has said explicitly that the Android platform has traditionally been very difficult to test.¹ In the inaugural episode of their (excellent) podcast, Don Felker and Kaushik Gopal have echoed similar sentiments. <a class="read-more" href="/2015/04/10/against-android-unit-tests/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
+        
+        
+            
+            
+        
+
+        
+        
+        on
+            
+                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
+            
+        
+        <time class="post-date" datetime="2015-04-11T03:35:55Z">
+            11 Apr 2015
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/04/06/dont-call-it-mvp/">Don&#39;t call it &#34;MVP&#34;</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p>Lately there&rsquo;s been a lot of discussion about an alternative architectural pattern for Android development. The acronym that&rsquo;s being used to denote this alternative pattern is &rdquo;MVP.&rdquo; I think that &ldquo;MVP&rdquo; is an inaccurate and confusing designation for this pattern. In this post, I will say why I think &ldquo;MVP&rdquo; is a bad name for the pattern, and I&rsquo;ll suggest a different name for referring to it.
+What is &rdquo;MVP? <a class="read-more" href="/2015/04/06/dont-call-it-mvp/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
+        
+        
+            
+            
+        
+
+        
+        
+        on
+            
+                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
+            
+        
+        <time class="post-date" datetime="2015-04-06T03:39:02Z">
+            6 Apr 2015
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/">How to Keep your RxJava Subscribers from Leaking</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p>Edit: Shortly after writing this, I realized that the solution that I present here isn&rsquo;t very good. I&rsquo;m leaving it here just in case it can serve as a building block for better solutions.
+Sometimes you don&rsquo;t have control over the lifecycle of your Subscribers. In these cases, to avoid leaking your Subscriber, you have to unsubscribe from your Observable when you&rsquo;re notified that your Subscriber is about to be destroyed. <a class="read-more" href="/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
+        
+        
+            
+            
+        
+
+        
+        
+        on
+            
+                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="https://www.philosophicalhacker.com/tags/rxjava/">#rxjava</a>,
+            
+        
+        <time class="post-date" datetime="2015-03-24T23:56:32Z">
+            24 Mar 2015
         </time>
     </footer>
 </article>
