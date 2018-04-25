@@ -83,7 +83,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/" />
     
@@ -267,138 +267,134 @@
 
 <p>Here&rsquo;s the scary <code>displaySessionData</code> method. This isn&rsquo;t something you&rsquo;re supposed to <em>easily</em> understand; that&rsquo;s what makes it scary. Gaze upon it with fear and trembling for a moment before we move on:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displaySessionData</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">final</span> SessionDetailModel data<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-  mTitle<span style="color: #666666">.</span><span style="color: #7D9029">setText</span><span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">getSessionTitle</span><span style="color: #666666">());</span>
-  mSubtitle<span style="color: #666666">.</span><span style="color: #7D9029">setText</span><span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">getSessionSubtitle</span><span style="color: #666666">());</span>
-  <span style="color: #008000; font-weight: bold">try</span> <span style="color: #666666">{</span>
-    AppIndex<span style="color: #666666">.</span><span style="color: #7D9029">AppIndexApi</span><span style="color: #666666">.</span><span style="color: #7D9029">start</span><span style="color: #666666">(</span>mClient<span style="color: #666666">,</span> getActionForTitle<span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">getSessionTitle</span><span style="color: #666666">()));</span>
-  <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">catch</span> <span style="color: #666666">(</span>Throwable e<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">// Nothing to do if indexing fails.</span>
-  <span style="color: #666666">}</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">void</span> displaySessionData(<span style="color:#fff;font-weight:bold">final</span> SessionDetailModel data) {
+  mTitle.<span style="color:#007f7f">setText</span>(data.<span style="color:#007f7f">getSessionTitle</span>());
+  mSubtitle.<span style="color:#007f7f">setText</span>(data.<span style="color:#007f7f">getSessionSubtitle</span>());
+  <span style="color:#fff;font-weight:bold">try</span> {
+    AppIndex.<span style="color:#007f7f">AppIndexApi</span>.<span style="color:#007f7f">start</span>(mClient, getActionForTitle(data.<span style="color:#007f7f">getSessionTitle</span>()));
+  } <span style="color:#fff;font-weight:bold">catch</span> (Throwable e) {
+    <span style="color:#007f7f">// Nothing to do if indexing fails.
+</span><span style="color:#007f7f"></span>  }
 
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">shouldShowHeaderImage</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
-    mImageLoader<span style="color: #666666">.</span><span style="color: #7D9029">loadImage</span><span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">getPhotoUrl</span><span style="color: #666666">(),</span> mPhotoView<span style="color: #666666">);</span>
-  <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
-    mPhotoViewContainer<span style="color: #666666">.</span><span style="color: #7D9029">setVisibility</span><span style="color: #666666">(</span>View<span style="color: #666666">.</span><span style="color: #7D9029">GONE</span><span style="color: #666666">);</span>
-    ViewCompat<span style="color: #666666">.</span><span style="color: #7D9029">setFitsSystemWindows</span><span style="color: #666666">(</span>mAppBar<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">false</span><span style="color: #666666">);</span>
-    <span style="color: #408080; font-style: italic">// This is hacky but the collapsing toolbar requires a minimum height to enable</span>
-    <span style="color: #408080; font-style: italic">// the status bar scrim feature; set 1px. When there is no image, this would leave</span>
-    <span style="color: #408080; font-style: italic">// a 1px gap so we offset with a negative margin.</span>
-    <span style="color: #666666">((</span>ViewGroup<span style="color: #666666">.</span><span style="color: #7D9029">MarginLayoutParams</span><span style="color: #666666">)</span> mCollapsingToolbar<span style="color: #666666">.</span><span style="color: #7D9029">getLayoutParams</span><span style="color: #666666">()).</span><span style="color: #7D9029">topMargin</span> <span style="color: #666666">=</span> <span style="color: #666666">-1;</span>
-  <span style="color: #666666">}</span>
+  <span style="color:#fff;font-weight:bold">if</span> (data.<span style="color:#007f7f">shouldShowHeaderImage</span>()) {
+    mImageLoader.<span style="color:#007f7f">loadImage</span>(data.<span style="color:#007f7f">getPhotoUrl</span>(), mPhotoView);
+  } <span style="color:#fff;font-weight:bold">else</span> {
+    mPhotoViewContainer.<span style="color:#007f7f">setVisibility</span>(View.<span style="color:#007f7f">GONE</span>);
+    ViewCompat.<span style="color:#007f7f">setFitsSystemWindows</span>(mAppBar, <span style="color:#fff;font-weight:bold">false</span>);
+    <span style="color:#007f7f">// This is hacky but the collapsing toolbar requires a minimum height to enable
+</span><span style="color:#007f7f"></span>    <span style="color:#007f7f">// the status bar scrim feature; set 1px. When there is no image, this would leave
+</span><span style="color:#007f7f"></span>    <span style="color:#007f7f">// a 1px gap so we offset with a negative margin.
+</span><span style="color:#007f7f"></span>    ((ViewGroup.<span style="color:#007f7f">MarginLayoutParams</span>) mCollapsingToolbar.<span style="color:#007f7f">getLayoutParams</span>()).<span style="color:#007f7f">topMargin</span> = -1;
+  }
 
-  tryExecuteDeferredUiOperations<span style="color: #666666">();</span>
+  tryExecuteDeferredUiOperations();
 
-  <span style="color: #408080; font-style: italic">// Handle Keynote as a special case, where the user cannot remove it</span>
-  <span style="color: #408080; font-style: italic">// from the schedule (it is auto added to schedule on sync)</span>
-  mShowFab <span style="color: #666666">=</span> <span style="color: #666666">(</span>AccountUtils<span style="color: #666666">.</span><span style="color: #7D9029">hasActiveAccount</span><span style="color: #666666">(</span>getContext<span style="color: #666666">())</span> <span style="color: #666666">&amp;&amp;</span> <span style="color: #666666">!</span>data<span style="color: #666666">.</span><span style="color: #7D9029">isKeynote</span><span style="color: #666666">());</span>
-  mAddScheduleFab<span style="color: #666666">.</span><span style="color: #7D9029">setVisibility</span><span style="color: #666666">(</span>mShowFab <span style="color: #666666">?</span> View<span style="color: #666666">.</span><span style="color: #7D9029">VISIBLE</span> <span style="color: #666666">:</span> View<span style="color: #666666">.</span><span style="color: #7D9029">INVISIBLE</span><span style="color: #666666">);</span>
+  <span style="color:#007f7f">// Handle Keynote as a special case, where the user cannot remove it
+</span><span style="color:#007f7f"></span>  <span style="color:#007f7f">// from the schedule (it is auto added to schedule on sync)
+</span><span style="color:#007f7f"></span>  mShowFab = (AccountUtils.<span style="color:#007f7f">hasActiveAccount</span>(getContext()) &amp;&amp; !data.<span style="color:#007f7f">isKeynote</span>());
+  mAddScheduleFab.<span style="color:#007f7f">setVisibility</span>(mShowFab ? View.<span style="color:#007f7f">VISIBLE</span> : View.<span style="color:#007f7f">INVISIBLE</span>);
 
-  displayTags<span style="color: #666666">(</span>data<span style="color: #666666">);</span>
+  displayTags(data);
 
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>data<span style="color: #666666">.</span><span style="color: #7D9029">isKeynote</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
-    showInScheduleDeferred<span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">isInSchedule</span><span style="color: #666666">());</span>
-  <span style="color: #666666">}</span>
+  <span style="color:#fff;font-weight:bold">if</span> (!data.<span style="color:#007f7f">isKeynote</span>()) {
+    showInScheduleDeferred(data.<span style="color:#007f7f">isInSchedule</span>());
+  }
 
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>TextUtils<span style="color: #666666">.</span><span style="color: #7D9029">isEmpty</span><span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">getSessionAbstract</span><span style="color: #666666">()))</span> <span style="color: #666666">{</span>
-    UIUtils<span style="color: #666666">.</span><span style="color: #7D9029">setTextMaybeHtml</span><span style="color: #666666">(</span>mAbstract<span style="color: #666666">,</span> data<span style="color: #666666">.</span><span style="color: #7D9029">getSessionAbstract</span><span style="color: #666666">());</span>
-    mAbstract<span style="color: #666666">.</span><span style="color: #7D9029">setVisibility</span><span style="color: #666666">(</span>View<span style="color: #666666">.</span><span style="color: #7D9029">VISIBLE</span><span style="color: #666666">);</span>
-  <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
-    mAbstract<span style="color: #666666">.</span><span style="color: #7D9029">setVisibility</span><span style="color: #666666">(</span>View<span style="color: #666666">.</span><span style="color: #7D9029">GONE</span><span style="color: #666666">);</span>
-  <span style="color: #666666">}</span>
+  <span style="color:#fff;font-weight:bold">if</span> (!TextUtils.<span style="color:#007f7f">isEmpty</span>(data.<span style="color:#007f7f">getSessionAbstract</span>())) {
+    UIUtils.<span style="color:#007f7f">setTextMaybeHtml</span>(mAbstract, data.<span style="color:#007f7f">getSessionAbstract</span>());
+    mAbstract.<span style="color:#007f7f">setVisibility</span>(View.<span style="color:#007f7f">VISIBLE</span>);
+  } <span style="color:#fff;font-weight:bold">else</span> {
+    mAbstract.<span style="color:#007f7f">setVisibility</span>(View.<span style="color:#007f7f">GONE</span>);
+  }
 
-  <span style="color: #408080; font-style: italic">// Build requirements section</span>
-  <span style="color: #008000; font-weight: bold">final</span> View requirementsBlock <span style="color: #666666">=</span> getActivity<span style="color: #666666">().</span><span style="color: #7D9029">findViewById</span><span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">id</span><span style="color: #666666">.</span><span style="color: #7D9029">session_requirements_block</span><span style="color: #666666">);</span>
-  <span style="color: #008000; font-weight: bold">final</span> String sessionRequirements <span style="color: #666666">=</span> data<span style="color: #666666">.</span><span style="color: #7D9029">getRequirements</span><span style="color: #666666">();</span>
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>TextUtils<span style="color: #666666">.</span><span style="color: #7D9029">isEmpty</span><span style="color: #666666">(</span>sessionRequirements<span style="color: #666666">))</span> <span style="color: #666666">{</span>
-    UIUtils<span style="color: #666666">.</span><span style="color: #7D9029">setTextMaybeHtml</span><span style="color: #666666">(</span>mRequirements<span style="color: #666666">,</span> sessionRequirements<span style="color: #666666">);</span>
-    requirementsBlock<span style="color: #666666">.</span><span style="color: #7D9029">setVisibility</span><span style="color: #666666">(</span>View<span style="color: #666666">.</span><span style="color: #7D9029">VISIBLE</span><span style="color: #666666">);</span>
-  <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
-    requirementsBlock<span style="color: #666666">.</span><span style="color: #7D9029">setVisibility</span><span style="color: #666666">(</span>View<span style="color: #666666">.</span><span style="color: #7D9029">GONE</span><span style="color: #666666">);</span>
-  <span style="color: #666666">}</span>
+  <span style="color:#007f7f">// Build requirements section
+</span><span style="color:#007f7f"></span>  <span style="color:#fff;font-weight:bold">final</span> View requirementsBlock = getActivity().<span style="color:#007f7f">findViewById</span>(R.<span style="color:#007f7f">id</span>.<span style="color:#007f7f">session_requirements_block</span>);
+  <span style="color:#fff;font-weight:bold">final</span> String sessionRequirements = data.<span style="color:#007f7f">getRequirements</span>();
+  <span style="color:#fff;font-weight:bold">if</span> (!TextUtils.<span style="color:#007f7f">isEmpty</span>(sessionRequirements)) {
+    UIUtils.<span style="color:#007f7f">setTextMaybeHtml</span>(mRequirements, sessionRequirements);
+    requirementsBlock.<span style="color:#007f7f">setVisibility</span>(View.<span style="color:#007f7f">VISIBLE</span>);
+  } <span style="color:#fff;font-weight:bold">else</span> {
+    requirementsBlock.<span style="color:#007f7f">setVisibility</span>(View.<span style="color:#007f7f">GONE</span>);
+  }
 
-  <span style="color: #008000; font-weight: bold">final</span> ViewGroup relatedVideosBlock <span style="color: #666666">=</span>
-      <span style="color: #666666">(</span>ViewGroup<span style="color: #666666">)</span> getActivity<span style="color: #666666">().</span><span style="color: #7D9029">findViewById</span><span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">id</span><span style="color: #666666">.</span><span style="color: #7D9029">related_videos_block</span><span style="color: #666666">);</span>
-  relatedVideosBlock<span style="color: #666666">.</span><span style="color: #7D9029">setVisibility</span><span style="color: #666666">(</span>View<span style="color: #666666">.</span><span style="color: #7D9029">GONE</span><span style="color: #666666">);</span>
+  <span style="color:#fff;font-weight:bold">final</span> ViewGroup relatedVideosBlock =
+      (ViewGroup) getActivity().<span style="color:#007f7f">findViewById</span>(R.<span style="color:#007f7f">id</span>.<span style="color:#007f7f">related_videos_block</span>);
+  relatedVideosBlock.<span style="color:#007f7f">setVisibility</span>(View.<span style="color:#007f7f">GONE</span>);
 
-  updateEmptyView<span style="color: #666666">(</span>data<span style="color: #666666">);</span>
+  updateEmptyView(data);
 
-  updateTimeBasedUi<span style="color: #666666">(</span>data<span style="color: #666666">);</span>
+  updateTimeBasedUi(data);
 
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">getLiveStreamVideoWatched</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
-    mPhotoView<span style="color: #666666">.</span><span style="color: #7D9029">setColorFilter</span><span style="color: #666666">(</span>getContext<span style="color: #666666">().</span><span style="color: #7D9029">getResources</span><span style="color: #666666">().</span><span style="color: #7D9029">getColor</span><span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">color</span><span style="color: #666666">.</span><span style="color: #7D9029">played_video_tint</span><span style="color: #666666">));</span>
-    mWatchVideo<span style="color: #666666">.</span><span style="color: #7D9029">setText</span><span style="color: #666666">(</span>getString<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">string</span><span style="color: #666666">.</span><span style="color: #7D9029">session_replay</span><span style="color: #666666">));</span>
-  <span style="color: #666666">}</span>
+  <span style="color:#fff;font-weight:bold">if</span> (data.<span style="color:#007f7f">getLiveStreamVideoWatched</span>()) {
+    mPhotoView.<span style="color:#007f7f">setColorFilter</span>(getContext().<span style="color:#007f7f">getResources</span>().<span style="color:#007f7f">getColor</span>(R.<span style="color:#007f7f">color</span>.<span style="color:#007f7f">played_video_tint</span>));
+    mWatchVideo.<span style="color:#007f7f">setText</span>(getString(R.<span style="color:#007f7f">string</span>.<span style="color:#007f7f">session_replay</span>));
+  }
 
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">hasLiveStream</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
-    mWatchVideo<span style="color: #666666">.</span><span style="color: #7D9029">setOnClickListener</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-      <span style="color: #AA22FF">@Override</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onClick</span><span style="color: #666666">(</span>View v<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        String videoId <span style="color: #666666">=</span>
-            YouTubeUtils<span style="color: #666666">.</span><span style="color: #7D9029">getVideoIdFromSessionData</span><span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">getYouTubeUrl</span><span style="color: #666666">(),</span> data<span style="color: #666666">.</span><span style="color: #7D9029">getLiveStreamId</span><span style="color: #666666">());</span>
-        YouTubeUtils<span style="color: #666666">.</span><span style="color: #7D9029">showYouTubeVideo</span><span style="color: #666666">(</span>videoId<span style="color: #666666">,</span> getActivity<span style="color: #666666">());</span>
-      <span style="color: #666666">}</span>
-    <span style="color: #666666">});</span>
-  <span style="color: #666666">}</span>
+  <span style="color:#fff;font-weight:bold">if</span> (data.<span style="color:#007f7f">hasLiveStream</span>()) {
+    mWatchVideo.<span style="color:#007f7f">setOnClickListener</span>(<span style="color:#fff;font-weight:bold">new</span> View.<span style="color:#007f7f">OnClickListener</span>() {
+      @Override <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onClick(View v) {
+        String videoId =
+            YouTubeUtils.<span style="color:#007f7f">getVideoIdFromSessionData</span>(data.<span style="color:#007f7f">getYouTubeUrl</span>(), data.<span style="color:#007f7f">getLiveStreamId</span>());
+        YouTubeUtils.<span style="color:#007f7f">showYouTubeVideo</span>(videoId, getActivity());
+      }
+    });
+  }
 
-  fireAnalyticsScreenView<span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">getSessionTitle</span><span style="color: #666666">());</span>
+  fireAnalyticsScreenView(data.<span style="color:#007f7f">getSessionTitle</span>());
 
-  mTimeHintUpdaterRunnable <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Runnable<span style="color: #666666">()</span> <span style="color: #666666">{</span>
-    <span style="color: #AA22FF">@Override</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">run</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-      <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>getActivity<span style="color: #666666">()</span> <span style="color: #666666">==</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #408080; font-style: italic">// Do not post a delayed message if the activity is detached.</span>
-        <span style="color: #008000; font-weight: bold">return</span><span style="color: #666666">;</span>
-      <span style="color: #666666">}</span>
-      updateTimeBasedUi<span style="color: #666666">(</span>data<span style="color: #666666">);</span>
-      mHandler<span style="color: #666666">.</span><span style="color: #7D9029">postDelayed</span><span style="color: #666666">(</span>mTimeHintUpdaterRunnable<span style="color: #666666">,</span>
-          SessionDetailConstants<span style="color: #666666">.</span><span style="color: #7D9029">TIME_HINT_UPDATE_INTERVAL</span><span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
-  <span style="color: #666666">};</span>
-  mHandler<span style="color: #666666">.</span><span style="color: #7D9029">postDelayed</span><span style="color: #666666">(</span>mTimeHintUpdaterRunnable<span style="color: #666666">,</span>
-      SessionDetailConstants<span style="color: #666666">.</span><span style="color: #7D9029">TIME_HINT_UPDATE_INTERVAL</span><span style="color: #666666">);</span>
+  mTimeHintUpdaterRunnable = <span style="color:#fff;font-weight:bold">new</span> Runnable() {
+    @Override <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> run() {
+      <span style="color:#fff;font-weight:bold">if</span> (getActivity() == <span style="color:#fff;font-weight:bold">null</span>) {
+        <span style="color:#007f7f">// Do not post a delayed message if the activity is detached.
+</span><span style="color:#007f7f"></span>        <span style="color:#fff;font-weight:bold">return</span>;
+      }
+      updateTimeBasedUi(data);
+      mHandler.<span style="color:#007f7f">postDelayed</span>(mTimeHintUpdaterRunnable,
+          SessionDetailConstants.<span style="color:#007f7f">TIME_HINT_UPDATE_INTERVAL</span>);
+    }
+  };
+  mHandler.<span style="color:#007f7f">postDelayed</span>(mTimeHintUpdaterRunnable,
+      SessionDetailConstants.<span style="color:#007f7f">TIME_HINT_UPDATE_INTERVAL</span>);
 
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>mHasEnterTransition<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">// No enter transition so update UI manually</span>
-    enterTransitionFinished<span style="color: #666666">();</span>
-  <span style="color: #666666">}</span>
+  <span style="color:#fff;font-weight:bold">if</span> (!mHasEnterTransition) {
+    <span style="color:#007f7f">// No enter transition so update UI manually
+</span><span style="color:#007f7f"></span>    enterTransitionFinished();
+  }
 
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>BuildConfig<span style="color: #666666">.</span><span style="color: #7D9029">ENABLE_EXTENDED_SESSION_URL</span> <span style="color: #666666">&amp;&amp;</span> data<span style="color: #666666">.</span><span style="color: #7D9029">shouldShowExtendedSessionLink</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
-    mExtendedSessionUrl <span style="color: #666666">=</span> data<span style="color: #666666">.</span><span style="color: #7D9029">getExtendedSessionUrl</span><span style="color: #666666">();</span>
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>TextUtils<span style="color: #666666">.</span><span style="color: #7D9029">isEmpty</span><span style="color: #666666">(</span>mExtendedSessionUrl<span style="color: #666666">))</span> <span style="color: #666666">{</span>
-      mExtended<span style="color: #666666">.</span><span style="color: #7D9029">setText</span><span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">string</span><span style="color: #666666">.</span><span style="color: #7D9029">description_extended</span><span style="color: #666666">);</span>
-      mExtended<span style="color: #666666">.</span><span style="color: #7D9029">setVisibility</span><span style="color: #666666">(</span>View<span style="color: #666666">.</span><span style="color: #7D9029">VISIBLE</span><span style="color: #666666">);</span>
+  <span style="color:#fff;font-weight:bold">if</span> (BuildConfig.<span style="color:#007f7f">ENABLE_EXTENDED_SESSION_URL</span> &amp;&amp; data.<span style="color:#007f7f">shouldShowExtendedSessionLink</span>()) {
+    mExtendedSessionUrl = data.<span style="color:#007f7f">getExtendedSessionUrl</span>();
+    <span style="color:#fff;font-weight:bold">if</span> (!TextUtils.<span style="color:#007f7f">isEmpty</span>(mExtendedSessionUrl)) {
+      mExtended.<span style="color:#007f7f">setText</span>(R.<span style="color:#007f7f">string</span>.<span style="color:#007f7f">description_extended</span>);
+      mExtended.<span style="color:#007f7f">setVisibility</span>(View.<span style="color:#007f7f">VISIBLE</span>);
 
-      mExtended<span style="color: #666666">.</span><span style="color: #7D9029">setClickable</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">true</span><span style="color: #666666">);</span>
-      mExtended<span style="color: #666666">.</span><span style="color: #7D9029">setOnClickListener</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-        <span style="color: #AA22FF">@Override</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onClick</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">final</span> View v<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-          sendUserAction<span style="color: #666666">(</span>SessionDetailUserActionEnum<span style="color: #666666">.</span><span style="color: #7D9029">EXTENDED</span><span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">);</span>
-        <span style="color: #666666">}</span>
-      <span style="color: #666666">});</span>
-    <span style="color: #666666">}</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+      mExtended.<span style="color:#007f7f">setClickable</span>(<span style="color:#fff;font-weight:bold">true</span>);
+      mExtended.<span style="color:#007f7f">setOnClickListener</span>(<span style="color:#fff;font-weight:bold">new</span> View.<span style="color:#007f7f">OnClickListener</span>() {
+        @Override <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onClick(<span style="color:#fff;font-weight:bold">final</span> View v) {
+          sendUserAction(SessionDetailUserActionEnum.<span style="color:#007f7f">EXTENDED</span>, <span style="color:#fff;font-weight:bold">null</span>);
+        }
+      });
+    }
+  }
+}</code></pre></div>
 
 <p>I know that was scary, but pull yourself together. Let&rsquo;s zoom in on these few lines in particular:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displaySessionData</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">final</span> SessionDetailModel data<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-  <span style="color: #408080; font-style: italic">//...</span>
+<p><div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">void</span> displaySessionData(<span style="color:#fff;font-weight:bold">final</span> SessionDetailModel data) {
+  <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>
+  <span style="color:#007f7f">// Handle Keynote as a special case, where the user cannot remove it
+</span><span style="color:#007f7f"></span>  <span style="color:#007f7f">// from the schedule (it is auto added to schedule on sync)
+</span><span style="color:#007f7f"></span>  mShowFab =  (AccountUtils.<span style="color:#007f7f">hasActiveAccount</span>(getContext()) &amp;&amp; !data.<span style="color:#007f7f">isKeynote</span>());
+  mAddScheduleFab.<span style="color:#007f7f">setVisibility</span>(mShowFab ? View.<span style="color:#007f7f">VISIBLE</span> : View.<span style="color:#007f7f">INVISIBLE</span>);
 
-  <span style="color: #408080; font-style: italic">// Handle Keynote as a special case, where the user cannot remove it</span>
-  <span style="color: #408080; font-style: italic">// from the schedule (it is auto added to schedule on sync)</span>
-  mShowFab <span style="color: #666666">=</span>  <span style="color: #666666">(</span>AccountUtils<span style="color: #666666">.</span><span style="color: #7D9029">hasActiveAccount</span><span style="color: #666666">(</span>getContext<span style="color: #666666">())</span> <span style="color: #666666">&amp;&amp;</span> <span style="color: #666666">!</span>data<span style="color: #666666">.</span><span style="color: #7D9029">isKeynote</span><span style="color: #666666">());</span>
-  mAddScheduleFab<span style="color: #666666">.</span><span style="color: #7D9029">setVisibility</span><span style="color: #666666">(</span>mShowFab <span style="color: #666666">?</span> View<span style="color: #666666">.</span><span style="color: #7D9029">VISIBLE</span> <span style="color: #666666">:</span> View<span style="color: #666666">.</span><span style="color: #7D9029">INVISIBLE</span><span style="color: #666666">);</span>
+  <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>
+  <span style="color:#fff;font-weight:bold">if</span> (!data.<span style="color:#007f7f">isKeynote</span>()) {
+    showInScheduleDeferred(data.<span style="color:#007f7f">isInSchedule</span>());
+  }
 
-  <span style="color: #408080; font-style: italic">//...</span>
-
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>data<span style="color: #666666">.</span><span style="color: #7D9029">isKeynote</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
-    showInScheduleDeferred<span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">isInSchedule</span><span style="color: #666666">());</span>
-  <span style="color: #666666">}</span>
-
-  <span style="color: #408080; font-style: italic">//...</span>
-<span style="color: #666666">}</span>
-</pre></div>
-</p>
+  <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>}</code></pre></div></p>
 
 <p>Interesting. It looks like we&rsquo;ve stumbled upon a business rule:</p>
 
@@ -416,21 +412,19 @@
 
 <p>That code lives in <code>updateTimeBasedUi</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">updateTimeBasedUi</span><span style="color: #666666">(</span>SessionDetailModel data<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-  <span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #408080; font-style: italic">// If the session is done, hide the FAB, and show the &quot;Give feedback&quot; card.</span>
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">isSessionReadyForFeedback</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
-    mShowFab <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">false</span><span style="color: #666666">;</span>
-    mAddScheduleFab<span style="color: #666666">.</span><span style="color: #7D9029">setVisibility</span><span style="color: #666666">(</span>View<span style="color: #666666">.</span><span style="color: #7D9029">GONE</span><span style="color: #666666">);</span>
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>data<span style="color: #666666">.</span><span style="color: #7D9029">hasFeedback</span><span style="color: #666666">()</span>
-        <span style="color: #666666">&amp;&amp;</span> data<span style="color: #666666">.</span><span style="color: #7D9029">isInScheduleWhenSessionFirstLoaded</span><span style="color: #666666">()</span>
-        <span style="color: #666666">&amp;&amp;</span> <span style="color: #666666">!</span>sDismissedFeedbackCard<span style="color: #666666">.</span><span style="color: #7D9029">contains</span><span style="color: #666666">(</span>data<span style="color: #666666">.</span><span style="color: #7D9029">getSessionId</span><span style="color: #666666">()))</span> <span style="color: #666666">{</span>
-      showGiveFeedbackCard<span style="color: #666666">(</span>data<span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">void</span> updateTimeBasedUi(SessionDetailModel data) {
+  <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  <span style="color:#007f7f">// If the session is done, hide the FAB, and show the &#34;Give feedback&#34; card.
+</span><span style="color:#007f7f"></span>  <span style="color:#fff;font-weight:bold">if</span> (data.<span style="color:#007f7f">isSessionReadyForFeedback</span>()) {
+    mShowFab = <span style="color:#fff;font-weight:bold">false</span>;
+    mAddScheduleFab.<span style="color:#007f7f">setVisibility</span>(View.<span style="color:#007f7f">GONE</span>);
+    <span style="color:#fff;font-weight:bold">if</span> (!data.<span style="color:#007f7f">hasFeedback</span>()
+        &amp;&amp; data.<span style="color:#007f7f">isInScheduleWhenSessionFirstLoaded</span>()
+        &amp;&amp; !sDismissedFeedbackCard.<span style="color:#007f7f">contains</span>(data.<span style="color:#007f7f">getSessionId</span>())) {
+      showGiveFeedbackCard(data);
+    }
+  }
+}</code></pre></div>
 
 <p>If you look at a session&rsquo;s details before the conference starts, you&rsquo;ll actually see the &ldquo;add to schedule&rdquo; FAB:</p>
 
@@ -448,62 +442,54 @@
 
 <p>Let&rsquo;s see if we can write a few tests for this presentation logic. Remember, as we said <a href="/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt1/">last time</a>, the idea here is that tests tell us something about our design. If the class is easy to unit test, its well designed. When I write this unit test, I&rsquo;ll write what I think is the easiest way to unit test this functionality. The more I have to change my ideal easy test, the most suspicious I become of the class I&rsquo;m testing.</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">SessionDetailFragmentTest</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> SessionDetailFragmentTest {
 
-  <span style="color: #AA22FF">@Test</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displayDataOnlyProvidesAddRemoveSessionAffordanceIfSessionIsNotKeynote</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">// Arrange</span>
-    SessionDetailFragment sessionDetailFragment <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> SessionDetailFragment<span style="color: #666666">();</span>
-    <span style="color: #008000; font-weight: bold">final</span> SessionDetailModel sessionDetailModel <span style="color: #666666">=</span> mock<span style="color: #666666">(</span>SessionDetailModel<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">);</span>
-    when<span style="color: #666666">(</span>sessionDetailModel<span style="color: #666666">.</span><span style="color: #7D9029">isKeynote</span><span style="color: #666666">()).</span><span style="color: #7D9029">thenReturn</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">true</span><span style="color: #666666">);</span>
-    <span style="color: #408080; font-style: italic">// Act</span>
-    sessionDetailFragment<span style="color: #666666">.</span><span style="color: #7D9029">displayData</span><span style="color: #666666">(</span>sessionDetailModel<span style="color: #666666">,</span>
-        SessionDetailModel<span style="color: #666666">.</span><span style="color: #7D9029">SessionDetailQueryEnum</span><span style="color: #666666">.</span><span style="color: #7D9029">SESSIONS</span><span style="color: #666666">);</span>
-    <span style="color: #408080; font-style: italic">// Assert</span>
-    <span style="color: #008000; font-weight: bold">final</span> View addScheduleButton <span style="color: #666666">=</span>
-        sessionDetailFragment<span style="color: #666666">.</span><span style="color: #7D9029">getView</span><span style="color: #666666">().</span><span style="color: #7D9029">findViewById</span><span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">id</span><span style="color: #666666">.</span><span style="color: #7D9029">add_schedule_button</span><span style="color: #666666">);</span>
-    assertTrue<span style="color: #666666">(</span>addScheduleButton<span style="color: #666666">.</span><span style="color: #7D9029">getVisibility</span><span style="color: #666666">()</span> <span style="color: #666666">==</span> View<span style="color: #666666">.</span><span style="color: #7D9029">INVISIBLE</span><span style="color: #666666">);</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+  @Test <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displayDataOnlyProvidesAddRemoveSessionAffordanceIfSessionIsNotKeynote() <span style="color:#fff;font-weight:bold">throws</span> Exception {
+    <span style="color:#007f7f">// Arrange
+</span><span style="color:#007f7f"></span>    SessionDetailFragment sessionDetailFragment = <span style="color:#fff;font-weight:bold">new</span> SessionDetailFragment();
+    <span style="color:#fff;font-weight:bold">final</span> SessionDetailModel sessionDetailModel = mock(SessionDetailModel.<span style="color:#007f7f">class</span>);
+    when(sessionDetailModel.<span style="color:#007f7f">isKeynote</span>()).<span style="color:#007f7f">thenReturn</span>(<span style="color:#fff;font-weight:bold">true</span>);
+    <span style="color:#007f7f">// Act
+</span><span style="color:#007f7f"></span>    sessionDetailFragment.<span style="color:#007f7f">displayData</span>(sessionDetailModel,
+        SessionDetailModel.<span style="color:#007f7f">SessionDetailQueryEnum</span>.<span style="color:#007f7f">SESSIONS</span>);
+    <span style="color:#007f7f">// Assert
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">final</span> View addScheduleButton =
+        sessionDetailFragment.<span style="color:#007f7f">getView</span>().<span style="color:#007f7f">findViewById</span>(R.<span style="color:#007f7f">id</span>.<span style="color:#007f7f">add_schedule_button</span>);
+    assertTrue(addScheduleButton.<span style="color:#007f7f">getVisibility</span>() == View.<span style="color:#007f7f">INVISIBLE</span>);
+  }
+}</code></pre></div>
 
 <p>This is the easiest test I can think of. There&rsquo;s already some trouble here since <code>displaySessionData</code> is a private method, so we have to test it indirectly through the public <code>SessionDetailFragment.displayData</code> method. Not too shabby though. Unfortunately, when we run it. Here&rsquo;s what we get:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>java<span style="color: #666666">.</span><span style="color: #7D9029">lang</span><span style="color: #666666">.</span><span style="color: #7D9029">NullPointerException</span>
-	at com<span style="color: #666666">.</span><span style="color: #7D9029">google</span><span style="color: #666666">.</span><span style="color: #7D9029">samples</span><span style="color: #666666">.</span><span style="color: #7D9029">apps</span><span style="color: #666666">.</span><span style="color: #7D9029">iosched</span><span style="color: #666666">.</span><span style="color: #7D9029">session</span><span style="color: #666666">.</span><span style="color: #7D9029">SessionDetailFragment</span><span style="color: #666666">.</span><span style="color: #7D9029">displaySessionData</span><span style="color: #666666">(</span>SessionDetailFragment<span style="color: #666666">.</span><span style="color: #7D9029">java</span><span style="color: #666666">:396)</span>
-	at com<span style="color: #666666">.</span><span style="color: #7D9029">google</span><span style="color: #666666">.</span><span style="color: #7D9029">samples</span><span style="color: #666666">.</span><span style="color: #7D9029">apps</span><span style="color: #666666">.</span><span style="color: #7D9029">iosched</span><span style="color: #666666">.</span><span style="color: #7D9029">session</span><span style="color: #666666">.</span><span style="color: #7D9029">SessionDetailFragment</span><span style="color: #666666">.</span><span style="color: #7D9029">displayData</span><span style="color: #666666">(</span>SessionDetailFragment<span style="color: #666666">.</span><span style="color: #7D9029">java</span><span style="color: #666666">:292)</span>
-	at com<span style="color: #666666">.</span><span style="color: #7D9029">google</span><span style="color: #666666">.</span><span style="color: #7D9029">samples</span><span style="color: #666666">.</span><span style="color: #7D9029">apps</span><span style="color: #666666">.</span><span style="color: #7D9029">iosched</span><span style="color: #666666">.</span><span style="color: #7D9029">session</span><span style="color: #666666">.</span><span style="color: #7D9029">SessionDetailFragmentTest</span><span style="color: #666666">.</span><span style="color: #7D9029">displayDataOnlyProvidesAddRemoveSessionAffordanceIfSessionIsNotKeynote</span><span style="color: #666666">(</span>SessionDetailFragmentTest<span style="color: #666666">.</span><span style="color: #7D9029">java</span><span style="color: #666666">:19)</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">java.<span style="color:#007f7f">lang</span>.<span style="color:#007f7f">NullPointerException</span>
+	at com.<span style="color:#007f7f">google</span>.<span style="color:#007f7f">samples</span>.<span style="color:#007f7f">apps</span>.<span style="color:#007f7f">iosched</span>.<span style="color:#007f7f">session</span>.<span style="color:#007f7f">SessionDetailFragment</span>.<span style="color:#007f7f">displaySessionData</span>(SessionDetailFragment.<span style="color:#007f7f">java</span>:396)
+	at com.<span style="color:#007f7f">google</span>.<span style="color:#007f7f">samples</span>.<span style="color:#007f7f">apps</span>.<span style="color:#007f7f">iosched</span>.<span style="color:#007f7f">session</span>.<span style="color:#007f7f">SessionDetailFragment</span>.<span style="color:#007f7f">displayData</span>(SessionDetailFragment.<span style="color:#007f7f">java</span>:292)
+	at com.<span style="color:#007f7f">google</span>.<span style="color:#007f7f">samples</span>.<span style="color:#007f7f">apps</span>.<span style="color:#007f7f">iosched</span>.<span style="color:#007f7f">session</span>.<span style="color:#007f7f">SessionDetailFragmentTest</span>.<span style="color:#007f7f">displayDataOnlyProvidesAddRemoveSessionAffordanceIfSessionIsNotKeynote</span>(SessionDetailFragmentTest.<span style="color:#007f7f">java</span>:19)</code></pre></div>
 
 <p>The test is complaining that <code>SessionDetailFragment.mTitleView</code> is null. Ugh. The error is annoying because <code>SessionDetailFragment.mTitleView</code> <em>nothing to do with this test</em>. Looks like I&rsquo;ll have to add a call to <code>onActivityCreated</code> to make sure those <code>View</code>s get instantiated:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displayDataOnlyProvidesAddRemoveSessionAffordanceIfSessionIsNotKeynote</span><span style="color: #666666">()</span>
-      <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">// Arrange</span>
-    SessionDetailFragment sessionDetailFragment <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> SessionDetailFragment<span style="color: #666666">();</span>
-    <span style="color: #008000; font-weight: bold">final</span> SessionDetailModel sessionDetailModel <span style="color: #666666">=</span> mock<span style="color: #666666">(</span>SessionDetailModel<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">);</span>
-    when<span style="color: #666666">(</span>sessionDetailModel<span style="color: #666666">.</span><span style="color: #7D9029">isKeynote</span><span style="color: #666666">()).</span><span style="color: #7D9029">thenReturn</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">false</span><span style="color: #666666">);</span>
-    <span style="color: #408080; font-style: italic">// Act</span>
-<span style="background-color: #ffffcc">    sessionDetailFragment<span style="color: #666666">.</span><span style="color: #7D9029">onActivityCreated</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">);</span>
-</span>    sessionDetailFragment<span style="color: #666666">.</span><span style="color: #7D9029">displayData</span><span style="color: #666666">(</span>sessionDetailModel<span style="color: #666666">,</span>
-        SessionDetailModel<span style="color: #666666">.</span><span style="color: #7D9029">SessionDetailQueryEnum</span><span style="color: #666666">.</span><span style="color: #7D9029">SESSIONS</span><span style="color: #666666">);</span>
-    <span style="color: #408080; font-style: italic">// Assert</span>
-    <span style="color: #008000; font-weight: bold">final</span> View addScheduleButton <span style="color: #666666">=</span>
-        sessionDetailFragment<span style="color: #666666">.</span><span style="color: #7D9029">getView</span><span style="color: #666666">().</span><span style="color: #7D9029">findViewById</span><span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">id</span><span style="color: #666666">.</span><span style="color: #7D9029">add_schedule_button</span><span style="color: #666666">);</span>
-    assertTrue<span style="color: #666666">(</span>addScheduleButton<span style="color: #666666">.</span><span style="color: #7D9029">getVisibility</span><span style="color: #666666">()</span> <span style="color: #666666">==</span> View<span style="color: #666666">.</span><span style="color: #7D9029">INVISIBLE</span><span style="color: #666666">);</span>
-  <span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displayDataOnlyProvidesAddRemoveSessionAffordanceIfSessionIsNotKeynote()
+      <span style="color:#fff;font-weight:bold">throws</span> Exception {
+    <span style="color:#007f7f">// Arrange
+</span><span style="color:#007f7f"></span>    SessionDetailFragment sessionDetailFragment = <span style="color:#fff;font-weight:bold">new</span> SessionDetailFragment();
+    <span style="color:#fff;font-weight:bold">final</span> SessionDetailModel sessionDetailModel = mock(SessionDetailModel.<span style="color:#007f7f">class</span>);
+    when(sessionDetailModel.<span style="color:#007f7f">isKeynote</span>()).<span style="color:#007f7f">thenReturn</span>(<span style="color:#fff;font-weight:bold">false</span>);
+    <span style="color:#007f7f">// Act
+</span><span style="display:block;width:100%;background-color:#191919"><span style="color:#007f7f"></span>    sessionDetailFragment.<span style="color:#007f7f">onActivityCreated</span>(<span style="color:#fff;font-weight:bold">null</span>);
+</span>    sessionDetailFragment.<span style="color:#007f7f">displayData</span>(sessionDetailModel,
+        SessionDetailModel.<span style="color:#007f7f">SessionDetailQueryEnum</span>.<span style="color:#007f7f">SESSIONS</span>);
+    <span style="color:#007f7f">// Assert
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">final</span> View addScheduleButton =
+        sessionDetailFragment.<span style="color:#007f7f">getView</span>().<span style="color:#007f7f">findViewById</span>(R.<span style="color:#007f7f">id</span>.<span style="color:#007f7f">add_schedule_button</span>);
+    assertTrue(addScheduleButton.<span style="color:#007f7f">getVisibility</span>() == View.<span style="color:#007f7f">INVISIBLE</span>);
+  }</code></pre></div>
 
 <p>When we run this test, we get another error:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>java<span style="color: #666666">.</span><span style="color: #7D9029">lang</span><span style="color: #666666">.</span><span style="color: #7D9029">NullPointerException</span>
-	at com<span style="color: #666666">.</span><span style="color: #7D9029">google</span><span style="color: #666666">.</span><span style="color: #7D9029">samples</span><span style="color: #666666">.</span><span style="color: #7D9029">apps</span><span style="color: #666666">.</span><span style="color: #7D9029">iosched</span><span style="color: #666666">.</span><span style="color: #7D9029">session</span><span style="color: #666666">.</span><span style="color: #7D9029">SessionDetailFragment</span><span style="color: #666666">.</span><span style="color: #7D9029">initPresenter</span><span style="color: #666666">(</span>SessionDetailFragment<span style="color: #666666">.</span><span style="color: #7D9029">java</span><span style="color: #666666">:260)</span>
-	at com<span style="color: #666666">.</span><span style="color: #7D9029">google</span><span style="color: #666666">.</span><span style="color: #7D9029">samples</span><span style="color: #666666">.</span><span style="color: #7D9029">apps</span><span style="color: #666666">.</span><span style="color: #7D9029">iosched</span><span style="color: #666666">.</span><span style="color: #7D9029">session</span><span style="color: #666666">.</span><span style="color: #7D9029">SessionDetailFragment</span><span style="color: #666666">.</span><span style="color: #7D9029">onActivityCreated</span><span style="color: #666666">(</span>SessionDetailFragment<span style="color: #666666">.</span><span style="color: #7D9029">java</span><span style="color: #666666">:177)</span>
-	at com<span style="color: #666666">.</span><span style="color: #7D9029">google</span><span style="color: #666666">.</span><span style="color: #7D9029">samples</span><span style="color: #666666">.</span><span style="color: #7D9029">apps</span><span style="color: #666666">.</span><span style="color: #7D9029">iosched</span><span style="color: #666666">.</span><span style="color: #7D9029">session</span><span style="color: #666666">.</span><span style="color: #7D9029">SessionDetailFragmentTest</span><span style="color: #666666">.</span><span style="color: #7D9029">displayDataOnlyProvidesAddRemoveSessionAffordanceIfSessionIsNotKeynote</span><span style="color: #666666">(</span>SessionDetailFragmentTest<span style="color: #666666">.</span><span style="color: #7D9029">java</span><span style="color: #666666">:20)</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">java.<span style="color:#007f7f">lang</span>.<span style="color:#007f7f">NullPointerException</span>
+	at com.<span style="color:#007f7f">google</span>.<span style="color:#007f7f">samples</span>.<span style="color:#007f7f">apps</span>.<span style="color:#007f7f">iosched</span>.<span style="color:#007f7f">session</span>.<span style="color:#007f7f">SessionDetailFragment</span>.<span style="color:#007f7f">initPresenter</span>(SessionDetailFragment.<span style="color:#007f7f">java</span>:260)
+	at com.<span style="color:#007f7f">google</span>.<span style="color:#007f7f">samples</span>.<span style="color:#007f7f">apps</span>.<span style="color:#007f7f">iosched</span>.<span style="color:#007f7f">session</span>.<span style="color:#007f7f">SessionDetailFragment</span>.<span style="color:#007f7f">onActivityCreated</span>(SessionDetailFragment.<span style="color:#007f7f">java</span>:177)
+	at com.<span style="color:#007f7f">google</span>.<span style="color:#007f7f">samples</span>.<span style="color:#007f7f">apps</span>.<span style="color:#007f7f">iosched</span>.<span style="color:#007f7f">session</span>.<span style="color:#007f7f">SessionDetailFragmentTest</span>.<span style="color:#007f7f">displayDataOnlyProvidesAddRemoveSessionAffordanceIfSessionIsNotKeynote</span>(SessionDetailFragmentTest.<span style="color:#007f7f">java</span>:20)</code></pre></div>
 
 <p>This time, the complaint basically boils down to the fact that <code>getActivity()</code> returns null. At this point, we might decide to call <code>onAttach</code> and pass in a dummy <code>Activity</code> to get around this. Or, we might realize that even if we did do this, there&rsquo;s going to be a lot of things we have to do to get this test setup <em>that have nothing to do with testing the behavior we&rsquo;re interested in.</em></p>
 

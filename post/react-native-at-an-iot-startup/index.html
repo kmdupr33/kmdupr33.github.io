@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/react-native-at-an-iot-startup/" />
     
@@ -310,24 +310,23 @@
 
 <p>In this video, the app is connecting to a lock via bluetooth to configure its settings. Here&rsquo;s some RN javascript code that does this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> NativeServiceBridge from <span style="color: #BA2121">&quot;./services&quot;</span>;
-<span style="color: #008000; font-weight: bold">export</span> <span style="color: #008000; font-weight: bold">default</span> <span style="color: #008000; font-weight: bold">class</span> ReaderDetails <span style="color: #008000; font-weight: bold">extends</span> Component {
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#fff;font-weight:bold">import</span> NativeServiceBridge from <span style="color:#0ff;font-weight:bold">&#34;./services&#34;</span>;
+<span style="color:#fff;font-weight:bold">export</span> <span style="color:#fff;font-weight:bold">default</span> <span style="color:#fff;font-weight:bold">class</span> ReaderDetails <span style="color:#fff;font-weight:bold">extends</span> Component {
   _componentWillAppear() {
-    getEmitter().addListener(<span style="color: #BA2121">&#39;readerSettingChange&#39;</span>,
-      settings <span style="color: #666666">=&gt;</span> {
-        <span style="color: #008000; font-weight: bold">if</span> (settings.length <span style="color: #666666">&gt;</span> <span style="color: #666666">0</span>) {
-          <span style="color: #008000; font-weight: bold">this</span>.setState({ settings, progress<span style="color: #666666">:</span> <span style="color: #008000; font-weight: bold">false</span> });
+    getEmitter().addListener(<span style="color:#0ff;font-weight:bold">&#39;readerSettingChange&#39;</span>,
+      settings =&gt; {
+        <span style="color:#fff;font-weight:bold">if</span> (settings.length &gt; <span style="color:#ff0;font-weight:bold">0</span>) {
+          <span style="color:#fff;font-weight:bold">this</span>.setState({ settings, progress: <span style="color:#fff;font-weight:bold">false</span> });
         }
       });
-    <span style="color: #008000; font-weight: bold">const</span> { reader } <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">this</span>.props;
+    <span style="color:#fff;font-weight:bold">const</span> { reader } = <span style="color:#fff;font-weight:bold">this</span>.props;
     NativeServiceBridge.startConfigureReaderSettings(reader.id,
-      error <span style="color: #666666">=&gt;</span> {
-        error <span style="color: #666666">&amp;&amp;</span> console.error(<span style="color: #BA2121">`can&#39;t configure settings`</span>);
+      error =&gt; {
+        error &amp;&amp; console.error(<span style="color:#0ff;font-weight:bold">`can&#39;t configure settings`</span>);
       });
   }
 }
-</pre></div>
-
+</code></pre></div>
 
 <p>The code is a little awkward, but its pretty simple. We have this <code>NativeServiceBridge</code> that mediates communication between the JS side and that native side and we&rsquo;re calling <code>startConfigureReaderSettings</code> on that bridge. We also register an event listener to receive events when we receive settings from the lock (of course, these events are emitted by the <code>NativeServiceBridge</code>.</p>
 
@@ -339,22 +338,20 @@
 
 <p>Here&rsquo;s some code:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">NativeServiceBridge</span>(reactContext: ReactApplicationContext) 
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#fff;font-weight:bold">class</span> NativeServiceBridge(reactContext: ReactApplicationContext) 
   : ReactContextBaseJavaModule(reactContext) {
-@ReactMethod <span style="color: #008000; font-weight: bold">fun</span> <span style="color: #0000FF">startConfigureReaderSettings</span>(uuid: String, callback: Callback) {  
+@ReactMethod <span style="color:#fff;font-weight:bold">fun</span> startConfigureReaderSettings(uuid: String, callback: Callback) {  
   UniKey.readerService()
     .configure(deviceSettingsObservable, UUID.fromString(uuid))    
     .subscribe({   
-      <span style="color: #008000; font-weight: bold">val</span> writableSettings = createWritableSettings(it)    
-      eventEmitter.<span style="color: #008000; font-weight: bold">get</span>().emit(READER_SETTINGS_CHANGE_EVENT, writableSettings)  
+      <span style="color:#fff;font-weight:bold">val</span> writableSettings = createWritableSettings(it)    
+      eventEmitter.<span style="color:#fff;font-weight:bold">get</span>().emit(READER_SETTINGS_CHANGE_EVENT, writableSettings)  
       }, 
       {  callback(it.toString())  }, 
-      { callback(<span style="color: #008000; font-weight: bold">null</span>)  }
+      { callback(<span style="color:#fff;font-weight:bold">null</span>)  }
     )
   }
-}
-</pre></div>
-
+}</code></pre></div>
 
 <p>Highlights here are that we&rsquo;re extending from the React Native type <code>ReactContextBaseJavaModule</code>, that we&rsquo;ve annotated our method with <code>@ReactMethod</code>, and that we&rsquo;re communicating with the js side through <code>Callback</code> and <code>EventEmitter</code>. We simply call the <code>UniKey.readerService.configure</code> method on our SDK and we pass the results back to the js side.</p>
 
@@ -392,24 +389,23 @@
 
 <p>A related point is that because of the limitations on how your API between JS and native code works, you can wind up with some awkward APIs. We already saw this with the JS code snippet I mentioned earlier. Here&rsquo;s the snippet again:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> NativeServiceBridge from <span style="color: #BA2121">&quot;./services&quot;</span>;
-<span style="color: #008000; font-weight: bold">export</span> <span style="color: #008000; font-weight: bold">default</span> <span style="color: #008000; font-weight: bold">class</span> ReaderDetails <span style="color: #008000; font-weight: bold">extends</span> Component {
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#fff;font-weight:bold">import</span> NativeServiceBridge from <span style="color:#0ff;font-weight:bold">&#34;./services&#34;</span>;
+<span style="color:#fff;font-weight:bold">export</span> <span style="color:#fff;font-weight:bold">default</span> <span style="color:#fff;font-weight:bold">class</span> ReaderDetails <span style="color:#fff;font-weight:bold">extends</span> Component {
   _componentWillAppear() {
-    getEmitter().addListener(<span style="color: #BA2121">&#39;readerSettingChange&#39;</span>,
-      settings <span style="color: #666666">=&gt;</span> {
-        <span style="color: #008000; font-weight: bold">if</span> (settings.length <span style="color: #666666">&gt;</span> <span style="color: #666666">0</span>) {
-          <span style="color: #008000; font-weight: bold">this</span>.setState({ settings, progress<span style="color: #666666">:</span> <span style="color: #008000; font-weight: bold">false</span> });
+    getEmitter().addListener(<span style="color:#0ff;font-weight:bold">&#39;readerSettingChange&#39;</span>,
+      settings =&gt; {
+        <span style="color:#fff;font-weight:bold">if</span> (settings.length &gt; <span style="color:#ff0;font-weight:bold">0</span>) {
+          <span style="color:#fff;font-weight:bold">this</span>.setState({ settings, progress: <span style="color:#fff;font-weight:bold">false</span> });
         }
       });
-    <span style="color: #008000; font-weight: bold">const</span> { reader } <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">this</span>.props;
+    <span style="color:#fff;font-weight:bold">const</span> { reader } = <span style="color:#fff;font-weight:bold">this</span>.props;
     NativeServiceBridge.startConfigureReaderSettings(reader.id,
-      error <span style="color: #666666">=&gt;</span> {
-        error <span style="color: #666666">&amp;&amp;</span> console.error(<span style="color: #BA2121">`can&#39;t configure settings`</span>);
+      error =&gt; {
+        error &amp;&amp; console.error(<span style="color:#0ff;font-weight:bold">`can&#39;t configure settings`</span>);
       });
   }
 }
-</pre></div>
-
+</code></pre></div>
 
 <p>The weird thing about this code is that we are registering an event emitter <em>and</em> passing in a callback to <code>startConfigureReaderSettings</code>.</p>
 
@@ -423,25 +419,21 @@
 
 <p>We white-label apps, so build tools and build variants are important to us. That&rsquo;s a rougher game with react-native apps than native apps. With ordinary Android development, you can create build flavors like so:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>productFlavors <span style="color: #666666">{</span>
-  partner1 <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #666666">}</span>
-  partner2 <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy">productFlavors {
+  partner1 {
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  }
+  partner2 {
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  }
+}</code></pre></div>
 
 <p>The react native build tools can handle flavors to some extent, but if your flavors need different javascript entry points, then you&rsquo;ll probably just have to disable the react-native gradle plugin because it doesn&rsquo;t have a hook to change the js entry-point based on a product flavor.</p>
 
 <p>On iOS, RN is better in this regard. You can change the js entry point based on a build variant (iOS scheme), but first you have to read a bash file and locate this comment and cryptic line:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic"># Define entry file</span>
-<span style="color: #19177C">ENTRY_FILE</span><span style="color: #666666">=</span><span style="color: #BB6688; font-weight: bold">${</span><span style="color: #19177C">1</span><span style="color: #008000; font-weight: bold">:-</span><span style="color: #19177C">index</span>.ios.js<span style="color: #BB6688; font-weight: bold">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#007f7f"># Define entry file
+</span><span style="color:#007f7f"></span>ENTRY_FILE=<span style="color:#0ff;font-weight:bold">${</span>1<span style="color:#fff;font-weight:bold">:-</span>index.ios.js<span style="color:#0ff;font-weight:bold">}</span></code></pre></div>
 
 <p>You can pass the entry point into this script from the build phases section in your Xcode build settings, but none of this is really documented.</p>
 

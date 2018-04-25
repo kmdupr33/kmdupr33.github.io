@@ -79,7 +79,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/" />
     
@@ -126,8 +126,8 @@
     },
     "headline": Should we use mocking libraries for go testing?,
     "name": Should we use mocking libraries for go testing?,
-    "wordCount": 1272,
-    "timeRequired": "PT6M",
+    "wordCount": 0,
+    "timeRequired": "PT0M",
     "inLanguage": {
       "@type": "Language",
       "alternateName": en
@@ -232,7 +232,7 @@
             Jan 14, 2016
           </time>  
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/go/">#go</a></span> 
-                            <strong>&middot; 6 minute read</strong>
+                            <strong>&middot; 0 minute read</strong>
                         </section>
                     </header>
 
@@ -267,40 +267,38 @@
 
 <p>Here&rsquo;s what a quick and dirty (hand-rolled) mock might look like in go:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">type</span> mockEmailSender <span style="color: #008000; font-weight: bold">struct</span> {
-	test        <span style="color: #666666">*</span>testing.T
-	sendCalled  <span style="color: #B00040">bool</span>
-	sendSubject <span style="color: #B00040">string</span>
-	sendBody    <span style="color: #B00040">string</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">type</span> mockEmailSender <span style="color:#fff;font-weight:bold">struct</span> {
+	test        *testing.T
+	sendCalled  <span style="color:#fff;font-weight:bold">bool</span>
+	sendSubject <span style="color:#fff;font-weight:bold">string</span>
+	sendBody    <span style="color:#fff;font-weight:bold">string</span>
 }
 
-<span style="color: #008000; font-weight: bold">func</span> (m <span style="color: #666666">*</span>mockEmailSender) Send(subject <span style="color: #B00040">string</span>, body <span style="color: #B00040">string</span>) {
-	m.sendCalled = <span style="color: #008000; font-weight: bold">true</span>
+<span style="color:#fff;font-weight:bold">func</span> (m *mockEmailSender) Send(subject <span style="color:#fff;font-weight:bold">string</span>, body <span style="color:#fff;font-weight:bold">string</span>) {
+	m.sendCalled = <span style="color:#fff;font-weight:bold">true</span>
 	m.sendSubject = subject
 	m.sendBody = body
 }
 
-<span style="color: #008000; font-weight: bold">func</span> (m mockEmailSender) verifyExpectation() {
-	<span style="color: #008000; font-weight: bold">if</span> !m.sendCalled {
-		m.test.Error(<span style="color: #BA2121">&quot;Expected call to Send()&quot;</span>)
+<span style="color:#fff;font-weight:bold">func</span> (m mockEmailSender) verifyExpectation() {
+	<span style="color:#fff;font-weight:bold">if</span> !m.sendCalled {
+		m.test.Error(<span style="color:#0ff;font-weight:bold">&#34;Expected call to Send()&#34;</span>)
 	}
 
-	<span style="color: #008000; font-weight: bold">if</span> m.sendSubject <span style="color: #666666">!=</span> <span style="color: #BA2121">&quot;Should we use mocking libraries?&quot;</span> {
-		m.test.Errorf(<span style="color: #BA2121">&quot;Expeced Send() with subject: %s, received: %s&quot;</span>, <span style="color: #BA2121">&quot;Should we use mocking libraries?&quot;</span>, m.sendSubject)
+	<span style="color:#fff;font-weight:bold">if</span> m.sendSubject != <span style="color:#0ff;font-weight:bold">&#34;Should we use mocking libraries?&#34;</span> {
+		m.test.Errorf(<span style="color:#0ff;font-weight:bold">&#34;Expeced Send() with subject: %s, received: %s&#34;</span>, <span style="color:#0ff;font-weight:bold">&#34;Should we use mocking libraries?&#34;</span>, m.sendSubject)
 	}
 
-	<span style="color: #008000; font-weight: bold">if</span> m.sendBody <span style="color: #666666">!=</span> <span style="color: #BA2121">&quot;Probably&quot;</span> {
-		m.test.Errorf(<span style="color: #BA2121">&quot;Expected Send() with body: %s, received: %s&quot;</span>, <span style="color: #BA2121">&quot;Probably&quot;</span>, m.sendBody)
+	<span style="color:#fff;font-weight:bold">if</span> m.sendBody != <span style="color:#0ff;font-weight:bold">&#34;Probably&#34;</span> {
+		m.test.Errorf(<span style="color:#0ff;font-weight:bold">&#34;Expected Send() with body: %s, received: %s&#34;</span>, <span style="color:#0ff;font-weight:bold">&#34;Probably&#34;</span>, m.sendBody)
 	}
 
 }
 
-<span style="color: #008000; font-weight: bold">func</span> TestEmailSender(t <span style="color: #666666">*</span>testing.T) {
-	m <span style="color: #666666">:=</span> mockEmailSender{test: t}
-	<span style="color: #008000; font-weight: bold">defer</span> m.verifyExpectation()
-}
-</pre></div>
-
+<span style="color:#fff;font-weight:bold">func</span> TestEmailSender(t *testing.T) {
+	m := mockEmailSender{test: t}
+	<span style="color:#fff;font-weight:bold">defer</span> m.verifyExpectation()
+}</code></pre></div>
 
 <p>Of course, this is a contrived example, but its enough to help convey the idea of a mock. As you can see, the test will fail if the mock doesn&rsquo;t receive a call with the appropriate arguments. The mock has been &ldquo;pre-programmed&rdquo; to expect a call to Send() with specific arguments and that expectation must be fulfilled in order for the test to pass.</p>
 

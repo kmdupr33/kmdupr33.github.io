@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/an-espresso-test-recorder-deep-dive/" />
     
@@ -256,183 +256,169 @@
 
 <p>Before I took a look at the source for the espresso recorder, I half expected to find some fancy bytecode manipulation of the sort we see for the <a href="https://android.googlesource.com/platform/tools/base/+/gradle_2.0.0/build-system/gradle-core/src/main/groovy/com/android/build/gradle/internal/transforms">proguard or jacoco transformers</a>. I was surprised to find that the espresso recorder actually relies heavily on breakpoints and the java debugger. To see this, let&rsquo;s start at the code that gets executed when you press the &ldquo;record espresso test button:&rdquo;</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">TestRecorderAction</span> <span style="color: #008000; font-weight: bold">extends</span> AnAction <span style="color: #666666">{</span>
-  <span style="color: #AA22FF">@Override</span>
-  <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">actionPerformed</span><span style="color: #666666">(</span>AnActionEvent event<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//...    </span>
-
-    <span style="color: #008000; font-weight: bold">try</span> <span style="color: #666666">{</span>
-      environment<span style="color: #666666">.</span><span style="color: #7D9029">getRunner</span><span style="color: #666666">().</span><span style="color: #7D9029">execute</span><span style="color: #666666">(</span>environment<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">new</span> ProgramRunner<span style="color: #666666">.</span><span style="color: #7D9029">Callback</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-        <span style="color: #AA22FF">@Override</span>
-        <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">processStarted</span><span style="color: #666666">(</span>RunContentDescriptor descriptor<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-          ApplicationManager<span style="color: #666666">.</span><span style="color: #7D9029">getApplication</span><span style="color: #666666">()</span>
-            <span style="color: #666666">.</span><span style="color: #7D9029">executeOnPooledThread</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> SessionInitializer<span style="color: #666666">(</span>myFacet<span style="color: #666666">,</span>
-                                                          environment<span style="color: #666666">,</span>
-                                                          launchOptionState<span style="color: #666666">));</span>
-        <span style="color: #666666">}</span>
-      <span style="color: #666666">});</span>
-    <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">catch</span> <span style="color: #666666">(</span>ExecutionException e<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-      <span style="color: #008000; font-weight: bold">throw</span> <span style="color: #008000; font-weight: bold">new</span> RuntimeException<span style="color: #666666">(</span><span style="color: #BA2121">&quot;Could not start debugging of the app: &quot;</span><span style="color: #666666">,</span> e<span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> TestRecorderAction <span style="color:#fff;font-weight:bold">extends</span> AnAction {
+  @Override
+  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> actionPerformed(AnActionEvent event) {
+    <span style="color:#007f7f">//...    
+</span><span style="color:#007f7f"></span>
+    <span style="color:#fff;font-weight:bold">try</span> {
+      environment.<span style="color:#007f7f">getRunner</span>().<span style="color:#007f7f">execute</span>(environment, <span style="color:#fff;font-weight:bold">new</span> ProgramRunner.<span style="color:#007f7f">Callback</span>() {
+        @Override
+        <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> processStarted(RunContentDescriptor descriptor) {
+          ApplicationManager.<span style="color:#007f7f">getApplication</span>()
+            .<span style="color:#007f7f">executeOnPooledThread</span>(<span style="color:#fff;font-weight:bold">new</span> SessionInitializer(myFacet,
+                                                          environment,
+                                                          launchOptionState));
+        }
+      });
+    } <span style="color:#fff;font-weight:bold">catch</span> (ExecutionException e) {
+      <span style="color:#fff;font-weight:bold">throw</span> <span style="color:#fff;font-weight:bold">new</span> RuntimeException(<span style="color:#0ff;font-weight:bold">&#34;Could not start debugging of the app: &#34;</span>, e);
+    }
+  }
+}</code></pre></div>
 
 <p>The <code>environment</code> variable here is just an <code>ExecutionEnvironment,</code> an object that uses an android studio run configuration to run the app. So, the code here is (roughly) using a run configuration to start the app and creating a <code>SessionInitializer</code> once the app process starts. Let&rsquo;s look at what the <code>SessionInitializer</code> does:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">SessionInitializer</span> <span style="color: #008000; font-weight: bold">implements</span> Runnable <span style="color: #666666">{</span>
-  <span style="color: #008000; font-weight: bold">public</span> <span style="color: #0000FF">SessionInitializer</span><span style="color: #666666">(</span>AndroidFacet facet<span style="color: #666666">,</span> ExecutionEnvironment environment<span style="color: #666666">,</span> LaunchOptionState launchOptionState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//...</span>
-    myBreakpointDescriptors<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> BreakpointDescriptor<span style="color: #666666">(</span>VIEW_CLICK<span style="color: #666666">,</span>
-                                                          SdkConstants<span style="color: #666666">.</span><span style="color: #7D9029">CLASS_VIEW</span><span style="color: #666666">,</span>
-                                                          <span style="color: #BA2121">&quot;performClick&quot;</span><span style="color: #666666">,</span>
-                                                          <span style="color: #008000; font-weight: bold">false</span><span style="color: #666666">));</span>
-    myBreakpointDescriptors<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> BreakpointDescriptor<span style="color: #666666">(</span>MENU_ITEM_CLICK<span style="color: #666666">,</span>
-                                                        <span style="color: #BA2121">&quot;android.widget.AbsListView&quot;</span><span style="color: #666666">,</span>
-                                                        <span style="color: #BA2121">&quot;performItemClick&quot;</span><span style="color: #666666">,</span>
-                                                        <span style="color: #008000; font-weight: bold">false</span><span style="color: #666666">));</span>
-    myBreakpointDescriptors<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> BreakpointDescriptor<span style="color: #666666">(</span>TEXT_CHANGE<span style="color: #666666">,</span>
-                                                        <span style="color: #BA2121">&quot;android.widget.TextView$ChangeWatcher&quot;</span><span style="color: #666666">,</span>
-                                                        <span style="color: #BA2121">&quot;beforeTextChanged&quot;</span><span style="color: #666666">,</span>
-                                                        <span style="color: #008000; font-weight: bold">true</span><span style="color: #666666">));</span>
-    myBreakpointDescriptors<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> BreakpointDescriptor<span style="color: #666666">(</span>TEXT_CHANGE<span style="color: #666666">,</span>
-                                                        <span style="color: #BA2121">&quot;android.widget.TextView$ChangeWatcher&quot;</span><span style="color: #666666">,</span>
-                                                        <span style="color: #BA2121">&quot;onTextChanged&quot;</span><span style="color: #666666">,</span>
-                                                        <span style="color: #008000; font-weight: bold">false</span><span style="color: #666666">));</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> SessionInitializer <span style="color:#fff;font-weight:bold">implements</span> Runnable {
+  <span style="color:#fff;font-weight:bold">public</span> SessionInitializer(AndroidFacet facet, ExecutionEnvironment environment, LaunchOptionState launchOptionState) {
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>    myBreakpointDescriptors.<span style="color:#007f7f">add</span>(<span style="color:#fff;font-weight:bold">new</span> BreakpointDescriptor(VIEW_CLICK,
+                                                          SdkConstants.<span style="color:#007f7f">CLASS_VIEW</span>,
+                                                          <span style="color:#0ff;font-weight:bold">&#34;performClick&#34;</span>,
+                                                          <span style="color:#fff;font-weight:bold">false</span>));
+    myBreakpointDescriptors.<span style="color:#007f7f">add</span>(<span style="color:#fff;font-weight:bold">new</span> BreakpointDescriptor(MENU_ITEM_CLICK,
+                                                        <span style="color:#0ff;font-weight:bold">&#34;android.widget.AbsListView&#34;</span>,
+                                                        <span style="color:#0ff;font-weight:bold">&#34;performItemClick&#34;</span>,
+                                                        <span style="color:#fff;font-weight:bold">false</span>));
+    myBreakpointDescriptors.<span style="color:#007f7f">add</span>(<span style="color:#fff;font-weight:bold">new</span> BreakpointDescriptor(TEXT_CHANGE,
+                                                        <span style="color:#0ff;font-weight:bold">&#34;android.widget.TextView$ChangeWatcher&#34;</span>,
+                                                        <span style="color:#0ff;font-weight:bold">&#34;beforeTextChanged&#34;</span>,
+                                                        <span style="color:#fff;font-weight:bold">true</span>));
+    myBreakpointDescriptors.<span style="color:#007f7f">add</span>(<span style="color:#fff;font-weight:bold">new</span> BreakpointDescriptor(TEXT_CHANGE,
+                                                        <span style="color:#0ff;font-weight:bold">&#34;android.widget.TextView$ChangeWatcher&#34;</span>,
+                                                        <span style="color:#0ff;font-weight:bold">&#34;onTextChanged&#34;</span>,
+                                                        <span style="color:#fff;font-weight:bold">false</span>));
 
-    myBreakpointDescriptors<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> BreakpointDescriptor<span style="color: #666666">(</span>PRESS_BACK<span style="color: #666666">,</span>
-                                                        <span style="color: #BA2121">&quot;android.view.inputmethod.InputMethodManager&quot;</span><span style="color: #666666">,</span>
-                                                        <span style="color: #BA2121">&quot;invokeFinishedInputEventCallback&quot;</span><span style="color: #666666">,</span>
-                                                        <span style="color: #008000; font-weight: bold">false</span><span style="color: #666666">));</span>
+    myBreakpointDescriptors.<span style="color:#007f7f">add</span>(<span style="color:#fff;font-weight:bold">new</span> BreakpointDescriptor(PRESS_BACK,
+                                                        <span style="color:#0ff;font-weight:bold">&#34;android.view.inputmethod.InputMethodManager&#34;</span>,
+                                                        <span style="color:#0ff;font-weight:bold">&#34;invokeFinishedInputEventCallback&#34;</span>,
+                                                        <span style="color:#fff;font-weight:bold">false</span>));
 
-    myBreakpointDescriptors<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> BreakpointDescriptor<span style="color: #666666">(</span>PRESS_EDITOR_ACTION<span style="color: #666666">,</span>
-                                                        <span style="color: #BA2121">&quot;android.widget.TextView&quot;</span><span style="color: #666666">,</span>
-                                                        <span style="color: #BA2121">&quot;onEditorAction&quot;</span><span style="color: #666666">,</span>
-                                                        <span style="color: #008000; font-weight: bold">false</span><span style="color: #666666">));</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    myBreakpointDescriptors.<span style="color:#007f7f">add</span>(<span style="color:#fff;font-weight:bold">new</span> BreakpointDescriptor(PRESS_EDITOR_ACTION,
+                                                        <span style="color:#0ff;font-weight:bold">&#34;android.widget.TextView&#34;</span>,
+                                                        <span style="color:#0ff;font-weight:bold">&#34;onEditorAction&#34;</span>,
+                                                        <span style="color:#fff;font-weight:bold">false</span>));
+  }
+}</code></pre></div>
 
 <p>Here they are just creating BreakpointDescriptor that will be used to create <em>method breakpoints</em> so that they can capture information about the parameters that are passed in to these methods. Here&rsquo;s where the method breakpints are created:</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> Set<span style="color: #666666">&lt;</span>BreakpointCommand<span style="color: #666666">&gt;</span> <span style="color: #0000FF">scheduleBreakpointCommands</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-  Set<span style="color: #666666">&lt;</span>BreakpointCommand<span style="color: #666666">&gt;</span> breakpointCommands <span style="color: #666666">=</span> Sets<span style="color: #666666">.</span><span style="color: #7D9029">newHashSet</span><span style="color: #666666">();</span>
-  DebugProcessImpl debugProcess <span style="color: #666666">=</span> myDebuggerSession<span style="color: #666666">.</span><span style="color: #7D9029">getProcess</span><span style="color: #666666">();</span>
-  <span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span>BreakpointDescriptor breakpointDescriptor <span style="color: #666666">:</span> myBreakpointDescriptors<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-    BreakpointCommand breakpointCommand <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> BreakpointCommand<span style="color: #666666">(</span>debugProcess<span style="color: #666666">,</span>
-                                                                breakpointDescriptor<span style="color: #666666">);</span>
-    breakpointCommands<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span>breakpointCommand<span style="color: #666666">);</span>
-    debugProcess<span style="color: #666666">.</span><span style="color: #7D9029">getManagerThread</span><span style="color: #666666">().</span><span style="color: #7D9029">schedule</span><span style="color: #666666">(</span>breakpointCommand<span style="color: #666666">);</span>
-  <span style="color: #666666">}</span>
-  <span style="color: #008000; font-weight: bold">return</span> breakpointCommands<span style="color: #666666">;</span>
-<span style="color: #666666">}</span>
-</pre></div>
-</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> Set&lt;BreakpointCommand&gt; scheduleBreakpointCommands() {
+  Set&lt;BreakpointCommand&gt; breakpointCommands = Sets.<span style="color:#007f7f">newHashSet</span>();
+  DebugProcessImpl debugProcess = myDebuggerSession.<span style="color:#007f7f">getProcess</span>();
+  <span style="color:#fff;font-weight:bold">for</span> (BreakpointDescriptor breakpointDescriptor : myBreakpointDescriptors) {
+    BreakpointCommand breakpointCommand = <span style="color:#fff;font-weight:bold">new</span> BreakpointCommand(debugProcess,
+                                                                breakpointDescriptor);
+    breakpointCommands.<span style="color:#007f7f">add</span>(breakpointCommand);
+    debugProcess.<span style="color:#007f7f">getManagerThread</span>().<span style="color:#007f7f">schedule</span>(breakpointCommand);
+  }
+  <span style="color:#fff;font-weight:bold">return</span> breakpointCommands;
+}</code></pre></div>
 
 <p>These <code>BreakpointCommand</code>s are apparently nothing special. They are subclasses of <code>DebuggerCommandImpl</code>, a class that&rsquo;s a part of the IntelliJ source code. These breakpoint commands simply notify a <code>TestRecorderEventListener</code> with a <code>TestRecorderEvent</code> whenever a breakpoint is hit. The <code>TestRecorderEvent</code> contains the info needed to write out the espresso tests and this info is snagged from the (paused) Execution context when the debugger stops at a breakpoint. Here&rsquo;s a hint of how some of that works:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Nullable</span>
-<span style="color: #008000; font-weight: bold">private</span> TestRecorderEvent <span style="color: #0000FF">prepareEvent</span><span style="color: #666666">(</span>EvaluationContextImpl evalContext<span style="color: #666666">,</span> NodeManagerImpl nodeManager<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-  TestRecorderEvent event <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> TestRecorderEvent<span style="color: #666666">(</span>myBreakpointDescriptor<span style="color: #666666">.</span><span style="color: #7D9029">eventType</span><span style="color: #666666">,</span> System<span style="color: #666666">.</span><span style="color: #7D9029">currentTimeMillis</span><span style="color: #666666">());</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Nullable
+<span style="color:#fff;font-weight:bold">private</span> TestRecorderEvent prepareEvent(EvaluationContextImpl evalContext, NodeManagerImpl nodeManager) {
+  TestRecorderEvent event = <span style="color:#fff;font-weight:bold">new</span> TestRecorderEvent(myBreakpointDescriptor.<span style="color:#007f7f">eventType</span>, System.<span style="color:#007f7f">currentTimeMillis</span>());
 
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>event<span style="color: #666666">.</span><span style="color: #7D9029">isPressEvent</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
-    <span style="color: #008000; font-weight: bold">return</span> populatePressEvent<span style="color: #666666">(</span>event<span style="color: #666666">,</span> evalContext<span style="color: #666666">,</span> nodeManager<span style="color: #666666">);</span>
-  <span style="color: #666666">}</span>
+  <span style="color:#fff;font-weight:bold">if</span> (event.<span style="color:#007f7f">isPressEvent</span>()) {
+    <span style="color:#fff;font-weight:bold">return</span> populatePressEvent(event, evalContext, nodeManager);
+  }
 
-  String receiverReference <span style="color: #666666">=</span> getReceiverReference<span style="color: #666666">(</span>evalContext<span style="color: #666666">,</span> nodeManager<span style="color: #666666">);</span>
+  String receiverReference = getReceiverReference(evalContext, nodeManager);
 
-  populateElementDescriptors<span style="color: #666666">(</span>event<span style="color: #666666">,</span> evalContext<span style="color: #666666">,</span> nodeManager<span style="color: #666666">,</span> receiverReference<span style="color: #666666">,</span> <span style="color: #666666">1);</span>
+  populateElementDescriptors(event, evalContext, nodeManager, receiverReference, 1);
 
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>event<span style="color: #666666">.</span><span style="color: #7D9029">getElementDescriptorsCount</span><span style="color: #666666">()</span> <span style="color: #666666">&gt;</span> <span style="color: #666666">0)</span> <span style="color: #666666">{</span>
-    event<span style="color: #666666">.</span><span style="color: #7D9029">setReplacementText</span><span style="color: #666666">(</span>event<span style="color: #666666">.</span><span style="color: #7D9029">getElementDescriptor</span><span style="color: #666666">(0).</span><span style="color: #7D9029">getText</span><span style="color: #666666">());</span>
-  <span style="color: #666666">}</span>
+  <span style="color:#fff;font-weight:bold">if</span> (event.<span style="color:#007f7f">getElementDescriptorsCount</span>() &gt; 0) {
+    event.<span style="color:#007f7f">setReplacementText</span>(event.<span style="color:#007f7f">getElementDescriptor</span>(0).<span style="color:#007f7f">getText</span>());
+  }
 
-  <span style="color: #008000; font-weight: bold">return</span> event<span style="color: #666666">;</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+  <span style="color:#fff;font-weight:bold">return</span> event;
+}</code></pre></div>
 
 <p>Here&rsquo;s a nice lower-level method that gets close to the IntelliJ api for accessing the data from the paused execution context:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> Value <span style="color: #0000FF">evaluateExpression</span><span style="color: #666666">(</span>String expression<span style="color: #666666">,</span> EvaluationContextImpl evalContext<span style="color: #666666">,</span> NodeManagerImpl nodeManager<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-  TextWithImports text <span style="color: #666666">=</span> TextWithImportsImpl<span style="color: #666666">.</span><span style="color: #7D9029">fromXExpression</span><span style="color: #666666">(</span>XExpressionImpl<span style="color: #666666">.</span><span style="color: #7D9029">fromText</span><span style="color: #666666">(</span>expression<span style="color: #666666">));</span>
-  WatchItemDescriptor descriptor <span style="color: #666666">=</span> nodeManager<span style="color: #666666">.</span><span style="color: #7D9029">getWatchItemDescriptor</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">,</span> text<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">);</span>
-  descriptor<span style="color: #666666">.</span><span style="color: #7D9029">setContext</span><span style="color: #666666">(</span>evalContext<span style="color: #666666">);</span>
-  <span style="color: #008000; font-weight: bold">return</span> descriptor<span style="color: #666666">.</span><span style="color: #7D9029">getEvaluateException</span><span style="color: #666666">()</span> <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">null</span> <span style="color: #666666">?</span> <span style="color: #008000; font-weight: bold">null</span> <span style="color: #666666">:</span> descriptor<span style="color: #666666">.</span><span style="color: #7D9029">getValue</span><span style="color: #666666">();</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> Value evaluateExpression(String expression, EvaluationContextImpl evalContext, NodeManagerImpl nodeManager) {
+  TextWithImports text = TextWithImportsImpl.<span style="color:#007f7f">fromXExpression</span>(XExpressionImpl.<span style="color:#007f7f">fromText</span>(expression));
+  WatchItemDescriptor descriptor = nodeManager.<span style="color:#007f7f">getWatchItemDescriptor</span>(<span style="color:#fff;font-weight:bold">null</span>, text, <span style="color:#fff;font-weight:bold">null</span>);
+  descriptor.<span style="color:#007f7f">setContext</span>(evalContext);
+  <span style="color:#fff;font-weight:bold">return</span> descriptor.<span style="color:#007f7f">getEvaluateException</span>() != <span style="color:#fff;font-weight:bold">null</span> ? <span style="color:#fff;font-weight:bold">null</span> : descriptor.<span style="color:#007f7f">getValue</span>();
+}</code></pre></div>
 
 <h3 id="writing-out-the-source-files">Writing out the Source Files</h3>
 
 <p>Now, that we have some idea of how the information for writing the source files is collected, let&rsquo;s look at how Google uses that info to actually write out the espresso test files. Let&rsquo;s start at the code that gets called when you click the &ldquo;Complete Recording&rdquo; button:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>myCompleteRecordingButton<span style="color: #666666">.</span><span style="color: #7D9029">addActionListener</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> ActionListener<span style="color: #666666">()</span> <span style="color: #666666">{</span>
-  <span style="color: #AA22FF">@Override</span>
-  <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">actionPerformed</span><span style="color: #666666">(</span>ActionEvent e<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//...</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">myCompleteRecordingButton.<span style="color:#007f7f">addActionListener</span>(<span style="color:#fff;font-weight:bold">new</span> ActionListener() {
+  @Override
+  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> actionPerformed(ActionEvent e) {
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>
+    <span style="color:#007f7f">// Get all events (UI events and assertions).
+</span><span style="color:#007f7f"></span>    ArrayList&lt;Object&gt; events = <span style="color:#fff;font-weight:bold">new</span> ArrayList&lt;Object&gt;();
+    <span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">int</span> i = 0; i &lt; myEventListModel.<span style="color:#007f7f">size</span>(); i++) {
+      events.<span style="color:#007f7f">add</span>(myEventListModel.<span style="color:#007f7f">get</span>(i));
+    }
 
-    <span style="color: #408080; font-style: italic">// Get all events (UI events and assertions).</span>
-    ArrayList<span style="color: #666666">&lt;</span>Object<span style="color: #666666">&gt;</span> events <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> ArrayList<span style="color: #666666">&lt;</span>Object<span style="color: #666666">&gt;();</span>
-    <span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span><span style="color: #B00040">int</span> i <span style="color: #666666">=</span> <span style="color: #666666">0;</span> i <span style="color: #666666">&lt;</span> myEventListModel<span style="color: #666666">.</span><span style="color: #7D9029">size</span><span style="color: #666666">();</span> i<span style="color: #666666">++)</span> <span style="color: #666666">{</span>
-      events<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span>myEventListModel<span style="color: #666666">.</span><span style="color: #7D9029">get</span><span style="color: #666666">(</span>i<span style="color: #666666">));</span>
-    <span style="color: #666666">}</span>
+    TestClassNameInputDialog chooser = <span style="color:#fff;font-weight:bold">new</span> TestClassNameInputDialog(myFacet,
+                                                                    launchedActivityName);
+    chooser.<span style="color:#007f7f">show</span>();
 
-    TestClassNameInputDialog chooser <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> TestClassNameInputDialog<span style="color: #666666">(</span>myFacet<span style="color: #666666">,</span>
-                                                                    launchedActivityName<span style="color: #666666">);</span>
-    chooser<span style="color: #666666">.</span><span style="color: #7D9029">show</span><span style="color: #666666">();</span>
+    PsiClass testClass = chooser.<span style="color:#007f7f">getTestClass</span>();
 
-    PsiClass testClass <span style="color: #666666">=</span> chooser<span style="color: #666666">.</span><span style="color: #7D9029">getTestClass</span><span style="color: #666666">();</span>
-
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>testClass <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-      doOKAction<span style="color: #666666">();</span>
-      <span style="color: #008000; font-weight: bold">new</span> TestCodeGenerator<span style="color: #666666">(</span>myFacet<span style="color: #666666">,</span> testClass<span style="color: #666666">,</span>
-                            events<span style="color: #666666">,</span> launchedActivityName<span style="color: #666666">,</span>
-                            hasCustomEspressoDependency<span style="color: #666666">()).</span><span style="color: #7D9029">generate</span><span style="color: #666666">();</span>
-    <span style="color: #666666">}</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">});</span>
-</pre></div>
-
+    <span style="color:#fff;font-weight:bold">if</span> (testClass != <span style="color:#fff;font-weight:bold">null</span>) {
+      doOKAction();
+      <span style="color:#fff;font-weight:bold">new</span> TestCodeGenerator(myFacet, testClass,
+                            events, launchedActivityName,
+                            hasCustomEspressoDependency()).<span style="color:#007f7f">generate</span>();
+    }
+  }
+});</code></pre></div>
 
 <p>Looks like most of the work of generating the test code lives in this <code>TestCodeGenerator</code> class, so let&rsquo;s look at that:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">TestCodeGenerator</span> <span style="color: #666666">{</span>
-  <span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">generate</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//...</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> TestCodeGenerator {
+  <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> generate() {
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>
+    <span style="color:#007f7f">// Write code to the test class file.
+</span><span style="color:#007f7f"></span>    BufferedWriter writer = <span style="color:#fff;font-weight:bold">null</span>;
+    <span style="color:#fff;font-weight:bold">try</span> {
+      writer = <span style="color:#fff;font-weight:bold">new</span> BufferedWriter(<span style="color:#fff;font-weight:bold">new</span> FileWriter(testFilePath));
+      VelocityEngine velocityEngine = <span style="color:#fff;font-weight:bold">new</span> VelocityEngine();
+      velocityEngine.<span style="color:#007f7f">init</span>();
+      velocityEngine.<span style="color:#007f7f">evaluate</span>(createVelocityContext(testVirtualFile),
+                              writer,
+                              RecordingDialog.<span style="color:#007f7f">class</span>.<span style="color:#007f7f">getName</span>(),
+                              readTemplateFileContent());
+      writer.<span style="color:#007f7f">flush</span>();
+    } <span style="color:#fff;font-weight:bold">catch</span> (Exception e) {
+      <span style="color:#fff;font-weight:bold">throw</span> <span style="color:#fff;font-weight:bold">new</span> RuntimeException(<span style="color:#0ff;font-weight:bold">&#34;Failed to generate test class file: &#34;</span>, e);
+    } <span style="color:#fff;font-weight:bold">finally</span> {
+      <span style="color:#fff;font-weight:bold">if</span> (writer != <span style="color:#fff;font-weight:bold">null</span>) {
+        <span style="color:#fff;font-weight:bold">try</span> {
+          writer.<span style="color:#007f7f">close</span>();
+        }
+        <span style="color:#fff;font-weight:bold">catch</span> (Exception e) {
+          <span style="color:#007f7f">// ignore
+</span><span style="color:#007f7f"></span>        }
+      }
+    }
 
-    <span style="color: #408080; font-style: italic">// Write code to the test class file.</span>
-    BufferedWriter writer <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">;</span>
-    <span style="color: #008000; font-weight: bold">try</span> <span style="color: #666666">{</span>
-      writer <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> BufferedWriter<span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> FileWriter<span style="color: #666666">(</span>testFilePath<span style="color: #666666">));</span>
-      VelocityEngine velocityEngine <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> VelocityEngine<span style="color: #666666">();</span>
-      velocityEngine<span style="color: #666666">.</span><span style="color: #7D9029">init</span><span style="color: #666666">();</span>
-      velocityEngine<span style="color: #666666">.</span><span style="color: #7D9029">evaluate</span><span style="color: #666666">(</span>createVelocityContext<span style="color: #666666">(</span>testVirtualFile<span style="color: #666666">),</span>
-                              writer<span style="color: #666666">,</span>
-                              RecordingDialog<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">.</span><span style="color: #7D9029">getName</span><span style="color: #666666">(),</span>
-                              readTemplateFileContent<span style="color: #666666">());</span>
-      writer<span style="color: #666666">.</span><span style="color: #7D9029">flush</span><span style="color: #666666">();</span>
-    <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">catch</span> <span style="color: #666666">(</span>Exception e<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-      <span style="color: #008000; font-weight: bold">throw</span> <span style="color: #008000; font-weight: bold">new</span> RuntimeException<span style="color: #666666">(</span><span style="color: #BA2121">&quot;Failed to generate test class file: &quot;</span><span style="color: #666666">,</span> e<span style="color: #666666">);</span>
-    <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">finally</span> <span style="color: #666666">{</span>
-      <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>writer <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">try</span> <span style="color: #666666">{</span>
-          writer<span style="color: #666666">.</span><span style="color: #7D9029">close</span><span style="color: #666666">();</span>
-        <span style="color: #666666">}</span>
-        <span style="color: #008000; font-weight: bold">catch</span> <span style="color: #666666">(</span>Exception e<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-          <span style="color: #408080; font-style: italic">// ignore</span>
-        <span style="color: #666666">}</span>
-      <span style="color: #666666">}</span>
-    <span style="color: #666666">}</span>
-
-    <span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  }
+}</code></pre></div>
 
 <p>Its interesting to see here that they are using <a href="http://velocity.apache.org/">Velocity</a>, a java templating library from apache. I&rsquo;d never heard of it before I stumbled upon the code here. I wonder why they didn&rsquo;t use <a href="https://github.com/square/javapoet">java poet</a> instead, a library from square that&rsquo;s especially designed for writing java class files. In any case, the actual construction of the source code file to be written happens in <code>createVelocityContext</code> if you&rsquo;re curious. I&rsquo;m not going to get into how that method works since that method is more about Velocity than it is about espresso test recording.</p>
 

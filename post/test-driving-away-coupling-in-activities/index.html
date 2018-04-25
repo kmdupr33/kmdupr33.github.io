@@ -83,7 +83,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/" />
     
@@ -269,51 +269,47 @@
 
 <p>Here&rsquo;s the code that accomplishes this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onRequestPermissionsResult</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">final</span> <span style="color: #B00040">int</span> requestCode<span style="color: #666666">,</span>
-        <span style="color: #AA22FF">@NonNull</span> <span style="color: #008000; font-weight: bold">final</span> String<span style="color: #666666">[]</span> permissions<span style="color: #666666">,</span>
-        <span style="color: #AA22FF">@NonNull</span> <span style="color: #008000; font-weight: bold">final</span> <span style="color: #B00040">int</span><span style="color: #666666">[]</span> grantResults<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Override
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onRequestPermissionsResult(<span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span> requestCode,
+        @NonNull <span style="color:#fff;font-weight:bold">final</span> String[] permissions,
+        @NonNull <span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span>[] grantResults) {
 
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>requestCode <span style="color: #666666">!=</span> REQUEST_LOCATION_PERMISSION<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">return</span><span style="color: #666666">;</span>
-    <span style="color: #666666">}</span>
+    <span style="color:#fff;font-weight:bold">if</span> (requestCode != REQUEST_LOCATION_PERMISSION) {
+        <span style="color:#fff;font-weight:bold">return</span>;
+    }
 
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>permissions<span style="color: #666666">.</span><span style="color: #7D9029">length</span> <span style="color: #666666">==</span> <span style="color: #666666">1</span> <span style="color: #666666">&amp;&amp;</span>
-            LOCATION_PERMISSION<span style="color: #666666">.</span><span style="color: #7D9029">equals</span><span style="color: #666666">(</span>permissions<span style="color: #666666">[0])</span> <span style="color: #666666">&amp;&amp;</span>
-            grantResults<span style="color: #666666">[0]</span> <span style="color: #666666">==</span> PackageManager<span style="color: #666666">.</span><span style="color: #7D9029">PERMISSION_GRANTED</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #408080; font-style: italic">// Permission has been granted.</span>
-        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>mMapFragment <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-            mMapFragment<span style="color: #666666">.</span><span style="color: #7D9029">setMyLocationEnabled</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">true</span><span style="color: #666666">);</span>
-        <span style="color: #666666">}</span>
-    <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">        <span style="color: #408080; font-style: italic">// Permission was denied. Display error message.</span>
-</span><span style="background-color: #ffffcc">        Toast<span style="color: #666666">.</span><span style="color: #7D9029">makeText</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">,</span> R<span style="color: #666666">.</span><span style="color: #7D9029">string</span><span style="color: #666666">.</span><span style="color: #7D9029">map_permission_denied</span><span style="color: #666666">,</span>
-</span><span style="background-color: #ffffcc">                Toast<span style="color: #666666">.</span><span style="color: #7D9029">LENGTH_SHORT</span><span style="color: #666666">).</span><span style="color: #7D9029">show</span><span style="color: #666666">();</span>
-</span>    <span style="color: #666666">}</span>
-    <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onRequestPermissionsResult</span><span style="color: #666666">(</span>requestCode<span style="color: #666666">,</span> permissions<span style="color: #666666">,</span>
-            grantResults<span style="color: #666666">);</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    <span style="color:#fff;font-weight:bold">if</span> (permissions.<span style="color:#007f7f">length</span> == 1 &amp;&amp;
+            LOCATION_PERMISSION.<span style="color:#007f7f">equals</span>(permissions[0]) &amp;&amp;
+            grantResults[0] == PackageManager.<span style="color:#007f7f">PERMISSION_GRANTED</span>) {
+        <span style="color:#007f7f">// Permission has been granted.
+</span><span style="color:#007f7f"></span>        <span style="color:#fff;font-weight:bold">if</span> (mMapFragment != <span style="color:#fff;font-weight:bold">null</span>) {
+            mMapFragment.<span style="color:#007f7f">setMyLocationEnabled</span>(<span style="color:#fff;font-weight:bold">true</span>);
+        }
+    } <span style="color:#fff;font-weight:bold">else</span> {
+<span style="display:block;width:100%;background-color:#191919">        <span style="color:#007f7f">// Permission was denied. Display error message.
+</span></span><span style="display:block;width:100%;background-color:#191919"><span style="color:#007f7f"></span>        Toast.<span style="color:#007f7f">makeText</span>(<span style="color:#fff;font-weight:bold">this</span>, R.<span style="color:#007f7f">string</span>.<span style="color:#007f7f">map_permission_denied</span>,
+</span><span style="display:block;width:100%;background-color:#191919">                Toast.<span style="color:#007f7f">LENGTH_SHORT</span>).<span style="color:#007f7f">show</span>();
+</span>    }
+    <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onRequestPermissionsResult</span>(requestCode, permissions,
+            grantResults);
+}</code></pre></div>
 
 <h3 id="the-test-code">The Test Code</h3>
 
 <p>Let&rsquo;s take a stab at testing this. Here&rsquo;s what that would look like:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">showsToastIfPermissionIsRejected</span><span style="color: #666666">()</span>
-        <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
-    MapActivity mapActivity <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> MapActivity<span style="color: #666666">();</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> showsToastIfPermissionIsRejected()
+        <span style="color:#fff;font-weight:bold">throws</span> Exception {
+    MapActivity mapActivity = <span style="color:#fff;font-weight:bold">new</span> MapActivity();
 
-    mapActivity<span style="color: #666666">.</span><span style="color: #7D9029">onRequestPermissionsResult</span><span style="color: #666666">(</span>
-            MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">REQUEST_LOCATION_PERMISSION</span><span style="color: #666666">,</span>
-            <span style="color: #008000; font-weight: bold">new</span> String<span style="color: #666666">[]{</span>MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">LOCATION_PERMISSION</span><span style="color: #666666">},</span> <span style="color: #008000; font-weight: bold">new</span> <span style="color: #B00040">int</span><span style="color: #666666">[]{</span>
-                    PackageManager<span style="color: #666666">.</span><span style="color: #7D9029">PERMISSION_DENIED</span><span style="color: #666666">});</span>
+    mapActivity.<span style="color:#007f7f">onRequestPermissionsResult</span>(
+            MapActivity.<span style="color:#007f7f">REQUEST_LOCATION_PERMISSION</span>,
+            <span style="color:#fff;font-weight:bold">new</span> String[]{MapActivity.<span style="color:#007f7f">LOCATION_PERMISSION</span>}, <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">int</span>[]{
+                    PackageManager.<span style="color:#007f7f">PERMISSION_DENIED</span>});
 
-    assertToastDisplayed<span style="color: #666666">();</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    assertToastDisplayed();
+}</code></pre></div>
 
 <p>Hopefully, you&rsquo;re wondering what the implementation of <code>assertToastDisplayed()</code> looks like. Here&rsquo;s the thing: there isn&rsquo;t a straight forward implementation of that method. In order to implement without refactoring our code, we&rsquo;d need to use a combination of roboelectric and powermock.</p>
 
@@ -327,68 +323,60 @@
 
 <p>To guide our refactoring, let&rsquo;s write our test first. This will ensure that our <em>new</em> classes are loosely coupled. We have to create a new class in this particular case in order to avoid Roboelectric, but ordinarily, we could just refactor already existing classes to reduce coupling.</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displaysErrorWhenPermissionRejected</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displaysErrorWhenPermissionRejected() <span style="color:#fff;font-weight:bold">throws</span> Exception {
 
-    OnPermissionResultListener onPermissionResultListener <span style="color: #666666">=</span>
-            <span style="color: #008000; font-weight: bold">new</span> OnPermissionResultListener<span style="color: #666666">(</span>mPermittedView<span style="color: #666666">);</span>
+    OnPermissionResultListener onPermissionResultListener =
+            <span style="color:#fff;font-weight:bold">new</span> OnPermissionResultListener(mPermittedView);
 
-    onPermissionResultListener<span style="color: #666666">.</span><span style="color: #7D9029">onPermissionResult</span><span style="color: #666666">(</span>
-            MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">REQUEST_LOCATION_PERMISSION</span><span style="color: #666666">,</span>
-            <span style="color: #008000; font-weight: bold">new</span> String<span style="color: #666666">[]{</span>MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">LOCATION_PERMISSION</span><span style="color: #666666">},</span>
-            <span style="color: #008000; font-weight: bold">new</span> <span style="color: #B00040">int</span><span style="color: #666666">[]{</span>PackageManager<span style="color: #666666">.</span><span style="color: #7D9029">PERMISSION_DENIED</span><span style="color: #666666">});</span>
+    onPermissionResultListener.<span style="color:#007f7f">onPermissionResult</span>(
+            MapActivity.<span style="color:#007f7f">REQUEST_LOCATION_PERMISSION</span>,
+            <span style="color:#fff;font-weight:bold">new</span> String[]{MapActivity.<span style="color:#007f7f">LOCATION_PERMISSION</span>},
+            <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">int</span>[]{PackageManager.<span style="color:#007f7f">PERMISSION_DENIED</span>});
 
-    verify<span style="color: #666666">(</span>mPermittedView<span style="color: #666666">).</span><span style="color: #7D9029">displayPermissionDenied</span><span style="color: #666666">();</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    verify(mPermittedView).<span style="color:#007f7f">displayPermissionDenied</span>();
+}</code></pre></div>
 
 <p>We&rsquo;ve introduced a <code>OnPermissionResultListener</code> whose job is just to handle the result of request permission from a user. Here&rsquo;s the code for that:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #B00040">void</span> <span style="color: #0000FF">onPermissionResult</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">final</span> <span style="color: #B00040">int</span> requestCode<span style="color: #666666">,</span>
-            <span style="color: #008000; font-weight: bold">final</span> String<span style="color: #666666">[]</span> permissions<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">final</span> <span style="color: #B00040">int</span><span style="color: #666666">[]</span> grantResults<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>requestCode <span style="color: #666666">!=</span> MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">REQUEST_LOCATION_PERMISSION</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">return</span><span style="color: #666666">;</span>
-    <span style="color: #666666">}</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">void</span> onPermissionResult(<span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span> requestCode,
+            <span style="color:#fff;font-weight:bold">final</span> String[] permissions, <span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span>[] grantResults) {
+    <span style="color:#fff;font-weight:bold">if</span> (requestCode != MapActivity.<span style="color:#007f7f">REQUEST_LOCATION_PERMISSION</span>) {
+        <span style="color:#fff;font-weight:bold">return</span>;
+    }
 
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>permissions<span style="color: #666666">.</span><span style="color: #7D9029">length</span> <span style="color: #666666">==</span> <span style="color: #666666">1</span> <span style="color: #666666">&amp;&amp;</span>
-            MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">LOCATION_PERMISSION</span><span style="color: #666666">.</span><span style="color: #7D9029">equals</span><span style="color: #666666">(</span>permissions<span style="color: #666666">[0])</span> <span style="color: #666666">&amp;&amp;</span>
-            grantResults<span style="color: #666666">[0]</span> <span style="color: #666666">==</span> PackageManager<span style="color: #666666">.</span><span style="color: #7D9029">PERMISSION_GRANTED</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #408080; font-style: italic">// Permission has been granted.</span>
-<span style="background-color: #ffffcc">        mPermittedView<span style="color: #666666">.</span><span style="color: #7D9029">displayPermittedView</span><span style="color: #666666">();</span>
+    <span style="color:#fff;font-weight:bold">if</span> (permissions.<span style="color:#007f7f">length</span> == 1 &amp;&amp;
+            MapActivity.<span style="color:#007f7f">LOCATION_PERMISSION</span>.<span style="color:#007f7f">equals</span>(permissions[0]) &amp;&amp;
+            grantResults[0] == PackageManager.<span style="color:#007f7f">PERMISSION_GRANTED</span>) {
+        <span style="color:#007f7f">// Permission has been granted.
+</span><span style="display:block;width:100%;background-color:#191919"><span style="color:#007f7f"></span>        mPermittedView.<span style="color:#007f7f">displayPermittedView</span>();
 </span>
-    <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
-        <span style="color: #408080; font-style: italic">// Permission was denied. Display error message.</span>
-<span style="background-color: #ffffcc">        mPermittedView<span style="color: #666666">.</span><span style="color: #7D9029">displayPermissionDenied</span><span style="color: #666666">();</span>
-</span>    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    } <span style="color:#fff;font-weight:bold">else</span> {
+        <span style="color:#007f7f">// Permission was denied. Display error message.
+</span><span style="display:block;width:100%;background-color:#191919"><span style="color:#007f7f"></span>        mPermittedView.<span style="color:#007f7f">displayPermissionDenied</span>();
+</span>    }
+}</code></pre></div>
 
 <p>The calls to <code>MapFragment</code> and <code>Toast</code> have been replaced with method calls on the <code>PermittedView</code>, an object that gets passed in through the constructor. <code>PermittedView</code> is an interface:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">interface</span> <span style="color: #0000FF; font-weight: bold">PermittedView</span> <span style="color: #666666">{</span>
-    <span style="color: #B00040">void</span> <span style="color: #0000FF">displayPermissionDenied</span><span style="color: #666666">();</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">interface</span> PermittedView {
+    <span style="color:#fff;font-weight:bold">void</span> displayPermissionDenied();
 
-    <span style="color: #B00040">void</span> <span style="color: #0000FF">displayPermittedView</span><span style="color: #666666">();</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    <span style="color:#fff;font-weight:bold">void</span> displayPermittedView();
+}</code></pre></div>
 
 <p>And it gets implemented by the <code>MapActivity</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MapActivity</span> <span style="color: #008000; font-weight: bold">extends</span> BaseActivity
-<span style="background-color: #ffffcc">        <span style="color: #008000; font-weight: bold">implements</span> SlideableInfoFragment<span style="color: #666666">.</span><span style="color: #7D9029">Callback</span><span style="color: #666666">,</span> MapFragment<span style="color: #666666">.</span><span style="color: #7D9029">Callbacks</span><span style="color: #666666">,</span>
-</span>        ActivityCompat<span style="color: #666666">.</span><span style="color: #7D9029">OnRequestPermissionsResultCallback</span><span style="color: #666666">,</span>
-<span style="background-color: #ffffcc">        OnPermissionResultListener<span style="color: #666666">.</span><span style="color: #7D9029">PermittedView</span> <span style="color: #666666">{</span>
-</span>    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displayPermissionDenied</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-        Toast<span style="color: #666666">.</span><span style="color: #7D9029">makeText</span><span style="color: #666666">(</span>MapActivity<span style="color: #666666">.</span><span style="color: #7D9029">this</span><span style="color: #666666">,</span> R<span style="color: #666666">.</span><span style="color: #7D9029">string</span><span style="color: #666666">.</span><span style="color: #7D9029">map_permission_denied</span><span style="color: #666666">,</span>
-                Toast<span style="color: #666666">.</span><span style="color: #7D9029">LENGTH_SHORT</span><span style="color: #666666">).</span><span style="color: #7D9029">show</span><span style="color: #666666">();</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> MapActivity <span style="color:#fff;font-weight:bold">extends</span> BaseActivity
+<span style="display:block;width:100%;background-color:#191919">        <span style="color:#fff;font-weight:bold">implements</span> SlideableInfoFragment.<span style="color:#007f7f">Callback</span>, MapFragment.<span style="color:#007f7f">Callbacks</span>,
+</span>        ActivityCompat.<span style="color:#007f7f">OnRequestPermissionsResultCallback</span>,
+<span style="display:block;width:100%;background-color:#191919">        OnPermissionResultListener.<span style="color:#007f7f">PermittedView</span> {
+</span>    @Override
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displayPermissionDenied() {
+        Toast.<span style="color:#007f7f">makeText</span>(MapActivity.<span style="color:#007f7f">this</span>, R.<span style="color:#007f7f">string</span>.<span style="color:#007f7f">map_permission_denied</span>,
+                Toast.<span style="color:#007f7f">LENGTH_SHORT</span>).<span style="color:#007f7f">show</span>();
+    }
+}</code></pre></div>
 
 <p>This may not the <em>best</em> solution, but it gets us to a point where we can test things. This <em>required</em> that <code>OnPermissionResultListener</code> be loosely coupled with its <code>PermittedView</code>. Loose coupling == definitely an improvement.</p>
 
@@ -408,14 +396,12 @@
 
 <p>Here&rsquo;s what that change would have looked like, using their little <code>PermissionUtils</code> class they wrote for displaying <code>SnackBar</code>s.</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displayPermissionDenied</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-    PermissionsUtils<span style="color: #666666">.</span><span style="color: #7D9029">displayConditionalPermissionDenialSnackbar</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">,</span>
-            R<span style="color: #666666">.</span><span style="color: #7D9029">string</span><span style="color: #666666">.</span><span style="color: #7D9029">map_permission_denied</span><span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">new</span> String<span style="color: #666666">[]{</span>LOCATION_PERMISSION<span style="color: #666666">},</span>
-            REQUEST_LOCATION_PERMISSION<span style="color: #666666">);</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Override
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displayPermissionDenied() {
+    PermissionsUtils.<span style="color:#007f7f">displayConditionalPermissionDenialSnackbar</span>(<span style="color:#fff;font-weight:bold">this</span>,
+            R.<span style="color:#007f7f">string</span>.<span style="color:#007f7f">map_permission_denied</span>, <span style="color:#fff;font-weight:bold">new</span> String[]{LOCATION_PERMISSION},
+            REQUEST_LOCATION_PERMISSION);
+}</code></pre></div>
 
 <p>Again, notice that we can make this change without thinking about the <code>OnPermissionResultListener</code> at all. This is actually exactly what Larry Constantine was talking about when he first defined the concept of coupling back in the 70s:</p>
 

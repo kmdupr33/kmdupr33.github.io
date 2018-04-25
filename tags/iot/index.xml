@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Iot on Philosophical Hacker</title>
-    <link>https://www.philosophicalhacker.com/tags/iot/index.xml</link>
+    <link>https://www.philosophicalhacker.com/tags/iot/</link>
     <description>Recent content in Iot on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://www.philosophicalhacker.com/tags/iot/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 22 Oct 2017 09:09:04 -0400</lastBuildDate>
+    
+	<atom:link href="https://www.philosophicalhacker.com/tags/iot/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>React Native at an IoT Startup</title>
@@ -14,207 +17,9 @@
       <pubDate>Sun, 22 Oct 2017 09:09:04 -0400</pubDate>
       
       <guid>https://www.philosophicalhacker.com/post/react-native-at-an-iot-startup/</guid>
-      <description>
-
-&lt;p&gt;If you saw a toilet seat in a movie theater, you&amp;rsquo;d probably think to yourself, &amp;ldquo;Wait a minute. You don&amp;rsquo;t use &lt;em&gt;that&lt;/em&gt; in &lt;em&gt;here&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Many of us have a similar reaction when we think of using react native at an IoT startup:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Wait a minute. React Native is fine for light-weight apps, but IoT companies need apps that make heavy use of the phone&amp;rsquo;s hardware, so don&amp;rsquo;t use it in this situation. &lt;strong&gt;Just don&amp;rsquo;t use that here.&lt;/strong&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;My goal in this written version of &lt;a href=&#34;https://www.meetup.com/preview/React-Orlando/events/243834909&#34;&gt;my talk&lt;/a&gt; is to convince you that using react native with hardware-intensive applications is not like using a toilet seat in a movie theater. Along the way, I&amp;rsquo;ll go over why we (at &lt;a href=&#34;https://www.unikey.com/&#34;&gt;UniKey&lt;/a&gt;) adopted react native, how we used in our apps, the results we&amp;rsquo;ve achieved using it so far, and the trade-offs/challenges we&amp;rsquo;ve faced.&lt;/p&gt;
-
-&lt;h3 id=&#34;why&#34;&gt;Why&lt;/h3&gt;
-
-&lt;p&gt;I originally approached React Native a little over a year ago with loads of skepticism. I had heard all the horror stories of companies getting burned by first-generation cross-platform mobile dev tools, so I had a hostile view of cross-platform tools in general. React Native was no exception.&lt;/p&gt;
-
-&lt;p&gt;Eventually, I noticed that an increasing number of impressive companies had adopted react native and this caught my eye:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/who-is-using-react-native.png&#34; alt=&#34;who is using react native&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;My favorite app on this list is Skype. Microsoft owns Xamarin and they choose React Native for Skype. I think that speaks volumes.&lt;/p&gt;
-
-&lt;p&gt;With the increasingly impressive rooster of these companies in the back of my mind, I stumbled upon an opportunity to do some pro-bono work for a charity. They needed an iOS and Android app, and I decided that React Native would be a good choice for building their app. It was a simple food pantry app with a form, and React Native did the job very well:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/fed40.png&#34; alt=&#34;food pantry&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Fast forward 1 year, and we&amp;rsquo;re staring down the barrel of a pretty hairy deadline. UniKey partners with lock manufacturers to build smart lock products. We provide white-label apps, SDKs, and hardware reference designs so that partners can launch in months instead of years. What this means is that a core part of our value proposition is &lt;em&gt;speed&lt;/em&gt;, so the conversation around this deadline looked a lot like this:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;The Market: Can you build this smart lock app in six weeks?&lt;/p&gt;
-
-&lt;p&gt;UniKey: That&amp;rsquo;s pretty aggressive, but we can probably do it.&lt;/p&gt;
-
-&lt;p&gt;The Market: Great. Also, build an SDK, fix these bugs, and build this other smart lock app.&lt;/p&gt;
-
-&lt;p&gt;UniKey: Well, hold on. That&amp;rsquo;s going to be a problem.&lt;/p&gt;
-
-&lt;p&gt;The Market: You offer the tools to help us launch in months instead of years right? Figure it out. K. Thx. Byeee.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;One of React Native&amp;rsquo;s core value propositions is to improve developer productivity by, among other things, sharing code between android and iOS. The productivity gain is something we &lt;em&gt;needed&lt;/em&gt;, but some folks were still skeptical or React Native in general and even I wanted to see proof of the React Native app working with our UniKey SDK before we struck out on the this path. So, we:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/keep-calm-and-hack.png&#34; alt=&#34;keep calm and hack&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;I pitched my team on staying up all night to build a prototype React Native app with our SDK to prove that it was the way forward for hitting our deadline. They were down because they&amp;rsquo;re awesome and we built the thing in a night. That went a long way towards helping folks feel comfortable with the path we were taking.&lt;/p&gt;
-
-&lt;h3 id=&#34;how&#34;&gt;How&lt;/h3&gt;
-
-&lt;p&gt;So, that&amp;rsquo;s why we adopted react native at UniKey. Let&amp;rsquo;s talk about how we did it. Here&amp;rsquo;s a very basic diagram of the architecture for the apps:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/react-native-arch.png&#34; alt=&#34;React Native App Arch&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;At the top, we&amp;rsquo;ve got our UI code written in javascript with React Native. In the middle, we&amp;rsquo;ve got a bridge layer that mediates communication between the javascript layer and our UniKey SDK, which is the bottom layer in the diagram.&lt;/p&gt;
-
-&lt;p&gt;I want to quickly walk through some sample code of how this works in our white label apps. Let&amp;rsquo;s start by looking at this video demonstrating our lock configuration feature:&lt;/p&gt;
-
-&lt;video width=&#34;640&#34; height=&#34;480&#34; controls&gt;
-  &lt;source src=&#34;https://www.philosophicalhacker.com/videos/settings.mp4&#34; type=&#34;video/mp4&#34;&gt;
-&lt;/video&gt;
-
-&lt;p&gt;In this video, the app is connecting to a lock via bluetooth to configure its settings. Here&amp;rsquo;s some RN javascript code that does this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;import&lt;/span&gt; NativeServiceBridge from &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;./services&amp;quot;&lt;/span&gt;;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;default&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; ReaderDetails &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Component {
-  _componentWillAppear() {
-    getEmitter().addListener(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;readerSettingChange&amp;#39;&lt;/span&gt;,
-      settings &lt;span style=&#34;color: #666666&#34;&gt;=&amp;gt;&lt;/span&gt; {
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; (settings.length &lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0&lt;/span&gt;) {
-          &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.setState({ settings, progress&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt; });
-        }
-      });
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;const&lt;/span&gt; { reader } &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.props;
-    NativeServiceBridge.startConfigureReaderSettings(reader.id,
-      error &lt;span style=&#34;color: #666666&#34;&gt;=&amp;gt;&lt;/span&gt; {
-        error &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; console.error(&lt;span style=&#34;color: #BA2121&#34;&gt;`can&amp;#39;t configure settings`&lt;/span&gt;);
-      });
-  }
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The code is a little awkward, but its pretty simple. We have this &lt;code&gt;NativeServiceBridge&lt;/code&gt; that mediates communication between the JS side and that native side and we&amp;rsquo;re calling &lt;code&gt;startConfigureReaderSettings&lt;/code&gt; on that bridge. We also register an event listener to receive events when we receive settings from the lock (of course, these events are emitted by the &lt;code&gt;NativeServiceBridge&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The js here is the same regardless of Android or iOS. We documented the contract between the js and native side with esdoc and basically said, &amp;ldquo;Android guys, make your interface look like this and iOS guys, do the same.&amp;rdquo; If we did this over, we&amp;rsquo;d consider Walmart&amp;rsquo;s &lt;a href=&#34;http://www.electrode.io/site/native.html&#34;&gt;electrode&lt;/a&gt;, which generates this contract from a swagger file.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s drop down a level in our stack diagram and look at the code in the &lt;code&gt;NativeServiceBridge&lt;/code&gt;. You are here:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/native-service-bridge.jpeg&#34; alt=&#34;Native Service Bridge&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s some code:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;NativeServiceBridge&lt;/span&gt;(reactContext: ReactApplicationContext) 
-  : ReactContextBaseJavaModule(reactContext) {
-@ReactMethod &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;fun&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;startConfigureReaderSettings&lt;/span&gt;(uuid: String, callback: Callback) {  
-  UniKey.readerService()
-    .configure(deviceSettingsObservable, UUID.fromString(uuid))    
-    .subscribe({   
-      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;val&lt;/span&gt; writableSettings = createWritableSettings(it)    
-      eventEmitter.&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;get&lt;/span&gt;().emit(READER_SETTINGS_CHANGE_EVENT, writableSettings)  
-      }, 
-      {  callback(it.toString())  }, 
-      { callback(&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;null&lt;/span&gt;)  }
-    )
-  }
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Highlights here are that we&amp;rsquo;re extending from the React Native type &lt;code&gt;ReactContextBaseJavaModule&lt;/code&gt;, that we&amp;rsquo;ve annotated our method with &lt;code&gt;@ReactMethod&lt;/code&gt;, and that we&amp;rsquo;re communicating with the js side through &lt;code&gt;Callback&lt;/code&gt; and &lt;code&gt;EventEmitter&lt;/code&gt;. We simply call the &lt;code&gt;UniKey.readerService.configure&lt;/code&gt; method on our SDK and we pass the results back to the js side.&lt;/p&gt;
-
-&lt;h3 id=&#34;results&#34;&gt;Results&lt;/h3&gt;
-
-&lt;p&gt;Overall, we were very pleased with how things turned out. We were able to hit our deadlines and our react native apps work well.&lt;/p&gt;
-
-&lt;p&gt;One of the things that I think allowed react native to work so well for us is that the bread and butter of the experience of our apps doesn&amp;rsquo;t actually need to communicate with the react native code at all. This image helps explain what I mean:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/react-native-at-iot-startup/unikey-to-phone-communication.jpeg&#34; alt=&#34;UniKey to phone communication&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Our apps aim to allow you to access your home or office in a way that is more convenient than the key. With our apps, you don&amp;rsquo;t even have to open the app in order to unlock the door. Because of this, our SDK does all the heavy-lifting with the hardware and doesn&amp;rsquo;t even need to talk to the React native code in order to perform its most important function. In other words, there&amp;rsquo;s no performance penalty in using react native for &amp;ldquo;passive entry&amp;rdquo; into a UniKey-powered smart lock.&lt;/p&gt;
-
-&lt;p&gt;What&amp;rsquo;s really interesting about our work with React Native is that because we white-label apps and create SDKs, we can actually easily create fully-native and react-native apps and compare them &lt;em&gt;side-by-side&lt;/em&gt; to see the results.&lt;/p&gt;
-
-&lt;p&gt;The side-by-side comparison is impressive. You might even have a hard time telling which app is native and which is react-native. You&amp;rsquo;ll notice that one of the videos is the same as the one we saw earlier. I &lt;em&gt;may&lt;/em&gt; have lied about whether that video was from a fully-native white-label app or a react-native one, so just look at the videos and see if you can guess which one is which.&lt;/p&gt;
-
-&lt;video width=&#34;640&#34; height=&#34;480&#34; controls&gt;
-  &lt;source src=&#34;https://www.philosophicalhacker.com/videos/settings.mp4&#34; type=&#34;video/mp4&#34;&gt;
-&lt;/video&gt;
-
-&lt;video width=&#34;640&#34; height=&#34;480&#34; controls&gt;
-  &lt;source src=&#34;https://www.philosophicalhacker.com/videos/rn-settings.mp4&#34; type=&#34;video/mp4&#34;&gt;
-&lt;/video&gt;
-
-&lt;h3 id=&#34;trade-offs&#34;&gt;Trade-offs&lt;/h3&gt;
-
-&lt;h4 id=&#34;performance-penalty-for-crossing-the-js-bridge&#34;&gt;Performance Penalty for Crossing the JS Bridge&lt;/h4&gt;
-
-&lt;p&gt;If you guessed right, it might be because the second video was a little slower than the first one to display the settings, and this leads into the first trade-off when working with react native: you do pay for sending commands across the javascript bridge. As the above videos suggest, that penalty is not very large, but it is there.&lt;/p&gt;
-
-&lt;p&gt;Again, for us, the trade-off mattered little since that extra ~.5 seconds is only needed for people who want to configure their lock. People who need to unlock their app can do so just as quickly as owners of the fully-native apps.&lt;/p&gt;
-
-&lt;h4 id=&#34;awkward-js-bridge-api&#34;&gt;Awkward JS Bridge API&lt;/h4&gt;
-
-&lt;p&gt;A related point is that because of the limitations on how your API between JS and native code works, you can wind up with some awkward APIs. We already saw this with the JS code snippet I mentioned earlier. Here&amp;rsquo;s the snippet again:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;import&lt;/span&gt; NativeServiceBridge from &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;./services&amp;quot;&lt;/span&gt;;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;default&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; ReaderDetails &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;extends&lt;/span&gt; Component {
-  _componentWillAppear() {
-    getEmitter().addListener(&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;readerSettingChange&amp;#39;&lt;/span&gt;,
-      settings &lt;span style=&#34;color: #666666&#34;&gt;=&amp;gt;&lt;/span&gt; {
-        &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;if&lt;/span&gt; (settings.length &lt;span style=&#34;color: #666666&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;0&lt;/span&gt;) {
-          &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.setState({ settings, progress&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;false&lt;/span&gt; });
-        }
-      });
-    &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;const&lt;/span&gt; { reader } &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;this&lt;/span&gt;.props;
-    NativeServiceBridge.startConfigureReaderSettings(reader.id,
-      error &lt;span style=&#34;color: #666666&#34;&gt;=&amp;gt;&lt;/span&gt; {
-        error &lt;span style=&#34;color: #666666&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; console.error(&lt;span style=&#34;color: #BA2121&#34;&gt;`can&amp;#39;t configure settings`&lt;/span&gt;);
-      });
-  }
-}
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The weird thing about this code is that we are registering an event emitter &lt;em&gt;and&lt;/em&gt; passing in a callback to &lt;code&gt;startConfigureReaderSettings&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The reason we need to do this is that we actually need two callbacks from that one method call. One callback when new settings arrive over bluetooth (which may be called multiple times) and another callback when the configure operation has completed. Callbacks can only be called once in react native, so we also have to use an event emitter, which feels awkward compared to native APIs.&lt;/p&gt;
-
-&lt;h4 id=&#34;libraries-can-be-hit-or-miss&#34;&gt;Libraries can be hit or miss&lt;/h4&gt;
-
-&lt;p&gt;For us, the best example of this trade-off related to the library we used for navigation. &lt;a href=&#34;https://facebook.github.io/react-native/docs/navigation.html#react-navigation&#34;&gt;The react native docs&lt;/a&gt; suggest react-navigation is the solution for navigation on react native. Turns out that way leads to weeping and gnashing of teeth. There&amp;rsquo;s even &lt;a href=&#34;https://github.com/react-community/react-navigation/issues/2031&#34;&gt;a github issue&lt;/a&gt; hilariously titled, &amp;ldquo;This library just isn&amp;rsquo;t good.&amp;rdquo; Use &lt;a href=&#34;https://github.com/wix/react-native-navigation&#34;&gt;Wix&amp;rsquo;s navigation library instead&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h4 id=&#34;build-tools-less-flexible-and-poorly-documented&#34;&gt;Build Tools Less Flexible and Poorly Documented&lt;/h4&gt;
-
-&lt;p&gt;We white-label apps, so build tools and build variants are important to us. That&amp;rsquo;s a rougher game with react-native apps than native apps. With ordinary Android development, you can create build flavors like so:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;productFlavors &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  partner1 &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-  partner2 &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    &lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;//...&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The react native build tools can handle flavors to some extent, but if your flavors need different javascript entry points, then you&amp;rsquo;ll probably just have to disable the react-native gradle plugin because it doesn&amp;rsquo;t have a hook to change the js entry-point based on a product flavor.&lt;/p&gt;
-
-&lt;p&gt;On iOS, RN is better in this regard. You can change the js entry point based on a build variant (iOS scheme), but first you have to read a bash file and locate this comment and cryptic line:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #408080; font-style: italic&#34;&gt;# Define entry file&lt;/span&gt;
-&lt;span style=&#34;color: #19177C&#34;&gt;ENTRY_FILE&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #BB6688; font-weight: bold&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color: #19177C&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;:-&lt;/span&gt;&lt;span style=&#34;color: #19177C&#34;&gt;index&lt;/span&gt;.ios.js&lt;span style=&#34;color: #BB6688; font-weight: bold&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;You can pass the entry point into this script from the build phases section in your Xcode build settings, but none of this is really documented.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;So, there you have it: the how, why, results, and trade-offs of our usage of React Native at UniKey. If you&amp;rsquo;re working on an IoT product, I hope I&amp;rsquo;ve convinced you that using react native is more appropriate than using a toilet in a movie theater.&lt;/p&gt;
-</description>
+      <description>If you saw a toilet seat in a movie theater, you&amp;rsquo;d probably think to yourself, &amp;ldquo;Wait a minute. You don&amp;rsquo;t use that in here.
+Many of us have a similar reaction when we think of using react native at an IoT startup:
+ Wait a minute. React Native is fine for light-weight apps, but IoT companies need apps that make heavy use of the phone&amp;rsquo;s hardware, so don&amp;rsquo;t use it in this situation.</description>
     </item>
     
   </channel>

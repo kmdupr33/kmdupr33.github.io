@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/unit-testable-recycler-views/" />
     
@@ -128,8 +128,8 @@
     },
     "headline": Unit Testable RecyclerViews,
     "name": Unit Testable RecyclerViews,
-    "wordCount": 787,
-    "timeRequired": "PT4M",
+    "wordCount": 0,
+    "timeRequired": "PT0M",
     "inLanguage": {
       "@type": "Language",
       "alternateName": en
@@ -235,7 +235,7 @@
           </time>  
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
-                            <strong>&middot; 4 minute read</strong>
+                            <strong>&middot; 0 minute read</strong>
                         </section>
                     </header>
 
@@ -250,34 +250,32 @@
 
 <p>Here&rsquo;s the code that creates this list:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MainActivity</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> MainActivity <span style="color:#fff;font-weight:bold">extends</span> AppCompatActivity {
 
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">protected</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onCreate</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
-        setContentView<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">layout</span><span style="color: #666666">.</span><span style="color: #7D9029">activity_main</span><span style="color: #666666">);</span>
-        <span style="color: #008000; font-weight: bold">final</span> RecyclerView recyclerView <span style="color: #666666">=</span> <span style="color: #666666">(</span>RecyclerView<span style="color: #666666">)</span> findViewById<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">id</span><span style="color: #666666">.</span><span style="color: #7D9029">recyclerView</span><span style="color: #666666">);</span>
-        recyclerView<span style="color: #666666">.</span><span style="color: #7D9029">setLayoutManager</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> LinearLayoutManager<span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">));</span>
-        recyclerView<span style="color: #666666">.</span><span style="color: #7D9029">setAdapter</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">Adapter</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-            <span style="color: #AA22FF">@Override</span>
-            <span style="color: #008000; font-weight: bold">public</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">ViewHolder</span> <span style="color: #0000FF">onCreateViewHolder</span><span style="color: #666666">(</span>ViewGroup parent<span style="color: #666666">,</span> <span style="color: #B00040">int</span> viewType<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-                <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000; font-weight: bold">new</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">ViewHolder</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> TextView<span style="color: #666666">(</span>parent<span style="color: #666666">.</span><span style="color: #7D9029">getContext</span><span style="color: #666666">()))</span> <span style="color: #666666">{};</span>
-            <span style="color: #666666">}</span>
+    @Override
+    <span style="color:#fff;font-weight:bold">protected</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(Bundle savedInstanceState) {
+        <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onCreate</span>(savedInstanceState);
+        setContentView(R.<span style="color:#007f7f">layout</span>.<span style="color:#007f7f">activity_main</span>);
+        <span style="color:#fff;font-weight:bold">final</span> RecyclerView recyclerView = (RecyclerView) findViewById(R.<span style="color:#007f7f">id</span>.<span style="color:#007f7f">recyclerView</span>);
+        recyclerView.<span style="color:#007f7f">setLayoutManager</span>(<span style="color:#fff;font-weight:bold">new</span> LinearLayoutManager(<span style="color:#fff;font-weight:bold">this</span>));
+        recyclerView.<span style="color:#007f7f">setAdapter</span>(<span style="color:#fff;font-weight:bold">new</span> RecyclerView.<span style="color:#007f7f">Adapter</span>() {
+            @Override
+            <span style="color:#fff;font-weight:bold">public</span> RecyclerView.<span style="color:#007f7f">ViewHolder</span> onCreateViewHolder(ViewGroup parent, <span style="color:#fff;font-weight:bold">int</span> viewType) {
+                <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">new</span> RecyclerView.<span style="color:#007f7f">ViewHolder</span>(<span style="color:#fff;font-weight:bold">new</span> TextView(parent.<span style="color:#007f7f">getContext</span>())) {};
+            }
 
-            <span style="color: #AA22FF">@Override</span>
-            <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onBindViewHolder</span><span style="color: #666666">(</span>RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">ViewHolder</span> holder<span style="color: #666666">,</span> <span style="color: #B00040">int</span> position<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-                <span style="color: #666666">((</span>TextView<span style="color: #666666">)</span> holder<span style="color: #666666">.</span><span style="color: #7D9029">itemView</span><span style="color: #666666">).</span><span style="color: #7D9029">setText</span><span style="color: #666666">(</span>String<span style="color: #666666">.</span><span style="color: #7D9029">valueOf</span><span style="color: #666666">(</span>position<span style="color: #666666">));</span>
-            <span style="color: #666666">}</span>
+            @Override
+            <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onBindViewHolder(RecyclerView.<span style="color:#007f7f">ViewHolder</span> holder, <span style="color:#fff;font-weight:bold">int</span> position) {
+                ((TextView) holder.<span style="color:#007f7f">itemView</span>).<span style="color:#007f7f">setText</span>(String.<span style="color:#007f7f">valueOf</span>(position));
+            }
 
-            <span style="color: #AA22FF">@Override</span>
-            <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">int</span> <span style="color: #0000FF">getItemCount</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-                <span style="color: #008000; font-weight: bold">return</span> <span style="color: #666666">100;</span>
-            <span style="color: #666666">}</span>
-        <span style="color: #666666">});</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+            @Override
+            <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">int</span> getItemCount() {
+                <span style="color:#fff;font-weight:bold">return</span> 100;
+            }
+        });
+    }
+}</code></pre></div>
 
 <p>Now that we&rsquo;ve introduced a working example, let&rsquo;s look at two ways of making RecyclerView-related code unit testable.</p>
 
@@ -285,67 +283,59 @@
 
 <p>One of the oft-cited benefits of using MVP in Android apps is that it enhances testability. So, a natural way of structuring our <code>RecyclerView</code> related classes so that we can enhance testability is to apply MVP to those classes. To do this, we make the <code>ViewHolder</code> sublcass implement an MVP <code>View</code>.</p>
 
-<p><div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">SimpleListItemViewHolder</span> <span style="color: #008000; font-weight: bold">extends</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">ViewHolder</span> <span style="color: #008000; font-weight: bold">implements</span> SimpleListItemView <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">static</span> <span style="color:#fff;font-weight:bold">class</span> SimpleListItemViewHolder <span style="color:#fff;font-weight:bold">extends</span> RecyclerView.<span style="color:#007f7f">ViewHolder</span> <span style="color:#fff;font-weight:bold">implements</span> SimpleListItemView {
 
-    SimpleListItemViewHolder<span style="color: #666666">(</span>View itemView<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">(</span>itemView<span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
+    SimpleListItemViewHolder(View itemView) {
+        <span style="color:#fff;font-weight:bold">super</span>(itemView);
+    }
 
-    <span style="color: #AA22FF">@Override</span> <span style="color: #408080; font-style: italic">// From SimpleListItemView interface</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">setText</span><span style="color: #666666">(</span>String text<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #666666">((</span>TextView<span style="color: #666666">)</span> itemView<span style="color: #666666">).</span><span style="color: #7D9029">setText</span><span style="color: #666666">(</span>text<span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-</p>
+    @Override <span style="color:#007f7f">// From SimpleListItemView interface
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> setText(String text) {
+        ((TextView) itemView).<span style="color:#007f7f">setText</span>(text);
+    }
+}</code></pre></div>
 
 <p>Next, we setup our RecyclerView.Adapter to create Presenters for each ViewHolder and we delegate the presentation logic to those presenters in <code>onBindViewHolder</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MyAdapter</span> <span style="color: #008000; font-weight: bold">extends</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">Adapter</span><span style="color: #666666">&lt;</span>SimpleListItemViewHolder<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">static</span> <span style="color:#fff;font-weight:bold">class</span> MyAdapter <span style="color:#fff;font-weight:bold">extends</span> RecyclerView.<span style="color:#007f7f">Adapter</span>&lt;SimpleListItemViewHolder&gt; {
 
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> SimpleListItemViewHolder <span style="color: #0000FF">onCreateViewHolder</span><span style="color: #666666">(</span>ViewGroup parent<span style="color: #666666">,</span>
-                                                        <span style="color: #B00040">int</span> viewType<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">final</span> TextView itemView <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> TextView<span style="color: #666666">(</span>parent<span style="color: #666666">.</span><span style="color: #7D9029">getContext</span><span style="color: #666666">());</span>
-<span style="background-color: #ffffcc">        itemView<span style="color: #666666">.</span><span style="color: #7D9029">setTag</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Presenter<span style="color: #666666">());</span>
-</span>        <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000; font-weight: bold">new</span> SimpleListItemViewHolder<span style="color: #666666">(</span>itemView<span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> SimpleListItemViewHolder onCreateViewHolder(ViewGroup parent,
+                                                        <span style="color:#fff;font-weight:bold">int</span> viewType) {
+        <span style="color:#fff;font-weight:bold">final</span> TextView itemView = <span style="color:#fff;font-weight:bold">new</span> TextView(parent.<span style="color:#007f7f">getContext</span>());
+<span style="display:block;width:100%;background-color:#191919">        itemView.<span style="color:#007f7f">setTag</span>(<span style="color:#fff;font-weight:bold">new</span> Presenter());
+</span>        <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">new</span> SimpleListItemViewHolder(itemView);
+    }
 
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onBindViewHolder</span><span style="color: #666666">(</span>SimpleListItemViewHolder holder<span style="color: #666666">,</span> <span style="color: #B00040">int</span> position<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">        <span style="color: #666666">((</span>Presenter<span style="color: #666666">)</span> holder<span style="color: #666666">.</span><span style="color: #7D9029">itemView</span><span style="color: #666666">.</span><span style="color: #7D9029">getTag</span><span style="color: #666666">()).</span><span style="color: #7D9029">presentListItem</span><span style="color: #666666">(</span>holder<span style="color: #666666">,</span> position<span style="color: #666666">);</span>
-</span>    <span style="color: #666666">}</span>
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onBindViewHolder(SimpleListItemViewHolder holder, <span style="color:#fff;font-weight:bold">int</span> position) {
+<span style="display:block;width:100%;background-color:#191919">        ((Presenter) holder.<span style="color:#007f7f">itemView</span>.<span style="color:#007f7f">getTag</span>()).<span style="color:#007f7f">presentListItem</span>(holder, position);
+</span>    }
 
-    <span style="color: #408080; font-style: italic">//...</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>}</code></pre></div>
 
 <p>Notice here that we set the <code>Presenter</code> as a tag on the <code>ViewHolder</code>&rsquo;s itemView. When it&rsquo;s time to bind the ViewHolder, we can grab the <code>Presenter</code> from the tag delegate the presentation logic to it. Here&rsquo;s what the <code>Presenter</code> looks like:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
-    <span style="color: #B00040">void</span> <span style="color: #0000FF">presentListItem</span><span style="color: #666666">(</span>SimpleListItemView view<span style="color: #666666">,</span> <span style="color: #B00040">int</span> position<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        view<span style="color: #666666">.</span><span style="color: #7D9029">setText</span><span style="color: #666666">(</span>String<span style="color: #666666">.</span><span style="color: #7D9029">valueOf</span><span style="color: #666666">(</span>position<span style="color: #666666">));</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">static</span> <span style="color:#fff;font-weight:bold">class</span> Presenter {
+    <span style="color:#fff;font-weight:bold">void</span> presentListItem(SimpleListItemView view, <span style="color:#fff;font-weight:bold">int</span> position) {
+        view.<span style="color:#007f7f">setText</span>(String.<span style="color:#007f7f">valueOf</span>(position));
+    }
+}</code></pre></div>
 
 <p>Because the logic we want to test now lives inside of the <code>Presenter</code>, a simple POJO, unit testing the presentation logic for our <code>RecyclerView</code>s becomes much easier. We simply instantiate a <code>Presenter</code>, call its main presentation method, and verify that it interacts properly with its MVP View.</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">PresenterTest</span> <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//...</span>
-    <span style="color: #AA22FF">@Test</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">presentListItemShouldSetViewTextToPosition</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
-        MainActivity<span style="color: #666666">.</span><span style="color: #7D9029">Presenter</span> presenter <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> MainActivity<span style="color: #666666">.</span><span style="color: #7D9029">Presenter</span><span style="color: #666666">();</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> PresenterTest {
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>    @Test
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> presentListItemShouldSetViewTextToPosition() <span style="color:#fff;font-weight:bold">throws</span> Exception {
+        MainActivity.<span style="color:#007f7f">Presenter</span> presenter = <span style="color:#fff;font-weight:bold">new</span> MainActivity.<span style="color:#007f7f">Presenter</span>();
 
-        presenter<span style="color: #666666">.</span><span style="color: #7D9029">presentListItem</span><span style="color: #666666">(</span>mSimpleListItemView<span style="color: #666666">,</span> <span style="color: #666666">0);</span>
+        presenter.<span style="color:#007f7f">presentListItem</span>(mSimpleListItemView, 0);
 
-        verify<span style="color: #666666">(</span>mSimpleListItemView<span style="color: #666666">).</span><span style="color: #7D9029">setText</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;0&quot;</span><span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+        verify(mSimpleListItemView).<span style="color:#007f7f">setText</span>(<span style="color:#0ff;font-weight:bold">&#34;0&#34;</span>);
+    }
+}</code></pre></div>
 
 <h3 id="a-lighter-way-reusing-a-presenter">A Lighter Way: Reusing a Presenter</h3>
 
@@ -353,94 +343,87 @@
 
 <p>Let&rsquo;s alter our working example a bit to suppose we had such a presenter. Instead of simply displaying the position of a ViewHolder in our <code>RecyclerView</code>, let&rsquo;s display numbers we have to fetch from somewhere else. In this case, we&rsquo;ll probably want a (unit-testable)<code>Presenter</code> that looks like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
-    <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> NumberFetcher mNumberFetcher<span style="color: #666666">;</span>
-    <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> NumberListView mNumberListView<span style="color: #666666">;</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">static</span> <span style="color:#fff;font-weight:bold">class</span> Presenter {
+    <span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">final</span> NumberFetcher mNumberFetcher;
+    <span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">final</span> NumberListView mNumberListView;
 
-    Presenter<span style="color: #666666">(</span>NumberFetcher numberFetcher<span style="color: #666666">,</span> NumberListView numberListView<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        mNumberFetcher <span style="color: #666666">=</span> numberFetcher<span style="color: #666666">;</span>
-        mNumberListView <span style="color: #666666">=</span> numberListView<span style="color: #666666">;</span>
-    <span style="color: #666666">}</span>
+    Presenter(NumberFetcher numberFetcher, NumberListView numberListView) {
+        mNumberFetcher = numberFetcher;
+        mNumberListView = numberListView;
+    }
 
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onViewReady</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-        mNumberFetcher<span style="color: #666666">.</span><span style="color: #7D9029">getNumbers</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Callback<span style="color: #666666">()</span> <span style="color: #666666">{</span>
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onViewReady() {
+        mNumberFetcher.<span style="color:#007f7f">getNumbers</span>(<span style="color:#fff;font-weight:bold">new</span> Callback() {
 
-            <span style="color: #AA22FF">@Override</span>
-            <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onSuccess</span><span style="color: #666666">(</span>List<span style="color: #666666">&lt;</span>Integer<span style="color: #666666">&gt;</span> numbers<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">                mNumberListView<span style="color: #666666">.</span><span style="color: #7D9029">displayNumbers</span><span style="color: #666666">(</span>numbers<span style="color: #666666">);</span>
-</span>            <span style="color: #666666">}</span>
+            @Override
+            <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onSuccess(List&lt;Integer&gt; numbers) {
+<span style="display:block;width:100%;background-color:#191919">                mNumberListView.<span style="color:#007f7f">displayNumbers</span>(numbers);
+</span>            }
 
-            <span style="color: #AA22FF">@Override</span>
-            <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onFailure</span><span style="color: #666666">(</span>Throwable err<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-                mNumberListView<span style="color: #666666">.</span><span style="color: #7D9029">displayErrorMessage</span><span style="color: #666666">();</span>
-            <span style="color: #666666">}</span>
-        <span style="color: #666666">});</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+            @Override
+            <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onFailure(Throwable err) {
+                mNumberListView.<span style="color:#007f7f">displayErrorMessage</span>();
+            }
+        });
+    }
+}</code></pre></div>
 
 <p>Now, if we were simply using MVP for a RecyclerView-related classes, the highlighted <code>displayNumbers</code> method is where we&rsquo;d have to create our <code>Adapter</code> that would creat and use a separate <code>Presenter</code> class that would hold our presentation logic. Since we already have a <code>Presenter</code>, however, we can simply reuse it by passing it to the <code>RecyclerView.Adapter</code> via our MVP View method:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//...</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onViewReady</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-        mNumberFetcher<span style="color: #666666">.</span><span style="color: #7D9029">getNumbers</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Callback<span style="color: #666666">()</span> <span style="color: #666666">{</span>
-            <span style="color: #AA22FF">@Override</span>
-            <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onSuccess</span><span style="color: #666666">(</span>List<span style="color: #666666">&lt;</span>Integer<span style="color: #666666">&gt;</span> numbers<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">                mNumberListView<span style="color: #666666">.</span><span style="color: #7D9029">displayNumbers</span><span style="color: #666666">(</span>numbers<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">);</span>
-</span>            <span style="color: #666666">}</span>
-            <span style="color: #408080; font-style: italic">//...</span>
-        <span style="color: #666666">});</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">static</span> <span style="color:#fff;font-weight:bold">class</span> Presenter {
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onViewReady() {
+        mNumberFetcher.<span style="color:#007f7f">getNumbers</span>(<span style="color:#fff;font-weight:bold">new</span> Callback() {
+            @Override
+            <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onSuccess(List&lt;Integer&gt; numbers) {
+<span style="display:block;width:100%;background-color:#191919">                mNumberListView.<span style="color:#007f7f">displayNumbers</span>(numbers, <span style="color:#fff;font-weight:bold">this</span>);
+</span>            }
+            <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>        });
+    }
+}</code></pre></div>
 
 <p>Here&rsquo;s the implementation of the <code>displayNumbers</code> view:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MainActivity</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #008000; font-weight: bold">implements</span> NumberListView <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//...</span>
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">displayNumbers</span><span style="color: #666666">(</span>List<span style="color: #666666">&lt;</span>Integer<span style="color: #666666">&gt;</span> numbers<span style="color: #666666">,</span> Presenter presenter<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">final</span> RecyclerView recyclerView <span style="color: #666666">=</span> <span style="color: #666666">(</span>RecyclerView<span style="color: #666666">)</span> findViewById<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">id</span><span style="color: #666666">.</span><span style="color: #7D9029">recyclerView</span><span style="color: #666666">);</span>
-        recyclerView<span style="color: #666666">.</span><span style="color: #7D9029">setLayoutManager</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> LinearLayoutManager<span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">));</span>
-        recyclerView<span style="color: #666666">.</span><span style="color: #7D9029">setAdapter</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> MyAdapter<span style="color: #666666">(</span>numbers<span style="color: #666666">,</span> presenter<span style="color: #666666">));</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> MainActivity <span style="color:#fff;font-weight:bold">extends</span> AppCompatActivity <span style="color:#fff;font-weight:bold">implements</span> NumberListView {
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>    @Override
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displayNumbers(List&lt;Integer&gt; numbers, Presenter presenter) {
+        <span style="color:#fff;font-weight:bold">final</span> RecyclerView recyclerView = (RecyclerView) findViewById(R.<span style="color:#007f7f">id</span>.<span style="color:#007f7f">recyclerView</span>);
+        recyclerView.<span style="color:#007f7f">setLayoutManager</span>(<span style="color:#fff;font-weight:bold">new</span> LinearLayoutManager(<span style="color:#fff;font-weight:bold">this</span>));
+        recyclerView.<span style="color:#007f7f">setAdapter</span>(<span style="color:#fff;font-weight:bold">new</span> MyAdapter(numbers, presenter));
+    }
+}</code></pre></div>
 
 <p>And here&rsquo;s the adapter delegating to the same <code>Presenter</code> that&rsquo;s responsible for loading the items in the list:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MyAdapter</span> <span style="color: #008000; font-weight: bold">extends</span> RecyclerView<span style="color: #666666">.</span><span style="color: #7D9029">Adapter</span><span style="color: #666666">&lt;</span>SimpleListItemViewHolder<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">static</span> <span style="color:#fff;font-weight:bold">class</span> MyAdapter <span style="color:#fff;font-weight:bold">extends</span> RecyclerView.<span style="color:#007f7f">Adapter</span>&lt;SimpleListItemViewHolder&gt; {
 
-        <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> List<span style="color: #666666">&lt;</span>Integer<span style="color: #666666">&gt;</span> mNumbers<span style="color: #666666">;</span>
-        <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> Presenter mPresenter<span style="color: #666666">;</span>
+        <span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">final</span> List&lt;Integer&gt; mNumbers;
+        <span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">final</span> Presenter mPresenter;
 
-        MyAdapter<span style="color: #666666">(</span>List<span style="color: #666666">&lt;</span>Integer<span style="color: #666666">&gt;</span> numbers<span style="color: #666666">,</span> Presenter presenter<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-            mNumbers <span style="color: #666666">=</span> numbers<span style="color: #666666">;</span>
-            mPresenter <span style="color: #666666">=</span> presenter<span style="color: #666666">;</span>
-        <span style="color: #666666">}</span>
+        MyAdapter(List&lt;Integer&gt; numbers, Presenter presenter) {
+            mNumbers = numbers;
+            mPresenter = presenter;
+        }
 
-        <span style="color: #AA22FF">@Override</span>
-        <span style="color: #008000; font-weight: bold">public</span> SimpleListItemViewHolder <span style="color: #0000FF">onCreateViewHolder</span><span style="color: #666666">(</span>ViewGroup parent<span style="color: #666666">,</span>
-                                                           <span style="color: #B00040">int</span> viewType<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-            <span style="color: #008000; font-weight: bold">final</span> TextView itemView <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> TextView<span style="color: #666666">(</span>parent<span style="color: #666666">.</span><span style="color: #7D9029">getContext</span><span style="color: #666666">());</span>
-            <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000; font-weight: bold">new</span> SimpleListItemViewHolder<span style="color: #666666">(</span>itemView<span style="color: #666666">);</span>
-        <span style="color: #666666">}</span>
+        @Override
+        <span style="color:#fff;font-weight:bold">public</span> SimpleListItemViewHolder onCreateViewHolder(ViewGroup parent,
+                                                           <span style="color:#fff;font-weight:bold">int</span> viewType) {
+            <span style="color:#fff;font-weight:bold">final</span> TextView itemView = <span style="color:#fff;font-weight:bold">new</span> TextView(parent.<span style="color:#007f7f">getContext</span>());
+            <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">new</span> SimpleListItemViewHolder(itemView);
+        }
 
-        <span style="color: #AA22FF">@Override</span>
-        <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onBindViewHolder</span><span style="color: #666666">(</span>SimpleListItemViewHolder holder<span style="color: #666666">,</span> <span style="color: #B00040">int</span> position<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-            mPresenter<span style="color: #666666">.</span><span style="color: #7D9029">presentListItem</span><span style="color: #666666">(</span>holder<span style="color: #666666">,</span> position<span style="color: #666666">);</span>
-        <span style="color: #666666">}</span>
+        @Override
+        <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onBindViewHolder(SimpleListItemViewHolder holder, <span style="color:#fff;font-weight:bold">int</span> position) {
+            mPresenter.<span style="color:#007f7f">presentListItem</span>(holder, position);
+        }
 
-        <span style="color: #AA22FF">@Override</span>
-        <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">int</span> <span style="color: #0000FF">getItemCount</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-            <span style="color: #008000; font-weight: bold">return</span> mNumbers<span style="color: #666666">.</span><span style="color: #7D9029">size</span><span style="color: #666666">();</span>
-        <span style="color: #666666">}</span>
-    <span style="color: #666666">}</span>
-</pre></div>
+        @Override
+        <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">int</span> getItemCount() {
+            <span style="color:#fff;font-weight:bold">return</span> mNumbers.<span style="color:#007f7f">size</span>();
+        }
+    }</code></pre></div>
                     </section>
 
 

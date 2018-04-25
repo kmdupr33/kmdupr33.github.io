@@ -79,7 +79,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/vice-a-regression-test-generation-library/" />
     
@@ -253,63 +253,53 @@
 
 <p>Suppose we have a simple class that reverses a string:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Reverser</span> <span style="color: #666666">{</span>
-    <span style="color: #008000; font-weight: bold">public</span> String <span style="color: #0000FF">reverse</span><span style="color: #666666">(</span>String string<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000; font-weight: bold">new</span> StringBuilder<span style="color: #666666">(</span>string<span style="color: #666666">).</span><span style="color: #7D9029">reverse</span><span style="color: #666666">().</span><span style="color: #7D9029">toString</span><span style="color: #666666">();</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> Reverser {
+    <span style="color:#fff;font-weight:bold">public</span> String reverse(String string) {
+        <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">new</span> StringBuilder(string).<span style="color:#007f7f">reverse</span>().<span style="color:#007f7f">toString</span>();
+    }
+}</code></pre></div>
 
 <p>Suppose further that we don&rsquo;t like the way <code>Reverser.reverse</code> is implemented. If we want to be sure that our modifications don&rsquo;t break anything, we would normally write a unit test for this method that looks like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">ReverserCharacterization</span> <span style="color: #666666">{</span>
-  <span style="color: #AA22FF">@Test</span>
-  <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeReverse</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-    Reverser reverser <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Reverser<span style="color: #666666">();</span>
-    <span style="color: #008000; font-weight: bold">final</span> String result <span style="color: #666666">=</span> reverser<span style="color: #666666">.</span><span style="color: #7D9029">reverse</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;hello&quot;</span><span style="color: #666666">);</span>
-    assertEquals<span style="color: #666666">(</span><span style="color: #BA2121">&quot;olleh&quot;</span><span style="color: #666666">,</span> result<span style="color: #666666">);</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> ReverserCharacterization {
+  @Test
+  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> characterizeReverse() {
+    Reverser reverser = <span style="color:#fff;font-weight:bold">new</span> Reverser();
+    <span style="color:#fff;font-weight:bold">final</span> String result = reverser.<span style="color:#007f7f">reverse</span>(<span style="color:#0ff;font-weight:bold">&#34;hello&#34;</span>);
+    assertEquals(<span style="color:#0ff;font-weight:bold">&#34;olleh&#34;</span>, result);
+  }
+}</code></pre></div>
 
 <p>Vice allows us to generate tests by simply writing code that exercises the classes for which we want tests. Let&rsquo;s look at the Vice code that generates the above test.</p>
 
 <p>First, we create a <code>ViceMaker</code> object:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@ViceFor</span><span style="color: #666666">(</span>Reverser<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">)</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">ViceMaker</span> <span style="color: #666666">{</span>
-    <span style="color: #AA22FF">@Clamp</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">clampReverse</span><span style="color: #666666">(</span>Reverser reverser<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        reverser<span style="color: #666666">.</span><span style="color: #7D9029">reverse</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;hello&quot;</span><span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@ViceFor(Reverser.<span style="color:#007f7f">class</span>)
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> ViceMaker {
+    @Clamp
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> clampReverse(Reverser reverser) {
+        reverser.<span style="color:#007f7f">reverse</span>(<span style="color:#0ff;font-weight:bold">&#34;hello&#34;</span>);
+    }
+}</code></pre></div>
 
 <p>Next, we run <code>Vice.make</code>, passing in the class of our <code>ViceMaker</code> and the path where we want our generated tests to live:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">final</span> Vice vice <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Vice<span style="color: #666666">();</span>
-<span style="color: #008000; font-weight: bold">final</span> String pathToGeneratedCharacterizationTest
-        <span style="color: #666666">=</span> <span style="color: #BA2121">&quot;/Users/mattdupree/Developer/Vice/src/test/java/&quot;</span><span style="color: #666666">;</span>
-<span style="color: #008000; font-weight: bold">final</span> Path testFilesPath <span style="color: #666666">=</span> Paths<span style="color: #666666">.</span><span style="color: #7D9029">get</span><span style="color: #666666">(</span>pathToGeneratedCharacterizationTest<span style="color: #666666">);</span>
-vice<span style="color: #666666">.</span><span style="color: #7D9029">make</span><span style="color: #666666">(</span>testFilesPath<span style="color: #666666">,</span> ViceMaker<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">);</span>  
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">final</span> Vice vice = <span style="color:#fff;font-weight:bold">new</span> Vice();
+<span style="color:#fff;font-weight:bold">final</span> String pathToGeneratedCharacterizationTest
+        = <span style="color:#0ff;font-weight:bold">&#34;/Users/mattdupree/Developer/Vice/src/test/java/&#34;</span>;
+<span style="color:#fff;font-weight:bold">final</span> Path testFilesPath = Paths.<span style="color:#007f7f">get</span>(pathToGeneratedCharacterizationTest);
+vice.<span style="color:#007f7f">make</span>(testFilesPath, ViceMaker.<span style="color:#007f7f">class</span>);  </code></pre></div>
 
 <p>Once the above code is run, you&rsquo;ll have regression test generated with code that is identical the code we would have written:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">ReverserCharacterization</span> <span style="color: #666666">{</span>
-  <span style="color: #AA22FF">@Test</span>
-  <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">characterizeReverse</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-    Reverser reverser <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Reverser<span style="color: #666666">();</span>
-    <span style="color: #008000; font-weight: bold">final</span> String result <span style="color: #666666">=</span> reverser<span style="color: #666666">.</span><span style="color: #7D9029">reverse</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;hello&quot;</span><span style="color: #666666">);</span>
-    assertEquals<span style="color: #666666">(</span><span style="color: #BA2121">&quot;olleh&quot;</span><span style="color: #666666">,</span> result<span style="color: #666666">);</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> ReverserCharacterization {
+  @Test
+  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> characterizeReverse() {
+    Reverser reverser = <span style="color:#fff;font-weight:bold">new</span> Reverser();
+    <span style="color:#fff;font-weight:bold">final</span> String result = reverser.<span style="color:#007f7f">reverse</span>(<span style="color:#0ff;font-weight:bold">&#34;hello&#34;</span>);
+    assertEquals(<span style="color:#0ff;font-weight:bold">&#34;olleh&#34;</span>, result);
+  }
+}</code></pre></div>
 
 <p>Once this code is generated, you can ensure that your refactoring doesn&rsquo;t break <code>Reverser</code> simply by running your tests.</p>
 

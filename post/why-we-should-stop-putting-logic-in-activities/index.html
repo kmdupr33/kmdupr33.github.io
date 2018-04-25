@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/" />
     
@@ -264,133 +264,125 @@
 
 <p>Let&rsquo;s look at an (abbreviated) snippet of code from the Google IO app:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">PresenterFragmentImpl</span> <span style="color: #008000; font-weight: bold">extends</span> Fragment
-        <span style="color: #008000; font-weight: bold">implements</span> Presenter<span style="color: #666666">,</span> UpdatableView<span style="color: #666666">.</span><span style="color: #7D9029">UserActionListener</span><span style="color: #666666">,</span>
-        LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
-  <span style="color: #408080; font-style: italic">/**</span>
-<span style="color: #408080; font-style: italic">   * The Idling Resources that manages the busy/idle state of the cursor loaders.</span>
-<span style="color: #408080; font-style: italic">   */</span>
-  <span style="color: #008000; font-weight: bold">private</span> LoaderIdlingResource mLoaderIdlingResource<span style="color: #666666">;</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> PresenterFragmentImpl <span style="color:#fff;font-weight:bold">extends</span> Fragment
+        <span style="color:#fff;font-weight:bold">implements</span> Presenter, UpdatableView.<span style="color:#007f7f">UserActionListener</span>,
+        LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; {
+  <span style="color:#007f7f">/**
+</span><span style="color:#007f7f">   * The Idling Resources that manages the busy/idle state of the cursor loaders.
+</span><span style="color:#007f7f">   */</span>
+  <span style="color:#fff;font-weight:bold">private</span> LoaderIdlingResource mLoaderIdlingResource;
 
-  <span style="color: #408080; font-style: italic">/**</span>
-<span style="color: #408080; font-style: italic">   * Returns the {@link LoaderIdlingResource} that allows the Espresso UI test framework to track</span>
-<span style="color: #408080; font-style: italic">   * the idle/busy state of the cursor loaders used in the {@link Model}.</span>
-<span style="color: #408080; font-style: italic">   */</span>
-  <span style="color: #008000; font-weight: bold">public</span> LoaderIdlingResource <span style="color: #0000FF">getLoaderIdlingResource</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-      <span style="color: #008000; font-weight: bold">return</span> mLoaderIdlingResource<span style="color: #666666">;</span>
-  <span style="color: #666666">}</span>  
+  <span style="color:#007f7f">/**
+</span><span style="color:#007f7f">   * Returns the {@link LoaderIdlingResource} that allows the Espresso UI test framework to track
+</span><span style="color:#007f7f">   * the idle/busy state of the cursor loaders used in the {@link Model}.
+</span><span style="color:#007f7f">   */</span>
+  <span style="color:#fff;font-weight:bold">public</span> LoaderIdlingResource getLoaderIdlingResource() {
+      <span style="color:#fff;font-weight:bold">return</span> mLoaderIdlingResource;
+  }  
 
-  <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onActivityCreated</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onActivityCreated</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
+  @Override
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onActivityCreated(Bundle savedInstanceState) {
+        <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onActivityCreated</span>(savedInstanceState);
 
-        mLoaderIdlingResource <span style="color: #666666">=</span>
-                <span style="color: #008000; font-weight: bold">new</span> LoaderIdlingResource<span style="color: #666666">(</span>getClass<span style="color: #666666">().</span><span style="color: #7D9029">getName</span><span style="color: #666666">()</span> <span style="color: #666666">+</span> <span style="color: #BA2121">&quot;/&quot;</span> <span style="color: #666666">+</span> getId<span style="color: #666666">(),</span> getLoaderManager<span style="color: #666666">());</span>
+        mLoaderIdlingResource =
+                <span style="color:#fff;font-weight:bold">new</span> LoaderIdlingResource(getClass().<span style="color:#007f7f">getName</span>() + <span style="color:#0ff;font-weight:bold">&#34;/&#34;</span> + getId(), getLoaderManager());
 
-        <span style="color: #408080; font-style: italic">// Load data queries if any.</span>
-        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>mInitialQueriesToLoad <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">null</span> <span style="color: #666666">&amp;&amp;</span> mInitialQueriesToLoad<span style="color: #666666">.</span><span style="color: #7D9029">length</span> <span style="color: #666666">&gt;</span> <span style="color: #666666">0)</span> <span style="color: #666666">{</span>
-            LoaderManager manager <span style="color: #666666">=</span> getLoaderManager<span style="color: #666666">();</span>
-            <span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span><span style="color: #B00040">int</span> i <span style="color: #666666">=</span> <span style="color: #666666">0;</span> i <span style="color: #666666">&lt;</span> mInitialQueriesToLoad<span style="color: #666666">.</span><span style="color: #7D9029">length</span><span style="color: #666666">;</span> i<span style="color: #666666">++)</span> <span style="color: #666666">{</span>
-                manager<span style="color: #666666">.</span><span style="color: #7D9029">initLoader</span><span style="color: #666666">(</span>mInitialQueriesToLoad<span style="color: #666666">[</span>i<span style="color: #666666">].</span><span style="color: #7D9029">getId</span><span style="color: #666666">(),</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">);</span>
-            <span style="color: #666666">}</span>
-        <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
-            <span style="color: #408080; font-style: italic">//...</span>
-        <span style="color: #666666">}</span>
-    <span style="color: #666666">}</span>  
+        <span style="color:#007f7f">// Load data queries if any.
+</span><span style="color:#007f7f"></span>        <span style="color:#fff;font-weight:bold">if</span> (mInitialQueriesToLoad != <span style="color:#fff;font-weight:bold">null</span> &amp;&amp; mInitialQueriesToLoad.<span style="color:#007f7f">length</span> &gt; 0) {
+            LoaderManager manager = getLoaderManager();
+            <span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">int</span> i = 0; i &lt; mInitialQueriesToLoad.<span style="color:#007f7f">length</span>; i++) {
+                manager.<span style="color:#007f7f">initLoader</span>(mInitialQueriesToLoad[i].<span style="color:#007f7f">getId</span>(), <span style="color:#fff;font-weight:bold">null</span>, <span style="color:#fff;font-weight:bold">this</span>);
+            }
+        } <span style="color:#fff;font-weight:bold">else</span> {
+            <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>        }
+    }  
 
-  <span style="color: #AA22FF">@Override</span>
-  <span style="color: #008000; font-weight: bold">public</span> Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #0000FF">onCreateLoader</span><span style="color: #666666">(</span><span style="color: #B00040">int</span> id<span style="color: #666666">,</span> Bundle args<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-      Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> cursorLoader <span style="color: #666666">=</span> createLoader<span style="color: #666666">(</span>id<span style="color: #666666">,</span> args<span style="color: #666666">);</span>
-      mLoaderIdlingResource<span style="color: #666666">.</span><span style="color: #7D9029">onLoaderStarted</span><span style="color: #666666">(</span>cursorLoader<span style="color: #666666">);</span>
-      <span style="color: #008000; font-weight: bold">return</span> cursorLoader<span style="color: #666666">;</span>
-  <span style="color: #666666">}</span>
+  @Override
+  <span style="color:#fff;font-weight:bold">public</span> Loader&lt;Cursor&gt; onCreateLoader(<span style="color:#fff;font-weight:bold">int</span> id, Bundle args) {
+      Loader&lt;Cursor&gt; cursorLoader = createLoader(id, args);
+      mLoaderIdlingResource.<span style="color:#007f7f">onLoaderStarted</span>(cursorLoader);
+      <span style="color:#fff;font-weight:bold">return</span> cursorLoader;
+  }
 
-  <span style="color: #AA22FF">@Override</span>
-  <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onLoadFinished</span><span style="color: #666666">(</span>Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> loader<span style="color: #666666">,</span> Cursor data<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-      processData<span style="color: #666666">(</span>loader<span style="color: #666666">,</span> data<span style="color: #666666">);</span>
-      mLoaderIdlingResource<span style="color: #666666">.</span><span style="color: #7D9029">onLoaderFinished</span><span style="color: #666666">(</span>loader<span style="color: #666666">);</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+  @Override
+  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoadFinished(Loader&lt;Cursor&gt; loader, Cursor data) {
+      processData(loader, data);
+      mLoaderIdlingResource.<span style="color:#007f7f">onLoaderFinished</span>(loader);
+  }
+}</code></pre></div>
 
 <p>So, here we&rsquo;re mixing espresso test code with application code. The reason the test code is mixed with application code is so that the espresso tests will &ldquo;pause&rdquo; while the data is being loaded during the functional UI tests. We can see that the <code>LoaderIdlingResource</code> gets registered with the espresso tests here:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@RunWith</span><span style="color: #666666">(</span>AndroidJUnit4<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">)</span>
-<span style="color: #AA22FF">@LargeTest</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">VideoLibraryActivityTest</span> <span style="color: #666666">{</span>
-  <span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #AA22FF">@Before</span>
-  <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">setupMembersAndIdlingResource</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-      mPresenter <span style="color: #666666">=</span> <span style="color: #666666">(</span>PresenterFragmentImpl<span style="color: #666666">)</span> mActivityRule<span style="color: #666666">.</span><span style="color: #7D9029">getActivity</span><span style="color: #666666">()</span>
-              <span style="color: #666666">.</span><span style="color: #7D9029">getFragmentManager</span><span style="color: #666666">().</span><span style="color: #7D9029">findFragmentByTag</span><span style="color: #666666">(</span>BaseActivity<span style="color: #666666">.</span><span style="color: #7D9029">PRESENTER_TAG</span><span style="color: #666666">);</span>
-      Espresso<span style="color: #666666">.</span><span style="color: #7D9029">registerIdlingResources</span><span style="color: #666666">(</span>mPresenter<span style="color: #666666">.</span><span style="color: #7D9029">getLoaderIdlingResource</span><span style="color: #666666">());</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@RunWith(AndroidJUnit4.<span style="color:#007f7f">class</span>)
+@LargeTest
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> VideoLibraryActivityTest {
+  <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  @Before
+  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> setupMembersAndIdlingResource() {
+      mPresenter = (PresenterFragmentImpl) mActivityRule.<span style="color:#007f7f">getActivity</span>()
+              .<span style="color:#007f7f">getFragmentManager</span>().<span style="color:#007f7f">findFragmentByTag</span>(BaseActivity.<span style="color:#007f7f">PRESENTER_TAG</span>);
+      Espresso.<span style="color:#007f7f">registerIdlingResources</span>(mPresenter.<span style="color:#007f7f">getLoaderIdlingResource</span>());
+  }
+}</code></pre></div>
 
 <p>As I said in <a href="www.philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/">my PSA</a>, mixing testing code with app code is gross. Unfortunately, separating the testing and application concerns in this case is not as simple as it was last time. In fact, I can understand why the engineers at Google decided to mix application code with test code in this case: it&rsquo;s because separating the Espresso code from the application code is a lot of work!</p>
 
 <p>Here&rsquo;s the gist of how we can start to salvage the situation. We need what <a href="https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052">Michael Feathers</a> calls a &ldquo;seam,&rdquo; a way to change the behavior of our <code>PresenterFragmentImpl</code> without having to edit the source of the <code>PresenterFragmentImpl</code> itself. When the <code>PresenterFragmentImpl</code> is run inside a test, we want the <code>PresenterFragmentImpl</code> to notify an espresso test when it&rsquo;s done loading it&rsquo;s data. Otherwise, we want the <code>PresenterFragmentImpl</code> to load data normally. To get this seam, we extract the Loader callback code into its own class and use an instance of this class as the <code>LoaderCallbacks</code> argument to the call to <code>initLoader</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #ffffcc"><span style="color: #008000; font-weight: bold">private</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> mLoaderCallbacks<span style="color: #666666">;</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="display:block;width:100%;background-color:#191919"><span style="color:#fff;font-weight:bold">private</span> LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; mLoaderCallbacks;
 </span>
-<span style="color: #AA22FF">@Override</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onActivityCreated</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-    <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onActivityCreated</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
-    <span style="color: #408080; font-style: italic">// Load data queries if any.</span>
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>mInitialQueriesToLoad <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">null</span> <span style="color: #666666">&amp;&amp;</span> mInitialQueriesToLoad<span style="color: #666666">.</span><span style="color: #7D9029">length</span> <span style="color: #666666">&gt;</span> <span style="color: #666666">0)</span> <span style="color: #666666">{</span>
-        LoaderManager manager <span style="color: #666666">=</span> getLoaderManager<span style="color: #666666">();</span>
-        <span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span><span style="color: #B00040">int</span> i <span style="color: #666666">=</span> <span style="color: #666666">0;</span> i <span style="color: #666666">&lt;</span> mInitialQueriesToLoad<span style="color: #666666">.</span><span style="color: #7D9029">length</span><span style="color: #666666">;</span> i<span style="color: #666666">++)</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">            manager<span style="color: #666666">.</span><span style="color: #7D9029">initLoader</span><span style="color: #666666">(</span>mInitialQueriesToLoad<span style="color: #666666">[</span>i<span style="color: #666666">].</span><span style="color: #7D9029">getId</span><span style="color: #666666">(),</span>
-</span><span style="background-color: #ffffcc">              <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">,</span> mLoaderCallbacks<span style="color: #666666">);</span>
-</span>        <span style="color: #666666">}</span>
-    <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
-        <span style="color: #408080; font-style: italic">// No data query to load, update the view.</span>
-        mUpdatableView<span style="color: #666666">.</span><span style="color: #7D9029">displayData</span><span style="color: #666666">(</span>mModel<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
+@Override
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onActivityCreated(Bundle savedInstanceState) {
+    <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onActivityCreated</span>(savedInstanceState);
+    <span style="color:#007f7f">// Load data queries if any.
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">if</span> (mInitialQueriesToLoad != <span style="color:#fff;font-weight:bold">null</span> &amp;&amp; mInitialQueriesToLoad.<span style="color:#007f7f">length</span> &gt; 0) {
+        LoaderManager manager = getLoaderManager();
+        <span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">int</span> i = 0; i &lt; mInitialQueriesToLoad.<span style="color:#007f7f">length</span>; i++) {
+<span style="display:block;width:100%;background-color:#191919">            manager.<span style="color:#007f7f">initLoader</span>(mInitialQueriesToLoad[i].<span style="color:#007f7f">getId</span>(),
+</span><span style="display:block;width:100%;background-color:#191919">              <span style="color:#fff;font-weight:bold">null</span>, mLoaderCallbacks);
+</span>        }
+    } <span style="color:#fff;font-weight:bold">else</span> {
+        <span style="color:#007f7f">// No data query to load, update the view.
+</span><span style="color:#007f7f"></span>        mUpdatableView.<span style="color:#007f7f">displayData</span>(mModel, <span style="color:#fff;font-weight:bold">null</span>);
+    }
+}
 
-<span style="background-color: #ffffcc"><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">CursorLoaderCallbacks</span>
-</span><span style="background-color: #ffffcc">    <span style="color: #008000; font-weight: bold">implements</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
-</span><span style="background-color: #ffffcc">  <span style="color: #408080; font-style: italic">// We&#39;ve just moved the callback code that was in the Fragment into this class.</span>
-</span><span style="background-color: #ffffcc"><span style="color: #666666">}</span>
-</span></pre></div>
-
+<span style="display:block;width:100%;background-color:#191919"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">static</span> <span style="color:#fff;font-weight:bold">class</span> CursorLoaderCallbacks
+</span><span style="display:block;width:100%;background-color:#191919">    <span style="color:#fff;font-weight:bold">implements</span> LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; {
+</span><span style="display:block;width:100%;background-color:#191919">  <span style="color:#007f7f">// We&#39;ve just moved the callback code that was in the Fragment into this class.
+</span></span><span style="display:block;width:100%;background-color:#191919"><span style="color:#007f7f"></span>}</span></code></pre></div>
 
 <p>Next, we provide an alternative implementation of <code>LoaderManager.LoaderCallbacks</code> that we&rsquo;ll use for our espresso tests. This implementation uses the decorator pattern, just like last time:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">EspressoNotifyingLoaderCallbacks</span> <span style="color: #008000; font-weight: bold">implements</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">static</span> <span style="color:#fff;font-weight:bold">class</span> EspressoNotifyingLoaderCallbacks <span style="color:#fff;font-weight:bold">implements</span> LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; {
 
-    <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> LoaderIdlingResource mLoaderIdlingResource<span style="color: #666666">;</span>
-    <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> loaderCallbacks<span style="color: #666666">;</span>
+    <span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">final</span> LoaderIdlingResource mLoaderIdlingResource;
+    <span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">final</span> LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; loaderCallbacks;
 
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #0000FF">EspressoNotifyingLoaderCallbacks</span><span style="color: #666666">(</span>LoaderIdlingResource mLoaderIdlingResource<span style="color: #666666">,</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> loaderCallbacks<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">        <span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">.</span><span style="color: #7D9029">mLoaderIdlingResource</span> <span style="color: #666666">=</span> mLoaderIdlingResource<span style="color: #666666">;</span>
-</span>        <span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">.</span><span style="color: #7D9029">loaderCallbacks</span> <span style="color: #666666">=</span> loaderCallbacks<span style="color: #666666">;</span>
-    <span style="color: #666666">}</span>
+    <span style="color:#fff;font-weight:bold">public</span> EspressoNotifyingLoaderCallbacks(LoaderIdlingResource mLoaderIdlingResource, LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; loaderCallbacks) {
+<span style="display:block;width:100%;background-color:#191919">        <span style="color:#fff;font-weight:bold">this</span>.<span style="color:#007f7f">mLoaderIdlingResource</span> = mLoaderIdlingResource;
+</span>        <span style="color:#fff;font-weight:bold">this</span>.<span style="color:#007f7f">loaderCallbacks</span> = loaderCallbacks;
+    }
 
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #0000FF">onCreateLoader</span><span style="color: #666666">(</span><span style="color: #B00040">int</span> id<span style="color: #666666">,</span> Bundle args<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">final</span> Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> cursorLoader <span style="color: #666666">=</span> loaderCallbacks<span style="color: #666666">.</span><span style="color: #7D9029">onCreateLoader</span><span style="color: #666666">(</span>id<span style="color: #666666">,</span> args<span style="color: #666666">);</span>
-<span style="background-color: #ffffcc">        mLoaderIdlingResource<span style="color: #666666">.</span><span style="color: #7D9029">onLoaderStarted</span><span style="color: #666666">(</span>cursorLoader<span style="color: #666666">);</span>
-</span>        <span style="color: #008000; font-weight: bold">return</span> cursorLoader<span style="color: #666666">;</span>
-    <span style="color: #666666">}</span>
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> Loader&lt;Cursor&gt; onCreateLoader(<span style="color:#fff;font-weight:bold">int</span> id, Bundle args) {
+        <span style="color:#fff;font-weight:bold">final</span> Loader&lt;Cursor&gt; cursorLoader = loaderCallbacks.<span style="color:#007f7f">onCreateLoader</span>(id, args);
+<span style="display:block;width:100%;background-color:#191919">        mLoaderIdlingResource.<span style="color:#007f7f">onLoaderStarted</span>(cursorLoader);
+</span>        <span style="color:#fff;font-weight:bold">return</span> cursorLoader;
+    }
 
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onLoadFinished</span><span style="color: #666666">(</span>Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> loader<span style="color: #666666">,</span> Cursor data<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        loaderCallbacks<span style="color: #666666">.</span><span style="color: #7D9029">onLoadFinished</span><span style="color: #666666">(</span>loader<span style="color: #666666">,</span> data<span style="color: #666666">);</span>
-<span style="background-color: #ffffcc">        mLoaderIdlingResource<span style="color: #666666">.</span><span style="color: #7D9029">onLoaderFinished</span><span style="color: #666666">(</span>loader<span style="color: #666666">);</span>
-</span>    <span style="color: #666666">}</span>
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoadFinished(Loader&lt;Cursor&gt; loader, Cursor data) {
+        loaderCallbacks.<span style="color:#007f7f">onLoadFinished</span>(loader, data);
+<span style="display:block;width:100%;background-color:#191919">        mLoaderIdlingResource.<span style="color:#007f7f">onLoaderFinished</span>(loader);
+</span>    }
 
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onLoaderReset</span><span style="color: #666666">(</span>Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> loader<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">        mLoaderIdlingResource<span style="color: #666666">.</span><span style="color: #7D9029">onLoaderFinished</span><span style="color: #666666">(</span>loader<span style="color: #666666">);</span>
-</span>    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoaderReset(Loader&lt;Cursor&gt; loader) {
+<span style="display:block;width:100%;background-color:#191919">        mLoaderIdlingResource.<span style="color:#007f7f">onLoaderFinished</span>(loader);
+</span>    }
+}</code></pre></div>
 
 <p>Now, here&rsquo;s where things get tricky. We need to figure out a way to inject the right implementation of <code>LoaderCallbacks</code> into our <code>PresenterFragmentImpl</code>. When we&rsquo;re testing, we want an instance of <code>EspressoNotifyingLoaderCallbacks</code>. When we running a normal application, we want a <code>CursorLoaderCallbacks</code>.</p>
 

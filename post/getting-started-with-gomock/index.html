@@ -79,7 +79,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/getting-started-with-gomock/" />
     
@@ -126,8 +126,8 @@
     },
     "headline": Getting started with Gomock,
     "name": Getting started with Gomock,
-    "wordCount": 886,
-    "timeRequired": "PT5M",
+    "wordCount": 0,
+    "timeRequired": "PT0M",
     "inLanguage": {
       "@type": "Language",
       "alternateName": en
@@ -232,7 +232,7 @@
             Jan 20, 2016
           </time>  
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/go/">#go</a></span> 
-                            <strong>&middot; 5 minute read</strong>
+                            <strong>&middot; 0 minute read</strong>
                         </section>
                     </header>
 
@@ -247,27 +247,25 @@
 
 <p>Suppose you&rsquo;re writing a simple server that allows users to lookup go programmers (gophers) by name. The handler function for that server might look something like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> FindHandler(gf GopherFinder) http.HandlerFunc {
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> FindHandler(gf GopherFinder) http.HandlerFunc {
 
-	<span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000; font-weight: bold">func</span>(w http.ResponseWriter, r <span style="color: #666666">*</span>http.Request) {
+	<span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">func</span>(w http.ResponseWriter, r *http.Request) {
 
-		gopher, err <span style="color: #666666">:=</span> gf.Find(r.URL.Path[<span style="color: #666666">1</span>:])
-		<span style="color: #008000; font-weight: bold">if</span> err <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">nil</span> {
-			w.WriteHeader(<span style="color: #666666">500</span>)
-			<span style="color: #008000; font-weight: bold">return</span>
+		gopher, err := gf.Find(r.URL.Path[<span style="color:#ff0;font-weight:bold">1</span>:])
+		<span style="color:#fff;font-weight:bold">if</span> err != <span style="color:#fff;font-weight:bold">nil</span> {
+			w.WriteHeader(<span style="color:#ff0;font-weight:bold">500</span>)
+			<span style="color:#fff;font-weight:bold">return</span>
 		}
 
-		gopherBytes, err <span style="color: #666666">:=</span> json.Marshal(gopher)
-		<span style="color: #008000; font-weight: bold">if</span> err <span style="color: #666666">!=</span> <span style="color: #008000; font-weight: bold">nil</span> {
-			w.WriteHeader(<span style="color: #666666">500</span>)
-			<span style="color: #008000; font-weight: bold">return</span>
+		gopherBytes, err := json.Marshal(gopher)
+		<span style="color:#fff;font-weight:bold">if</span> err != <span style="color:#fff;font-weight:bold">nil</span> {
+			w.WriteHeader(<span style="color:#ff0;font-weight:bold">500</span>)
+			<span style="color:#fff;font-weight:bold">return</span>
 		}
 
 		w.Write(gopherBytes)
 	}
-}
-</pre></div>
-
+}</code></pre></div>
 
 <p>Now, say we want to write a unit test that ensures that this function works properly. The first thing that this function should do is pull the gopher&rsquo;s name data off of the <code>Request</code> struct and pass that name into the <code>Find()</code> method of the <code>GopherFinder</code>. With Gomock, we can create a mock <code>GopherFinder</code> that will fail the test if it does not receive a call to <code>Find()</code> with the appropriate arguments.</p>
 
@@ -284,34 +282,32 @@ GopherFinder
 
 <p>Now that we&rsquo;ve generated the code to support our mock <code>GopherFinder</code>, we can create a mock for a test of the <code>FindHandler</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">package</span> philhackerblogcode_test
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">package</span> philhackerblogcode_test
 
-<span style="color: #008000; font-weight: bold">import</span> (
-	<span style="color: #408080; font-style: italic">//...</span>
+<span style="color:#fff;font-weight:bold">import</span> (
+	<span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>
+	. <span style="color:#0ff;font-weight:bold">&#34;github.com/kmdupr33/philhackerblogcode&#34;</span>
 
-	. <span style="color: #BA2121">&quot;github.com/kmdupr33/philhackerblogcode&quot;</span>
-
-	<span style="color: #408080; font-style: italic">//...</span>
-	<span style="color: #BA2121">&quot;github.com/kmdupr33/philhackerblogcode/mock_philhackerblogcode&quot;</span>
+	<span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>	<span style="color:#0ff;font-weight:bold">&#34;github.com/kmdupr33/philhackerblogcode/mock_philhackerblogcode&#34;</span>
 )
 
-<span style="color: #008000; font-weight: bold">func</span> TestHandler(t <span style="color: #666666">*</span>testing.T) {
+<span style="color:#fff;font-weight:bold">func</span> TestHandler(t *testing.T) {
 
-	mockCtrl <span style="color: #666666">:=</span> gomock.NewController(t)
-	<span style="color: #008000; font-weight: bold">defer</span> mockCtrl.Finish()
-	mgf <span style="color: #666666">:=</span> mock_philhackerblogcode.NewMockGopherFinder(mockCtrl)
-<span style="background-color: #ffffcc">	mgf.EXPECT().Find(<span style="color: #BA2121">&quot;andrewgerrand&quot;</span>)
+	mockCtrl := gomock.NewController(t)
+	<span style="color:#fff;font-weight:bold">defer</span> mockCtrl.Finish()
+	mgf := mock_philhackerblogcode.NewMockGopherFinder(mockCtrl)
+<span style="display:block;width:100%;background-color:#191919">	mgf.EXPECT().Find(<span style="color:#0ff;font-weight:bold">&#34;andrewgerrand&#34;</span>)
 </span>
-	h <span style="color: #666666">:=</span> FindHandler(mgf)
+	h := FindHandler(mgf)
 
-	wr <span style="color: #666666">:=</span> httptest.NewRecorder()
-	url, _ <span style="color: #666666">:=</span> url.Parse(<span style="color: #BA2121">&quot;http://gopherfinder.com/andrewgerrand&quot;</span>)
-	r <span style="color: #666666">:=</span> <span style="color: #666666">&amp;</span>http.Request{URL: url}
+	wr := httptest.NewRecorder()
+	url, _ := url.Parse(<span style="color:#0ff;font-weight:bold">&#34;http://gopherfinder.com/andrewgerrand&#34;</span>)
+	r := &amp;http.Request{URL: url}
 
 	h(wr, r)
-}
-</pre></div>
-
+}</code></pre></div>
 
 <p>The highlighted line above is the call where you actually specify which methods the mock <code>GopherFinder</code> is expecting to receive during the test. Here we tell the mock that we&rsquo;re expecting a call to the <code>Find()</code> method with an argument of &ldquo;andrewgerrand.&rdquo;</p>
 
@@ -329,27 +325,25 @@ GopherFinder
 
 <p>Fortunately, Gomock also allows us to do exactly this. It allows the mocks it generates to behave like stubs.<sup>2</sup> You can specify the return value that should be returned by using the <code>Return()</code> method on the result of calling <code>EXPECT()</code> and the method you are expecting:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">func</span> TestHandler(t <span style="color: #666666">*</span>testing.T) {
-	<span style="color: #408080; font-style: italic">//...</span>
-	mgf <span style="color: #666666">:=</span> mock_philhackerblogcode.NewMockGopherFinder(mockCtrl)
-<span style="background-color: #ffffcc">	mgf.EXPECT().
-</span><span style="background-color: #ffffcc">		Find(<span style="color: #BA2121">&quot;andrewgerrand&quot;</span>).
-</span><span style="background-color: #ffffcc">		Return(Gopher{}, errors.New(<span style="color: #BA2121">&quot;error for test purposes&quot;</span>))
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> TestHandler(t *testing.T) {
+	<span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>	mgf := mock_philhackerblogcode.NewMockGopherFinder(mockCtrl)
+<span style="display:block;width:100%;background-color:#191919">	mgf.EXPECT().
+</span><span style="display:block;width:100%;background-color:#191919">		Find(<span style="color:#0ff;font-weight:bold">&#34;andrewgerrand&#34;</span>).
+</span><span style="display:block;width:100%;background-color:#191919">		Return(Gopher{}, errors.New(<span style="color:#0ff;font-weight:bold">&#34;error for test purposes&#34;</span>))
 </span>
-	<span style="color: #408080; font-style: italic">//...</span>
-
-	wr <span style="color: #666666">:=</span> httptest.NewRecorder()
-	<span style="color: #408080; font-style: italic">//...</span>
-	r <span style="color: #666666">:=</span> <span style="color: #666666">&amp;</span>http.Request{URL: url}
+	<span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>
+	wr := httptest.NewRecorder()
+	<span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>	r := &amp;http.Request{URL: url}
 
 	h(wr, r)
 
-<span style="background-color: #ffffcc">	<span style="color: #008000; font-weight: bold">if</span> wr.Code <span style="color: #666666">!=</span> <span style="color: #666666">500</span> {
-</span><span style="background-color: #ffffcc">		t.Errorf(<span style="color: #BA2121">&quot;Expected code: %d, actual code: %d&quot;</span>, <span style="color: #666666">500</span>, wr.Code)
-</span><span style="background-color: #ffffcc">	}
-</span>}
-</pre></div>
-
+<span style="display:block;width:100%;background-color:#191919">	<span style="color:#fff;font-weight:bold">if</span> wr.Code != <span style="color:#ff0;font-weight:bold">500</span> {
+</span><span style="display:block;width:100%;background-color:#191919">		t.Errorf(<span style="color:#0ff;font-weight:bold">&#34;Expected code: %d, actual code: %d&#34;</span>, <span style="color:#ff0;font-weight:bold">500</span>, wr.Code)
+</span><span style="display:block;width:100%;background-color:#191919">	}
+</span>}</code></pre></div>
 
 <p>Because we&rsquo;ve told the mock <code>GopherFinder</code> to return an error when its <code>Find()</code> method is called, we can test to see that the <code>HandlerFunc</code> actually writes out a 500 response code when the <code>GopherFinder</code> returns an error.</p>
 

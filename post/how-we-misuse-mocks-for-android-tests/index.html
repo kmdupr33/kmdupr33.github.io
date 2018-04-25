@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/" />
     
@@ -276,22 +276,20 @@
 
 <p>I think a compelling example of an object interacting with a collaborator in a way that isn&rsquo;t an implementation detail is actually a <code>Presenter</code> interacting with a <code>View</code> in MVP. Take, for example, this <code>Presenter</code> that we talked about in <a href="/post/object-seams-and-mvp-for-testability/">my post on MVP and object seams</a></p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">class</span> Presenter {
 
-  <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">presentCards</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> presentCards() {
 
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>mIsAttendeeAtVenue<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+    <span style="color:#fff;font-weight:bold">if</span> (mIsAttendeeAtVenue) {
 
-      <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>mMsgSettings<span style="color: #666666">.</span><span style="color: #7D9029">hasAnsweredMessagePrompt</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
+      <span style="color:#fff;font-weight:bold">if</span> (!mMsgSettings.<span style="color:#007f7f">hasAnsweredMessagePrompt</span>()) {
 
-<span style="background-color: #ffffcc">        mExploreView<span style="color: #666666">.</span><span style="color: #7D9029">addMessageOptInCard</span><span style="color: #666666">();</span>
+<span style="display:block;width:100%;background-color:#191919">        mExploreView.<span style="color:#007f7f">addMessageOptInCard</span>();
 </span>
-      <span style="color: #666666">}</span>
-    <span style="color: #666666">}</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+      }
+    }
+  }
+}</code></pre></div>
 
 <p>In this snippet, the <code>Presenter</code>&rsquo;s responsibility is to display the appropriate cards depending on various factors. When we write a test that includes the line <code>verify(mExploreView).addMessageOptInCard()</code>, we&rsquo;re merely making sure that the <code>Presenter</code> does its job. We&rsquo;re concerned with the &ldquo;what,&rdquo; not with the &ldquo;how.&rdquo; If <code>mExploreView</code> wants to change how it actually adds a message opt in card, we don&rsquo;t care. If the implementation of <code>MessageSettings.hasAnsweredMessagePrompt</code> changes, again, we don&rsquo;t care.</p>
 

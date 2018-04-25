@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Ci on Philosophical Hacker</title>
-    <link>https://www.philosophicalhacker.com/tags/ci/index.xml</link>
+    <link>https://www.philosophicalhacker.com/tags/ci/</link>
     <description>Recent content in Ci on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://www.philosophicalhacker.com/tags/ci/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 28 Apr 2017 17:39:22 -0400</lastBuildDate>
+    
+	<atom:link href="https://www.philosophicalhacker.com/tags/ci/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Setting up a Jenkins Pipeline for Android Testing</title>
@@ -14,117 +17,9 @@
       <pubDate>Fri, 28 Apr 2017 17:39:22 -0400</pubDate>
       
       <guid>https://www.philosophicalhacker.com/post/setting-up-a-jenkins-pipeline-for-android-testing/</guid>
-      <description>
-
-&lt;p&gt;Some tests are fast. You can run 1000s of them in seconds. These are the tests that are the heart and soul of TDD, so you run them every chance you get.&lt;/p&gt;
-
-&lt;p&gt;There are other tests that aren&amp;rsquo;t so fast. Because they&amp;rsquo;re slow, you don&amp;rsquo;t want to run them often. You&amp;rsquo;ve got better things to do than to sit and wait for test results to come through.&lt;/p&gt;
-
-&lt;p&gt;Unfortunately, the less you run your slow tests, the less valuable they are. By moving your slow test runs off your machine and running them every time you make a change, you can make sure you&amp;rsquo;re getting the most value out of your slow tests.&lt;/p&gt;
-
-&lt;p&gt;This is one reason why I think CI is so important. At every job I&amp;rsquo;ve had, setting up a CI is one of the first things I&amp;rsquo;ve done, and now that Jenkins has gotten a little more sophisticated with its &amp;ldquo;Pipelines,&amp;rdquo; I thought I should document how I set things up somewhere.&lt;/p&gt;
-
-&lt;p&gt;My hope is that if my future self has a different job that requires him to setup Jenkins for Android Testing, he&amp;rsquo;ll find this useful. If your current self needs to setup Jenkins so that you can maximize the value of your slow tests, I hope you find this useful too.&lt;/p&gt;
-
-&lt;h3 id=&#34;the-jenkinsfile&#34;&gt;The Jenkinsfile&lt;/h3&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 1 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;node&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;android&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 2 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;    step&lt;span style=&#34;color: #666666&#34;&gt;([&lt;/span&gt;$class&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;StashNotifier&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;])&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 3 &lt;/span&gt;    checkout scm
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 4 &lt;/span&gt;    &lt;span style=&#34;color: #0000FF&#34;&gt;stage&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;Build&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 5 &lt;/span&gt;      &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;try&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 6 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        sh &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;./gradlew --refresh-dependencies clean assemble&amp;#39;&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 7 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        lock&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;emulator&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 8 &lt;/span&gt;          sh &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;./gradlew connectedCheck&amp;#39;&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt; 9 &lt;/span&gt;        &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;10 &lt;/span&gt;        currentBuild&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;result&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;SUCCESS&amp;#39;&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;11 &lt;/span&gt;      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;catch&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;error&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;12 &lt;/span&gt;&lt;span style=&#34;background-color: #ffffcc&#34;&gt;        slackSend &lt;span style=&#34;color: #A0A000&#34;&gt;channel:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;#build-failures&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #A0A000&#34;&gt;color:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;bad&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #A0A000&#34;&gt;message:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;quot;This build is broken ${env.BUILD_URL}&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color: #A0A000&#34;&gt;token:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;XXXXXXXXXXX&amp;#39;&lt;/span&gt;
-&lt;/span&gt;&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;13 &lt;/span&gt;        currentBuild&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;result&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;FAILURE&amp;#39;&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;14 &lt;/span&gt;      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;finally&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;15 &lt;/span&gt;        junit &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;**/test-results/**/*.xml&amp;#39;&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;16 &lt;/span&gt;      &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;17 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;18 &lt;/span&gt;    stage&lt;span style=&#34;color: #666666&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;Archive&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;19 &lt;/span&gt;      archiveArtifacts &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;app/build/outputs/apk/*&amp;#39;&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;20 &lt;/span&gt;    &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;21 &lt;/span&gt;    step&lt;span style=&#34;color: #666666&#34;&gt;([&lt;/span&gt;$class&lt;span style=&#34;color: #666666&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;StashNotifier&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;])&lt;/span&gt;
-&lt;span style=&#34;background-color: #f0f0f0; padding: 0 5px 0 5px&#34;&gt;22 &lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;There&amp;rsquo;s a couple of lines worth highlighting here.&lt;/p&gt;
-
-&lt;h4 id=&#34;1-node-android&#34;&gt;1 &lt;code&gt;node(&#39;android&#39;)&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;A node is a computer that can execute a Jenkins job. A single Jenkins &amp;ldquo;master&amp;rdquo; server can queue up jobs for many nodes, so you can run as many jobs as you have machines simultaneously.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;What&amp;rsquo;s interesting about this line is the parameter that &lt;code&gt;node()&lt;/code&gt; takes. The value of this parameter is a &amp;ldquo;label,&amp;rdquo; which is a way of telling Jenkins which types of nodes can run this job. With this line, I&amp;rsquo;m saying: &amp;ldquo;Only run this job on nodes that have the label &amp;lsquo;android&amp;rsquo;.&amp;rdquo; When managing your nodes through the Jenkins UI, you can specify which labels your node has, thereby limiting the execution of your jobs to particular nodes:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/changing-node-labels.png&#34; alt=&#34;Setting labels on a node&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;OSX machines are more expensive than the linux machines that can run our Android builds, so we currently use labels to ensure that android build jobs aren&amp;rsquo;t tying up the (more expensive) OSX machines.&lt;/p&gt;
-
-&lt;h4 id=&#34;2-step-class-stashnotifier&#34;&gt;2 &lt;code&gt;step([$class: &#39;StashNotifier&#39;])&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;Prs can be gated by your Jenkins build. In other words, you can set things up so that no one can merge a pr with failing tests or lint violations. This pr gating is made possible by this step and the &lt;a href=&#34;https://github.com/jenkinsci/stashnotifier-plugin&#34;&gt;Stash Notifier plugin that exposes it&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;If someone can merge broken code into master in spite of failing tests, those tests aren&amp;rsquo;t as valuable as they could be.&lt;/p&gt;
-
-&lt;p&gt;Flaky tests are made especially painful by pr gating based on test results. I think this is a good thing, as flaky tests can be a subtle poison to your testing suite. By making their poison more explicitly felt through pr gates, we&amp;rsquo;ll be more motivated to fix them or delete them. Better that, then for people to start ignoring test results.&lt;/p&gt;
-
-&lt;h4 id=&#34;6-sh-gradlew-refresh-dependencies-clean-assemble&#34;&gt;6 &lt;code&gt;sh &#39;./gradlew --refresh-dependencies clean assemble&#39;&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;One way of thinking about a CI server is that it continuously runs what we might call &amp;ldquo;the integration test,&amp;rdquo; which we might express as follows:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;Given &lt;/span&gt;&lt;span style=&#34;color: #0000FF&#34;&gt;a working code base&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;When &lt;/span&gt;&lt;span style=&#34;color: #0000FF&#34;&gt;new code is merged in&lt;/span&gt;
-&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;Then &lt;/span&gt;&lt;span style=&#34;color: #0000FF&#34;&gt;we still have a working code base&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;&amp;ldquo;working code base&amp;rdquo; here is fleshed out by the specific steps in a Jenkinsfile, but is often defined as follows:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&amp;ldquo;A working code base builds from a &lt;em&gt;fresh checkout&lt;/em&gt; and all the tests pass.&amp;rdquo;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The &amp;ldquo;fresh checkout&amp;rdquo; bit of the definition is often necessary to avoid the proverbial &amp;ldquo;but it builds on my machine&amp;rdquo; excuse.&lt;/p&gt;
-
-&lt;p&gt;Since developers and their computers are not invincible, a particular developer&amp;rsquo;s machine is not the source of truth for whether a build is broken. The CI server should be that source of truth, as it tells us whether its possible for a new developer to build a project on a new machine.&lt;/p&gt;
-
-&lt;p&gt;This is why &lt;code&gt;--refresh-dependencies&lt;/code&gt; and &lt;code&gt;clean&lt;/code&gt; are included in this line. &lt;code&gt;--refresh-dependencies&lt;/code&gt; is particularly important if you&amp;rsquo;re using SNAPSHOT dependencies, as I&amp;rsquo;ve run into cases where the build appears to be fine but is actually broken, and I couldn&amp;rsquo;t tell because the CI server was using a cached SNAPSHOT dependency.&lt;/p&gt;
-
-&lt;h4 id=&#34;7-lock-emulator&#34;&gt;7 &lt;code&gt;lock(&#39;emulator&#39;) {}&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;Suppose you have a quad-core node that builds Android jobs. Nodes often have an executor for each of their cores. This allows Jenkins to take full advantage of multi-core machines, as it can run a job for each core on a machine. A quad-core node, for example, could run 4 jobs simultaneously.&lt;/p&gt;
-
-&lt;p&gt;Now, suppose that two jobs for two branches get kicked off simultaneously. If there&amp;rsquo;s only one emulator available on a node, you could have a problem: one test run could try to access the emulator while the other is using it, thereby causing failures. Locks solve this problem.&lt;/p&gt;
-
-&lt;p&gt;This line of code grabs a lock on a resource labeled as &amp;ldquo;emulator,&amp;rdquo; and retains that lock until the code running inside its block has been completed. Any other jobs that try to run tests against the emulator while the lock is held by a particular job will have to wait, which ensures that you can take full advantage of the parallelism gained by adding additional nodes and executors.&lt;/p&gt;
-
-&lt;h4 id=&#34;12-slacksend-channel-failures-message-broken-build-env-build-url&#34;&gt;12 &lt;code&gt;slackSend channel: &#39;#failures&#39;, message: &amp;quot;Broken build ${env.BUILD_URL}&amp;quot;&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;If a build on the CI passes, great. That should be the status quo. With all the noise in our emails and slack channels, we don&amp;rsquo;t need a notification that says, in effect, &amp;ldquo;everything is &lt;em&gt;still&lt;/em&gt; working just fine.&amp;rdquo; Any source of information that provides us with useless information MOST of the time seems likely to be a source of information that we&amp;rsquo;ll pay less attention to over time.&lt;/p&gt;
-
-&lt;p&gt;This is why I only post build failures to a slack channel. A broken build is a big deal. Ideally, a developer will investigate a broken build immediately.&lt;/p&gt;
-
-&lt;p&gt;When broken builds aren&amp;rsquo;t investigated immediately, we lose the value of our tests and CI, which are supposed to give us feedback on our code while the changes are still fresh in our mind. It&amp;rsquo;s much easier to fix broken code immediately than it is to fix it 3+ days later when the changes we&amp;rsquo;ve made aren&amp;rsquo;t fresh in our mind.&lt;/p&gt;
-
-&lt;p&gt;All that to say, a slack notification seems appropriate for build failures.&lt;/p&gt;
-
-&lt;h4 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h4&gt;
-
-&lt;p&gt;I&amp;rsquo;ll conclude with an exhortation for my future self and for all the selves engaged in the noble struggle of Android dev:&lt;/p&gt;
-
-&lt;p&gt;Slugging around in the Jenkins web UI may not be as interesting as writing an elegant Observable cascade for loading data in your &lt;code&gt;Activity&lt;/code&gt;, but it&amp;rsquo;s necessary if you&amp;rsquo;re going to maximize the value of the tests you&amp;rsquo;ve already written. Take solace in the fact that you&amp;rsquo;re efforts are making your team more effective.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Actually, you can run more jobs than this. Each node can have multiple executors, and the folks at Jenkins recommend that you create an executor for each core on the node.&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+      <description>Some tests are fast. You can run 1000s of them in seconds. These are the tests that are the heart and soul of TDD, so you run them every chance you get.
+There are other tests that aren&amp;rsquo;t so fast. Because they&amp;rsquo;re slow, you don&amp;rsquo;t want to run them often. You&amp;rsquo;ve got better things to do than to sit and wait for test results to come through.
+Unfortunately, the less you run your slow tests, the less valuable they are.</description>
     </item>
     
   </channel>

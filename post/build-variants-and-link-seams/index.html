@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/build-variants-and-link-seams/" />
     
@@ -268,26 +268,24 @@
 
 <p>Here&rsquo;s the smelly code that used to live in the Google I/O app:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">PresenterFragmentImpl</span> <span style="color: #008000; font-weight: bold">extends</span> Fragment
-        <span style="color: #008000; font-weight: bold">implements</span> Presenter<span style="color: #666666">,</span> UpdatableView<span style="color: #666666">.</span><span style="color: #7D9029">UserActionListener</span><span style="color: #666666">,</span>
-        LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> PresenterFragmentImpl <span style="color:#fff;font-weight:bold">extends</span> Fragment
+        <span style="color:#fff;font-weight:bold">implements</span> Presenter, UpdatableView.<span style="color:#007f7f">UserActionListener</span>,
+        LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; {
 
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #0000FF">onCreateLoader</span><span style="color: #666666">(</span><span style="color: #B00040">int</span> id<span style="color: #666666">,</span> Bundle args<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> cursorLoader <span style="color: #666666">=</span> createLoader<span style="color: #666666">(</span>id<span style="color: #666666">,</span> args<span style="color: #666666">);</span>
-<span style="background-color: #ffffcc">        mLoaderIdlingResource<span style="color: #666666">.</span><span style="color: #7D9029">onLoaderStarted</span><span style="color: #666666">(</span>cursorLoader<span style="color: #666666">);</span>
-</span>        <span style="color: #008000; font-weight: bold">return</span> cursorLoader<span style="color: #666666">;</span>
-    <span style="color: #666666">}</span>
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> Loader&lt;Cursor&gt; onCreateLoader(<span style="color:#fff;font-weight:bold">int</span> id, Bundle args) {
+        Loader&lt;Cursor&gt; cursorLoader = createLoader(id, args);
+<span style="display:block;width:100%;background-color:#191919">        mLoaderIdlingResource.<span style="color:#007f7f">onLoaderStarted</span>(cursorLoader);
+</span>        <span style="color:#fff;font-weight:bold">return</span> cursorLoader;
+    }
 
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onLoadFinished</span><span style="color: #666666">(</span>Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> loader<span style="color: #666666">,</span>
-                               Cursor data<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        processData<span style="color: #666666">(</span>loader<span style="color: #666666">,</span> data<span style="color: #666666">);</span>
-<span style="background-color: #ffffcc">        mLoaderIdlingResource<span style="color: #666666">.</span><span style="color: #7D9029">onLoaderFinished</span><span style="color: #666666">(</span>loader<span style="color: #666666">);</span>
-</span>    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoadFinished(Loader&lt;Cursor&gt; loader,
+                               Cursor data) {
+        processData(loader, data);
+<span style="display:block;width:100%;background-color:#191919">        mLoaderIdlingResource.<span style="color:#007f7f">onLoaderFinished</span>(loader);
+</span>    }
+}</code></pre></div>
 
 <p>The two highlighted lines point to a smell: this code mixes testing responsibilities in with production code. Idling resources, in case you didn&rsquo;t know, are used to tell espresso when it can continue executing tests. They&rsquo;re used to avoid having to place <code>sleep</code> calls all over your tests.</p>
 
@@ -311,19 +309,17 @@
 
 <p>If we&rsquo;ve got things setup this way, then when the <code>PresenterFragmentImpl</code> gets instantiated, we&rsquo;ll have different implementations depending on whether we&rsquo;re building a <code>prod</code> or <code>mock</code> build variant. In that case, we can change the behavior of our program while also leaving the code that instantiates and uses our <code>PresenterFragmentImpl</code> alone:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> PresenterFragmentImpl <span style="color: #0000FF">addPresenterFragment</span><span style="color: #666666">(</span><span style="color: #B00040">int</span> uVResId<span style="color: #666666">,</span>
-                                  Model model<span style="color: #666666">,</span>
-                                  QueryEnum<span style="color: #666666">[]</span> queries<span style="color: #666666">,</span>
-                                            UserActionEnum<span style="color: #666666">[]</span> actions<span style="color: #666666">){</span>
-<span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>presenter <span style="color: #666666">==</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//Create, set up and add the presenter.</span>
-    presenter <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> PresenterFragmentImpl<span style="color: #666666">();</span>
-  <span style="color: #666666">}</span> <span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #008000; font-weight: bold">return</span> presenter<span style="color: #666666">;</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> PresenterFragmentImpl addPresenterFragment(<span style="color:#fff;font-weight:bold">int</span> uVResId,
+                                  Model model,
+                                  QueryEnum[] queries,
+                                            UserActionEnum[] actions){
+<span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  <span style="color:#fff;font-weight:bold">if</span> (presenter == <span style="color:#fff;font-weight:bold">null</span>) {
+    <span style="color:#007f7f">//Create, set up and add the presenter.
+</span><span style="color:#007f7f"></span>    presenter = <span style="color:#fff;font-weight:bold">new</span> PresenterFragmentImpl();
+  } <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  <span style="color:#fff;font-weight:bold">return</span> presenter;
+}</code></pre></div>
 
 <p>What we&rsquo;ve done perfectly fits the definition of a link seam: we&rsquo;ve manipulated the classpath to link together different files in such a way that we can modify the behavior of the code that instantiates and uses <code>PresenterFragmentImpl</code> without actually modifying the source files that create and use <code>PresenterFragmentImpl</code>.</p>
 
@@ -347,36 +343,32 @@
 
 <p>Let&rsquo;s flesh suggestion out by seeing how it would apply to the above example. Instead of having a <code>PresenterFragmentImpl</code> for each sourceset, we&rsquo;d have a different factory for each sourceset.</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">// prod sourcest</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">FragFactory</span> <span style="color: #666666">{</span>
-    <span style="color: #008000; font-weight: bold">public</span> PresenterFragmentImpl <span style="color: #0000FF">make</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">        <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000; font-weight: bold">new</span> PresenterFragmentImpl<span style="color: #666666">();</span>
-</span>    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-<span style="color: #408080; font-style: italic">// mock sourcest</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">FragFactory</span> <span style="color: #666666">{</span>
-    <span style="color: #008000; font-weight: bold">public</span> PresenterFragmentImpl <span style="color: #0000FF">make</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">        <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000; font-weight: bold">new</span> MockPresenterFragmentImpl<span style="color: #666666">();</span>
-</span>    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#007f7f">// prod sourcest
+</span><span style="color:#007f7f"></span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> FragFactory {
+    <span style="color:#fff;font-weight:bold">public</span> PresenterFragmentImpl make() {
+<span style="display:block;width:100%;background-color:#191919">        <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">new</span> PresenterFragmentImpl();
+</span>    }
+}
+<span style="color:#007f7f">// mock sourcest
+</span><span style="color:#007f7f"></span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> FragFactory {
+    <span style="color:#fff;font-weight:bold">public</span> PresenterFragmentImpl make() {
+<span style="display:block;width:100%;background-color:#191919">        <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">new</span> MockPresenterFragmentImpl();
+</span>    }
+}</code></pre></div>
 
 <p>Then, instead of directly instantiating a <code>PresenterFragmentImpl</code>, we&rsquo;d get one from a factory.</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> PresenterFragmentImpl <span style="color: #0000FF">addPresenterFragment</span><span style="color: #666666">(</span><span style="color: #B00040">int</span> uVResId<span style="color: #666666">,</span>
-                                  Model model<span style="color: #666666">,</span>
-                                  QueryEnum<span style="color: #666666">[]</span> queries<span style="color: #666666">,</span>
-                                  UserActionEnum<span style="color: #666666">[]</span> actions<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-  <span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>presenter <span style="color: #666666">==</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-      <span style="color: #408080; font-style: italic">//Create, set up and add the presenter.</span>
-      presenter <span style="color: #666666">=</span> mFragFactory<span style="color: #666666">.</span><span style="color: #7D9029">make</span><span style="color: #666666">();</span>
-  <span style="color: #666666">}</span> <span style="color: #408080; font-style: italic">//...        </span>
-  <span style="color: #008000; font-weight: bold">return</span> presenter<span style="color: #666666">;</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> PresenterFragmentImpl addPresenterFragment(<span style="color:#fff;font-weight:bold">int</span> uVResId,
+                                  Model model,
+                                  QueryEnum[] queries,
+                                  UserActionEnum[] actions) {
+  <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  <span style="color:#fff;font-weight:bold">if</span> (presenter == <span style="color:#fff;font-weight:bold">null</span>) {
+      <span style="color:#007f7f">//Create, set up and add the presenter.
+</span><span style="color:#007f7f"></span>      presenter = mFragFactory.<span style="color:#007f7f">make</span>();
+  } <span style="color:#007f7f">//...        
+</span><span style="color:#007f7f"></span>  <span style="color:#fff;font-weight:bold">return</span> presenter;
+}</code></pre></div>
 
 <p>Getting the instance from a factory actually allows us the ability to change our apps behavior at run time instead of compile time, which can be very useful. <a href="https://speakerdeck.com/jakewharton/android-apps-with-dagger-devoxx-2013?slide=168">Square, for example, has a &ldquo;mock mode&rdquo;</a> in their applications for testing where they can pull out a navigation drawer and tell the app to stub network responses instead of hitting their servers. The app restarts and does exactly that. This allows the stubbing code they wrote to be useful both for automated and manual testing.</p>
 

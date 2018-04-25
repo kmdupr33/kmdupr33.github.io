@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tdd on Philosophical Hacker</title>
-    <link>https://www.philosophicalhacker.com/tags/tdd/index.xml</link>
+    <link>https://www.philosophicalhacker.com/tags/tdd/</link>
     <description>Recent content in Tdd on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://www.philosophicalhacker.com/tags/tdd/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 16 Oct 2016 22:38:44 -0400</lastBuildDate>
+    
+	<atom:link href="https://www.philosophicalhacker.com/tags/tdd/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>3 Ways of &#39;Getting to Green&#39;</title>
@@ -14,18 +17,8 @@
       <pubDate>Sun, 16 Oct 2016 22:38:44 -0400</pubDate>
       
       <guid>https://www.philosophicalhacker.com/post/3-ways-of-getting-to-green/</guid>
-      <description>&lt;p&gt;A part of the TDD work flow is getting a failing test to pass as quickly as possible. This makes sense if we think about how &lt;a href=&#34;http://www.philosophicalhacker.com/post/the-goal-of-refactoring-during-tdd/&#34;&gt;TDD is supposed to help us take smaller steps when we&amp;rsquo;re writing programs&lt;/a&gt;. Beck goes over three ways of getting a test to pass quickly in the fist part of &lt;em&gt;TDD By Example&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;The first method is to fake it. Just hard code whatever values you need to to get the tests to pass.&lt;/p&gt;
-
-&lt;p&gt;The second method is try for the simplest possible implementation.&lt;/p&gt;
-
-&lt;p&gt;The third method is something Beck calls &amp;ldquo;triangulation&amp;rdquo;, and its only used if you&amp;rsquo;re not sure how to proceed. When you triangulate on an implementation, you start by writing a second test. This second test will force you to generalize the hard-coded implementation you wrote to get your test to pass. Writing this second test, moreover, is supposed to help you think through how to generalize your implementation:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&amp;hellip;Triangulation provides a chance to think about the problem from a slightly different direction. What axes of variability are you trying to support in your design? Make some of them vary, and the answer [i.e., the general implementation] may become clearer.&lt;/p&gt;
-&lt;/blockquote&gt;
-</description>
+      <description>A part of the TDD work flow is getting a failing test to pass as quickly as possible. This makes sense if we think about how TDD is supposed to help us take smaller steps when we&amp;rsquo;re writing programs. Beck goes over three ways of getting a test to pass quickly in the fist part of TDD By Example.
+The first method is to fake it. Just hard code whatever values you need to to get the tests to pass.</description>
     </item>
     
     <item>
@@ -34,72 +27,9 @@
       <pubDate>Sun, 16 Oct 2016 16:35:28 -0400</pubDate>
       
       <guid>https://www.philosophicalhacker.com/post/the-goal-of-refactoring-during-tdd/</guid>
-      <description>&lt;p&gt;Red, green, refactor. That&amp;rsquo;s the TDD flow. That much was obvious to me.&lt;/p&gt;
-
-&lt;p&gt;However, refactoring is a pretty broad term. There are many reasons you may want to refactor code and as a result of this, I didn&amp;rsquo;t really understand what exactly was supposed to happen during the refactor step of the TDD loop until I finished the first part of Kent Beck&amp;rsquo;s &lt;em&gt;TDD by Example.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Actually, in the first description of TDD, Beck uses a more helpful description of the &amp;ldquo;refactor step.&amp;rdquo; After getting our tests to pass, he says that we should &amp;ldquo;&lt;em&gt;refactor to remove duplication.&lt;/em&gt;&amp;rdquo; This is helpful, as it restricts the reasons we might refactor a piece of code while working. I&amp;rsquo;ve sometimes found myself deep down a rabbit-hole of refactoring. This restriction gives me a principled way of determining what I should refactoring.&lt;/p&gt;
-
-&lt;p&gt;(As a bit of an aside, it was interesting to see how Beck recommends that we write down the tasks that need to be accomplished in a kind of todo-list. I wonder if I could leverage the TODO feature in most ideas to create this kind of todo-list)&lt;/p&gt;
-
-&lt;p&gt;The reason duplication is targeted for elimination is because duplication is indicative of dependency between the code and the test, which means that you can&amp;rsquo;t change one without the other. This thwarts the TDD flow, which demands that after we get a test passing we, we want to write another test that &amp;ldquo;&amp;lsquo;makes sense&amp;rsquo; to us without having to change the code.&amp;rdquo; Beck makes this point even more explicit by saying this:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;By eliminating duplication before we go on to the next test, we maximize our chance of being able to get the next test running with one and only one change.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;One thing that&amp;rsquo;s been really interesting about reading Beck&amp;rsquo;s take on TDD is that he really emphasizes how TDD enables us to make progress through &lt;em&gt;very&lt;/em&gt; small changes. More on that in a second.&lt;/p&gt;
-
-&lt;p&gt;Another interesting thing about Beck&amp;rsquo;s take on duplication is how he recommends we spot it:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Duplication most often takes the form of duplicate logic—the same expression appearing in multiple places in the code.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;When I first read this, I thought spotting duplication would merely involve looking for identical if-then statements, but Beck sees duplication in similar &lt;em&gt;expressions&lt;/em&gt;, even if those expressions aren&amp;rsquo;t expressed in code in identical ways:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Usually you see duplication between two pieces of code, but here the duplication is between the data in the test and the data in the code.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;We see this in his refactoring of the first test he writes. Here&amp;rsquo;s the test code:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;testMultiplication&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-   Dollar five&lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;new&lt;/span&gt; Dollar&lt;span style=&#34;color: #666666&#34;&gt;(5);&lt;/span&gt;
-   five&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;times&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;(2);&lt;/span&gt;
-   assertEquals&lt;span style=&#34;color: #666666&#34;&gt;(10,&lt;/span&gt; five&lt;span style=&#34;color: #666666&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color: #7D9029&#34;&gt;amount&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;);&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;And the model code:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Dollar&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  &lt;span style=&#34;color: #B00040&#34;&gt;int&lt;/span&gt; amount &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;10;&lt;/span&gt;  
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;He reveals the duplication by pointing out that we set &lt;code&gt;amount&lt;/code&gt; equal to &lt;code&gt;10&lt;/code&gt; because we&amp;rsquo;ve multiplied &lt;code&gt;5&lt;/code&gt; by &lt;code&gt;2&lt;/code&gt; in our heads to get the test to pass quickly. If we write our assigmnet of &lt;code&gt;amount&lt;/code&gt; as &lt;code&gt;int amount = 5 * 2&lt;/code&gt;, we see that &lt;code&gt;5&lt;/code&gt; and &lt;code&gt;2&lt;/code&gt; appear in both the model code and in the test code. That&amp;rsquo;s duplication that&amp;rsquo;s got to go.&lt;/p&gt;
-
-&lt;p&gt;The step that Beck takes towards eliminating the duplication is small and it doesn&amp;rsquo;t even really eliminate the duplication:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color: #0000FF; font-weight: bold&#34;&gt;Dollar&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;  
-  &lt;span style=&#34;color: #B00040&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color: #0000FF&#34;&gt;times&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-    amount &lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color: #666666&#34;&gt;2;&lt;/span&gt;
-  &lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;He then says something interesting about TDD and the size of the step he took:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Do these steps seem too small to you? Remember, TDD is not about taking teeny-tiny steps, it&amp;rsquo;s about being able to take teeny-tiny steps. Would I code day-to-day with steps this small? No. But when things get the least bit weird, I&amp;rsquo;m glad I can&amp;hellip;If you can make steps too small, you can certainly make steps the right size. If you only take larger steps, you&amp;rsquo;ll never know if smaller steps are appropriate.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This is interesting, and it points to an issue related to getting stuck down a rabbit-hole of refactoring. I think a part of the reason this rabbit-hole happens, especially during Android development, is because we don&amp;rsquo;t have the tests in place to make very small steps. (Although, I wouldn&amp;rsquo;t be surprised if it happened more often in my case due to lack of discipline.) An inability to make small changes is a huge bummer because if something breaks, your search space for tracking down the bug is going to be large in proportion to the number of changes you&amp;rsquo;ve made.&lt;/p&gt;
-</description>
+      <description>Red, green, refactor. That&amp;rsquo;s the TDD flow. That much was obvious to me.
+However, refactoring is a pretty broad term. There are many reasons you may want to refactor code and as a result of this, I didn&amp;rsquo;t really understand what exactly was supposed to happen during the refactor step of the TDD loop until I finished the first part of Kent Beck&amp;rsquo;s TDD by Example.
+Actually, in the first description of TDD, Beck uses a more helpful description of the &amp;ldquo;refactor step.</description>
     </item>
     
   </channel>

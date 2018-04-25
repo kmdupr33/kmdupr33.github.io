@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/object-seams-and-mvp-for-testability/" />
     
@@ -270,27 +270,25 @@
 
 
 <div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
-  <iframe src="//www.youtube.com/embed/RtGSl9h-SoE" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
+  <iframe src="//www.youtube.com/embed/RtGSl9h-SoE" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0" title="YouTube Video"></iframe>
  </div>
 
 
 <p>Here&rsquo;s the relevant code for this functionality:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">private</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">setupCards</span><span style="color: #666666">(</span>CollectionView<span style="color: #666666">.</span><span style="color: #7D9029">Inventory</span> inventory<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">isAttendeeAtVenue</span><span style="color: #666666">(</span>getContext<span style="color: #666666">()))</span> <span style="color: #666666">{</span>
-</span><span style="background-color: #ffffcc">        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>ConfMessageCardUtils<span style="color: #666666">.</span><span style="color: #7D9029">hasAnsweredConfMessageCardsPrompt</span><span style="color: #666666">(</span>getContext<span style="color: #666666">()))</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">void</span> setupCards(CollectionView.<span style="color:#007f7f">Inventory</span> inventory) {
+<span style="display:block;width:100%;background-color:#191919">    <span style="color:#fff;font-weight:bold">if</span> (SettingsUtils.<span style="color:#007f7f">isAttendeeAtVenue</span>(getContext())) {
+</span><span style="display:block;width:100%;background-color:#191919">        <span style="color:#fff;font-weight:bold">if</span> (!ConfMessageCardUtils.<span style="color:#007f7f">hasAnsweredConfMessageCardsPrompt</span>(getContext())) {
 </span>            inventoryGroup
-            <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> InventoryGroup<span style="color: #666666">(</span>GROUP_ID_MESSAGE_CARDS<span style="color: #666666">);</span>
-            MessageData conferenceMessageOptIn <span style="color: #666666">=</span> MessageCardHelper
-                    <span style="color: #666666">.</span><span style="color: #7D9029">getConferenceOptInMessageData</span><span style="color: #666666">(</span>getContext<span style="color: #666666">());</span>
-            inventoryGroup<span style="color: #666666">.</span><span style="color: #7D9029">addItemWithTag</span><span style="color: #666666">(</span>conferenceMessageOptIn<span style="color: #666666">);</span>
-            inventoryGroup<span style="color: #666666">.</span><span style="color: #7D9029">setDisplayCols</span><span style="color: #666666">(1);</span>
-<span style="background-color: #ffffcc">            inventory<span style="color: #666666">.</span><span style="color: #7D9029">addGroup</span><span style="color: #666666">(</span>inventoryGroup<span style="color: #666666">);</span>
-</span>        <span style="color: #666666">}</span> <span style="color: #408080; font-style: italic">// ...</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+            = <span style="color:#fff;font-weight:bold">new</span> InventoryGroup(GROUP_ID_MESSAGE_CARDS);
+            MessageData conferenceMessageOptIn = MessageCardHelper
+                    .<span style="color:#007f7f">getConferenceOptInMessageData</span>(getContext());
+            inventoryGroup.<span style="color:#007f7f">addItemWithTag</span>(conferenceMessageOptIn);
+            inventoryGroup.<span style="color:#007f7f">setDisplayCols</span>(1);
+<span style="display:block;width:100%;background-color:#191919">            inventory.<span style="color:#007f7f">addGroup</span>(inventoryGroup);
+</span>        } <span style="color:#007f7f">// ...
+</span><span style="color:#007f7f"></span>    }
+}</code></pre></div>
 
 <p>Take a look at the first two lines. Right away, we have a red flag: static methods. Every use of a static method is a missed opportunity to create an object seam. If we decide we need to unit test some of the code here, we&rsquo;re going to have trouble arranging in our test code.</p>
 
@@ -300,22 +298,20 @@
 
 <p>Ok, so we&rsquo;ve got a mixed bag in terms of our seams. Let&rsquo;s say we refactor this code to use MVP. Our presenter looks something like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Presenter</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">class</span> Presenter {
 
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">presentCards</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> presentCards() {
 
-<span style="background-color: #ffffcc">        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>mIsAttendeeAtVenue<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<span style="display:block;width:100%;background-color:#191919">        <span style="color:#fff;font-weight:bold">if</span> (mIsAttendeeAtVenue) {
 </span>
-<span style="background-color: #ffffcc">            <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(!</span>mMsgSettings<span style="color: #666666">.</span><span style="color: #7D9029">hasAnsweredMessagePrompt</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
+<span style="display:block;width:100%;background-color:#191919">            <span style="color:#fff;font-weight:bold">if</span> (!mMsgSettings.<span style="color:#007f7f">hasAnsweredMessagePrompt</span>()) {
 </span>
-<span style="background-color: #ffffcc">                mExploreView<span style="color: #666666">.</span><span style="color: #7D9029">addMessageOptInCard</span><span style="color: #666666">();</span>
+<span style="display:block;width:100%;background-color:#191919">                mExploreView.<span style="color:#007f7f">addMessageOptInCard</span>();
 </span>
-            <span style="color: #666666">}</span> <span style="color: #408080; font-style: italic">// Stuff</span>
-        <span style="color: #666666">}</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+            } <span style="color:#007f7f">// Stuff
+</span><span style="color:#007f7f"></span>        }
+    }
+}</code></pre></div>
 
 <p>The view is one of the injected dependencies and we can easily verify that the appropriate method has been called in our tests. This is the main way in which MVP helps us write more testable code: all of the interaction with the UI can now be verified by swapping out the injected View with an implementation that records its interaction with the Presenter. In our case, this implementation is usually generated by mockito.</p>
 

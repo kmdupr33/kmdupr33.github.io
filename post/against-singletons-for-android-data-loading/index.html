@@ -85,7 +85,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/against-singletons-for-android-data-loading/" />
     
@@ -290,29 +290,27 @@
 
 <p>Because the fairly complicated logic governing whether the list of sessions should be preceded by various preference cards <a href="/post/what-should-we-unit-test/">scares you a little</a>, you decide to write tests for this screen. Since you know <a href="/post/why-we-should-stop-putting-logic-in-activities/">you&rsquo;re not going to have an easy time testing logic in an <code>Activity</code></a>, you move the logic to a presenter:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">SessionsPresenter</span> <span style="color: #666666">{</span>  
-  <span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #B00040">void</span> <span style="color: #0000FF">present</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>shouldShowSessionNotificationsCard<span style="color: #666666">())</span> <span style="color: #666666">{</span>
-      sessionsView<span style="color: #666666">.</span><span style="color: #7D9029">showSessionNotificationsCard</span><span style="color: #666666">();</span>
-    <span style="color: #666666">}</span>
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>shouldShowConferenceMessagesCard<span style="color: #666666">())</span> <span style="color: #666666">{</span>
-      sessionsView<span style="color: #666666">.</span><span style="color: #7D9029">showConferenceMessagesCard</span><span style="color: #666666">();</span>
-    <span style="color: #666666">}</span>
-<span style="background-color: #ffffcc">    SessionsStore<span style="color: #666666">.</span><span style="color: #7D9029">getInstance</span><span style="color: #666666">()</span>
-</span>      <span style="color: #666666">.</span><span style="color: #7D9029">loadSessions</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> SessionsStore<span style="color: #666666">.</span><span style="color: #7D9029">LoadCompleteListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-        <span style="color: #AA22FF">@Override</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onLoadComplete</span><span style="color: #666666">(</span>List<span style="color: #666666">&lt;</span>Session<span style="color: #666666">&gt;</span> sessions<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">          <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>sessions<span style="color: #666666">.</span><span style="color: #7D9029">isEmpty</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
-</span><span style="background-color: #ffffcc">            sessionsView<span style="color: #666666">.</span><span style="color: #7D9029">showNoSessions</span><span style="color: #666666">();</span>
-</span><span style="background-color: #ffffcc">          <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
-</span><span style="background-color: #ffffcc">            sessionsView<span style="color: #666666">.</span><span style="color: #7D9029">showSessions</span><span style="color: #666666">(</span>sessions<span style="color: #666666">);</span>
-</span>          <span style="color: #666666">}</span>
-        <span style="color: #666666">}</span>
-      <span style="color: #666666">});</span>      
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> SessionsPresenter {  
+  <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  <span style="color:#fff;font-weight:bold">void</span> present() {
+    <span style="color:#fff;font-weight:bold">if</span> (shouldShowSessionNotificationsCard()) {
+      sessionsView.<span style="color:#007f7f">showSessionNotificationsCard</span>();
+    }
+    <span style="color:#fff;font-weight:bold">if</span> (shouldShowConferenceMessagesCard()) {
+      sessionsView.<span style="color:#007f7f">showConferenceMessagesCard</span>();
+    }
+<span style="display:block;width:100%;background-color:#191919">    SessionsStore.<span style="color:#007f7f">getInstance</span>()
+</span>      .<span style="color:#007f7f">loadSessions</span>(<span style="color:#fff;font-weight:bold">new</span> SessionsStore.<span style="color:#007f7f">LoadCompleteListener</span>() {
+        @Override <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoadComplete(List&lt;Session&gt; sessions) {
+<span style="display:block;width:100%;background-color:#191919">          <span style="color:#fff;font-weight:bold">if</span> (sessions.<span style="color:#007f7f">isEmpty</span>()) {
+</span><span style="display:block;width:100%;background-color:#191919">            sessionsView.<span style="color:#007f7f">showNoSessions</span>();
+</span><span style="display:block;width:100%;background-color:#191919">          } <span style="color:#fff;font-weight:bold">else</span> {
+</span><span style="display:block;width:100%;background-color:#191919">            sessionsView.<span style="color:#007f7f">showSessions</span>(sessions);
+</span>          }
+        }
+      });      
+  }
+}</code></pre></div>
 
 <p>In the first highlighted line, we&rsquo;re accessing a singleton to load the sessions. In the following highlighted lines, we either show the sessions or something indicating that there are no sessions at this time.</p>
 
@@ -320,21 +318,19 @@
 
 <p>Getting around this problem forces us to create additional methods that are only used by the tests. For example, to test the above code, we&rsquo;d need to add <code>SessionStore.setTestInstance</code> and set the test instance with a stub during our unit test:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">SessionsPresenterTests</span> <span style="color: #666666">{</span>  
-  <span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #AA22FF">@Test</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">showsNoSessionsViewWhenNoSessions</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>    
-    <span style="color: #408080; font-style: italic">//...</span>
-    SessionsStore<span style="color: #666666">.</span><span style="color: #7D9029">setTestInstance</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> SessionsStore<span style="color: #666666">()</span> <span style="color: #666666">{</span>
-      <span style="color: #AA22FF">@Override</span>
-      <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">loadSessions</span><span style="color: #666666">(</span>SessionsStore<span style="color: #666666">.</span><span style="color: #7D9029">LoadCompleteListener</span> listener<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        listener<span style="color: #666666">.</span><span style="color: #7D9029">onLoadComplete</span><span style="color: #666666">(</span>Collections<span style="color: #666666">.</span><span style="color: #7D9029">emptyList</span><span style="color: #666666">());</span>
-      <span style="color: #666666">}</span>
-    <span style="color: #666666">});</span>
-    <span style="color: #408080; font-style: italic">//...</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> SessionsPresenterTests {  
+  <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  @Test <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> showsNoSessionsViewWhenNoSessions() {    
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>    SessionsStore.<span style="color:#007f7f">setTestInstance</span>(<span style="color:#fff;font-weight:bold">new</span> SessionsStore() {
+      @Override
+      <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> loadSessions(SessionsStore.<span style="color:#007f7f">LoadCompleteListener</span> listener) {
+        listener.<span style="color:#007f7f">onLoadComplete</span>(Collections.<span style="color:#007f7f">emptyList</span>());
+      }
+    });
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>  }
+}</code></pre></div>
 
 <p>When we need to change the API of the SUT <em>solely</em><sup>2</sup> for the purpose of testing, our tests are telling us there&rsquo;s a problem with our design.</p>
 
@@ -342,14 +338,12 @@
 
 <p>At this point, some readers may point out that these problems are alleviated if we inject the singleton through the constructor and if we keep our <code>Activity</code> as a dumb view that isn&rsquo;t scary enough to test. The code for this suggestion might look something like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">SessionsActivity</span> <span style="color: #008000; font-weight: bold">extends</span> Activity <span style="color: #666666">{</span>
-  <span style="color: #AA22FF">@Override</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span>Bundle bundle<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-    <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onCreate</span><span style="color: #666666">(</span>bundle<span style="color: #666666">);</span>
-    <span style="color: #008000; font-weight: bold">new</span> SessionsPresenter<span style="color: #666666">(</span>SessionStore<span style="color: #666666">.</span><span style="color: #7D9029">getInstance</span><span style="color: #666666">()).</span><span style="color: #7D9029">present</span><span style="color: #666666">();</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> SessionsActivity <span style="color:#fff;font-weight:bold">extends</span> Activity {
+  @Override <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(Bundle bundle) {
+    <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onCreate</span>(bundle);
+    <span style="color:#fff;font-weight:bold">new</span> SessionsPresenter(SessionStore.<span style="color:#007f7f">getInstance</span>()).<span style="color:#007f7f">present</span>();
+  }
+}</code></pre></div>
 
 <p>This does alleviate the testing problems at the unit level. However, if we want to stub out what gets returned by the singleton <code>SessionStore</code> for UI tests, we&rsquo;ll still have to add a <code>SessionStore.setTestInstance</code> method. Again, modifying the API of our classes for testing purposes is smelly.</p>
 

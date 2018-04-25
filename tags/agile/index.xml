@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Agile on Philosophical Hacker</title>
-    <link>https://www.philosophicalhacker.com/tags/agile/index.xml</link>
+    <link>https://www.philosophicalhacker.com/tags/agile/</link>
     <description>Recent content in Agile on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://www.philosophicalhacker.com/tags/agile/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 03 May 2017 08:57:08 -0400</lastBuildDate>
+    
+	<atom:link href="https://www.philosophicalhacker.com/tags/agile/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Object Thinking&#39;s Intro</title>
@@ -14,72 +17,8 @@
       <pubDate>Wed, 03 May 2017 08:57:08 -0400</pubDate>
       
       <guid>https://www.philosophicalhacker.com/note/object-thinkings-intro/</guid>
-      <description>
-
-&lt;p&gt;&lt;em&gt;Object Thinking&lt;/em&gt;&amp;rsquo;s introduction begins with talking about the ongoing crisis in software:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;The time: 1968. A software crisis has been declared. Part of the crisis derives from the fact that more software is needed than there are developers to produce it. The other part of the crisis is the abysmal record of development efforts. More than half of the projects initiated are canceled, and less than 20 percent of projects are successfully completed&amp;hellip;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;In 2003, things are a bit better because we have more developers, but West seems to think that things are still looking pretty bad. Bad in what way? Well, this:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;It is still the case that almost half of all projects initiated are not completed. Those that are completed almost always incur significant cost overruns. Quality—the lack thereof—is still a major issue. Bloated, inefficient, bug-ridden, user-unfriendly, and marginally useful—these are still common adjectives used to describe software.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;So far, so good. Unfortunately, all of this resonates with my limited experience in software.&lt;/p&gt;
-
-&lt;p&gt;The rest of the intro goes on to make a few major points:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;There are two main responses to the software crisis: software engineering and agile. Software engineering is about better process and tools through formalization. XP/Agile is about creating better software developers, which, in turn, leads to better software.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Software engineering is the dominant response to the crisis, and its not working to resolve the crisis.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Agile &amp;ndash; and more specifically XP &amp;ndash; is inextricably linked with OO thinking and programming.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;These points are not obvious, which is fine because that&amp;rsquo;s partially what makes them interesting.&lt;/p&gt;
-
-&lt;h3 id=&#34;two-sides&#34;&gt;Two sides&lt;/h3&gt;
-
-&lt;p&gt;First off, I haven&amp;rsquo;t been in software that long, so its hard for me to take seriously the idea that there is some sort of war going on between formalists and agile folks. West goes on the quote lots of folks that seem to be engaged in said war, and a quick search of Beck&amp;rsquo;s &lt;em&gt;Extreme Programming&lt;/em&gt; book reveals that it generated quite a stir when it was first published, but I still have a hard time picturing this struggle between the two groups. Its never something that I&amp;rsquo;ve heard older programmers talk about in my circles.&lt;/p&gt;
-
-&lt;p&gt;(If you&amp;rsquo;re reading this and you&amp;rsquo;ve got personal experience with this struggle, I&amp;rsquo;d love to hear your experience.)&lt;/p&gt;
-
-&lt;h3 id=&#34;software-engineering-is-sucking&#34;&gt;Software Engineering is sucking&lt;/h3&gt;
-
-&lt;p&gt;West seems to paint software engineering as the dominant response to the software crisis. That seems plausible.&lt;/p&gt;
-
-&lt;p&gt;At every job I&amp;rsquo;ve held, whenever software quality is poor, someone decides that we need to improve our processes. Ironically, this happens in the form of an agile coach or training session. Agile, according to West, is supposed to be people-focused, but that&amp;rsquo;s definitely not how I&amp;rsquo;ve felt when I&amp;rsquo;ve attended (and even perpetrated) &amp;ldquo;agile&amp;rdquo; training sessions. Although it&amp;rsquo;s ironic, this shouldn&amp;rsquo;t be surprising given the &amp;ldquo;raspberry jam effect&amp;rdquo; and the fact Kent Beck has talked about how the whole agile movement has become something he doesn&amp;rsquo;t even recognize.&lt;sup&gt;1&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;That software engineering is directly responsible for quality problems is less obvious. I read an article a while back that suggested that, deep down, our leaders don&amp;rsquo;t really care about quality; there just aren&amp;rsquo;t enough economic incentives for them to care about the buggy experiences or inelegant code, for example. That seems plausible to me. If that&amp;rsquo;s true, I&amp;rsquo;m not really sure what that does to West&amp;rsquo;s project in his book.&lt;/p&gt;
-
-&lt;h3 id=&#34;link-between-oo-and-agile&#34;&gt;Link between OO and Agile&lt;/h3&gt;
-
-&lt;p&gt;For West,&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;XP cannot be understood, and those practicing XP will not realize the full potential of the approach, until they understand object thinking and the shared historical and philosophical roots of both object thinking and XP core values and practices.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Its hard to see how this could be true, especially because the link between OO and XP isn&amp;rsquo;t emphasized in any of the seminal texts on XP, a fact that West points out:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;The terms object and object-oriented do not appear in any of the first five books in the Addison-Wesley XP series—except once, and that occasion points to an incorrect page in the text. However, object vocabulary and concepts are abundantly evident. This discrepancy merely confirms that object thinking is presupposed by those advocating XP.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;However, I am just at the beginning of the book, so I&amp;rsquo;ll have to revisit this. For now, since I&amp;rsquo;m not going to go back and read all of those books, I&amp;rsquo;m just going to have to take West&amp;rsquo;s word for it.&lt;/p&gt;
-
-&lt;p&gt;Its a actually bit tricky to just trust West on this because it seems like West&amp;rsquo;s book exists on a island, that is, without the endorsement or mention from any of the founding members of the agile alliance. Contrast this with a book like, &lt;em&gt;Domain Driven Design&lt;/em&gt;, for example, that is explicitly praised by both Kent Beck and Martin Fowler, even though its written by someone who wasn&amp;rsquo;t at the founding of agile.&lt;/p&gt;
-
-&lt;h3 id=&#34;notes&#34;&gt;Notes:&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Its in one of the segments in the &amp;ldquo;Is TDD Dead&amp;rdquo; series.&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+      <description>Object Thinking&amp;rsquo;s introduction begins with talking about the ongoing crisis in software:
+ The time: 1968. A software crisis has been declared. Part of the crisis derives from the fact that more software is needed than there are developers to produce it. The other part of the crisis is the abysmal record of development efforts. More than half of the projects initiated are canceled, and less than 20 percent of projects are successfully completed&amp;hellip;</description>
     </item>
     
   </channel>

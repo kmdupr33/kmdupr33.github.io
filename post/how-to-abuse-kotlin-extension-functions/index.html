@@ -83,7 +83,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/how-to-abuse-kotlin-extension-functions/" />
     
@@ -275,17 +275,13 @@
 
 <p>The example they have for this is brilliant:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>Collections<span style="color: #666666">.</span><span style="color: #7D9029">swap</span><span style="color: #666666">(</span>list<span style="color: #666666">,</span> 
-                Collections<span style="color: #666666">.</span><span style="color: #7D9029">binarySearch</span><span style="color: #666666">(</span>list<span style="color: #666666">,</span> Collections<span style="color: #666666">.</span><span style="color: #7D9029">max</span><span style="color: #666666">(</span>otherList<span style="color: #666666">)),</span> 
-                Collections<span style="color: #666666">.</span><span style="color: #7D9029">max</span><span style="color: #666666">(</span>list<span style="color: #666666">))</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Collections.<span style="color:#007f7f">swap</span>(list, 
+                Collections.<span style="color:#007f7f">binarySearch</span>(list, Collections.<span style="color:#007f7f">max</span>(otherList)), 
+                Collections.<span style="color:#007f7f">max</span>(list))</code></pre></div>
 
 <p>Because of the code completion and improved readability, the kotlin folks rightly point out that we&rsquo;d rather write:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>list<span style="color: #666666">.</span><span style="color: #7D9029">swap</span><span style="color: #666666">(</span>list<span style="color: #666666">.</span><span style="color: #7D9029">binarySearch</span><span style="color: #666666">(</span>otherList<span style="color: #666666">.</span><span style="color: #7D9029">max</span><span style="color: #666666">()),</span> list<span style="color: #666666">.</span><span style="color: #7D9029">max</span><span style="color: #666666">())</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">list.<span style="color:#007f7f">swap</span>(list.<span style="color:#007f7f">binarySearch</span>(otherList.<span style="color:#007f7f">max</span>()), list.<span style="color:#007f7f">max</span>())</code></pre></div>
 
 <p>However, we can&rsquo;t implement all possible list methods inside of the list class, so, in order to achieve this, we need to a way to write list methods outside of the list class. And that, boys and girls, is where extension functions come from.</p>
 
@@ -295,35 +291,31 @@
 
 <p>The Google I/O code base contains a <code>SettingsUtils</code> class. Its 484 lines long and has 33 methods. Yuck. Call sites of the methods on this class, moreover, don&rsquo;t look great:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">// Ensure we don&#39;t run this fragment again</span>
-LOGD<span style="color: #666666">(</span>TAG<span style="color: #666666">,</span> <span style="color: #BA2121">&quot;Marking attending flag.&quot;</span><span style="color: #666666">);</span>
-SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">setAttendeeAtVenue</span><span style="color: #666666">(</span>mActivity<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">true</span><span style="color: #666666">);</span>
-SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">markAnsweredLocalOrRemote</span><span style="color: #666666">(</span>mActivity<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">true</span><span style="color: #666666">);</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#007f7f">// Ensure we don&#39;t run this fragment again
+</span><span style="color:#007f7f"></span>LOGD(TAG, <span style="color:#0ff;font-weight:bold">&#34;Marking attending flag.&#34;</span>);
+SettingsUtils.<span style="color:#007f7f">setAttendeeAtVenue</span>(mActivity, <span style="color:#fff;font-weight:bold">true</span>);
+SettingsUtils.<span style="color:#007f7f">markAnsweredLocalOrRemote</span>(mActivity, <span style="color:#fff;font-weight:bold">true</span>);</code></pre></div>
 
 <p>Now, using an extension method on a <code>Context</code> might make some of this code look a little better:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">// PrefExtensions.kt</span>
-<span style="color: #008000; font-weight: bold">fun</span> <span style="color: #0000FF">Context</span>.setAttendeeAtVenue(newValue: Boolean) {
-    <span style="color: #008000; font-weight: bold">val</span> defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(<span style="color: #008000; font-weight: bold">this</span>)
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#007f7f">// PrefExtensions.kt
+</span><span style="color:#007f7f"></span><span style="color:#fff;font-weight:bold">fun</span> Context.setAttendeeAtVenue(newValue: Boolean) {
+    <span style="color:#fff;font-weight:bold">val</span> defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(<span style="color:#fff;font-weight:bold">this</span>)
     defaultSharedPreferences.edit().putBoolean(BuildConfig.PREF_ATTENDEE_AT_VENUE, newValue).apply()
 }
 
-<span style="color: #008000; font-weight: bold">fun</span> <span style="color: #0000FF">Context</span>.markAnsweredLocalOrRemote(newValue: Boolean) {
-    <span style="color: #008000; font-weight: bold">val</span> sp = PreferenceManager.getDefaultSharedPreferences(<span style="color: #008000; font-weight: bold">this</span>)
+<span style="color:#fff;font-weight:bold">fun</span> Context.markAnsweredLocalOrRemote(newValue: Boolean) {
+    <span style="color:#fff;font-weight:bold">val</span> sp = PreferenceManager.getDefaultSharedPreferences(<span style="color:#fff;font-weight:bold">this</span>)
     sp.edit().putBoolean(PREF_ANSWERED_LOCAL_OR_REMOTE, newValue).apply()
 }
 
-<span style="color: #408080; font-style: italic">// AttendingFragment.kt</span>
-<span style="color: #008000; font-weight: bold">override</span> <span style="color: #008000; font-weight: bold">fun</span> <span style="color: #0000FF">onClick</span>(v: View) {
-    <span style="color: #408080; font-style: italic">// Ensure we don&#39;t run this fragment again</span>
-    LOGD(TAG, <span style="color: #BA2121">&quot;Marking attending flag.&quot;</span>)
-    mActivity.setAttendeeAtVenue(<span style="color: #008000; font-weight: bold">true</span>)
-    mActivity.markAnsweredLocalOrRemote(<span style="color: #008000; font-weight: bold">true</span>)
-}
-</pre></div>
-
+<span style="color:#007f7f">// AttendingFragment.kt
+</span><span style="color:#007f7f"></span><span style="color:#fff;font-weight:bold">override</span> <span style="color:#fff;font-weight:bold">fun</span> onClick(v: View) {
+    <span style="color:#007f7f">// Ensure we don&#39;t run this fragment again
+</span><span style="color:#007f7f"></span>    LOGD(TAG, <span style="color:#0ff;font-weight:bold">&#34;Marking attending flag.&#34;</span>)
+    mActivity.setAttendeeAtVenue(<span style="color:#fff;font-weight:bold">true</span>)
+    mActivity.markAnsweredLocalOrRemote(<span style="color:#fff;font-weight:bold">true</span>)
+}</code></pre></div>
 
 <p>Even if you&rsquo;re not crazy enough to add extension functions to <a href="/post/towards-godless-android-development-how-and-why-i-kill-god-objects/">a god object</a>, you might be tempted to kotlinify this code by writing an extension function for <code>SharedPreferences</code>. I still that that would be a mistake.</p>
 
@@ -353,41 +345,35 @@ SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">m
 
 <p>To solidify the idea that using a function extension in this case would be an abuse, let&rsquo;s look at a better way of handling the above code. As far as I can tell, the missing abstraction here is an <code>Attendee</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">interface</span> <span style="color: #0000FF; font-weight: bold">Attendee</span> {
-    <span style="color: #008000; font-weight: bold">enum</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Attending</span> {
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#fff;font-weight:bold">interface</span> Attendee {
+    <span style="color:#fff;font-weight:bold">enum</span> <span style="color:#fff;font-weight:bold">class</span> Attending {
         IN_PERSON,
         REMOTE,
         UNKNOWN
     }
 
-    <span style="color: #008000; font-weight: bold">fun</span> <span style="color: #0000FF">setAtVenue</span>(newValue: Boolean)
-    <span style="color: #008000; font-weight: bold">fun</span> <span style="color: #0000FF">attending</span>(): Attending
-}
-</pre></div>
-
+    <span style="color:#fff;font-weight:bold">fun</span> setAtVenue(newValue: Boolean)
+    <span style="color:#fff;font-weight:bold">fun</span> attending(): Attending
+}</code></pre></div>
 
 <p>It turns out that there are other <code>SettingsUtil</code> methods that make sense to move to this interface. Conference attendees accept a code of conduct that is presented in the <code>ConductFragment</code>.</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">interface</span> <span style="color: #0000FF; font-weight: bold">Attendee</span> {
-    <span style="color: #408080; font-style: italic">//...</span>
-
-    <span style="color: #008000; font-weight: bold">fun</span> <span style="color: #0000FF">acceptCodeOfConduct</span>(newValue: Boolean)
-    <span style="color: #008000; font-weight: bold">fun</span> <span style="color: #0000FF">hasAcceptedCodeOfConduct</span>(): Boolean
-}
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#fff;font-weight:bold">interface</span> Attendee {
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>
+    <span style="color:#fff;font-weight:bold">fun</span> acceptCodeOfConduct(newValue: Boolean)
+    <span style="color:#fff;font-weight:bold">fun</span> hasAcceptedCodeOfConduct(): Boolean
+}</code></pre></div>
 
 <p>Now that we&rsquo;ve filled out the methods on this interface, we can see that the call sites of <code>Attendee</code> methods are simpler and more easily understood than their <code>SettingsUtils</code> counter-parts:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">// AttendingFragment.kt</span>
-<span style="color: #008000; font-weight: bold">override</span> <span style="color: #008000; font-weight: bold">fun</span> <span style="color: #0000FF">onClick</span>(v: View) {
-    <span style="color: #408080; font-style: italic">// Ensure we don&#39;t run this fragment again</span>
-    LOGD(TAG, <span style="color: #BA2121">&quot;Marking attending flag.&quot;</span>)
-    attendee.setAtVenue(<span style="color: #008000; font-weight: bold">true</span>)    
-    <span style="color: #408080; font-style: italic">// Notice we dont need to call SettingsUtils.markAnsweredLocalOrRemote.</span>
-}
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#007f7f">// AttendingFragment.kt
+</span><span style="color:#007f7f"></span><span style="color:#fff;font-weight:bold">override</span> <span style="color:#fff;font-weight:bold">fun</span> onClick(v: View) {
+    <span style="color:#007f7f">// Ensure we don&#39;t run this fragment again
+</span><span style="color:#007f7f"></span>    LOGD(TAG, <span style="color:#0ff;font-weight:bold">&#34;Marking attending flag.&#34;</span>)
+    attendee.setAtVenue(<span style="color:#fff;font-weight:bold">true</span>)    
+    <span style="color:#007f7f">// Notice we dont need to call SettingsUtils.markAnsweredLocalOrRemote.
+</span><span style="color:#007f7f"></span>}</code></pre></div>
 
 <h3 id="conclusion">Conclusion</h3>
 

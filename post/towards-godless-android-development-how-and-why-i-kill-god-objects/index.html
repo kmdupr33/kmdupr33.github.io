@@ -83,7 +83,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/towards-godless-android-development-how-and-why-i-kill-god-objects/" />
     
@@ -293,24 +293,22 @@
 
 <p>This functionality might make us a little nervous, so we let <a href="/post/what-should-we-unit-test/">fear drive us to write a test first</a>.</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@RunWith</span><span style="color: #666666">(</span>MockitoJUnitRunner<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">)</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">AppRaterPresenterTests</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@RunWith(MockitoJUnitRunner.<span style="color:#007f7f">class</span>)
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> AppRaterPresenterTests {
 
-  <span style="color: #AA22FF">@Mock</span> AskAppRateView askAppRateView<span style="color: #666666">;</span>
-  <span style="color: #AA22FF">@Mock</span> AppUsageStore appUsageStore<span style="color: #666666">;</span>
+  @Mock AskAppRateView askAppRateView;
+  @Mock AppUsageStore appUsageStore;
 
-  <span style="color: #AA22FF">@Test</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">showsRateDialogIfUsedThreeTimes</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>  
+  @Test <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> showsRateDialogIfUsedThreeTimes() <span style="color:#fff;font-weight:bold">throws</span> Exception {  
 
-    AskAppRatePresenter askAppRatePresenter <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> AskAppRatePresenter<span style="color: #666666">(</span>appUsageStore<span style="color: #666666">);</span>
-    when<span style="color: #666666">(</span>appUsageStore<span style="color: #666666">.</span><span style="color: #7D9029">getNumberOfUsages</span><span style="color: #666666">()).</span><span style="color: #7D9029">thenReturn</span><span style="color: #666666">(3);</span>
+    AskAppRatePresenter askAppRatePresenter = <span style="color:#fff;font-weight:bold">new</span> AskAppRatePresenter(appUsageStore);
+    when(appUsageStore.<span style="color:#007f7f">getNumberOfUsages</span>()).<span style="color:#007f7f">thenReturn</span>(3);
 
-    askAppRatePresenter<span style="color: #666666">.</span><span style="color: #7D9029">onAttach</span><span style="color: #666666">(</span>askAppRateView<span style="color: #666666">);</span>
+    askAppRatePresenter.<span style="color:#007f7f">onAttach</span>(askAppRateView);
 
-    verify<span style="color: #666666">(</span>askAppRateView<span style="color: #666666">).</span><span style="color: #7D9029">displayAsk</span><span style="color: #666666">();</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    verify(askAppRateView).<span style="color:#007f7f">displayAsk</span>();
+  }
+}</code></pre></div>
 
 <p>When I&rsquo;m writing this test and designing my ideal interface for <code>AskAppRatePresenter</code>, I&rsquo;m <em>not</em> thinking about <em>how</em> the number of app usages are stored. They could be stored through <code>SharedPreferences</code> or through a database or through realm or&hellip; Because of this, I don&rsquo;t make the <code>AskAppRatePresenter</code> ask for a <code>Context</code>. All I really care about is that the <code>AskAppRatePresenter</code> has a way of getting the number of times the app has been used.<sup>4</sup></p>
 
@@ -320,38 +318,34 @@
 
 <p>Once we have the test written and failing, we can start to implement what we need to make it pass. Obviously, we&rsquo;ll need a <code>Context</code> in the implementation, but that can be a detail that the <code>AskAppRatePresenter</code> doesn&rsquo;t know about. There are two pretty obvious ways of doing this. One is to use a <code>Context</code> passed into the constructor to get the <code>SharedPreferences</code> that stores the info we retrieve from a <code>AppUsageStore</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">SharedPreferencesAppUsageStore</span> <span style="color: #008000; font-weight: bold">implements</span> AppUsageStore <span style="color: #666666">{</span>
-    <span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> SharedPreferences sharedPreferences<span style="color: #666666">;</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">class</span> SharedPreferencesAppUsageStore <span style="color:#fff;font-weight:bold">implements</span> AppUsageStore {
+    <span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">final</span> SharedPreferences sharedPreferences;
 
-    SharedPreferencesAppUsageStore<span style="color: #666666">(</span>Context context<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-      sharedPreferences <span style="color: #666666">=</span> context<span style="color: #666666">.</span><span style="color: #7D9029">getSharedPreferences</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;usage&quot;</span><span style="color: #666666">,</span> Context<span style="color: #666666">.</span><span style="color: #7D9029">MODE_PRIVATE</span><span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
+    SharedPreferencesAppUsageStore(Context context) {
+      sharedPreferences = context.<span style="color:#007f7f">getSharedPreferences</span>(<span style="color:#0ff;font-weight:bold">&#34;usage&#34;</span>, Context.<span style="color:#007f7f">MODE_PRIVATE</span>);
+    }
 
-    <span style="color: #AA22FF">@Override</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">int</span> <span style="color: #0000FF">getNumberOfUsages</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-      <span style="color: #008000; font-weight: bold">return</span> sharedPreferences<span style="color: #666666">.</span><span style="color: #7D9029">getInt</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;numusages&quot;</span><span style="color: #666666">,</span> <span style="color: #666666">0);</span>
-    <span style="color: #666666">}</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    @Override <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">int</span> getNumberOfUsages() {
+      <span style="color:#fff;font-weight:bold">return</span> sharedPreferences.<span style="color:#007f7f">getInt</span>(<span style="color:#0ff;font-weight:bold">&#34;numusages&#34;</span>, 0);
+    }
+  }
+}</code></pre></div>
 
 <p>The other way is to make the <code>Activity</code> that hosts the presenter implement the <code>AppUsageStore</code> interface and pass a reference to the <code>Activity</code> into <code>AskAppRatePresenter</code>&rsquo;s constructor:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MainActivity</span> <span style="color: #008000; font-weight: bold">extends</span> Activity <span style="color: #008000; font-weight: bold">implements</span> AppUsageStore<span style="color: #666666">,</span> AskAppRateView <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> MainActivity <span style="color:#fff;font-weight:bold">extends</span> Activity <span style="color:#fff;font-weight:bold">implements</span> AppUsageStore, AskAppRateView {
 
-    <span style="color: #AA22FF">@Override</span> <span style="color: #008000; font-weight: bold">protected</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-      <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onCreate</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
-      AskAppRatePresenter askAppRatePresenter <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> AskAppRatePresenter<span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">);</span>
-      askAppRatePresenter<span style="color: #666666">.</span><span style="color: #7D9029">onAttach</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
+    @Override <span style="color:#fff;font-weight:bold">protected</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(Bundle savedInstanceState) {
+      <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onCreate</span>(savedInstanceState);
+      AskAppRatePresenter askAppRatePresenter = <span style="color:#fff;font-weight:bold">new</span> AskAppRatePresenter(<span style="color:#fff;font-weight:bold">this</span>);
+      askAppRatePresenter.<span style="color:#007f7f">onAttach</span>(<span style="color:#fff;font-weight:bold">this</span>);
+    }
 
-    <span style="color: #AA22FF">@Override</span> <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">int</span> <span style="color: #0000FF">getNumberOfUsages</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-      <span style="color: #008000; font-weight: bold">return</span> getSharedPreferences<span style="color: #666666">(</span><span style="color: #BA2121">&quot;usage&quot;</span><span style="color: #666666">,</span> Context<span style="color: #666666">.</span><span style="color: #7D9029">MODE_PRIVATE</span><span style="color: #666666">)</span>
-          <span style="color: #666666">.</span><span style="color: #7D9029">getInt</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;usage&quot;</span><span style="color: #666666">,</span> <span style="color: #666666">0);</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    @Override <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">int</span> getNumberOfUsages() {
+      <span style="color:#fff;font-weight:bold">return</span> getSharedPreferences(<span style="color:#0ff;font-weight:bold">&#34;usage&#34;</span>, Context.<span style="color:#007f7f">MODE_PRIVATE</span>)
+          .<span style="color:#007f7f">getInt</span>(<span style="color:#0ff;font-weight:bold">&#34;usage&#34;</span>, 0);
+    }
+}</code></pre></div>
 
 <p>So, the general recipe for killing a <code>Context</code> &ndash; or other gods in general &ndash; is as follows:</p>
 

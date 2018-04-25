@@ -85,7 +85,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/" />
     
@@ -270,31 +270,27 @@
 
 <p>What&rsquo;s interesting is that when you find a good way to explicitly model your problems in code, you actually start to think with that model, <em>even if you aren&rsquo;t actively using it in code.</em> For example, suppose I&rsquo;m looking at the following code:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #B00040">int</span><span style="color: #666666">[]</span> ints <span style="color: #666666">=</span> <span style="color: #666666">{0,</span> <span style="color: #666666">1,</span> <span style="color: #666666">2};</span>
-<span style="color: #B00040">int</span> sum <span style="color: #666666">=</span> <span style="color: #666666">0;</span>
-<span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span><span style="color: #B00040">int</span> i <span style="color: #666666">=</span> <span style="color: #666666">0;</span> i <span style="color: #666666">&lt;</span> ints<span style="color: #666666">.</span><span style="color: #7D9029">length</span><span style="color: #666666">;</span> i<span style="color: #666666">++)</span> <span style="color: #666666">{</span>
-  ints<span style="color: #666666">[</span>i<span style="color: #666666">]</span> <span style="color: #666666">*=</span> ints<span style="color: #666666">[</span>i<span style="color: #666666">];</span>
-<span style="color: #666666">}</span>
-<span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span><span style="color: #B00040">int</span> anInt <span style="color: #666666">:</span> ints<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-  sum <span style="color: #666666">+=</span> anInt<span style="color: #666666">;</span>
-<span style="color: #666666">}</span>
-System<span style="color: #666666">.</span><span style="color: #7D9029">out</span><span style="color: #666666">.</span><span style="color: #7D9029">println</span><span style="color: #666666">(</span>sum<span style="color: #666666">);</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">int</span>[] ints = {0, 1, 2};
+<span style="color:#fff;font-weight:bold">int</span> sum = 0;
+<span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">int</span> i = 0; i &lt; ints.<span style="color:#007f7f">length</span>; i++) {
+  ints[i] *= ints[i];
+}
+<span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">int</span> anInt : ints) {
+  sum += anInt;
+}
+System.<span style="color:#007f7f">out</span>.<span style="color:#007f7f">println</span>(sum);</code></pre></div>
 
 <p>I think about this code by thinking in terms of maps and reduces, even if I&rsquo;m not working with a Java <code>Stream</code> that has those methods. The same is true about <code>Observable</code>: its such a good way of modeling the problems that I face that I think in terms of it, even if I&rsquo;m not lucky enough to use RxJava.</p>
 
 <p>Coroutines, on the other hand, dont give us any model of what we&rsquo;re trying to accomplish with our asynchronous data at all. Rather, coroutines just give us a way to write code that feels <em>imperative,</em> even if it is asynchronous. Here&rsquo;s an example from the blog post announcing coroutines:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">// launches new coroutine in UI context</span>
-launch(UI) {
-    <span style="color: #408080; font-style: italic">// wait for async overlay to complete</span>
-    <span style="color: #008000; font-weight: bold">val</span> image = asyncOverlay().await()
-    <span style="color: #408080; font-style: italic">// and then show it in UI</span>
-    showImage(image)
-}
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#007f7f">// launches new coroutine in UI context
+</span><span style="color:#007f7f"></span>launch(UI) {
+    <span style="color:#007f7f">// wait for async overlay to complete
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">val</span> image = asyncOverlay().await()
+    <span style="color:#007f7f">// and then show it in UI
+</span><span style="color:#007f7f"></span>    showImage(image)
+}</code></pre></div>
 
 <p><code>asyncOverlay</code> does some async work, but we get to avoid writing callbacks. The code just &ldquo;stops&rdquo; while waiting for that async work to complete <em>without blocking the main thread</em>. Its neat, but, again, there&rsquo;s no modeling of problems that&rsquo;s happening here.</p>
 
@@ -308,13 +304,11 @@ launch(UI) {
 
 <p>Here&rsquo;s something that I regularly do that demonstrates this delightful abstraction:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>clicksObservable
-  <span style="color: #666666">.</span><span style="color: #7D9029">flatMapSingle</span><span style="color: #666666">(</span>click <span style="color: #666666">-&gt;</span> githubApi<span style="color: #666666">.</span><span style="color: #7D9029">listRepos</span><span style="color: #666666">())</span>
-  <span style="color: #666666">.</span><span style="color: #7D9029">flatMap</span><span style="color: #666666">(</span>repos <span style="color: #666666">-&gt;</span> Observable<span style="color: #666666">.</span><span style="color: #7D9029">fromIterable</span><span style="color: #666666">(</span>repos<span style="color: #666666">))</span>
-  <span style="color: #666666">.</span><span style="color: #7D9029">filter</span><span style="color: #666666">(</span>repo <span style="color: #666666">-&gt;</span> isMine<span style="color: #666666">(</span>repo<span style="color: #666666">))</span>
-  <span style="color: #666666">.</span><span style="color: #7D9029">subscribe</span><span style="color: #666666">(</span>repo <span style="color: #666666">-&gt;</span> <span style="color: #666666">{</span> displayInList<span style="color: #666666">(</span>repo<span style="color: #666666">)})</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">clicksObservable
+  .<span style="color:#007f7f">flatMapSingle</span>(click -&gt; githubApi.<span style="color:#007f7f">listRepos</span>())
+  .<span style="color:#007f7f">flatMap</span>(repos -&gt; Observable.<span style="color:#007f7f">fromIterable</span>(repos))
+  .<span style="color:#007f7f">filter</span>(repo -&gt; isMine(repo))
+  .<span style="color:#007f7f">subscribe</span>(repo -&gt; { displayInList(repo)})</code></pre></div>
 
 <p>I start with a stream of clicks and wind up with a list view that displays only the repos that aren&rsquo;t mine. Along the way, I work with an <code>Iterable</code> of repos, but I can easily turn that <code>Iterable</code> into an <code>Observable</code> and then it doesn&rsquo;t even matter whether the repos are in memory or retrieved asynchronously. The <code>Observable</code> cascade doesn&rsquo;t get broken and the periods line up beautifully.</p>
 
@@ -324,18 +318,14 @@ launch(UI) {
 
 <p><code>Observable</code>s do more than just model our problems and abstract over synchronicity. They do this in a way that lets us work at a higher level of abstraction than imperative code. I can write a map an array imperatively like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #B00040">int</span><span style="color: #666666">[]</span> ints <span style="color: #666666">=</span> <span style="color: #666666">{0,</span> <span style="color: #666666">1,</span> <span style="color: #666666">2};</span>    
-<span style="color: #008000; font-weight: bold">for</span> <span style="color: #666666">(</span><span style="color: #B00040">int</span> i <span style="color: #666666">=</span> <span style="color: #666666">0;</span> i <span style="color: #666666">&lt;</span> ints<span style="color: #666666">.</span><span style="color: #7D9029">length</span><span style="color: #666666">;</span> i<span style="color: #666666">++)</span> <span style="color: #666666">{</span>
-  ints<span style="color: #666666">[</span>i<span style="color: #666666">]</span> <span style="color: #666666">*=</span> ints<span style="color: #666666">[</span>i<span style="color: #666666">];</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">int</span>[] ints = {0, 1, 2};    
+<span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">int</span> i = 0; i &lt; ints.<span style="color:#007f7f">length</span>; i++) {
+  ints[i] *= ints[i];
+}</code></pre></div>
 
 <p>Or I can do it declaratively like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>Observable<span style="color: #666666">.</span><span style="color: #7D9029">fromArray</span><span style="color: #666666">(</span>ints<span style="color: #666666">).</span><span style="color: #7D9029">map</span><span style="color: #666666">(</span>aInt <span style="color: #666666">-&gt;</span> aInt <span style="color: #666666">*</span> aInt<span style="color: #666666">)</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Observable.<span style="color:#007f7f">fromArray</span>(ints).<span style="color:#007f7f">map</span>(aInt -&gt; aInt * aInt)</code></pre></div>
 
 <p>Coroutines, in my opinion, when used to handle problems that are well modeled by <code>Observable</code>s are merely the for loops of the asynchronous world.</p>
 

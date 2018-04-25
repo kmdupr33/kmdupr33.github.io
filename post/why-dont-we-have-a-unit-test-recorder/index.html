@@ -79,7 +79,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/why-dont-we-have-a-unit-test-recorder/" />
     
@@ -265,30 +265,28 @@
 
 <p>Doing this on Android was trickier than I first imagined. I thought that I could just use Bytebuddy to rewrite providers to return recorders like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
-<span style="color: #008000; font-weight: bold">public</span> List<span style="color: #666666">&lt;</span>RecordingObject<span style="color: #666666">&gt;</span> <span style="color: #0000FF">rewrite</span><span style="color: #666666">(</span>Method providers<span style="color: #666666">,</span> <span style="color: #B00040">boolean</span> isAndroid<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//...</span>
-    <span style="color: #008000; font-weight: bold">final</span> Map<span style="color: #666666">&lt;</span>Class<span style="color: #666666">&lt;?&gt;,</span> List<span style="color: #666666">&lt;</span>Provider<span style="color: #666666">&gt;&gt;</span> classesGroup
-            <span style="color: #666666">=</span> streamSupplier<span style="color: #666666">.</span><span style="color: #7D9029">get</span><span style="color: #666666">()</span>
-                <span style="color: #666666">.</span><span style="color: #7D9029">collect</span><span style="color: #666666">(</span>groupingBy<span style="color: #666666">((</span>Function<span style="color: #666666">&lt;</span>Provider<span style="color: #666666">,</span> Class<span style="color: #666666">&lt;?&gt;&gt;)</span> Provider<span style="color: #666666">::</span>getDeclaringClass<span style="color: #666666">));</span>
-    classesGroup<span style="color: #666666">.</span><span style="color: #7D9029">forEach</span><span style="color: #666666">((</span>aClass<span style="color: #666666">,</span> classProviders<span style="color: #666666">)</span> <span style="color: #666666">-&gt;</span> <span style="color: #666666">{</span>
-        <span style="color: #408080; font-style: italic">// Working with the classProviders using the Stream API gives us a cleaner way of building up our dynamic subclass.</span>
-        <span style="color: #008000; font-weight: bold">final</span> DynamicType<span style="color: #666666">.</span><span style="color: #7D9029">Builder</span><span style="color: #666666">&lt;?&gt;</span> recordingSubclass <span style="color: #666666">=</span> classProviders<span style="color: #666666">.</span><span style="color: #7D9029">stream</span><span style="color: #666666">()</span>
-                <span style="color: #666666">.</span><span style="color: #7D9029">reduce</span><span style="color: #666666">(</span>byteBuddy<span style="color: #666666">.</span><span style="color: #7D9029">subclass</span><span style="color: #666666">(</span>aClass<span style="color: #666666">),</span> <span style="color: #008000; font-weight: bold">new</span> BiFunction<span style="color: #666666">&lt;</span>DynamicType<span style="color: #666666">.</span><span style="color: #7D9029">Builder</span><span style="color: #666666">&lt;?&gt;,</span> Provider<span style="color: #666666">,</span> DynamicType<span style="color: #666666">.</span><span style="color: #7D9029">Builder</span><span style="color: #666666">&lt;?&gt;&gt;()</span> <span style="color: #666666">{</span>
-                    <span style="color: #AA22FF">@Override</span>
-                    <span style="color: #008000; font-weight: bold">public</span> DynamicType<span style="color: #666666">.</span><span style="color: #7D9029">Builder</span><span style="color: #666666">&lt;?&gt;</span> apply<span style="color: #666666">(</span>DynamicType<span style="color: #666666">.</span><span style="color: #7D9029">Builder</span><span style="color: #666666">&lt;?&gt;</span> builder<span style="color: #666666">,</span> Provider provider<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-                        <span style="color: #008000; font-weight: bold">return</span> provider<span style="color: #666666">.</span><span style="color: #7D9029">rewrite</span><span style="color: #666666">(</span>builder<span style="color: #666666">,</span> any<span style="color: #666666">());</span>
-                    <span style="color: #666666">}</span>
-                <span style="color: #666666">},</span> <span style="color: #666666">(</span>builder<span style="color: #666666">,</span> builder2<span style="color: #666666">)</span> <span style="color: #666666">-&gt;</span> builder2<span style="color: #666666">);</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Override
+<span style="color:#fff;font-weight:bold">public</span> List&lt;RecordingObject&gt; rewrite(Method providers, <span style="color:#fff;font-weight:bold">boolean</span> isAndroid) {
+    <span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">final</span> Map&lt;Class&lt;?&gt;, List&lt;Provider&gt;&gt; classesGroup
+            = streamSupplier.<span style="color:#007f7f">get</span>()
+                .<span style="color:#007f7f">collect</span>(groupingBy((Function&lt;Provider, Class&lt;?&gt;&gt;) Provider::getDeclaringClass));
+    classesGroup.<span style="color:#007f7f">forEach</span>((aClass, classProviders) -&gt; {
+        <span style="color:#007f7f">// Working with the classProviders using the Stream API gives us a cleaner way of building up our dynamic subclass.
+</span><span style="color:#007f7f"></span>        <span style="color:#fff;font-weight:bold">final</span> DynamicType.<span style="color:#007f7f">Builder</span>&lt;?&gt; recordingSubclass = classProviders.<span style="color:#007f7f">stream</span>()
+                .<span style="color:#007f7f">reduce</span>(byteBuddy.<span style="color:#007f7f">subclass</span>(aClass), <span style="color:#fff;font-weight:bold">new</span> BiFunction&lt;DynamicType.<span style="color:#007f7f">Builder</span>&lt;?&gt;, Provider, DynamicType.<span style="color:#007f7f">Builder</span>&lt;?&gt;&gt;() {
+                    @Override
+                    <span style="color:#fff;font-weight:bold">public</span> DynamicType.<span style="color:#007f7f">Builder</span>&lt;?&gt; apply(DynamicType.<span style="color:#007f7f">Builder</span>&lt;?&gt; builder, Provider provider) {
+                        <span style="color:#fff;font-weight:bold">return</span> provider.<span style="color:#007f7f">rewrite</span>(builder, any());
+                    }
+                }, (builder, builder2) -&gt; builder2);
 
-        recordingSubclass<span style="color: #666666">.</span><span style="color: #7D9029">make</span><span style="color: #666666">()</span>
-                <span style="color: #666666">.</span><span style="color: #7D9029">load</span><span style="color: #666666">(</span>aClass<span style="color: #666666">.</span><span style="color: #7D9029">getClassLoader</span><span style="color: #666666">(),</span>
-                      isAndroid <span style="color: #666666">?</span> AndroidClassLoadingStrategy<span style="color: #666666">.</span><span style="color: #7D9029">Default</span><span style="color: #666666">.</span><span style="color: #7D9029">WRAPPER</span> <span style="color: #666666">:</span> ClassReloadingStrategy<span style="color: #666666">.</span><span style="color: #7D9029">fromInstalledAgent</span><span style="color: #666666">());</span>
-    <span style="color: #666666">});</span>
-    <span style="color: #008000; font-weight: bold">return</span> recorders<span style="color: #666666">;</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+        recordingSubclass.<span style="color:#007f7f">make</span>()
+                .<span style="color:#007f7f">load</span>(aClass.<span style="color:#007f7f">getClassLoader</span>(),
+                      isAndroid ? AndroidClassLoadingStrategy.<span style="color:#007f7f">Default</span>.<span style="color:#007f7f">WRAPPER</span> : ClassReloadingStrategy.<span style="color:#007f7f">fromInstalledAgent</span>());
+    });
+    <span style="color:#fff;font-weight:bold">return</span> recorders;
+}</code></pre></div>
 
 <p>The hope here was that we could simply pass in an array of method or constructor references and use Bytebuddy to rewrite those providers to return recorders. Unfortunately, I didn&rsquo;t read notice this line in the Bytebuddy docs:</p>
 

@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/" />
     
@@ -128,8 +128,8 @@
     },
     "headline": What makes Android Apps Testable?,
     "name": What makes Android Apps Testable?,
-    "wordCount": 1279,
-    "timeRequired": "PT7M",
+    "wordCount": 0,
+    "timeRequired": "PT0M",
     "inLanguage": {
       "@type": "Language",
       "alternateName": en
@@ -243,7 +243,7 @@
           </time>  
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
-                            <strong>&middot; 7 minute read</strong>
+                            <strong>&middot; 0 minute read</strong>
                         </section>
                     </header>
 
@@ -276,26 +276,24 @@
 
 <p>Case in point: <a href="https://github.com/google/iosched/blob/2015/android/src/main/java/com/google/samples/apps/iosched/framework/PresenterFragmentImpl.java#L185">The google 2015 I/O app</a> contains a particularly egregious violation of the principle of single responsibility:<sup>1</sup></p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">PresenterFragmentImpl</span> <span style="color: #008000; font-weight: bold">extends</span> Fragment
-        <span style="color: #008000; font-weight: bold">implements</span> Presenter<span style="color: #666666">,</span> UpdatableView<span style="color: #666666">.</span><span style="color: #7D9029">UserActionListener</span><span style="color: #666666">,</span>
-        LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> PresenterFragmentImpl <span style="color:#fff;font-weight:bold">extends</span> Fragment
+        <span style="color:#fff;font-weight:bold">implements</span> Presenter, UpdatableView.<span style="color:#007f7f">UserActionListener</span>,
+        LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; {
 
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> <span style="color: #0000FF">onCreateLoader</span><span style="color: #666666">(</span><span style="color: #B00040">int</span> id<span style="color: #666666">,</span> Bundle args<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> cursorLoader <span style="color: #666666">=</span> createLoader<span style="color: #666666">(</span>id<span style="color: #666666">,</span> args<span style="color: #666666">);</span>
-<span style="background-color: #ffffcc">        mLoaderIdlingResource<span style="color: #666666">.</span><span style="color: #7D9029">onLoaderStarted</span><span style="color: #666666">(</span>cursorLoader<span style="color: #666666">);</span>
-</span>        <span style="color: #008000; font-weight: bold">return</span> cursorLoader<span style="color: #666666">;</span>
-    <span style="color: #666666">}</span>
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> Loader&lt;Cursor&gt; onCreateLoader(<span style="color:#fff;font-weight:bold">int</span> id, Bundle args) {
+        Loader&lt;Cursor&gt; cursorLoader = createLoader(id, args);
+<span style="display:block;width:100%;background-color:#191919">        mLoaderIdlingResource.<span style="color:#007f7f">onLoaderStarted</span>(cursorLoader);
+</span>        <span style="color:#fff;font-weight:bold">return</span> cursorLoader;
+    }
 
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onLoadFinished</span><span style="color: #666666">(</span>Loader<span style="color: #666666">&lt;</span>Cursor<span style="color: #666666">&gt;</span> loader<span style="color: #666666">,</span>
-                               Cursor data<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        processData<span style="color: #666666">(</span>loader<span style="color: #666666">,</span> data<span style="color: #666666">);</span>
-<span style="background-color: #ffffcc">        mLoaderIdlingResource<span style="color: #666666">.</span><span style="color: #7D9029">onLoaderFinished</span><span style="color: #666666">(</span>loader<span style="color: #666666">);</span>
-</span>    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoadFinished(Loader&lt;Cursor&gt; loader,
+                               Cursor data) {
+        processData(loader, data);
+<span style="display:block;width:100%;background-color:#191919">        mLoaderIdlingResource.<span style="color:#007f7f">onLoaderFinished</span>(loader);
+</span>    }
+}</code></pre></div>
 
 <p>This code snippet mixes production code and test code. That&rsquo;s pretty unfortunate.</p>
 
@@ -319,42 +317,38 @@
 
 <p>This toggle determines whether the google I/O calendar should be synced to the user&rsquo;s personal calendar. Here&rsquo;s the code for it:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Override</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onSharedPreferenceChanged</span><span style="color: #666666">(</span>SharedPreferences sharedPrefs<span style="color: #666666">,</span>
-                            String key<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Override
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onSharedPreferenceChanged(SharedPreferences sharedPrefs,
+                            String key) {
 
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">PREF_SYNC_CALENDAR</span><span style="color: #666666">.</span><span style="color: #7D9029">equals</span><span style="color: #666666">(</span>key<span style="color: #666666">))</span> <span style="color: #666666">{</span>
-        Intent intent<span style="color: #666666">;</span>
-        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">shouldSyncCalendar</span><span style="color: #666666">(</span>getActivity<span style="color: #666666">()))</span> <span style="color: #666666">{</span>
-            <span style="color: #408080; font-style: italic">// Add all calendar entries</span>
-            intent <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Intent<span style="color: #666666">(</span>ACTION_UPDATE_ALL_SESSIONS_CALENDAR<span style="color: #666666">);</span>
-        <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
-            <span style="color: #408080; font-style: italic">// Remove all calendar entries</span>
-            intent <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Intent<span style="color: #666666">(</span>ACTION_CLEAR_ALL_SESSIONS_CALENDAR<span style="color: #666666">);</span>
-        <span style="color: #666666">}</span>
+    <span style="color:#fff;font-weight:bold">if</span> (SettingsUtils.<span style="color:#007f7f">PREF_SYNC_CALENDAR</span>.<span style="color:#007f7f">equals</span>(key)) {
+        Intent intent;
+        <span style="color:#fff;font-weight:bold">if</span> (SettingsUtils.<span style="color:#007f7f">shouldSyncCalendar</span>(getActivity())) {
+            <span style="color:#007f7f">// Add all calendar entries
+</span><span style="color:#007f7f"></span>            intent = <span style="color:#fff;font-weight:bold">new</span> Intent(ACTION_UPDATE_ALL_SESSIONS_CALENDAR);
+        } <span style="color:#fff;font-weight:bold">else</span> {
+            <span style="color:#007f7f">// Remove all calendar entries
+</span><span style="color:#007f7f"></span>            intent = <span style="color:#fff;font-weight:bold">new</span> Intent(ACTION_CLEAR_ALL_SESSIONS_CALENDAR);
+        }
 
-        intent<span style="color: #666666">.</span><span style="color: #7D9029">setClass</span><span style="color: #666666">(</span>getActivity<span style="color: #666666">(),</span> SessionCalendarService<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">);</span>
-        getActivity<span style="color: #666666">().</span><span style="color: #7D9029">startService</span><span style="color: #666666">(</span>intent<span style="color: #666666">);</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+        intent.<span style="color:#007f7f">setClass</span>(getActivity(), SessionCalendarService.<span style="color:#007f7f">class</span>);
+        getActivity().<span style="color:#007f7f">startService</span>(intent);
+    }
+}</code></pre></div>
 
 <p>Let&rsquo;s start writing our test for it:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onSharedPreferenceChangedRemovesSessions</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">// Arrange</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onSharedPreferenceChangedRemovesSessions() <span style="color:#fff;font-weight:bold">throws</span> Exception {
+    <span style="color:#007f7f">// Arrange
+</span><span style="color:#007f7f"></span>
+    <span style="color:#007f7f">//Act
+</span><span style="color:#007f7f"></span>    mSettingsFragment.<span style="color:#007f7f">onSharedPreferencesChanged</span>(mMockSharedPreferences,
+                                  PREF_SYNC_CALENDAR);
 
-    <span style="color: #408080; font-style: italic">//Act</span>
-    mSettingsFragment<span style="color: #666666">.</span><span style="color: #7D9029">onSharedPreferencesChanged</span><span style="color: #666666">(</span>mMockSharedPreferences<span style="color: #666666">,</span>
-                                  PREF_SYNC_CALENDAR<span style="color: #666666">);</span>
-
-    <span style="color: #408080; font-style: italic">//Assert</span>
-
-<span style="color: #666666">}</span>
-</pre></div>
-
+    <span style="color:#007f7f">//Assert
+</span><span style="color:#007f7f"></span>
+}</code></pre></div>
 
 <p>As the test method name implies, we want to test that <code>onSharedPreferencesChnaged</code> removes the calendar sessions appropriately.<sup>2</sup> We need to make sure the the <code>else</code> branch of the above <code>if-else</code> statement gets executed. To do that, we need to make sure that <code>SettingsUtils.shouldSyncCalendar(getActivity())</code> returns false, but we can&rsquo;t just go to the declaration of <code>SettingsUtils.shouldSyncCalendar</code> and change the code so that it returns false. <em>We need to change behavior of our code without editing it &ldquo;in place.&rdquo;</em></p>
 
@@ -364,45 +358,41 @@
 
 <p>Suppose instead that the settings toggle code looked like this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">CalendarUpdatingOnSharedPreferenceChangedListener</span> <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">class</span> CalendarUpdatingOnSharedPreferenceChangedListener {
 
-    <span style="color: #B00040">void</span> <span style="color: #0000FF">onPreferenceChanged</span><span style="color: #666666">(</span>CalendarPreferences calendarPreferences<span style="color: #666666">,</span>
-                             String key<span style="color: #666666">)</span> <span style="color: #666666">{</span>
+    <span style="color:#fff;font-weight:bold">void</span> onPreferenceChanged(CalendarPreferences calendarPreferences,
+                             String key) {
 
-        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">PREF_SYNC_CALENDAR</span><span style="color: #666666">.</span><span style="color: #7D9029">equals</span><span style="color: #666666">(</span>key<span style="color: #666666">))</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">            <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>calendarPreferences<span style="color: #666666">.</span><span style="color: #7D9029">shouldSyncCalendar</span><span style="color: #666666">())</span> <span style="color: #666666">{</span>
-</span>                mSessUpdaterLauncher<span style="color: #666666">.</span><span style="color: #7D9029">launchAddAllSessionsUpdater</span><span style="color: #666666">();</span>
-            <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
-<span style="background-color: #ffffcc">                mSessUpdaterLauncher<span style="color: #666666">.</span><span style="color: #7D9029">launchClearAllSessionsUpdate</span><span style="color: #666666">();</span>
-</span>            <span style="color: #666666">}</span>
-        <span style="color: #666666">}</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+        <span style="color:#fff;font-weight:bold">if</span> (SettingsUtils.<span style="color:#007f7f">PREF_SYNC_CALENDAR</span>.<span style="color:#007f7f">equals</span>(key)) {
+<span style="display:block;width:100%;background-color:#191919">            <span style="color:#fff;font-weight:bold">if</span> (calendarPreferences.<span style="color:#007f7f">shouldSyncCalendar</span>()) {
+</span>                mSessUpdaterLauncher.<span style="color:#007f7f">launchAddAllSessionsUpdater</span>();
+            } <span style="color:#fff;font-weight:bold">else</span> {
+<span style="display:block;width:100%;background-color:#191919">                mSessUpdaterLauncher.<span style="color:#007f7f">launchClearAllSessionsUpdate</span>();
+</span>            }
+        }
+    }
+}</code></pre></div>
 
 <p>Notice that we&rsquo;ve replaced a static method call with an instance method call. Notice also that the details of how the <code>SessionCalendarService</code> is started is hidden behind a call to <code>mSessUpdateerLauncher.launchClearAllSessionsUpdate()</code>. These two changes let us arrange and assert in our unit test:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onPreferenceChangedClearedCalendar</span><span style="color: #666666">()</span> <span style="color: #008000; font-weight: bold">throws</span> Exception <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onPreferenceChangedClearedCalendar() <span style="color:#fff;font-weight:bold">throws</span> Exception {
 
-    <span style="color: #408080; font-style: italic">// Arrange</span>
-    CUOSPCListener listener
-            <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> CUOSPCListener<span style="color: #666666">(</span>mSessionUpdateLauncher<span style="color: #666666">);</span>
+    <span style="color:#007f7f">// Arrange
+</span><span style="color:#007f7f"></span>    CUOSPCListener listener
+            = <span style="color:#fff;font-weight:bold">new</span> CUOSPCListener(mSessionUpdateLauncher);
 
-    <span style="color: #008000; font-weight: bold">final</span> CalendarPreferences calendarPreferences
-            <span style="color: #666666">=</span> mock<span style="color: #666666">(</span>CalendarPreferences<span style="color: #666666">.</span><span style="color: #7D9029">class</span><span style="color: #666666">);</span>
-<span style="background-color: #ffffcc">    when<span style="color: #666666">(</span>calendarPreferences<span style="color: #666666">.</span><span style="color: #7D9029">shouldSyncCalendar</span><span style="color: #666666">()).</span><span style="color: #7D9029">thenReturn</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">false</span><span style="color: #666666">);</span>
+    <span style="color:#fff;font-weight:bold">final</span> CalendarPreferences calendarPreferences
+            = mock(CalendarPreferences.<span style="color:#007f7f">class</span>);
+<span style="display:block;width:100%;background-color:#191919">    when(calendarPreferences.<span style="color:#007f7f">shouldSyncCalendar</span>()).<span style="color:#007f7f">thenReturn</span>(<span style="color:#fff;font-weight:bold">false</span>);
 </span>
-    <span style="color: #408080; font-style: italic">// Act</span>
-    listener<span style="color: #666666">.</span><span style="color: #7D9029">onPreferenceChanged</span><span style="color: #666666">(</span>calendarPreferences<span style="color: #666666">,</span>
-                                 SettingsUtils<span style="color: #666666">.</span><span style="color: #7D9029">PREF_SYNC_CALENDAR</span><span style="color: #666666">);</span>
+    <span style="color:#007f7f">// Act
+</span><span style="color:#007f7f"></span>    listener.<span style="color:#007f7f">onPreferenceChanged</span>(calendarPreferences,
+                                 SettingsUtils.<span style="color:#007f7f">PREF_SYNC_CALENDAR</span>);
 
-    <span style="color: #408080; font-style: italic">// Assert</span>
-<span style="background-color: #ffffcc">    verify<span style="color: #666666">(</span>mSessionUpdateLauncher<span style="color: #666666">).</span><span style="color: #7D9029">launchClearAllSessionsUpdate</span><span style="color: #666666">();</span>
-</span><span style="color: #666666">}</span>
-</pre></div>
-
+    <span style="color:#007f7f">// Assert
+</span><span style="display:block;width:100%;background-color:#191919"><span style="color:#007f7f"></span>    verify(mSessionUpdateLauncher).<span style="color:#007f7f">launchClearAllSessionsUpdate</span>();
+</span>}</code></pre></div>
 
 <p>The changes we made to our code gave us seams that we exploited in our unit test. Using mockito<sup>3</sup>, we changed the behavior of <code>calendarPreferences.shouldSyncCalendar()</code> so that it returns false without going to the declaration of <code>CalendarPreferences.shouldSyncCalendar</code> and editing it. We also used mockito to swap out a standard <code>SessionUpdaterLauncher</code> with an implementation that records that a particular method has been called. This, of course, is what allows us to assert in our test with <code>verify</code>.</p>
 

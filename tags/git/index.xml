@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Git on Philosophical Hacker</title>
-    <link>https://www.philosophicalhacker.com/tags/git/index.xml</link>
+    <link>https://www.philosophicalhacker.com/tags/git/</link>
     <description>Recent content in Git on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://www.philosophicalhacker.com/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 23 Oct 2016 17:27:45 -0400</lastBuildDate>
+    
+	<atom:link href="https://www.philosophicalhacker.com/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Using Git Submodules Effectively</title>
@@ -14,107 +17,7 @@
       <pubDate>Sun, 23 Oct 2016 17:27:45 -0400</pubDate>
       
       <guid>https://www.philosophicalhacker.com/post/using-git-submodules-effectively/</guid>
-      <description>
-
-&lt;p&gt;I used to think git submodules were categorically evil. This was naive, as most choices in software development are about tradeoffs. A part of the reason I had this simplistic view was because of &lt;a href=&#34;https://codingkilledthecat.wordpress.com/2012/04/28/why-your-company-shouldnt-use-git-submodules/&#34;&gt;an article&lt;/a&gt; called &amp;ldquo;Why your Company Shouldn&amp;rsquo;t use Git Submodules.&amp;rdquo; I took a second look at this article recently and I read the docs on git submodules. What follows are some more nuanced thoughts on how and when git submodules can be used effectively.&lt;/p&gt;
-
-&lt;h3 id=&#34;what-are-submodules-even-for&#34;&gt;What are Submodules even for?&lt;/h3&gt;
-
-&lt;p&gt;The docs actually provide a very helpful example to answer this question:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Suppose you’re developing a web site and creating Atom feeds. Instead of writing your own Atom-generating code, you decide to use a library. You’re likely to have to either include this code from a shared library like a CPAN install or Ruby gem, or copy the source code into your own project tree. The issue with including the library is that it’s difficult to customize the library in any way and often more difficult to deploy it, because you need to make sure every client has that library available. The issue with vendoring the code into your own project is that any custom changes you make are difficult to merge when upstream changes become available.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Interestingly, this is very different from what we might call the &amp;ldquo;naive perceived purpose&amp;rdquo; of git submodules, which is well captured by the opening paragraph of the aforementioned article arguing against git submodules:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;It is not uncommon at all when working on any kind of larger-scale project with Git to find yourself wanting to share code between multiple different repositories – whether it be some core system among multiple different products built on top of that system, or perhaps a shared utility library between projects.&lt;/p&gt;
-
-&lt;p&gt;At first glance, Git submodules seem to be the perfect answer for this&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I used to think submodules were designed for the purpose of sharing code. As the above example from the docs suggest, that&amp;rsquo;s not entirely true. Its more accurate to say that git submodules are useful when you want to share code &lt;em&gt;that you also need change along with the consumer of that code.&lt;/em&gt; If you&amp;rsquo;re not trying to change the shared code along with the consumer of that code, there are better options for sharing your code. The docs even seem to admit this:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;It’s quite likely that if you’re using submodules, you’re doing so because you really want to work on the code in the submodule at the same time as you’re working on the code in the main project (or across several submodules). Otherwise you would probably instead be using a simpler dependency management system (such as Maven or Rubygems).&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;So, if you&amp;rsquo;re using git submodules merely as a way of sharing code, that&amp;rsquo;s probably misguided, as it&amp;rsquo;s a use case that git submodules weren&amp;rsquo;t designed to handle. There&amp;rsquo;s additional complexity that comes along with using git submodules, and this complexity isn&amp;rsquo;t worth it if there are simpler ways of sharing code. This additional complexity &lt;em&gt;may&lt;/em&gt; be worth it if you&amp;rsquo;re trying to work on shared code and project code simultaneously and if there are methods of managing this complexity in a way that a) keeps us moving quickly and b) helps us avoids costly mistakes. The next section is about some of the complexities of git submodules and the techniques the git folks recommend for managing these complexities.&lt;/p&gt;
-
-&lt;h3 id=&#34;managing-git-submodule-complexity&#34;&gt;Managing git submodule complexity&lt;/h3&gt;
-
-&lt;h4 id=&#34;working-around-init-and-update&#34;&gt;Working around init and update&lt;/h4&gt;
-
-&lt;p&gt;The first thing that&amp;rsquo;s annoying about git submodules, in my opinion, is that when you check out a project, you can&amp;rsquo;t get it to build without initializing and updating your submodules. This isn&amp;rsquo;t a problem if you know that you&amp;rsquo;ve got submodules, but its a little annoying and surprising to see a build error when you don&amp;rsquo;t realize that the project has submodules.&lt;/p&gt;
-
-&lt;p&gt;A remedy here is to use the &lt;code&gt;--recursive&lt;/code&gt; flag on the &lt;code&gt;git clone&lt;/code&gt; command. This is probably something that I should just always do from now on. I&amp;rsquo;ll make a bash function to support this. I&amp;rsquo;ve already &lt;code&gt;git status&lt;/code&gt; and &lt;code&gt;git push&lt;/code&gt; aliased to &lt;code&gt;gs&lt;/code&gt; and &lt;code&gt;gp&lt;/code&gt; respectively, so &lt;code&gt;gc&lt;/code&gt; is a good name for this function:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;function&lt;/span&gt; gc &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-   git clone --recursive &lt;span style=&#34;color: #19177C&#34;&gt;$1&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;h4 id=&#34;pushing-changes&#34;&gt;Pushing changes&lt;/h4&gt;
-
-&lt;p&gt;Pushing changes with submodules can be a bit of a pain if you manually go into a subdirectory and push from there. Fortunately, there are commands for this and we can even create git aliases to make using these commands easy. Here&amp;rsquo;s the command:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git push --recurse-submodules&lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;on-demand
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;As the option suggests, this command recursively pushes the submodules along with the changes in the parent project. I could create an alias for this command with the following command:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git config alias.spush &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;push --recurse-submodules=on-demand&amp;#39;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;But like I said, I&amp;rsquo;ve already got &lt;code&gt;gp&lt;/code&gt; aliased as &lt;code&gt;git push&lt;/code&gt;, so I can just update that alias:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000&#34;&gt;alias&lt;/span&gt; &lt;span style=&#34;color: #19177C&#34;&gt;gp&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;git push --recurse-submodules=on-demand&amp;#39;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;h4 id=&#34;getting-updates&#34;&gt;Getting updates&lt;/h4&gt;
-
-&lt;p&gt;The last thing that&amp;rsquo;s a little annoying about git submodules is updating them when there are changes upstream. Turns out that there&amp;rsquo;s a command that eases this process too:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git submodule update --remote --merge
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Gonna alias that one too:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000&#34;&gt;alias&lt;/span&gt; &lt;span style=&#34;color: #19177C&#34;&gt;gu&lt;/span&gt;&lt;span style=&#34;color: #666666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;git submodule update --remote --merge&amp;#39;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The &lt;code&gt;--merge&lt;/code&gt; flag, of course, is actually supposed to &lt;em&gt;safely&lt;/em&gt; merge in the upstream changes. This is a bit misleading because, as article against git modules points out, if you aren&amp;rsquo;t careful, you can blow away your changes in a git submodule by running this command. To avoid this, you actually need to make sure the git submodule has a branch checked out.&lt;/p&gt;
-
-&lt;p&gt;One way of doing this easily is to use the git submodule &lt;code&gt;foreach&lt;/code&gt; subcommand:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;git submodule foreach &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;git checkout -b featureA&amp;#39;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;If we create a bash function that we use for checking out new branches, we can, with a single command, checkout a new branch in the parent repo in in the submodules:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34; style=&#34;background: #f8f8f8&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;color: #008000; font-weight: bold&#34;&gt;function&lt;/span&gt; gcb &lt;span style=&#34;color: #666666&#34;&gt;{&lt;/span&gt;
-  git checkout -b &lt;span style=&#34;color: #19177C&#34;&gt;$1&lt;/span&gt;
-  git submodule foreach &lt;span style=&#34;color: #BA2121&#34;&gt;&amp;#39;git checkout -b&amp;#39;&lt;/span&gt;&lt;span style=&#34;color: #19177C&#34;&gt;$1&lt;/span&gt;
-&lt;span style=&#34;color: #666666&#34;&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;If we&amp;rsquo;re using gitflow, we won&amp;rsquo;t be making any changes outside of a feature branch anyway, so if we&amp;rsquo;re using a function like the above one, we shouldn&amp;rsquo;t ever run into a situation where we&amp;rsquo;ve blown away changes we&amp;rsquo;ve made in our submodule.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;Sometimes all of this feels a bit wonky to me. I think it feels this way because git modules are still fundamentally weird. In an ideal world, we&amp;rsquo;d develop our shared code in separate repositories and we&amp;rsquo;d test that shared code with automated tests instead of testing it by running the project that consumes that shared library.&lt;/p&gt;
-
-&lt;p&gt;However, sometimes we need to take out a tech loan. Sometimes we need to live with a wonky submodule setup for a bit. Fortunately, git provides us the tools needed to handle the additional complexity that comes along with using git submodules, and if we want to be able to work on a project and its shared code simultaneously, git submodules are appropriate. If we&amp;rsquo;re just trying to share code, we should use simpler dependency management solutions.&lt;/p&gt;
-</description>
+      <description>I used to think git submodules were categorically evil. This was naive, as most choices in software development are about tradeoffs. A part of the reason I had this simplistic view was because of an article called &amp;ldquo;Why your Company Shouldn&amp;rsquo;t use Git Submodules.&amp;rdquo; I took a second look at this article recently and I read the docs on git submodules. What follows are some more nuanced thoughts on how and when git submodules can be used effectively.</description>
     </item>
     
   </channel>

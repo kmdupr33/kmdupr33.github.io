@@ -79,7 +79,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/using-git-submodules-effectively/" />
     
@@ -273,62 +273,46 @@
 
 <p>A remedy here is to use the <code>--recursive</code> flag on the <code>git clone</code> command. This is probably something that I should just always do from now on. I&rsquo;ll make a bash function to support this. I&rsquo;ve already <code>git status</code> and <code>git push</code> aliased to <code>gs</code> and <code>gp</code> respectively, so <code>gc</code> is a good name for this function:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">function</span> gc <span style="color: #666666">{</span>
-   git clone --recursive <span style="color: #19177C">$1</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#fff;font-weight:bold">function</span> gc {
+   git clone --recursive $1
+}</code></pre></div>
 
 <h4 id="pushing-changes">Pushing changes</h4>
 
 <p>Pushing changes with submodules can be a bit of a pain if you manually go into a subdirectory and push from there. Fortunately, there are commands for this and we can even create git aliases to make using these commands easy. Here&rsquo;s the command:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>git push --recurse-submodules<span style="color: #666666">=</span>on-demand
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git push --recurse-submodules=on-demand</code></pre></div>
 
 <p>As the option suggests, this command recursively pushes the submodules along with the changes in the parent project. I could create an alias for this command with the following command:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>git config alias.spush <span style="color: #BA2121">&#39;push --recurse-submodules=on-demand&#39;</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git config alias.spush <span style="color:#0ff;font-weight:bold">&#39;push --recurse-submodules=on-demand&#39;</span></code></pre></div>
 
 <p>But like I said, I&rsquo;ve already got <code>gp</code> aliased as <code>git push</code>, so I can just update that alias:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000">alias</span> <span style="color: #19177C">gp</span><span style="color: #666666">=</span><span style="color: #BA2121">&#39;git push --recurse-submodules=on-demand&#39;</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#fff;font-weight:bold">alias</span> gp=<span style="color:#0ff;font-weight:bold">&#39;git push --recurse-submodules=on-demand&#39;</span></code></pre></div>
 
 <h4 id="getting-updates">Getting updates</h4>
 
 <p>The last thing that&rsquo;s a little annoying about git submodules is updating them when there are changes upstream. Turns out that there&rsquo;s a command that eases this process too:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>git submodule update --remote --merge
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git submodule update --remote --merge</code></pre></div>
 
 <p>Gonna alias that one too:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000">alias</span> <span style="color: #19177C">gu</span><span style="color: #666666">=</span><span style="color: #BA2121">&#39;git submodule update --remote --merge&#39;</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#fff;font-weight:bold">alias</span> gu=<span style="color:#0ff;font-weight:bold">&#39;git submodule update --remote --merge&#39;</span></code></pre></div>
 
 <p>The <code>--merge</code> flag, of course, is actually supposed to <em>safely</em> merge in the upstream changes. This is a bit misleading because, as article against git modules points out, if you aren&rsquo;t careful, you can blow away your changes in a git submodule by running this command. To avoid this, you actually need to make sure the git submodule has a branch checked out.</p>
 
 <p>One way of doing this easily is to use the git submodule <code>foreach</code> subcommand:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>git submodule foreach <span style="color: #BA2121">&#39;git checkout -b featureA&#39;</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git submodule foreach <span style="color:#0ff;font-weight:bold">&#39;git checkout -b featureA&#39;</span></code></pre></div>
 
 <p>If we create a bash function that we use for checking out new branches, we can, with a single command, checkout a new branch in the parent repo in in the submodules:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">function</span> gcb <span style="color: #666666">{</span>
-  git checkout -b <span style="color: #19177C">$1</span>
-  git submodule foreach <span style="color: #BA2121">&#39;git checkout -b&#39;</span><span style="color: #19177C">$1</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#fff;font-weight:bold">function</span> gcb {
+  git checkout -b $1
+  git submodule foreach <span style="color:#0ff;font-weight:bold">&#39;git checkout -b&#39;</span>$1
+}</code></pre></div>
 
 <p>If we&rsquo;re using gitflow, we won&rsquo;t be making any changes outside of a feature branch anyway, so if we&rsquo;re using a function like the above one, we shouldn&rsquo;t ever run into a situation where we&rsquo;ve blown away changes we&rsquo;ve made in our submodule.</p>
 

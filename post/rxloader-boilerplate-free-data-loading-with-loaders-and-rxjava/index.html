@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/" />
     
@@ -128,8 +128,8 @@
     },
     "headline": RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava,
     "name": RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava,
-    "wordCount": 1135,
-    "timeRequired": "PT6M",
+    "wordCount": 0,
+    "timeRequired": "PT0M",
     "inLanguage": {
       "@type": "Language",
       "alternateName": en
@@ -235,7 +235,7 @@
           </time>  
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/rxjava/">#rxjava</a></span> 
-                            <strong>&middot; 6 minute read</strong>
+                            <strong>&middot; 0 minute read</strong>
                         </section>
                     </header>
 
@@ -248,24 +248,22 @@
 The following code should make you nervous:</p>
 </blockquote>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> BoilerplateFree <span style="color:#fff;font-weight:bold">extends</span> AppCompatActivity {
 
-    <span style="color: #408080; font-style: italic">//...    </span>
-
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">protected</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onCreate</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
-        setContentView<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">layout</span><span style="color: #666666">.</span><span style="color: #7D9029">activity_boilerplate_free</span><span style="color: #666666">);</span>
-        mLoginObservable<span style="color: #666666">.</span><span style="color: #7D9029">subscribe</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Action1<span style="color: #666666">&lt;</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span><span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
-            <span style="color: #AA22FF">@Override</span>
-            <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">call</span><span style="color: #666666">(</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span> authResponse<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-                Log<span style="color: #666666">.</span><span style="color: #7D9029">d</span><span style="color: #666666">(</span>TAG<span style="color: #666666">,</span> <span style="color: #BA2121">&quot;call: Successfully logged in&quot;</span><span style="color: #666666">);</span>                
-            <span style="color: #666666">}</span>
-        <span style="color: #666666">});</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    <span style="color:#007f7f">//...    
+</span><span style="color:#007f7f"></span>
+    @Override
+    <span style="color:#fff;font-weight:bold">protected</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(Bundle savedInstanceState) {
+        <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onCreate</span>(savedInstanceState);
+        setContentView(R.<span style="color:#007f7f">layout</span>.<span style="color:#007f7f">activity_boilerplate_free</span>);
+        mLoginObservable.<span style="color:#007f7f">subscribe</span>(<span style="color:#fff;font-weight:bold">new</span> Action1&lt;AuthManager.<span style="color:#007f7f">AuthResponse</span>&gt;() {
+            @Override
+            <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> call(AuthManager.<span style="color:#007f7f">AuthResponse</span> authResponse) {
+                Log.<span style="color:#007f7f">d</span>(TAG, <span style="color:#0ff;font-weight:bold">&#34;call: Successfully logged in&#34;</span>);                
+            }
+        });
+    }
+}</code></pre></div>
 
 <p>When you see this code you should be asking, &ldquo;What will happen upon a configuration change? Will the <code>Activity</code> leak? Do we need to re-query the network just because of a configuration change?&rdquo; (Hopefully, when you see this code, you&rsquo;re also wondering, <a href="http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/">like I do</a>, &ldquo;Why are we putting logic in our <code>Activitys</code>?&ldquo;)</p>
 
@@ -303,17 +301,15 @@ The following code should make you nervous:</p>
 
 <p>RxLifecycle can alleviate some of the weaknesses of the previous approach by giving us a way to automatically complete observable &ldquo;sequences based on Activity or Fragment life-cycle events.&rdquo;<sup>1</sup> There&rsquo;s not much boilerplate we have to write to take advantage of this, which is an impressive feat of the library:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MyActivity</span> <span style="color: #008000; font-weight: bold">extends</span> RxActivity <span style="color: #666666">{</span>
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onResume</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onResume</span><span style="color: #666666">();</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> MyActivity <span style="color:#fff;font-weight:bold">extends</span> RxActivity {
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onResume() {
+        <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onResume</span>();
         myObservable
-            <span style="color: #666666">.</span><span style="color: #7D9029">compose</span><span style="color: #666666">(</span>bindToLifecycle<span style="color: #666666">())</span>
-            <span style="color: #666666">.</span><span style="color: #7D9029">subscribe</span><span style="color: #666666">();</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+            .<span style="color:#007f7f">compose</span>(bindToLifecycle())
+            .<span style="color:#007f7f">subscribe</span>();
+    }
+}</code></pre></div>
 
 <p>Unfortunately, if we don&rsquo;t want to subclass a particular kind of Activity to take advantage of this we&rsquo;ll need to write more boilerplate to generate an observable sequence of life-cycle events. Either way, RxLifecycle, combined with the previously outlined cache-replay approach, gives us a pretty nice way of loading data in our Android apps.</p>
 
@@ -329,28 +325,26 @@ The following code should make you nervous:</p>
 
 <p>I think if we use <code>Loader</code>s <em>with</em> <code>Observable</code>s, we can come up with a solution that&rsquo;s better than the above solutions. Here&rsquo;s the basic idea: we wrap the call to <code>LoaderManager.initLoader</code> in an <code>Observable</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>Observable<span style="color: #666666">.</span><span style="color: #7D9029">create</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Observable<span style="color: #666666">.</span><span style="color: #7D9029">OnSubscribe</span><span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">call</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">final</span> Subscriber<span style="color: #666666">&lt;?</span> <span style="color: #008000; font-weight: bold">super</span> T<span style="color: #666666">&gt;</span> subscriber<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        loaderManager<span style="color: #666666">.</span><span style="color: #7D9029">initLoader</span><span style="color: #666666">(</span>loaderId<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">null</span><span style="color: #666666">,</span>
-                <span style="color: #008000; font-weight: bold">new</span> LoaderManager<span style="color: #666666">.</span><span style="color: #7D9029">LoaderCallbacks</span><span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
-                    <span style="color: #AA22FF">@Override</span>
-                    <span style="color: #008000; font-weight: bold">public</span> Loader<span style="color: #666666">&lt;</span>U<span style="color: #666666">&gt;</span> <span style="color: #0000FF">onCreateLoader</span><span style="color: #666666">(</span><span style="color: #B00040">int</span> id<span style="color: #666666">,</span> Bundle args<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-                        <span style="color: #408080; font-style: italic">// return some loader</span>
-                    <span style="color: #666666">}</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Observable.<span style="color:#007f7f">create</span>(<span style="color:#fff;font-weight:bold">new</span> Observable.<span style="color:#007f7f">OnSubscribe</span>&lt;T&gt;() {
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> call(<span style="color:#fff;font-weight:bold">final</span> Subscriber&lt;? <span style="color:#fff;font-weight:bold">super</span> T&gt; subscriber) {
+        loaderManager.<span style="color:#007f7f">initLoader</span>(loaderId, <span style="color:#fff;font-weight:bold">null</span>,
+                <span style="color:#fff;font-weight:bold">new</span> LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;T&gt;() {
+                    @Override
+                    <span style="color:#fff;font-weight:bold">public</span> Loader&lt;U&gt; onCreateLoader(<span style="color:#fff;font-weight:bold">int</span> id, Bundle args) {
+                        <span style="color:#007f7f">// return some loader
+</span><span style="color:#007f7f"></span>                    }
 
-                    <span style="color: #AA22FF">@Override</span>
-                    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onLoadFinished</span><span style="color: #666666">(</span>Loader<span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;</span> loader<span style="color: #666666">,</span> T data<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-                        subscriber<span style="color: #666666">.</span><span style="color: #7D9029">onNext</span><span style="color: #666666">(</span>data<span style="color: #666666">);</span>
-                    <span style="color: #666666">}</span>
+                    @Override
+                    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoadFinished(Loader&lt;T&gt; loader, T data) {
+                        subscriber.<span style="color:#007f7f">onNext</span>(data);
+                    }
 
-                    <span style="color: #AA22FF">@Override</span>
-                    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onLoaderReset</span><span style="color: #666666">(</span>Loader<span style="color: #666666">&lt;</span>T<span style="color: #666666">&gt;</span> loader<span style="color: #666666">)</span> <span style="color: #666666">{}</span>
-            <span style="color: #666666">});</span>
-    <span style="color: #666666">}</span>        
-<span style="color: #666666">});</span>
-</pre></div>
-
+                    @Override
+                    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoaderReset(Loader&lt;T&gt; loader) {}
+            });
+    }        
+});</code></pre></div>
 
 <p>To be sure, this isn&rsquo;t the cleanest way of doing this, but I think its a useful way of initially presenting the idea. Let&rsquo;s think for a second about what this simple little trick gives us.</p>
 
@@ -358,46 +352,42 @@ The following code should make you nervous:</p>
 
 <p>These two properties let us write boilerplate-free data loading code like the code with which we began this article:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> BoilerplateFree <span style="color:#fff;font-weight:bold">extends</span> AppCompatActivity {
 
-    <span style="color: #408080; font-style: italic">//...    </span>
-
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">protected</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onCreate</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
-        setContentView<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">layout</span><span style="color: #666666">.</span><span style="color: #7D9029">activity_boilerplate_free</span><span style="color: #666666">);</span>
-        mLoginObservable<span style="color: #666666">.</span><span style="color: #7D9029">subscribe</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Action1<span style="color: #666666">&lt;</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span><span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
-            <span style="color: #AA22FF">@Override</span>
-            <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">call</span><span style="color: #666666">(</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span> authResponse<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-                Log<span style="color: #666666">.</span><span style="color: #7D9029">d</span><span style="color: #666666">(</span>TAG<span style="color: #666666">,</span> <span style="color: #BA2121">&quot;call: Successfully logged in&quot;</span><span style="color: #666666">);</span>                
-            <span style="color: #666666">}</span>
-        <span style="color: #666666">});</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    <span style="color:#007f7f">//...    
+</span><span style="color:#007f7f"></span>
+    @Override
+    <span style="color:#fff;font-weight:bold">protected</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(Bundle savedInstanceState) {
+        <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onCreate</span>(savedInstanceState);
+        setContentView(R.<span style="color:#007f7f">layout</span>.<span style="color:#007f7f">activity_boilerplate_free</span>);
+        mLoginObservable.<span style="color:#007f7f">subscribe</span>(<span style="color:#fff;font-weight:bold">new</span> Action1&lt;AuthManager.<span style="color:#007f7f">AuthResponse</span>&gt;() {
+            @Override
+            <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> call(AuthManager.<span style="color:#007f7f">AuthResponse</span> authResponse) {
+                Log.<span style="color:#007f7f">d</span>(TAG, <span style="color:#0ff;font-weight:bold">&#34;call: Successfully logged in&#34;</span>);                
+            }
+        });
+    }
+}</code></pre></div>
 
 <p>But where does the <code>mLoginObservable</code> that&rsquo;s wrapped the <code>LoaderManager.init</code> call come from? That&rsquo;s where RxLoader comes into play. RxLoader is a <em>very</em> lightweight library (less than 150 LOC). It&rsquo;s simply an RxJava <code>Transformer</code> that lets you take an Observable and compose it into something with loader-like behaviour, something that in fact uses a <code>Loader</code> to get this behaviour for free. With RxLoader, your data loading code is as simple as this:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">public</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">BoilerplateFree</span> <span style="color: #008000; font-weight: bold">extends</span> AppCompatActivity <span style="color: #666666">{</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> BoilerplateFree <span style="color:#fff;font-weight:bold">extends</span> AppCompatActivity {
 
-    <span style="color: #408080; font-style: italic">//...    </span>
-
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">protected</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onCreate</span><span style="color: #666666">(</span>Bundle savedInstanceState<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">super</span><span style="color: #666666">.</span><span style="color: #7D9029">onCreate</span><span style="color: #666666">(</span>savedInstanceState<span style="color: #666666">);</span>
-        setContentView<span style="color: #666666">(</span>R<span style="color: #666666">.</span><span style="color: #7D9029">layout</span><span style="color: #666666">.</span><span style="color: #7D9029">activity_boilerplate_free</span><span style="color: #666666">);</span>
-<span style="background-color: #ffffcc">        mLoginObservable<span style="color: #666666">.</span><span style="color: #7D9029">compose</span><span style="color: #666666">(</span>RxLoader<span style="color: #666666">.</span><span style="color: #7D9029">from</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">this</span><span style="color: #666666">))</span>
-</span>            <span style="color: #666666">.</span><span style="color: #7D9029">subscribe</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">new</span> Action1<span style="color: #666666">&lt;</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span><span style="color: #666666">&gt;()</span> <span style="color: #666666">{</span>
-            <span style="color: #AA22FF">@Override</span>
-            <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">call</span><span style="color: #666666">(</span>AuthManager<span style="color: #666666">.</span><span style="color: #7D9029">AuthResponse</span> authResponse<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-                Log<span style="color: #666666">.</span><span style="color: #7D9029">d</span><span style="color: #666666">(</span>TAG<span style="color: #666666">,</span> <span style="color: #BA2121">&quot;call: Successfully logged in&quot;</span><span style="color: #666666">);</span>                
-            <span style="color: #666666">}</span>
-        <span style="color: #666666">});</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    <span style="color:#007f7f">//...    
+</span><span style="color:#007f7f"></span>
+    @Override
+    <span style="color:#fff;font-weight:bold">protected</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(Bundle savedInstanceState) {
+        <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onCreate</span>(savedInstanceState);
+        setContentView(R.<span style="color:#007f7f">layout</span>.<span style="color:#007f7f">activity_boilerplate_free</span>);
+<span style="display:block;width:100%;background-color:#191919">        mLoginObservable.<span style="color:#007f7f">compose</span>(RxLoader.<span style="color:#007f7f">from</span>(<span style="color:#fff;font-weight:bold">this</span>))
+</span>            .<span style="color:#007f7f">subscribe</span>(<span style="color:#fff;font-weight:bold">new</span> Action1&lt;AuthManager.<span style="color:#007f7f">AuthResponse</span>&gt;() {
+            @Override
+            <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> call(AuthManager.<span style="color:#007f7f">AuthResponse</span> authResponse) {
+                Log.<span style="color:#007f7f">d</span>(TAG, <span style="color:#0ff;font-weight:bold">&#34;call: Successfully logged in&#34;</span>);                
+            }
+        });
+    }
+}</code></pre></div>
 
 <p>One line of code gets you an <code>Observable</code> with memory-leak-proof data loading whose results are cached across orientation changes.</p>
 

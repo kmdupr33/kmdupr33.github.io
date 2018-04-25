@@ -79,7 +79,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/testing-package-implmentation-details-from-the-outside/" />
     
@@ -257,42 +257,36 @@
 
 <p>In order to test the <code>isSpace()</code> function from outside of the fmt package, the standard lib authors created a export_test.go file in the fmt package. This file simply exports the parts of the un-exported interface that they wanted to test:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">//export_test.go</span>
-<span style="color: #008000; font-weight: bold">package</span> fmt
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007f7f">//export_test.go
+</span><span style="color:#007f7f"></span><span style="color:#fff;font-weight:bold">package</span> fmt
 
-<span style="color: #008000; font-weight: bold">var</span> IsSpace = isSpace
-</pre></div>
-
+<span style="color:#fff;font-weight:bold">var</span> IsSpace = isSpace</code></pre></div>
 
 <p>This file ensures that the <code>isSpace()</code> function is available to the fmt tests as <code>IsSpace()</code>. Importantly, because this file has a _test.go prefix, it is only compiled when the <code>go test</code> command is run, thereby ensuring that no clients outside of the testing package can access the <code>isSpace()</code> function.</p>
 
 <p>Sometimes, however, we want to test more than just an un-exported function from a package. Sometimes, we may want to test the methods of an un-exported struct. Say you&rsquo;ve got a struct like <code>lruCache</code>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">//cache.go</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007f7f">//cache.go
+</span><span style="color:#007f7f"></span>
+<span style="color:#fff;font-weight:bold">type</span> lruCache <span style="color:#fff;font-weight:bold">struct</span> {
+	<span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>}
 
-<span style="color: #008000; font-weight: bold">type</span> lruCache <span style="color: #008000; font-weight: bold">struct</span> {
-	<span style="color: #408080; font-style: italic">//...</span>
-}
-
-<span style="color: #008000; font-weight: bold">func</span> (s <span style="color: #666666">*</span>lruCache) GetGopher(name <span style="color: #B00040">string</span>) (Gopher, <span style="color: #B00040">error</span>) {
-	gopher, ok <span style="color: #666666">:=</span> s.CachedGophers[name]
-	<span style="color: #008000; font-weight: bold">if</span> !ok {
-		<span style="color: #008000; font-weight: bold">return</span> s.GopherFinder.Find(name)
+<span style="color:#fff;font-weight:bold">func</span> (s *lruCache) GetGopher(name <span style="color:#fff;font-weight:bold">string</span>) (Gopher, <span style="color:#fff;font-weight:bold">error</span>) {
+	gopher, ok := s.CachedGophers[name]
+	<span style="color:#fff;font-weight:bold">if</span> !ok {
+		<span style="color:#fff;font-weight:bold">return</span> s.GopherFinder.Find(name)
 	}
-	<span style="color: #008000; font-weight: bold">return</span> gopher, <span style="color: #008000; font-weight: bold">nil</span>
+	<span style="color:#fff;font-weight:bold">return</span> gopher, <span style="color:#fff;font-weight:bold">nil</span>
 }
 
-Now, suppose you wanted to test the <span style="color: #BA2121">`GetGopher()`</span> method. This can be accomplished by combining the above technique with <span style="color: #008000; font-weight: bold">struct</span> embedding:
-</pre></div>
+Now, suppose you wanted to test the <span style="color:#0ff;font-weight:bold">`GetGopher()`</span> method. This can be accomplished by combining the above technique with <span style="color:#fff;font-weight:bold">struct</span> embedding:</code></pre></div>
 
-
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic">//export_test.go</span>
-
-<span style="color: #008000; font-weight: bold">type</span> LRUCache <span style="color: #008000; font-weight: bold">struct</span> {
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007f7f">//export_test.go
+</span><span style="color:#007f7f"></span>
+<span style="color:#fff;font-weight:bold">type</span> LRUCache <span style="color:#fff;font-weight:bold">struct</span> {
 	lruCache
-}
-</pre></div>
-
+}</code></pre></div>
 
 <p>Now, in order for this to work, the <code>GetGopher()</code> method has to be exported. This doesn&rsquo;t break encapsulation, however, because an exported method on an un-exported type will still be unaccessible to clients outside of the package.</p>
 

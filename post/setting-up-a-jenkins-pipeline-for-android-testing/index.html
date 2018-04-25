@@ -83,7 +83,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/setting-up-a-jenkins-pipeline-for-android-testing/" />
     
@@ -130,7 +130,7 @@
     },
     "headline": Setting up a Jenkins Pipeline for Android Testing,
     "name": Setting up a Jenkins Pipeline for Android Testing,
-    "wordCount": 1253,
+    "wordCount": 1251,
     "timeRequired": "PT6M",
     "inLanguage": {
       "@type": "Language",
@@ -265,30 +265,28 @@
 
 <h3 id="the-jenkinsfile">The Jenkinsfile</h3>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 1 </span><span style="background-color: #ffffcc">node<span style="color: #666666">(</span><span style="color: #BA2121">&#39;android&#39;</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 2 </span><span style="background-color: #ffffcc">    step<span style="color: #666666">([</span>$class<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;StashNotifier&#39;</span><span style="color: #666666">])</span>
-</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 3 </span>    checkout scm
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 4 </span>    <span style="color: #0000FF">stage</span><span style="color: #666666">(</span><span style="color: #BA2121">&#39;Build&#39;</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 5 </span>      <span style="color: #008000; font-weight: bold">try</span> <span style="color: #666666">{</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 6 </span><span style="background-color: #ffffcc">        sh <span style="color: #BA2121">&#39;./gradlew --refresh-dependencies clean assemble&#39;</span>
-</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 7 </span><span style="background-color: #ffffcc">        lock<span style="color: #666666">(</span><span style="color: #BA2121">&#39;emulator&#39;</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 8 </span>          sh <span style="color: #BA2121">&#39;./gradlew connectedCheck&#39;</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px"> 9 </span>        <span style="color: #666666">}</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">10 </span>        currentBuild<span style="color: #666666">.</span><span style="color: #7D9029">result</span> <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;SUCCESS&#39;</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">11 </span>      <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">catch</span><span style="color: #666666">(</span>error<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">12 </span><span style="background-color: #ffffcc">        slackSend <span style="color: #A0A000">channel:</span> <span style="color: #BA2121">&#39;#build-failures&#39;</span><span style="color: #666666">,</span> <span style="color: #A0A000">color:</span> <span style="color: #BA2121">&#39;bad&#39;</span><span style="color: #666666">,</span> <span style="color: #A0A000">message:</span> <span style="color: #BA2121">&quot;This build is broken ${env.BUILD_URL}&quot;</span><span style="color: #666666">,</span> <span style="color: #A0A000">token:</span> <span style="color: #BA2121">&#39;XXXXXXXXXXX&#39;</span>
-</span><span style="background-color: #f0f0f0; padding: 0 5px 0 5px">13 </span>        currentBuild<span style="color: #666666">.</span><span style="color: #7D9029">result</span> <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;FAILURE&#39;</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">14 </span>      <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">finally</span> <span style="color: #666666">{</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">15 </span>        junit <span style="color: #BA2121">&#39;**/test-results/**/*.xml&#39;</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">16 </span>      <span style="color: #666666">}</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">17 </span>    <span style="color: #666666">}</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">18 </span>    stage<span style="color: #666666">(</span><span style="color: #BA2121">&#39;Archive&#39;</span><span style="color: #666666">)</span> <span style="color: #666666">{</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">19 </span>      archiveArtifacts <span style="color: #BA2121">&#39;app/build/outputs/apk/*&#39;</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">20 </span>    <span style="color: #666666">}</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">21 </span>    step<span style="color: #666666">([</span>$class<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;StashNotifier&#39;</span><span style="color: #666666">])</span>
-<span style="background-color: #f0f0f0; padding: 0 5px 0 5px">22 </span><span style="color: #666666">}</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy"><span style="display:block;width:100%;background-color:#191919"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 1</span>node(<span style="color:#0ff;font-weight:bold">&#39;android&#39;</span>) {
+</span><span style="display:block;width:100%;background-color:#191919"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 2</span>    step([$class: <span style="color:#0ff;font-weight:bold">&#39;StashNotifier&#39;</span>])
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 3</span>    checkout scm
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 4</span>    stage(<span style="color:#0ff;font-weight:bold">&#39;Build&#39;</span>) {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 5</span>      <span style="color:#fff;font-weight:bold">try</span> {
+<span style="display:block;width:100%;background-color:#191919"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 6</span>        sh <span style="color:#0ff;font-weight:bold">&#39;./gradlew --refresh-dependencies clean assemble&#39;</span>
+</span><span style="display:block;width:100%;background-color:#191919"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 7</span>        lock(<span style="color:#0ff;font-weight:bold">&#39;emulator&#39;</span>) {
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 8</span>          sh <span style="color:#0ff;font-weight:bold">&#39;./gradlew connectedCheck&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 9</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">10</span>        currentBuild.<span style="color:#007f7f">result</span> = <span style="color:#0ff;font-weight:bold">&#39;SUCCESS&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">11</span>      } <span style="color:#fff;font-weight:bold">catch</span>(error) {
+<span style="display:block;width:100%;background-color:#191919"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">12</span>        slackSend channel: <span style="color:#0ff;font-weight:bold">&#39;#build-failures&#39;</span>, color: <span style="color:#0ff;font-weight:bold">&#39;bad&#39;</span>, message: <span style="color:#0ff;font-weight:bold">&#34;This build is broken ${env.BUILD_URL}&#34;</span>, token: <span style="color:#0ff;font-weight:bold">&#39;XXXXXXXXXXX&#39;</span>
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">13</span>        currentBuild.<span style="color:#007f7f">result</span> = <span style="color:#0ff;font-weight:bold">&#39;FAILURE&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">14</span>      } <span style="color:#fff;font-weight:bold">finally</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">15</span>        junit <span style="color:#0ff;font-weight:bold">&#39;**/test-results/**/*.xml&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">16</span>      }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">17</span>    }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">18</span>    stage(<span style="color:#0ff;font-weight:bold">&#39;Archive&#39;</span>) {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">19</span>      archiveArtifacts <span style="color:#0ff;font-weight:bold">&#39;app/build/outputs/apk/*&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">20</span>    }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">21</span>    step([$class: <span style="color:#0ff;font-weight:bold">&#39;StashNotifier&#39;</span>])
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">22</span>}</code></pre></div>
 
 <p>There&rsquo;s a couple of lines worth highlighting here.</p>
 
@@ -314,11 +312,9 @@
 
 <p>One way of thinking about a CI server is that it continuously runs what we might call &ldquo;the integration test,&rdquo; which we might express as follows:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">Given </span><span style="color: #0000FF">a working code base</span>
-<span style="color: #008000; font-weight: bold">When </span><span style="color: #0000FF">new code is merged in</span>
-<span style="color: #008000; font-weight: bold">Then </span><span style="color: #0000FF">we still have a working code base</span>
-</pre></div>
-
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-gherkin" data-lang="gherkin">Given a working code base
+When new code is merged in
+Then we still have a working code base</code></pre></div>
 
 <p>&ldquo;working code base&rdquo; here is fleshed out by the specific steps in a Jenkinsfile, but is often defined as follows:</p>
 

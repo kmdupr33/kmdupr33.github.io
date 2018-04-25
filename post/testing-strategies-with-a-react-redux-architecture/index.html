@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.19" />
+    <meta name="generator" content="Hugo 0.40" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/" />
     
@@ -250,22 +250,20 @@
 
 <p>Android architectures that rely on MVP are forced to use behavior-based verification in their unit tests. Behavior-based verification is about ensuring that the unit being tested is interacting properly with it&rsquo;s collaborators. For example, consider this test from <a href="https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#5">Google&rsquo;s testing code lab</a>:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">loadNotesFromRepositoryAndLoadIntoView</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-   <span style="color: #408080; font-style: italic">// Given an initialized NotesPresenter with initialized notes</span>
-   <span style="color: #408080; font-style: italic">// When loading of Notes is requested</span>
-   mNotesPresenter<span style="color: #666666">.</span><span style="color: #7D9029">loadNotes</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">true</span><span style="color: #666666">);</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> loadNotesFromRepositoryAndLoadIntoView() {
+   <span style="color:#007f7f">// Given an initialized NotesPresenter with initialized notes
+</span><span style="color:#007f7f"></span>   <span style="color:#007f7f">// When loading of Notes is requested
+</span><span style="color:#007f7f"></span>   mNotesPresenter.<span style="color:#007f7f">loadNotes</span>(<span style="color:#fff;font-weight:bold">true</span>);
 
-   <span style="color: #408080; font-style: italic">// Callback is captured and invoked with stubbed notes</span>
-   verify<span style="color: #666666">(</span>mNotesRepository<span style="color: #666666">).</span><span style="color: #7D9029">getNotes</span><span style="color: #666666">(</span>mLoadNotesCallbackCaptor<span style="color: #666666">.</span><span style="color: #7D9029">capture</span><span style="color: #666666">());</span>
-   mLoadNotesCallbackCaptor<span style="color: #666666">.</span><span style="color: #7D9029">getValue</span><span style="color: #666666">().</span><span style="color: #7D9029">onNotesLoaded</span><span style="color: #666666">(</span>NOTES<span style="color: #666666">);</span>
+   <span style="color:#007f7f">// Callback is captured and invoked with stubbed notes
+</span><span style="color:#007f7f"></span>   verify(mNotesRepository).<span style="color:#007f7f">getNotes</span>(mLoadNotesCallbackCaptor.<span style="color:#007f7f">capture</span>());
+   mLoadNotesCallbackCaptor.<span style="color:#007f7f">getValue</span>().<span style="color:#007f7f">onNotesLoaded</span>(NOTES);
 
-   <span style="color: #408080; font-style: italic">// Then progress indicator is hidden and notes are shown in UI</span>
-   verify<span style="color: #666666">(</span>mNotesView<span style="color: #666666">).</span><span style="color: #7D9029">setProgressIndicator</span><span style="color: #666666">(</span><span style="color: #008000; font-weight: bold">false</span><span style="color: #666666">);</span>
-   verify<span style="color: #666666">(</span>mNotesView<span style="color: #666666">).</span><span style="color: #7D9029">showNotes</span><span style="color: #666666">(</span>NOTES<span style="color: #666666">);</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+   <span style="color:#007f7f">// Then progress indicator is hidden and notes are shown in UI
+</span><span style="color:#007f7f"></span>   verify(mNotesView).<span style="color:#007f7f">setProgressIndicator</span>(<span style="color:#fff;font-weight:bold">false</span>);
+   verify(mNotesView).<span style="color:#007f7f">showNotes</span>(NOTES);
+}</code></pre></div>
 
 <p>The test ensures that the <code>mNotesPresenter</code>&rsquo;s <code>loadNotes</code> works properly by verifying that it&rsquo;s called <code>setProgressIndicator</code> and <code>showNotes</code> on that <code>mNotesPresenter</code>&rsquo;s <code>View</code>.</p>
 
@@ -291,62 +289,58 @@
 
 
 <div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
-  <iframe src="//www.youtube.com/embed/qUYP1WNz50U" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0"></iframe>
+  <iframe src="//www.youtube.com/embed/qUYP1WNz50U" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0" title="YouTube Video"></iframe>
  </div>
 
 
 <p>Last time, I showed how we might implement this functionality according to the principles of React and Redux. Again those principles are that the content of a screen is a function of some view-state object and updates to the screen are a function of some view-state object and some action describing a user&rsquo;s interaction with the screen. Here&rsquo;s what our React/Redux-like code looked like:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="background-color: #ffffcc"><span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> Reducer reducer <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Reducer<span style="color: #666666">();</span>
-</span><span style="color: #408080; font-style: italic">// The OnClickListener for the Switch widgets on the navigation filter.</span>
-<span style="color: #008000; font-weight: bold">private</span> <span style="color: #008000; font-weight: bold">final</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span> mDrawerItemCheckBoxClickListener <span style="color: #666666">=</span>
-        <span style="color: #008000; font-weight: bold">new</span> View<span style="color: #666666">.</span><span style="color: #7D9029">OnClickListener</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-    <span style="color: #AA22FF">@Override</span>
-    <span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">onClick</span><span style="color: #666666">(</span>View v<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-        <span style="color: #008000; font-weight: bold">final</span> TagMetadata<span style="color: #666666">.</span><span style="color: #7D9029">Tag</span> tag <span style="color: #666666">=</span> <span style="color: #666666">(</span>TagMetadata<span style="color: #666666">.</span><span style="color: #7D9029">Tag</span><span style="color: #666666">)</span> v<span style="color: #666666">.</span><span style="color: #7D9029">getTag</span><span style="color: #666666">();</span>
-<span style="background-color: #ffffcc">        mTagFilterHolder <span style="color: #666666">=</span> reducer<span style="color: #666666">.</span><span style="color: #7D9029">reduce</span><span style="color: #666666">(</span>mTagFilterHolder<span style="color: #666666">,</span> <span style="color: #008000; font-weight: bold">new</span> Click<span style="color: #666666">(</span>tag<span style="color: #666666">));</span>
-</span>        reloadFragment<span style="color: #666666">();</span>
-    <span style="color: #666666">}</span>
-<span style="color: #666666">};</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="display:block;width:100%;background-color:#191919"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">final</span> Reducer reducer = <span style="color:#fff;font-weight:bold">new</span> Reducer();
+</span><span style="color:#007f7f">// The OnClickListener for the Switch widgets on the navigation filter.
+</span><span style="color:#007f7f"></span><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">final</span> View.<span style="color:#007f7f">OnClickListener</span> mDrawerItemCheckBoxClickListener =
+        <span style="color:#fff;font-weight:bold">new</span> View.<span style="color:#007f7f">OnClickListener</span>() {
+    @Override
+    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onClick(View v) {
+        <span style="color:#fff;font-weight:bold">final</span> TagMetadata.<span style="color:#007f7f">Tag</span> tag = (TagMetadata.<span style="color:#007f7f">Tag</span>) v.<span style="color:#007f7f">getTag</span>();
+<span style="display:block;width:100%;background-color:#191919">        mTagFilterHolder = reducer.<span style="color:#007f7f">reduce</span>(mTagFilterHolder, <span style="color:#fff;font-weight:bold">new</span> Click(tag));
+</span>        reloadFragment();
+    }
+};
 
-<span style="color: #408080; font-style: italic">//...</span>
-
-<span style="color: #008000; font-weight: bold">static</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Reducer</span> <span style="color: #666666">{</span>
-  <span style="color: #008000; font-weight: bold">public</span> TagFilterHolder <span style="color: #0000FF">reduce</span><span style="color: #666666">(</span>TagFilterHolder tagFilterHolder<span style="color: #666666">,</span> Click click<span style="color: #666666">)</span> <span style="color: #666666">{</span>
-      <span style="color: #408080; font-style: italic">// Create a new holder with all the values from the old holder</span>
-      TagFilterHolder newTagFilterHolder <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> TagFilterHolder<span style="color: #666666">(</span>tagFilterHolder<span style="color: #666666">);</span>
-      TagMetadata<span style="color: #666666">.</span><span style="color: #7D9029">Tag</span> theTag <span style="color: #666666">=</span> click<span style="color: #666666">.</span><span style="color: #7D9029">getTag</span><span style="color: #666666">();</span>
-      <span style="color: #008000; font-weight: bold">if</span> <span style="color: #666666">(</span>tagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">contains</span><span style="color: #666666">(</span>theTag<span style="color: #666666">.</span><span style="color: #7D9029">getId</span><span style="color: #666666">()))</span> <span style="color: #666666">{</span>
-          newTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">remove</span><span style="color: #666666">(</span>theTag<span style="color: #666666">.</span><span style="color: #7D9029">getId</span><span style="color: #666666">(),</span> theTag<span style="color: #666666">.</span><span style="color: #7D9029">getCategory</span><span style="color: #666666">());</span>
-      <span style="color: #666666">}</span> <span style="color: #008000; font-weight: bold">else</span> <span style="color: #666666">{</span>
-          newTagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span>theTag<span style="color: #666666">.</span><span style="color: #7D9029">getId</span><span style="color: #666666">(),</span> theTag<span style="color: #666666">.</span><span style="color: #7D9029">getCategory</span><span style="color: #666666">());</span>
-      <span style="color: #666666">}</span>
-      <span style="color: #008000; font-weight: bold">return</span> newTagFilterHolder<span style="color: #666666">;</span>
-  <span style="color: #666666">}</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+<span style="color:#007f7f">//...
+</span><span style="color:#007f7f"></span>
+<span style="color:#fff;font-weight:bold">static</span> <span style="color:#fff;font-weight:bold">class</span> Reducer {
+  <span style="color:#fff;font-weight:bold">public</span> TagFilterHolder reduce(TagFilterHolder tagFilterHolder, Click click) {
+      <span style="color:#007f7f">// Create a new holder with all the values from the old holder
+</span><span style="color:#007f7f"></span>      TagFilterHolder newTagFilterHolder = <span style="color:#fff;font-weight:bold">new</span> TagFilterHolder(tagFilterHolder);
+      TagMetadata.<span style="color:#007f7f">Tag</span> theTag = click.<span style="color:#007f7f">getTag</span>();
+      <span style="color:#fff;font-weight:bold">if</span> (tagFilterHolder.<span style="color:#007f7f">contains</span>(theTag.<span style="color:#007f7f">getId</span>())) {
+          newTagFilterHolder.<span style="color:#007f7f">remove</span>(theTag.<span style="color:#007f7f">getId</span>(), theTag.<span style="color:#007f7f">getCategory</span>());
+      } <span style="color:#fff;font-weight:bold">else</span> {
+          newTagFilterHolder.<span style="color:#007f7f">add</span>(theTag.<span style="color:#007f7f">getId</span>(), theTag.<span style="color:#007f7f">getCategory</span>());
+      }
+      <span style="color:#fff;font-weight:bold">return</span> newTagFilterHolder;
+  }
+}</code></pre></div>
 
 <p>Recall that the <code>reloadFragment</code> call uses the <code>mTagFilterHolder</code> as a view-state object to determine what get&rsquo;s rendered to the screen. Testing this <code>reduce</code> method doesn&rsquo;t require the use of mocks:</p>
 
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #AA22FF">@Test</span>
-<span style="color: #008000; font-weight: bold">public</span> <span style="color: #B00040">void</span> <span style="color: #0000FF">shouldToggleFilter</span><span style="color: #666666">()</span> <span style="color: #666666">{</span>
-    <span style="color: #408080; font-style: italic">//Arrange</span>
-    ExploreSessionsActivity<span style="color: #666666">.</span><span style="color: #7D9029">Reducer</span> reducer <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> ExploreSessionsActivity<span style="color: #666666">.</span><span style="color: #7D9029">Reducer</span><span style="color: #666666">();</span>
-    TagFilterHolder tagFilterHolder <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> TagFilterHolder<span style="color: #666666">();</span>
-    tagFilterHolder<span style="color: #666666">.</span><span style="color: #7D9029">add</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;AudienceGrowth&quot;</span><span style="color: #666666">,</span> Config<span style="color: #666666">.</span><span style="color: #7D9029">Tags</span><span style="color: #666666">.</span><span style="color: #7D9029">CATEGORY_THEME</span><span style="color: #666666">);</span>
-    <span style="color: #008000; font-weight: bold">final</span> TagMetadata<span style="color: #666666">.</span><span style="color: #7D9029">Tag</span> tag <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> TagMetadata<span style="color: #666666">.</span><span style="color: #7D9029">Tag</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;AudienceGrowth&quot;</span><span style="color: #666666">,</span> <span style="color: #BA2121">&quot;name&quot;</span><span style="color: #666666">,</span> Config<span style="color: #666666">.</span><span style="color: #7D9029">Tags</span><span style="color: #666666">.</span><span style="color: #7D9029">CATEGORY_THEME</span><span style="color: #666666">,</span> <span style="color: #666666">1,</span>
-            <span style="color: #BA2121">&quot;some stuff&quot;</span><span style="color: #666666">,</span> <span style="color: #666666">1);</span>
-    <span style="color: #008000; font-weight: bold">final</span> ExploreSessionsActivity<span style="color: #666666">.</span><span style="color: #7D9029">Click</span> clickAction <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> ExploreSessionsActivity<span style="color: #666666">.</span><span style="color: #7D9029">Click</span><span style="color: #666666">(</span>tag<span style="color: #666666">);</span>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> shouldToggleFilter() {
+    <span style="color:#007f7f">//Arrange
+</span><span style="color:#007f7f"></span>    ExploreSessionsActivity.<span style="color:#007f7f">Reducer</span> reducer = <span style="color:#fff;font-weight:bold">new</span> ExploreSessionsActivity.<span style="color:#007f7f">Reducer</span>();
+    TagFilterHolder tagFilterHolder = <span style="color:#fff;font-weight:bold">new</span> TagFilterHolder();
+    tagFilterHolder.<span style="color:#007f7f">add</span>(<span style="color:#0ff;font-weight:bold">&#34;AudienceGrowth&#34;</span>, Config.<span style="color:#007f7f">Tags</span>.<span style="color:#007f7f">CATEGORY_THEME</span>);
+    <span style="color:#fff;font-weight:bold">final</span> TagMetadata.<span style="color:#007f7f">Tag</span> tag = <span style="color:#fff;font-weight:bold">new</span> TagMetadata.<span style="color:#007f7f">Tag</span>(<span style="color:#0ff;font-weight:bold">&#34;AudienceGrowth&#34;</span>, <span style="color:#0ff;font-weight:bold">&#34;name&#34;</span>, Config.<span style="color:#007f7f">Tags</span>.<span style="color:#007f7f">CATEGORY_THEME</span>, 1,
+            <span style="color:#0ff;font-weight:bold">&#34;some stuff&#34;</span>, 1);
+    <span style="color:#fff;font-weight:bold">final</span> ExploreSessionsActivity.<span style="color:#007f7f">Click</span> clickAction = <span style="color:#fff;font-weight:bold">new</span> ExploreSessionsActivity.<span style="color:#007f7f">Click</span>(tag);
 
-    <span style="color: #408080; font-style: italic">//Act</span>
-    <span style="color: #008000; font-weight: bold">final</span> TagFilterHolder holder <span style="color: #666666">=</span> reducer<span style="color: #666666">.</span><span style="color: #7D9029">reduce</span><span style="color: #666666">(</span>tagFilterHolder<span style="color: #666666">,</span> clickAction<span style="color: #666666">);</span>
+    <span style="color:#007f7f">//Act
+</span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">final</span> TagFilterHolder holder = reducer.<span style="color:#007f7f">reduce</span>(tagFilterHolder, clickAction);
 
-    <span style="color: #408080; font-style: italic">//Assert</span>
-    assertFalse<span style="color: #666666">(</span>holder<span style="color: #666666">.</span><span style="color: #7D9029">contains</span><span style="color: #666666">(</span><span style="color: #BA2121">&quot;AudienceGrowth&quot;</span><span style="color: #666666">));</span>
-<span style="color: #666666">}</span>
-</pre></div>
-
+    <span style="color:#007f7f">//Assert
+</span><span style="color:#007f7f"></span>    assertFalse(holder.<span style="color:#007f7f">contains</span>(<span style="color:#0ff;font-weight:bold">&#34;AudienceGrowth&#34;</span>));
+}</code></pre></div>
 
 <p>This shows that React/Redux-like architectures open up the possibility of using state-based verification in our UI unit test code. This opens up the possibility of unit tests that don&rsquo;t suffer from the disadvantages pointed out by Martin Fowler.</p>
 
