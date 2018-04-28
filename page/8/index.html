@@ -187,161 +187,276 @@
 
 
 
-	
-  <header class="main-header tag-head" style="background-image: url(https://www.philosophicalhacker.com/images/cropped-thinker.jpg)">
+  <header class="main-header" style="background-image: url(https://www.philosophicalhacker.com/images/cropped-thinker.jpg)">
   
 
+
     <nav class="main-nav overlay clearfix">
-      
-      
-          <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
-      
+        
+        
+            <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
+        
     </nav>
     <div class="vertical">
         <div class="main-header-content inner">
-            <h1 class="page-title">Philosophical Hacker</h1>            
-            <h2 class="page-description">
-                
-            </h2>
+            
+                <a class="bloglogo" href="https://www.linkedin.com/in/k-matthew-dupree-44672178" target="_blank">
+                    <span class="icon-linkedin"></span>
+                </a>
+            &nbsp;
+            
+            
+                        
+            
+                <a class="bloglogo" href="https://twitter.com/philosohacker" target="_blank">
+                    <span class="icon-twitter"></span>
+                </a>
+            &nbsp;
+            
+            
+                <a class="bloglogo" href="https://www.facebook.com/philosophicalhacker" target="_blank">
+                    <span class="icon-facebook"></span>
+                </a>
+            &nbsp;
+            
+            
+            
+            
+            
+
+            <h1 class="page-title">Philosophical Hacker</h1>
+            <h2 class="page-description">Thoughts on programming and startups from a wannabe philosophy professor turned wannabe tech entrepreneur</h2>
         </div>
     </div>
+    <a class="scroll-down icon-arrow-left" href="#content"><span class="hidden">Scroll Down</span></a>
 </header>
 
-<main class="content" role="main">
+
+<main id="content" class="content" role="main">
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
     
 
-	<div class="extra-pagination inner">
-    <nav class="pagination" role="navigation">
+    
+
+    
+    
+    
+
+    <div class="extra-pagination inner">
+        <nav class="pagination" role="navigation">
 	
 	    <a class="newer-posts" href="/page/7/">&larr; Newer Posts</a>
 	
-	<span class="page-number">Page 8 of 10</span>
+	<span class="page-number">Page 8 of 9</span>
 	
 	    <a class="older-posts" href="/page/9/">Older Posts &rarr;</a>
 	
 </nav>
 
-	</div>
+    </div>
 
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">What I&#39;ve Learned From Trying to Make An Android App Unit Testable</a></h2>
-    </header>
-    <section class="post-excerpt">
+    
         
-            <p><p>For the past few posts, I&rsquo;ve introduced and showed how we would apply The Square Way of building Android applications. The primary motivation for The Square Way was to increase the unit testability of our applications. As I stated in the <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">introduction to this series</a>, most tests in Android are slow, instrumentation tests and/or tests that rely on third-party frameworks like Roboletric. The Square Way was supposed to help us write fast unit tests that didn&rsquo;t rely on any third-party frameworks.</p>
-
-<p>Now that we&rsquo;ve discussed <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">why unit testing in Android is so difficult</a> and seen how <a href="http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">The Square Way resolves those difficulties</a>, we are finally in a position to assess The Square Way as a whole as a method of creating unit testable Android applications. That assessment is the subject of this article. My assessment consists of the following three claims:</p>
-
-<ol>
-<li><p>Removing all compile time dependencies on the Android SDK is not necessary for us write fast unit tests for Android. (Its also not really a practical thing to try to do anyway.)</p></li>
-
-<li><p>Provided that we redefine The Square Way so that it does not require us to remove compile-time dependencies on the Android SDK, the only problem that arises when trying to apply The Square Way is simply writing all of boilerplate code. Fortunately, much of this boilerplate can be written for us by Android Studio.</p></li>
-
-<li><p>Dependency Injection is really the main &ldquo;active ingredient&rdquo; that allows The Square Way enhance the unit testability of our applications.</p></li>
-</ol>
-
-<p></p> <a class="read-more" href="/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-22T12:29:28Z">
-            22 May 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/09/android-unit-testing-guides/">Android Unit Testing Guides</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>In <a href="http://philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/">my last post</a>, I showed how we can apply The Square Way to UI app component classes. More specifically I showed how The Square Way would have us rewrite the <code>SessionDetailActivity</code> so that we could unit test its <code>onStop()</code> method. At the end of my last post, I said that I&rsquo;d be spending this and the next post doing an overall assessment of The Square Way.</p>
-
-<p>I actually won&rsquo;t be doing that this post. I&rsquo;ll be postponing the overall assessment of The Square Way until the next few posts. Instead, what I want to do in this post is simply present a few unit-testability guides. These cheatsheets summarize much of what&rsquo;s been covered in the past few posts and provide you with simplified steps to follow if you are interested in enhancing your application&rsquo;s unit-testability via The Square Way.</p>
-
-<p></p> <a class="read-more" href="/2015/05/09/android-unit-testing-guides/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-09T13:20:54Z">
-            9 May 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/">How to Make Our Android Apps Unit Testable (Pt. 2)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>In <a href="http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">my last post</a>, I introduced the “The Square Way” of structuring our android code. I said that The Square Way is a generalization of the approach that Square used to make the logic within their <code>Fragment</code>s unit testable. I also showed how The Square Way would have us rewrite the <code>SessionCalendarService</code> within Google’s IOSched app so that we could unit test the business logic within it. As we’ll see in this post, The Square Way also makes it easier/possible for us to unit test UI app component business logic.</p>
-
-<p></p> <a class="read-more" href="/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-08T11:46:13Z">
-            8 May 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
 <article class="post post">
     <header class="post-header">
         <h2 class="post-title"><a href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">How to Make Our Android Apps Unit Testable (Pt. 1)</a></h2>
@@ -379,8 +494,8 @@
     </footer>
 </article>
 
-	
-	   
+    
+        
 <article class="post post">
     <header class="post-header">
         <h2 class="post-title"><a href="/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">Why Android Unit Testing Is So Hard (Pt. 2)</a></h2>
@@ -422,8 +537,8 @@
     </footer>
 </article>
 
-	
-	   
+    
+        
 <article class="post post">
     <header class="post-header">
         <h2 class="post-title"><a href="/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">Why Android Unit Testing is so Hard (Pt 1)</a></h2>
@@ -477,8 +592,8 @@
     </footer>
 </article>
 
-	
-	   
+    
+        
 <article class="post post">
     <header class="post-header">
         <h2 class="post-title"><a href="/2015/04/16/is-mark-zuckerberg-a-douche-bag/">Is Mark Zuckerberg a Douche-bag?</a></h2>
@@ -508,8 +623,8 @@
     </footer>
 </article>
 
-	
-	   
+    
+        
 <article class="post post">
     <header class="post-header">
         <h2 class="post-title"><a href="/2015/04/10/against-android-unit-tests/">Against Android Unit Tests</a></h2>
@@ -542,8 +657,8 @@ Even the best among us admit that they struggle with testing their Android apps.
     </footer>
 </article>
 
-	
-	   
+    
+        
 <article class="post post">
     <header class="post-header">
         <h2 class="post-title"><a href="/2015/04/06/dont-call-it-mvp/">Don&#39;t call it &#34;MVP&#34;</a></h2>
@@ -574,8 +689,8 @@ What is &rdquo;MVP? <a class="read-more" href="/2015/04/06/dont-call-it-mvp/">&
     </footer>
 </article>
 
-	
-	   
+    
+        
 <article class="post post">
     <header class="post-header">
         <h2 class="post-title"><a href="/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/">How to Keep your RxJava Subscribers from Leaking</a></h2>
@@ -608,21 +723,111 @@ Sometimes you don&rsquo;t have control over the lifecycle of your Subscribers. I
     </footer>
 </article>
 
-	
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/02/22/why-pirating-is-probably-wrong-java/">Why Pirating is Probably Wrong (.java)</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p>  <a class="read-more" href="/2015/02/22/why-pirating-is-probably-wrong-java/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
+        
+        
+            
+            
+        
 
-	<nav class="pagination" role="navigation">
+        
+        
+        
+        <time class="post-date" datetime="2015-02-22T17:02:40Z">
+            22 Feb 2015
+        </time>
+    </footer>
+</article>
+
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/01/24/why-ayn-rands-psychology-is-probably-wrong/">Why Ayn Rand&#39;s Psychology is Probably Wrong (or trivial)</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p>Edit: Some have pointed out that I&rsquo;ve misrepresented Ayn Rand&rsquo;s position in this post. From what I can tell, they are right. Either way, I still think the argument presented here is interesting and accurate as long as we change the conclusion to &rdquo;Psychological egoism is probably wrong (or trivial)&rdquo;
+I’ve met a surprising number of people in my life who believe that no one is capable of altruism. These people believe that everyone always acts to further their own interests. <a class="read-more" href="/2015/01/24/why-ayn-rands-psychology-is-probably-wrong/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
+        
+        
+            
+            
+        
+
+        
+        
+        on
+            
+                <a href="https://www.philosophicalhacker.com/tags/coding/">#coding</a>,
+            
+                <a href="https://www.philosophicalhacker.com/tags/philosophy/">#philosophy</a>,
+            
+                <a href="https://www.philosophicalhacker.com/tags/programming/">#programming</a>,
+            
+        
+        <time class="post-date" datetime="2015-01-24T05:20:31Z">
+            24 Jan 2015
+        </time>
+    </footer>
+</article>
+
+    
+        
+<article class="post post">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/2015/01/18/build-apps-smarter-with-archiva-and-gradle/">Build Apps Smarter With Archiva and Gradle</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p>Dependency management in both Eclipse and Android Studio can be a serious pain. Now that we have gradle, there’s a better way to build android apps: we can configure our library projects to publish maven artifacts to a maven repository and we can configure our app projects to consume those artifacts. Once projects are setup to produce and consume maven artifacts, building an app with many dependencies becomes much more manageable. <a class="read-more" href="/2015/01/18/build-apps-smarter-with-archiva-and-gradle/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
+        
+        
+            
+            
+        
+
+        
+        
+        
+        <time class="post-date" datetime="2015-01-18T13:32:20Z">
+            18 Jan 2015
+        </time>
+    </footer>
+</article>
+
+    
+
+    <nav class="pagination" role="navigation">
 	
 	    <a class="newer-posts" href="/page/7/">&larr; Newer Posts</a>
 	
-	<span class="page-number">Page 8 of 10</span>
+	<span class="page-number">Page 8 of 9</span>
 	
 	    <a class="older-posts" href="/page/9/">Older Posts &rarr;</a>
 	
 </nav>
 
+
+
 </main>
-
-
 
 <div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
 <footer class="site-footer clearfix">
