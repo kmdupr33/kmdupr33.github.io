@@ -229,6 +229,57 @@
 	   
 <article class="post post">
     <header class="post-header">
+        <h2 class="post-title"><a href="/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/">Why Having Global Static References to Application Contexts is Probably not the Best Idea</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p><p>In my last post, I went over <a href="http://www.philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/">6 things I wish I knew before I wrote my first Android app</a>. One of the things I listed in that post was this:</p>
+
+<blockquote>
+<ol>
+<li>Don’t have static references to Contexts</li>
+</ol>
+</blockquote>
+
+<p>The reason I warned against this is that static references to Contexts can cause memory leaks. An astute reader pointed out that a static reference to an application Context wouldn&rsquo;t cause a memory leak since the application Context is around for the lifetime the app is running anyway. I then qualified my warning by saying:</p>
+
+<blockquote>Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but I wouldn’t recommend that you do that either.</blockquote>
+
+<p>In this post, I want to say a little more about why think having and using a static reference to an application Context is <em>less-than-ideal</em>. I emphasize &ldquo;less-than-ideal&rdquo; in the previous sentence as a way of highlighting what I&rsquo;m not saying: I&rsquo;m not saying that a kitten dies every time you use a static reference to an application Context. Once again, @codestandards is hilarious and relevant here:</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Please, for the sake of the kittens. <a href="http://t.co/xaj7pNDVfH">pic.twitter.com/xaj7pNDVfH</a></p>&mdash; Code Standards (@codestandards) <a href="https://twitter.com/codestandards/status/570224843536277504?ref_src=twsrc%5Etfw">February 24, 2015</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>Instead, all I&rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps. </p> <a class="read-more" href="/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
+        
+        
+            
+            
+        
+
+        
+        
+        on
+            
+                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
+            
+        
+        <time class="post-date" datetime="2015-07-14T18:35:40Z">
+            14 Jul 2015
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
         <h2 class="post-title"><a href="/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/">6 Things I wish I Knew before I Wrote my first Android App</a></h2>
     </header>
     <section class="post-excerpt">
@@ -601,45 +652,6 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_<
         
         <time class="post-date" datetime="2015-05-08T11:46:13Z">
             8 May 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">How to Make Our Android Apps Unit Testable (Pt. 1)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>Unit testing Android apps is hard, and sometimes it can be impossible. For <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">the past two posts</a>, I’ve been explaining why android unit testing is so difficult. The main conclusion from <a href="http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">the last post</a> is that it is difficult/impossible to unit test our Android applications because of the way we are encouraged to structure them. Google seems to want us to put our business logic in app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s, etc.). This approach to writing Android applications is what I have been calling the “standard way.”</p>
-
-<p>In this post, I outline an alternative approach to structuring Android applications that will make it easier to unit test them. As I pointed out in <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">the introduction to this series</a>, the approach that I suggest is a generalization of the approach that Square uses to <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html">remove Fragments from their applications</a>. Since this approach is inspired by the folks at Square, I will call it “the square way.”</p>
-
-<p>The heart of the square way way is this: remove all business logic from app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s) and place that logic into “business objects,” POJO objects whose dependencies are injected, android-specific implementations of android-agnostic interfaces. If we follow the square way of developing our apps, we will be in a better position to unit test them. In this post, I explain how the square way would have us refactor non-UI app components like the <code>SessionCalendarService</code> I’ve been discussing for the past few posts.</p>
-
-<p></p> <a class="read-more" href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-01T11:30:24Z">
-            1 May 2015
         </time>
     </footer>
 </article>
