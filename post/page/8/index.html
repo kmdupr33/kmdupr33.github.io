@@ -234,6 +234,45 @@
 	   
 <article class="post post">
     <header class="post-header">
+        <h2 class="post-title"><a href="/2015/06/19/introduction-to-rxjava-for-android-pt-2/">Introduction to RxJava for Android (Pt. 2)</a></h2>
+    </header>
+    <section class="post-excerpt">
+        
+            <p><p>I concluded my last post by summing up what we&rsquo;ve seen so far and what we still need to understand about RxJava:</p>
+
+<blockquote>We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that’s interested. We still don’t know, however, what it means for a data stream to be “functionally transformed” nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I’ll have to tackle in the second part of this written version of my upcoming RxJava talk.</blockquote>
+
+<p>In this post, I&rsquo;ll fill in the missing gaps in our understanding of my initial statement of what RxJava allows us to do.</p>
+
+<p></p> <a class="read-more" href="/2015/06/19/introduction-to-rxjava-for-android-pt-2/">&raquo;</a></p>
+        
+    </section>
+    <footer class="post-meta">
+        
+        
+            
+            
+        
+
+        
+        
+        on
+            
+                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
+            
+                <a href="https://www.philosophicalhacker.com/tags/rxjava/">#rxjava</a>,
+            
+        
+        <time class="post-date" datetime="2015-06-19T12:19:14Z">
+            19 Jun 2015
+        </time>
+    </footer>
+</article>
+
+	
+	   
+<article class="post post">
+    <header class="post-header">
         <h2 class="post-title"><a href="/2015/06/16/introduction-to-rxjava-for-android-the-talk/">Introduction to RxJava for Android: The Talk</a></h2>
     </header>
     <section class="post-excerpt">
@@ -570,45 +609,6 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
         
         <time class="post-date" datetime="2015-05-08T11:46:13Z">
             8 May 2015
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">How to Make Our Android Apps Unit Testable (Pt. 1)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>Unit testing Android apps is hard, and sometimes it can be impossible. For <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">the past two posts</a>, I’ve been explaining why android unit testing is so difficult. The main conclusion from <a href="http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">the last post</a> is that it is difficult/impossible to unit test our Android applications because of the way we are encouraged to structure them. Google seems to want us to put our business logic in app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s, etc.). This approach to writing Android applications is what I have been calling the “standard way.”</p>
-
-<p>In this post, I outline an alternative approach to structuring Android applications that will make it easier to unit test them. As I pointed out in <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">the introduction to this series</a>, the approach that I suggest is a generalization of the approach that Square uses to <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html">remove Fragments from their applications</a>. Since this approach is inspired by the folks at Square, I will call it “the square way.”</p>
-
-<p>The heart of the square way way is this: remove all business logic from app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s) and place that logic into “business objects,” POJO objects whose dependencies are injected, android-specific implementations of android-agnostic interfaces. If we follow the square way of developing our apps, we will be in a better position to unit test them. In this post, I explain how the square way would have us refactor non-UI app components like the <code>SessionCalendarService</code> I’ve been discussing for the past few posts.</p>
-
-<p></p> <a class="read-more" href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-01T11:30:24Z">
-            1 May 2015
         </time>
     </footer>
 </article>
