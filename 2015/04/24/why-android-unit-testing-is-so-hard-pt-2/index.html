@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.40" />
+    <meta name="generator" content="Hugo 0.54.0" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/" />
     
@@ -128,8 +128,8 @@
     },
     "headline": Why Android Unit Testing Is So Hard (Pt. 2),
     "name": Why Android Unit Testing Is So Hard (Pt. 2),
-    "wordCount": 0,
-    "timeRequired": "PT0M",
+    "wordCount": 1639,
+    "timeRequired": "PT8M",
     "inLanguage": {
       "@type": "Language",
       "alternateName": en
@@ -240,7 +240,7 @@
           </time>  
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
-                            <strong>&middot; 0 minute read</strong>
+                            <strong>&middot; 8 minute read</strong>
                         </section>
                     </header>
 
@@ -255,29 +255,27 @@
 
 <p>There’s a standard way of developing android applications. Sample code and open source code alike both place an app’s business logic within Android app component classes, namely, Activities, Services, and Fragments. Going forward, I’m going to refer to this practice as “the standard way.” Here’s the central claim of this post: As long as we follow the “standard way”, we’re going to write code that’s either difficult or impossible to unit test. In other words, the untestable code that I pointed out in my last article is not a fluke. The standard way prevents us from unit testing key pieces of our applications.</p>
 
-<p></p>
-
 <h1 id="the-standard-way-makes-some-unit-tests-impossible">The Standard Way Makes (some) Unit Tests Impossible</h1>
 
 <p>To begin to see why the standard way leads to untestable app components, let’s briefly recall some of the points I made in my last post. Unit testing consists of three steps: arrange, act, and assert. In order to complete the arrange step of the process we need to be able to alter the pre-act-state of the code we’re testing, and accessing the post-act-state of our program is required to complete the assert-step of a test.</p>
 
 <p>With those points in mind, we can see that dependency injection, in some cases, is really the only acceptable way to write code whose pre-act-state can be altered and whose post-act-state is accessible. Let’s look at a non-android example of this:</p>
 
-<script src="//gist.github.com/kmdupr33/b0e31bfca58e8acb9465.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/b0e31bfca58e8acb9465.js"></script>
 
 <p>Dependency injection is really the only way to unit test <code>doIntenseCalculation()</code>. <code>doIntenseCalculation()</code> doesn’t have a return value. Moreover, there’s no property on <code>MathNerd</code> that will allow us to determine the validity of our post-act-state. We could get the post-act-state in a test from the <code>mCalcCache</code> like this:</p>
 
-<script src="//gist.github.com/kmdupr33/554cc7afe27cdc5e6426.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/554cc7afe27cdc5e6426.js"></script>
 
 <p>If we did this, however, we would no longer be writing a unit test for <code>MathNerd</code>. We’d be writing an integration test that checks the behavior of a <code>MathNerd</code> and whatever class is responsible for updating the <code>CalcCache</code> with the results from doIntenseCalculationInBackground().</p>
 
 <p>Dependency injection is really the only way that we can verify our post-act-state for a unit test. We inject mocks and verify that methods are called in the right circumstances:</p>
 
-<script src="//gist.github.com/kmdupr33/528c6094c43a74f8c0be.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/528c6094c43a74f8c0be.js"></script>
 
 <p>There are many instances in which unit testing an Android class requires the same thing: dependency injection. Here’s the problem: key android classes have dependencies that we cannot inject. The <code>SessionCalendarService</code> that’s launched by the <code>SessionDetailActivity</code> I talked about last time is an example of this:</p>
 
-<script src="//gist.github.com/kmdupr33/02f61591f40f459ae40c.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/02f61591f40f459ae40c.js"></script>
 
 <p>The <code>SessionCalendarService</code> has a ContentResolver as a dependency. This dependency, however, is not one that we can inject, so there’s simply no way for us to write a unit test for onHandleIntent(). onHandleIntent() doesn’t have a return method and there’s no property on <code>SessionCalendarService</code> that would allow us to check the validity of our post-act-state. To verify our post-act-state, we could actually query the ContentProvider to see if the requested data has been inserted, but then we wouldn’t be writing a unit test for a <code>SessionCalendarService</code>. Instead, we’d be writing an integration test that tests both our <code>SessionCalendarService</code> and whatever ContentProvider handles session calendar data.</p>
 
@@ -287,13 +285,13 @@
 
 <p>In some cases, the standard way will only make it very difficult to unit test your code. If we return to the <code>onStop()</code> method within the <code>SessionDetailActivity</code> that we examined in the last article, we’ll see this:</p>
 
-<script src="//gist.github.com/kmdupr33/4c90e155dcaf6c4e0147.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/4c90e155dcaf6c4e0147.js"></script>
 
 <p>There is no publically accessible property that will tell us whether the <code>SessionCalendarService</code> has been launched with the right parameters. Morover, <code>onStop()</code> is a protected method whose return value cannot be modified. Thus, the only way we can access post-act-state is to check the state of a dependency injected into <code>onStop()</code>.</p>
 
 <p>At this point, you’ll notice that the code within <code>onStop()</code> that launches the <code>SessionCalendarService</code> doesn’t actually belong to a single object at all. In other words, there is no dependency to inject into <code>onStop()</code> that would allow us to access the post-act-state for a test that checks if the Service has been launched under the right conditions with the right arguments. To put the point a third way, in order to start making <code>onStop()</code> testable, it needs to look something like this:</p>
 
-<script src="//gist.github.com/kmdupr33/84a4a4c92affc3910536.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/84a4a4c92affc3910536.js"></script>
 
 <p>This isn’t the cleanest way of refactoring <code>onStop()</code>, but something like this is necessary if we want to make the code unit testable while adhering to the standard practice of keeping our business logic in Activities. Now, think for a second about how counter-intuitive this refactor is: Instead of simply calling startService(), a method that belongs to Context and, by extension, the <code>SessionDetailActivity</code>, we are using a <code>ServiceLauncher</code>, an object that depends on a Context to start the service. The SesionDetailActivity that is-a Context is using an object that has-a Context to launch the <code>SessionCalendarService</code>.</p>
 
@@ -373,18 +371,6 @@
 </section>
 
  
-
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-  var disqus_shortname = 'philosophicalhacker';
-  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/2015\/04\/24\/why-android-unit-testing-is-so-hard-pt-2\/';
-  (function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
 

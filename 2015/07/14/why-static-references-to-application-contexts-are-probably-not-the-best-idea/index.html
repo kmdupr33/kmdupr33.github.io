@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.40" />
+    <meta name="generator" content="Hugo 0.54.0" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/" />
     
@@ -128,8 +128,8 @@
     },
     "headline": Why Having Global Static References to Application Contexts is Probably not the Best Idea,
     "name": Why Having Global Static References to Application Contexts is Probably not the Best Idea,
-    "wordCount": 0,
-    "timeRequired": "PT0M",
+    "wordCount": 1226,
+    "timeRequired": "PT6M",
     "inLanguage": {
       "@type": "Language",
       "alternateName": en
@@ -240,7 +240,7 @@
           </time>  
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
-                            <strong>&middot; 0 minute read</strong>
+                            <strong>&middot; 6 minute read</strong>
                         </section>
                     </header>
 
@@ -263,7 +263,7 @@
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
-<p>Instead, all I&rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps. </p>
+<p>Instead, all I&rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps.</p>
 
 <h2 id="1-classes-methods-that-use-static-references-to-an-application-context-are-liars">1. Classes/Methods that use static references to an application Context are &ldquo;Liars&rdquo;</h2>
 
@@ -277,11 +277,11 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 <p>Here&rsquo;s a quick example to illustrate this. Suppose you run across this method signature while you&rsquo;re looking at code:</p>
 
-<script src="//gist.github.com/kmdupr33/b3ae8532aa3ef1f738b9.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/b3ae8532aa3ef1f738b9.js"></script>
 
 <p>When you encounter this signature, you have no idea how this method displays the string passed in as a parameter. Now, suppose instead that you encountered this signature:</p>
 
-<script src="//gist.github.com/kmdupr33/d783e83a14b2cbc3807b.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/d783e83a14b2cbc3807b.js"></script>
 
 <p>With this signature you have a hint that maybe this method uses a <code>Toast</code> to display the string. Because <code>Context</code> is a god-object, knowing that a particular class or method depends on it doesn&rsquo;t always shed much light on what that class/method does or how it does it, but a little help in understanding what a class/method does is better than no help. </p>
 
@@ -301,7 +301,7 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 
 <p>If one of your classes calls a method on an application Context and you would like to verify that that method has been called in a unit test, using an static reference will not make your life easy. As I&rsquo;ve pointed out in <a href="http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">this post</a>, there are cases where you&rsquo;ll probably want to do this. Suppose you&rsquo;ve got an ServiceLauncher object that launches an Android Service. If you&rsquo;ve used dependency injection to pass in the Context upon which the ServiceLauncher depends, unit testing is easy:</p>
 
-<p><script src="//gist.github.com/kmdupr33/4b9cf75237955e97558a.js"></script> </p>
+<p><script type="application/javascript" src="//gist.github.com/kmdupr33/4b9cf75237955e97558a.js"></script> </p>
 
 <p>If the ServiceLauncher used a static reference to an application Context, this class would more difficult to unit test. In this particular case, you could use the testing support library to verify that intents are sent with a UI test, but UI tests are slower than unit tests, and, in any case, there are methods on a Context that you might want to verify that don&rsquo;t use intents, so injecting a Context into a target object will give you more flexibility when testing than using a globally accessible static reference, even if you leverage the testing support library to help you verify that certain intents were sent.</p>
 
@@ -362,18 +362,6 @@ Accessing global state statically doesn’t clarify those shared dependencies to
 </section>
 
  
-
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-  var disqus_shortname = 'philosophicalhacker';
-  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/2015\/07\/14\/why-static-references-to-application-contexts-are-probably-not-the-best-idea\/';
-  (function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
 

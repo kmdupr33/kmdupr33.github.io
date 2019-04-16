@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.40" />
+    <meta name="generator" content="Hugo 0.54.0" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/" />
     
@@ -255,13 +255,13 @@
 
 <p>Sometimes you want to fetch some data and then update the UI with that data in response to a touch event, and sometimes fetching data can&rsquo;t be done on the main thread. <code>Observables</code> can be a nice way to handle this problem:</p>
 
-<script src="//gist.github.com/kmdupr33/ef8023275ca36d201360.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/ef8023275ca36d201360.js"></script>
 
 <p>However, if the Android framework wants to destroy your <code>Activity</code> while your <code>Observable</code> is doing its thing, you run into a problem: The <code>Observable</code> will keep your Activity from being garbage collected, because your <code>Activity</code> contains a reference to an anonymous inner <code>Subscriber</code> and this <code>Subscriber</code> implicitly contains a reference to your <code>Activity</code>.</p>
 
 <p>The straightforward solution to this is to unsubscribe from your <code>Observable</code> when the <code>Activity</code> is about to be destroyed:</p>
 
-<script src="//gist.github.com/kmdupr33/338f863a42f53b736bdd.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/338f863a42f53b736bdd.js"></script>
 
 <p>Although this solution is straightforward, it puts you in an unfortunate dilemma:</p>
 
@@ -279,11 +279,11 @@
 
 <p>To see how this would work, let&rsquo;s start by defining the <code>Subscriber</code> decorator:</p>
 
-<script src="//gist.github.com/kmdupr33/b5fe4b2a67a3473e20c7.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/b5fe4b2a67a3473e20c7.js"></script>
 
 <p>Next, we define the Observable subclass that adds a <code>safeSubscribe()</code> method to wrap the <code>Subscriber</code> passed in:</p>
 
-<script src="//gist.github.com/kmdupr33/057612a1d383cc196c9a.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/057612a1d383cc196c9a.js"></script>
 
 <p>And that&rsquo;s it. Now, clients can subscribe to an <code>Observable</code> without having to worry about leaking an object with a big memory footprint. Instead, only the <code>Subscriber</code> decorator is leaked, and since the Subscriber decorator doesn&rsquo;t have a big memory footprint, its not a huge deal if it sticks around until the <code>Observer</code> is done doing its thing.</p>
 
@@ -339,18 +339,6 @@
 </section>
 
  
-
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-  var disqus_shortname = 'philosophicalhacker';
-  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/2015\/03\/24\/how-to-keep-your-rxjava-subscribers-from-leaking\/';
-  (function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
 

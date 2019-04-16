@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.40" />
+    <meta name="generator" content="Hugo 0.54.0" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/" />
     
@@ -128,8 +128,8 @@
     },
     "headline": What I&#39;ve Learned From Trying to Make An Android App Unit Testable,
     "name": What I&#39;ve Learned From Trying to Make An Android App Unit Testable,
-    "wordCount": 0,
-    "timeRequired": "PT0M",
+    "wordCount": 1359,
+    "timeRequired": "PT7M",
     "inLanguage": {
       "@type": "Language",
       "alternateName": en
@@ -240,7 +240,7 @@
           </time>  
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
-                            <strong>&middot; 0 minute read</strong>
+                            <strong>&middot; 7 minute read</strong>
                         </section>
                     </header>
 
@@ -257,8 +257,6 @@
 <li><p>Dependency Injection is really the main &ldquo;active ingredient&rdquo; that allows The Square Way enhance the unit testability of our applications.</p></li>
 </ol>
 
-<p></p>
-
 <h2 id="removing-compile-time-dependency-on-the-android-sdk-is-neither-practical-nor-necessary">Removing Compile-Time Dependency on the Android SDK is neither practical nor necessary</h2>
 
 <p>The idea that started off this entire series was to make Android apps more unit testable by making our app stack look like this:</p>
@@ -267,7 +265,7 @@
 
 <p>As we&rsquo;ll see later in this post, this idea is fundamentally misguided. Making our applications unit testable has more to do with making proper use of dependency injection than it does with decoupling from the Android SDK. The primary reason for this is that an object&rsquo;s Android dependencies can be mocked out using something like Mockito, and in cases where Mocktio alone fails to give us clean control over the pre-act-state of test, we can replace those android dependencies with interfaces that have mock implementations. This is what we did with the <code>SessionRepositoryManager</code> I discussed in <a href="http://philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/">my post on how to make UI app component classes unit testable</a>:</p>
 
-<script src="//gist.github.com/kmdupr33/54d1b6a42139dcae8c2e.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/54d1b6a42139dcae8c2e.js"></script>
 
 <p>In addition to being unnecessary, completely decoupling from the Android SDK is impractical. The problems that arise when you attempt to this are, in retrospect, obvious and uninteresting, so I will only briefly state them here. Attempting to remove all compile-time dependencies on the Android SDK from your application will likely result in:</p>
 
@@ -288,9 +286,9 @@
 <p>If this is true, then the only thing that prevents us from adopting The Square Way is having to write a bunch of boilerplate code. Fortunately, Android Studio provides us with a refactoring option that helps in making the transition to The Square Way: the <code>Extract Delegate</code> option. With this option, you can automatically move a class&rsquo;s methods and instance variables to a delegate class and have the original class call on this newly created delegate instead of relying on its own methods:</p>
 
 
-<div style="position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden;">
-  <iframe src="//www.youtube.com/embed/N0F7w4wEnQ8" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" allowfullscreen frameborder="0" title="YouTube Video"></iframe>
- </div>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/N0F7w4wEnQ8" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
 
 
 <p>This video demonstrates how to make use of the Extract Delegate option to do some of the refactoring necessary to make the SessionDetailActivity&rsquo;s onStop() method unit testable. I discuss why this kind of refactor is necessary <a href="http://philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/">in an earlier post</a>. Obviously, this mechanical option isn&rsquo;t going to cover all cases, and you may need to rework some methods to separate out the business logic from the statements that update an Activity&rsquo;s view, but the option is definitely helpful.</p>
@@ -373,18 +371,6 @@
 </section>
 
  
-
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-  var disqus_shortname = 'philosophicalhacker';
-  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/2015\/05\/22\/what-ive-learned-from-trying-to-make-an-android-app-unit-testable\/';
-  (function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
 

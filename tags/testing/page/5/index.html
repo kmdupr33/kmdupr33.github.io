@@ -27,7 +27,7 @@
 
 
 <meta name="twitter:title" content="Testing"/>
-<meta name="twitter:description" content="Thoughts on programming and startups from Matt Dupree, a wannabe philosophy professor turned wannabe tech entrepreneur living in Orlando"/>
+<meta name="twitter:description" content="Thoughts on building stuff (products, startups, and code), a wannabe philosophy professor turned wannabe tech entrepreneur"/>
 <meta name="twitter:site" content="@philosohacker"/>
 
 
@@ -44,13 +44,13 @@
 
     
     <meta property="og:type" content="website" />
-    <meta property="og:description" content="Thoughts on programming and startups from Matt Dupree, a wannabe philosophy professor turned wannabe tech entrepreneur living in Orlando" />
+    <meta property="og:description" content="Thoughts on building stuff (products, startups, and code), a wannabe philosophy professor turned wannabe tech entrepreneur" />
     
 
     <title>Testing &middot; Philosophical Hacker</title>
 
     
-    <meta name="description" content="Thoughts on programming and startups from Matt Dupree, a wannabe philosophy professor turned wannabe tech entrepreneur living in Orlando" />
+    <meta name="description" content="Thoughts on building stuff (products, startups, and code), a wannabe philosophy professor turned wannabe tech entrepreneur" />
     
 
     <meta name="HandheldFriendly" content="True" />
@@ -74,7 +74,7 @@
         <link href="https://www.philosophicalhacker.com/tags/testing/index.xml" rel="alternate" type="application/rss+xml" title="Testing &middot; Philosophical Hacker" />
       
     
-    <meta name="generator" content="Hugo 0.40" />
+    <meta name="generator" content="Hugo 0.54.0" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/tags/testing/" />
     
@@ -120,7 +120,7 @@
         "@type": "WebPage",
         "@id": https://www.philosophicalhacker.com/
     },
-    "description": Thoughts on programming and startups from Matt Dupree, a wannabe philosophy professor turned wannabe tech entrepreneur living in Orlando
+    "description": Thoughts on building stuff (products, startups, and code), a wannabe philosophy professor turned wannabe tech entrepreneur
 }
   </script>
     
@@ -240,9 +240,7 @@
 
 <p>In this post, I outline an alternative approach to structuring Android applications that will make it easier to unit test them. As I pointed out in <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">the introduction to this series</a>, the approach that I suggest is a generalization of the approach that Square uses to <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html">remove Fragments from their applications</a>. Since this approach is inspired by the folks at Square, I will call it “the square way.”</p>
 
-<p>The heart of the square way way is this: remove all business logic from app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s) and place that logic into “business objects,” POJO objects whose dependencies are injected, android-specific implementations of android-agnostic interfaces. If we follow the square way of developing our apps, we will be in a better position to unit test them. In this post, I explain how the square way would have us refactor non-UI app components like the <code>SessionCalendarService</code> I’ve been discussing for the past few posts.</p>
-
-<p></p> <a class="read-more" href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">&raquo;</a></p>
+<p>The heart of the square way way is this: remove all business logic from app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s) and place that logic into “business objects,” POJO objects whose dependencies are injected, android-specific implementations of android-agnostic interfaces. If we follow the square way of developing our apps, we will be in a better position to unit test them. In this post, I explain how the square way would have us refactor non-UI app components like the <code>SessionCalendarService</code> I’ve been discussing for the past few posts.</p> <a class="read-more" href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">&raquo;</a></p>
         
     </section>
     <footer class="post-meta">
@@ -283,9 +281,7 @@
 
 <p>Before I do that, let me say again that showing that the difficulty of testing Android applications is caused by the standard structure of android apps is important for the overarching goal of this series of articles. This series is an attempt to argue that we should consider restructuring our applications so that they do not explicitly depend on the Android SDK and its an attempt to present a robust architecture that will enhance the testability of Android applications. You can read the introduction to this series <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">here</a>. With that said, I can move on to trying to demonstrate the central claim of this post.</p>
 
-<p>There’s a standard way of developing android applications. Sample code and open source code alike both place an app’s business logic within Android app component classes, namely, Activities, Services, and Fragments. Going forward, I’m going to refer to this practice as “the standard way.” Here’s the central claim of this post: As long as we follow the “standard way”, we’re going to write code that’s either difficult or impossible to unit test. In other words, the untestable code that I pointed out in my last article is not a fluke. The standard way prevents us from unit testing key pieces of our applications.</p>
-
-<p></p> <a class="read-more" href="/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">&raquo;</a></p>
+<p>There’s a standard way of developing android applications. Sample code and open source code alike both place an app’s business logic within Android app component classes, namely, Activities, Services, and Fragments. Going forward, I’m going to refer to this practice as “the standard way.” Here’s the central claim of this post: As long as we follow the “standard way”, we’re going to write code that’s either difficult or impossible to unit test. In other words, the untestable code that I pointed out in my last article is not a fluke. The standard way prevents us from unit testing key pieces of our applications.</p> <a class="read-more" href="/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">&raquo;</a></p>
         
     </section>
     <footer class="post-meta">
@@ -338,9 +334,7 @@
 
 <p>So, Android unit testing is hard. That much is clear. Why Android unit testing is so difficult, however, is less clear. Its true that a part of the difficulty with Android unit testing has to do with the nonsense that you have to overcome to get Roboletric started so that you can run your tests at a decent speed, but I think that there’s a deeper reason why we are having a hard time testing our applications: the way that Google has written the Android SDK and the way that Google encourages us to structure our applications makes testing difficult and, in some cases, impossible.</p>
 
-<p>I realize that this is a bold claim, so I will spend the entire post trying to establish it. In the following post, I’ll try to say more about how the “standard” way of developing Android applications encourages us to write code that is difficult/impossible to write sensible unit tests against. These posts are a part of a series in which I’m exploring the viability of enhancing the testability of Android applications by restructuring them so that application code does not directly depend on the Android SDK. Showing why the standard architecture for Android development makes testing difficult will both motivate and inform my alternative proposal for structuring Android applications, a proposal that I will outline in the fourth post of the series.</p>
-
-<p></p> <a class="read-more" href="/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">&raquo;</a></p>
+<p>I realize that this is a bold claim, so I will spend the entire post trying to establish it. In the following post, I’ll try to say more about how the “standard” way of developing Android applications encourages us to write code that is difficult/impossible to write sensible unit tests against. These posts are a part of a series in which I’m exploring the viability of enhancing the testability of Android applications by restructuring them so that application code does not directly depend on the Android SDK. Showing why the standard architecture for Android development makes testing difficult will both motivate and inform my alternative proposal for structuring Android applications, a proposal that I will outline in the fourth post of the series.</p> <a class="read-more" href="/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">&raquo;</a></p>
         
     </section>
     <footer class="post-meta">

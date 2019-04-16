@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.40" />
+    <meta name="generator" content="Hugo 0.54.0" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/" />
     
@@ -128,8 +128,8 @@
     },
     "headline": Unit Testing Dynamically Constructed Views,
     "name": Unit Testing Dynamically Constructed Views,
-    "wordCount": 0,
-    "timeRequired": "PT0M",
+    "wordCount": 842,
+    "timeRequired": "PT4M",
     "inLanguage": {
       "@type": "Language",
       "alternateName": en
@@ -240,7 +240,7 @@
           </time>  
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
-                            <strong>&middot; 0 minute read</strong>
+                            <strong>&middot; 4 minute read</strong>
                         </section>
                     </header>
 
@@ -251,15 +251,13 @@
 
 <p>In this screenshot, the &ldquo;Distribute,&rdquo; &ldquo;Android,&rdquo; and &ldquo;Games&rdquo; tags are added to the view hierarchy based on the tags associated with the &rdquo;Going global with Google Play&rdquo; IO session. In this post, I&rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the <code>SesisonDetailActivity</code>&rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards <a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">making Google&rsquo;s IOSched app unit testable</a>.</p>
 
-<p></p>
-
 <p>As <a href="http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">I&rsquo;ve stated elsewhere</a>, dependency injection is key to making our apps unit testable. Because the MVP pattern allows us to inject dependencies into Presenters, objects which contain much of our app&rsquo;s business logic, the pattern plays a key role in making our apps unit testable in general. Unsurprisingly, the pattern also plays a role in helping us write unit testable dynamically constructed views.</p>
 
 <p>If you&rsquo;re not familiar with MVP, you should check out <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html">this post</a> in which Square talks about how they use MVP to get rid of fragments and to facilitate unit testing. <a href="http://hannesdorfmann.com/android/mosby/">This post</a> in which Hannes Dorfmann introduces a library he wrote to facilitate the application of the MVP pattern also contains a decent introduction to the pattern.</p>
 
 <p>Before I outline my approach to refactoring the <code>SessionDetailActivity</code> so that we can have unit testable, view constructing code, let&rsquo;s try to get a handle on how the <code>SessionDetailActivity</code>works without any kind of refactoring. Here&rsquo;s what the code currently looks like:</p>
 
-<script src="//gist.github.com/kmdupr33/0560695307233112cf3f.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/0560695307233112cf3f.js"></script>
 
 <p>There are few important things to notice about this code fragment.</p>
 
@@ -269,15 +267,15 @@
 
 <p>The problem of creating unit testable, dynamically constructed views is basically the problem of finding sensible places to put these two different kinds of business logic. Here&rsquo;s what I suggest, the view-hierarchy-affecting business logic should go in a <code>SessionDetailPresenter</code>:</p>
 
-<script src="//gist.github.com/kmdupr33/a0cef94a26e88f4f5ecf.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/a0cef94a26e88f4f5ecf.js"></script>
 
 <p>The <code>SessionDetailActivity</code> in this code segment is acting as the View within the MVP triad, and as such, it should not contain any business logic. Thus, we know that the view-property-affecting business logic should not be within the <code>SessionDetailActivity</code>. Instead of placing the view-property affecting business logic within the <code>SessionDetailActivity</code>, we have the <code>SessionDetailActivity</code> delegate that logic out to another View-Presenter pair:</p>
 
-<script src="//gist.github.com/kmdupr33/49428a2fcaf71df555f0.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/49428a2fcaf71df555f0.js"></script>
 
 <p>The &ldquo;SessionTagViewTranslator&rdquo; in this code segment is really just the View within the View-Presenter pair. For reasons that I discuss <a href="http://www.philosophicalhacker.com/2015/04/05/dont-call-it-mvp/">here</a>, I prefer the name &ldquo;ViewTranslator&rdquo; over &ldquo;View&rdquo; because it more clearly marks the difference between an MVP View and an Android View. Astute readers will notice that the SessionDetailActivity shouldn&rsquo;t be responsible for forwarding the click event on the view to the TagPresenter. This problem arises because of a circular dependency between MVP Views and Presenters. I&rsquo;ll discuss how to break this dependency in my next post. The <code>TagPresenter</code> is fairly trivial, but here&rsquo;s what it looks like:</p>
 
-<script src="//gist.github.com/kmdupr33/fd03667d4593eff59b1a.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/fd03667d4593eff59b1a.js"></script>
 
 <p>The SesionTagViewTranslator is even more trivial, so I won&rsquo;t bother showing the code for that.</p>
 
@@ -343,18 +341,6 @@
 </section>
 
  
-
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-  var disqus_shortname = 'philosophicalhacker';
-  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/2015\/06\/06\/unit-testing-dynamically-constructed-views\/';
-  (function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
 

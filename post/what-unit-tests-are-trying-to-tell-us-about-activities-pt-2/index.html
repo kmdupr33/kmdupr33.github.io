@@ -83,7 +83,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.40" />
+    <meta name="generator" content="Hugo 0.54.0" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/" />
     
@@ -384,7 +384,7 @@
 
 <p>I know that was scary, but pull yourself together. Let&rsquo;s zoom in on these few lines in particular:</p>
 
-<p><div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">void</span> displaySessionData(<span style="color:#fff;font-weight:bold">final</span> SessionDetailModel data) {
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">void</span> displaySessionData(<span style="color:#fff;font-weight:bold">final</span> SessionDetailModel data) {
   <span style="color:#007f7f">//...
 </span><span style="color:#007f7f"></span>
   <span style="color:#007f7f">// Handle Keynote as a special case, where the user cannot remove it
@@ -399,7 +399,7 @@
   }
 
   <span style="color:#007f7f">//...
-</span><span style="color:#007f7f"></span>}</code></pre></div></p>
+</span><span style="color:#007f7f"></span>}</code></pre></div>
 
 <p>Interesting. It looks like we&rsquo;ve stumbled upon a business rule:</p>
 
@@ -554,18 +554,6 @@
 </section>
 
  
-
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-  var disqus_shortname = 'philosophicalhacker';
-  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/post\/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2\/';
-  (function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
 

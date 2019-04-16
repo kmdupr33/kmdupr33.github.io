@@ -81,7 +81,7 @@
       
       
     
-    <meta name="generator" content="Hugo 0.40" />
+    <meta name="generator" content="Hugo 0.54.0" />
 
     <link rel="canonical" href="https://www.philosophicalhacker.com/2015/07/17/making-a-tdd-based-hackernews-client-for-android/" />
     
@@ -128,8 +128,8 @@
     },
     "headline": Making a TDD-based HackerNews client for Android,
     "name": Making a TDD-based HackerNews client for Android,
-    "wordCount": 0,
-    "timeRequired": "PT0M",
+    "wordCount": 732,
+    "timeRequired": "PT4M",
     "inLanguage": {
       "@type": "Language",
       "alternateName": en
@@ -240,14 +240,12 @@
           </time>  
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
                             <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
-                            <strong>&middot; 0 minute read</strong>
+                            <strong>&middot; 4 minute read</strong>
                         </section>
                     </header>
 
                     <section class="post-content">
                         <p>I&rsquo;m using TDD to write a HackerNews client for Android. This post (and the ones that will likely follow it) share a little bit about some of the techniques I used to follow a TDD-based work-flow for developing this application. It also discusses the architecture that arises when Android apps are built with testability in mind from the ground up.</p>
-
-<p></p>
 
 <h2 id="testing-a-walking-skeleton">Testing a Walking Skeleton</h2>
 
@@ -259,7 +257,7 @@ pg. 69-70</blockquote>
 
 <p>A walking skeleton for a HackerNews client, as I see it, should just display a list of HackerNews story ids. To implement this test, I use a simple espresso test that looks like this:</p>
 
-<script src="//gist.github.com/kmdupr33/a25db0930e583db05535.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/a25db0930e583db05535.js"></script>
 
 <h3 id="how-i-got-consistent-test-data">How I Got Consistent Test Data</h3>
 
@@ -269,15 +267,15 @@ pg. 69-70</blockquote>
 
 <p>Objects in PhilHackerNews access the Dagger object graph from the <code>PhilHackerNewsApplication</code> subclass. That class is responsible for making the <code>ObjectGraph</code>:</p>
 
-<script src="//gist.github.com/kmdupr33/eb4565747da03d9f1309.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/eb4565747da03d9f1309.js"></script>
 
 <p>So, when I&rsquo;m running a test, I use a custom test runner that creates a subclass of <code>PhilHackerNewsApplication</code> to create the <code>ObjectGraph</code> with the overridden module:</p>
 
-<script src="//gist.github.com/kmdupr33/d8a344157014e3cf0c8a.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/d8a344157014e3cf0c8a.js"></script>
 
 <p>The <code>TestApplication</code> class creates the <code>ObjectGraph</code> with a module that overrides the dependencies responsible for fetching HackerNews data:</p>
 
-<script src="//gist.github.com/kmdupr33/36c1e516b335092057c2.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/36c1e516b335092057c2.js"></script>
 
 <p><code>TestLoaderModule</code> is the module that provides the overridden dependency. It provides a HackerNewsRestAdapter that simply loads HackerNews data from memory instead of the server:</p>
 
@@ -305,15 +303,15 @@ Pg. 90</blockquote>
 
 <p>The problem that Loaders attempt to solve, as I see it, is a technical one that doesn&rsquo;t belong in the Application Layer. To shield application layer objects from this technical detail, I&rsquo;ve created and pass around an Observable that, upon subscription, initializes a load from a Loader using a LoaderManager:</p>
 
-<script src="//gist.github.com/kmdupr33/c6c1641ed1a24e07e062.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/c6c1641ed1a24e07e062.js"></script>
 
 <p>Rather than dealing with loaders directly, clients that want to consume the &ldquo;loaded&rdquo; data subscribe to the <code>Observable</code> that&rsquo;s created with a <code>LoaderInitializingOnSubscribe</code>. In my application, Activities/Fragments/Presenters will not interact with this Observable directly, however. Instead, they&rsquo;ll interact with a StoryRepository that will (eventually) be responsible for deciding whether data gets loaded from the cache or from the network. Here&rsquo;s what that class looks like at the moment:</p>
 
-<script src="//gist.github.com/kmdupr33/378997639d5bac95a392.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/378997639d5bac95a392.js"></script>
 
 <p>And here&rsquo;s a relevant snippet of the Fragment that uses this class to load the HackerNews data:</p>
 
-<script src="//gist.github.com/kmdupr33/fb1c638f2fdbe6a8bd68.js"></script>
+<script type="application/javascript" src="//gist.github.com/kmdupr33/fb1c638f2fdbe6a8bd68.js"></script>
 
 <p>If you want to have a closer look at what I&rsquo;ve done, feel free to take a look at <a href="https://github.com/kmdupr33/PhilHackerNews">the repo for this project</a>.</p>
                     </section>
@@ -358,18 +356,6 @@ Pg. 90</blockquote>
 </section>
 
  
-
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-  var disqus_shortname = 'philosophicalhacker';
-  var disqus_url = 'https:\/\/www.philosophicalhacker.com\/2015\/07\/17\/making-a-tdd-based-hackernews-client-for-android\/';
-  (function() {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
 
