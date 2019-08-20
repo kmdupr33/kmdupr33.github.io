@@ -1,586 +1,759 @@
 <!DOCTYPE html>
-<html lang="en-us">
-<head>
+<html><head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+  />
+  <style>
+    #content img {
+      max-width: 100%;
+    }
+    #mc_embed_signup label {
+      color: white;
+    }
+    #mc_embed_signup input.email {
+      color: white;
+      border-color: white;
+    }
 
-    <style type="text/css">
-      #mc_embed_signup {
-        margin-top: 50px;
-        margin-bottom: 50px;        
-        display: flex;
-        justify-content: center;
-        font:14px "Open Sans",Arial,sans-serif;
-      }
-      #mc_embed_signup input.button {
-        background: black;
-      }
-    </style>
-
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-    
-
-
-    <meta name="twitter:card" content="summary"/>
-    <meta name="twitter:image" content="https://www.philosophicalhacker.com/images/black.jpg"/>
-
-
-
-<meta name="twitter:title" content="Posts"/>
-<meta name="twitter:description" content="Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur"/>
-<meta name="twitter:site" content="@philosohacker"/>
-
-
-
-  	<meta property="og:title" content="Posts &middot; Philosophical Hacker" />
-  	<meta property="og:site_name" content="Philosophical Hacker" />
-  	<meta property="og:url" content="https://www.philosophicalhacker.com/post/" />
-    
-    
-        
-            <meta property="og:image" content="https://www.philosophicalhacker.com/images/black.jpg"/>
-        
-    
-
-    
-    <meta property="og:type" content="website" />
-    <meta property="og:description" content="Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur" />
-    
-
-    <title>Posts &middot; Philosophical Hacker</title>
-
-    
-    <meta name="description" content="Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur" />
-    
-
-    <meta name="HandheldFriendly" content="True" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="shortcut icon" href="https://www.philosophicalhacker.com/images/favicon.ico">
-	  <link rel="apple-touch-icon" href="https://www.philosophicalhacker.com/images/apple-touch-icon.png" />
-
-    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/screen.css" />
-    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/nav.css" />
-    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
-
-    
-
-    
-      
-          <link href="https://www.philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
-      
-      
-        <link href="https://www.philosophicalhacker.com/post/index.xml" rel="alternate" type="application/rss+xml" title="Posts &middot; Philosophical Hacker" />
-      
-    
-    <meta name="generator" content="Hugo 0.54.0" />
-
-    <link rel="canonical" href="https://www.philosophicalhacker.com/post/" />
-    
-  
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-63544399-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
-  
-
-
-    
-      
-    
-    <script type="application/ld+json">
-    {
-    "@context": "https://schema.org",
-    "@type": "Website",
-    "publisher": {
-        "@type": "Person",
-        "name": ,
-        
-        "url": ,
-        "sameAs": [
-            
-            
-             
-             
-             
-             
-             
-            
-        ]
-    },
-    "url": https://www.philosophicalhacker.com/,
-    "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": https://www.philosophicalhacker.com/
-    },
-    "description": Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur
-}
-  </script>
-    
-
-
-    
-
-    
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-63544399-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
-    
-
-    
+    #mc_embed_signup input.button {
+      background-color: #ee6e73;
+    }
+    .rc-scout .rc-scout__link:link {
+      color: white;
+    }
+    .browser-default-uls ul {
+      padding-left: 30px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+    .browser-default-uls ul > li {
+      list-style-type: disc!important;
+    }
+  </style>
+  <title>Philosophical Hacker</title>
 </head>
-
-<body class="nav-closed">
-
-  <div class="nav">
-    <h3 class="nav-title">Menu</h3>
-    <a href="#" class="nav-close">
-        <span class="hidden">Close</span>
-    </a>
-    <ul>
-        
-        
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="/">Home</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="https://www.oreilly.com/programming/free/rxjava-for-android-app-development.csp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development">RxJava O&#39;Reilly Book</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="/talk">Talks</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="https://github.com/kmdupr33">Github</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="/note">Notes</a>
-            </li>
-        
+<body><nav>
+  <div class="nav-wrapper green">
+    <a
+      href="/"
+      class="brand-logo"
+      style="margin-left: 10px;"
+      >Philosophical Hacker</a
+    >
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger"
+      ><i class="material-icons">menu</i></a
+    >
+    <ul class="right hide-on-med-and-down">
+      <li><a href="/about/me">About</a></li>
+      
+      <li><a href="/note">Notes</a></li>
+      <li>
+        <a
+          href="https://www.oreilly.com/library/view/~/9781492048343/?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"
+          >RxJava O'Reilly Ebook</a
+        >
+      </li>
     </ul>
+  </div>
+  <ul class="sidenav" id="mobile-demo">
+    <li><a href="/about/me">About</a></li>
     
-    
-    <a class="subscribe-button icon-feed" href="https://www.philosophicalhacker.com/post/index.xml">Subscribe</a>
-    
-</div>
-<span class="nav-cover"></span>
-
-
- <div class="site-wrapper">
-
-
-
-
-	 
-  <header class="main-header tag-head" style="background-image: url(https://www.philosophicalhacker.com/images/black.jpg)">
-  
-
-    <nav class="main-nav overlay clearfix">
-      
-      
-          <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
-      
-    </nav>
-    <div class="vertical">
-        <div class="main-header-content inner">
-            <h1 class="page-title">Posts</h1>
-            <h2 class="page-description">
-                
-            </h2>
-        </div>
-    </div>
-</header>
-
-<main class="content" role="main">
-    
-
-	<div class="extra-pagination inner">
-    <nav class="pagination" role="navigation">
-	
-	<span class="page-number">Page 1 of 11</span>
-	
-	    <a class="older-posts" href="/post/page/2/">Older Posts &rarr;</a>
-	
+    <li><a href="/note">Notes</a></li>
+    <li>
+      <a
+        href="https://www.oreilly.com/library/view/~/9781492048343/?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"
+        >Rx Java O'Reilly Ebook</a
+      >
+    </li>
+  </ul>
 </nav>
-
-	</div>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/post/towards-readable-clis/">Maybe we Should Stop Creating Inscrutable CLIs</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p>In the original Unix tradition, command-line options are single letters preceded by a single hyphen&hellip;The original Unix style evolved on slow ASR-33 teletypes that made terseness a virtue; thus the single-letter options.
-Eric Steven Raymond, The Art of Unix Programming
-  Programs must be written for people to read, and only incidentally for machines to execute.
-Abelson et. al., Structure and Interpretation of Computer Programs
- I just wrote this little bash-ism the other day for removing all attachments from a jira ticket: <a class="read-more" href="/post/towards-readable-clis/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/programming/">#programming</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/clis/">#clis</a>,
-            
-        
-        <time class="post-date" datetime="2019-08-17T10:45:06-04:00">
-            17 Aug 2019
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/post/roadmap-presentation-tips/">Some Tips for Delivering an Effective Roadmap Presentation</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>I recently delivered a presentation of our (outcome-based) roadmap. Several people approached me after the presentation to tell me that they found it useful and informative, so I thought I’d jot down some of the things that I think contributed to the warm reception of the presentation. Hopefully, these tips will come in handy both for others and for my future self.</p> <a class="read-more" href="/post/roadmap-presentation-tips/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/product-management/">#product management</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/roadmaps/">#roadmaps</a>,
-            
-        
-        <time class="post-date" datetime="2019-07-13T12:54:09-04:00">
-            13 Jul 2019
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/post/jira-cli-fu/">How to Automate Common Jira Tasks with Go Jira Custom Commands</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p>in all but small teams I typically recommend separate people for the separate roles [of product managment and project management]. But in every case I believe that developing strong project management skills is a big advantage for product managers – at the least your product will get to market faster, and it could make the difference between getting your product shipped at all.
-&ndash;Marty Cagan, &ldquo;Ebay&rsquo;s Secret Weapon&rdquo; <a class="read-more" href="/post/jira-cli-fu/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/jira/">#jira</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/product-management/">#product management</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/project-management/">#project management</a>,
-            
-        
-        <time class="post-date" datetime="2019-07-03T20:03:48-04:00">
-            3 Jul 2019
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/why-pms-should-study-statistics/">Why PMs Should Study Statistics: An Interactive Essay</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p>Marty Cagan &ndash; seasoned product manager and author of a book and blog that makes practically every recommended reading list for new product managers &ndash; says that there are two academic courses that “every product manager should take”: finance and computer science. In this interactive essay, I suggest we add another course to this list: statistics. A strong understanding of statistics facilitates three key responsibilities of product managment: understanding analytics, implementing cooprorate change, and making accurate forecasts. <a class="read-more" href="/why-pms-should-study-statistics/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/product-management/">#product management</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/statistics/">#statistics</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/analytics/">#analytics</a>,
-            
-        
-        <time class="post-date" datetime="2019-06-02T08:22:51-04:00">
-            2 Jun 2019
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/post/lost-local-optima/">Some thoughts on the moral implications of building habit-forming products</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p>I recently finished the book Hooked: How to build habit-forming products
-I challenged the author&rsquo;s view on the moral permissibility of creating habit forming products here on medium (It was picked up by product coalition and selected by medium curators 🙌) and again as an interactive essay using idyll. <a class="read-more" href="/post/lost-local-optima/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/product-management/">#product management</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/ethics/">#ethics</a>,
-            
-        
-        <time class="post-date" datetime="2019-05-11T08:09:37-04:00">
-            11 May 2019
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/post/apple-q1-revenue-forecast/">iPhone Q1 Revenue Forecast</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p>This is my first crack at making a forecast as a part of what I&rsquo;m calling the &ldquo;Cassandra Project.&rdquo; The gist of the motivation for the project is that product management and entrepreneurship requires smart bets on the future and that you can&rsquo;t get good at making smart bets on the future without practice. You can read more here.
-The forecast I&rsquo;m making relates to this question:
- Will the percent change in iPhone revenue growth from Q1 2018 to Q1 2019 be greater than the percent change in revenue growth from Q4 2017 to Q4 2018? <a class="read-more" href="/post/apple-q1-revenue-forecast/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/product-management/">#product management</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/business/">#business</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/forecasting/">#forecasting</a>,
-            
-        
-        <time class="post-date" datetime="2019-04-17T19:38:20-04:00">
-            17 Apr 2019
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/post/cassandra-project/">The Cassandra Project: Towards Better Product Management via Better Forecasting</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p>Product managers have to make bets on the future. If you think for a few seconds about the types of risk that product managers are charged with managing, this becomes obvious. Product managers &mdash; as Marty Cagan points out &mdash; must manage risk around:
-  value risk (whether customers will buy it or users will choose to use it) usability risk (whether users can figure out how to use it) feasibility risk (whether our engineers can build what we need with the time, skills and technology we have) business viability risk (whether this solution also works for the various aspects of our business)   All of these require some betting on the future, but managing value risk and business viability risk in particular require forecasting that can be especially difficult to do. <a class="read-more" href="/post/cassandra-project/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/product-managment/">#product managment</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/startups/">#startups</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/business/">#business</a>,
-            
-        
-        <time class="post-date" datetime="2019-03-30T22:12:12-04:00">
-            30 Mar 2019
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/post/big-disruption-review/">Hilarious Heresy: A Review of Jessica Powell’s &#34;The Big Disruption&#34;</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p>If I had to pick a few words to describe Jessica Powell’s The Big Disruption they’d be the words “hilarious heresy.”
-&ldquo;Hilarious&rdquo; because the book is surprisingly funny. My wife actually kept commenting on how much I was chuckling as I read the book.
-&ldquo;Heresy&rdquo; because it’s a good way of capturing what Powell is doing in the book with all of her criticisms: she’s challenging the silicon valley gospel that tech companies are here to save the world, and given all of the attention and good will towards those companies, “heresy” feels like an appropriate label for this message. <a class="read-more" href="/post/big-disruption-review/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/startups/">#startups</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/product-management/">#product management</a>,
-            
-        
-        <time class="post-date" datetime="2019-03-23T10:55:05-04:00">
-            23 Mar 2019
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/post/okr-problems/">Some problems with the impossibility of achieving OKRs</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p>In many ways, OKRs are a neat way of structuring goals for a company. According to Marty Cagan, product managers should be especially interested in OKRs as a goal setting framework since they are a better way of tracking product work than a &ldquo;product roadmap.&rdquo; I agree with Cagan. OKRs are often better than typical product road maps.
-However, there’s an aspect of OKRs that I think is morally and psychologically problematic: the idea that OKRs should be impossible to entirely achieve. <a class="read-more" href="/post/okr-problems/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/startups/">#startups</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/business/">#business</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/io-psychology/">#io psychology</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/product-management/">#product management</a>,
-            
-        
-        <time class="post-date" datetime="2019-03-01T22:11:45-05:00">
-            1 Mar 2019
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/post/how-lean-became-profound/">How The Lean Principle Became Profound</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p>There are certain books that are required reading for product managers. Eric Reis&rsquo; The Lean Startup and Marty Cagan&rsquo;s Inspired both come to mind. They&rsquo;re great books with lots of useful techniques and important ideas.
-Lately, however, the fact that these books are popular and useful has struck me as rather odd. If you take a step back from these books &mdash; and the many books, articles, talks, podcasts, etc. <a class="read-more" href="/post/how-lean-became-profound/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/product-management/">#product management</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/lean-startup/">#lean startup</a>,
-            
-        
-        <time class="post-date" datetime="2019-02-02T14:18:03-05:00">
-            2 Feb 2019
-        </time>
-    </footer>
-</article>
-
-	
-
-	<nav class="pagination" role="navigation">
-	
-	<span class="page-number">Page 1 of 11</span>
-	
-	    <a class="older-posts" href="/post/page/2/">Older Posts &rarr;</a>
-	
-</nav>
-
-</main>
-
-
-
-<div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
-<footer class="site-footer clearfix">
-    <section class="copyright"><a href="">Philosophical Hacker</a> </section>
-    
-    <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
-    
-</footer>
+<div id="content" class="browser-default-uls">
+<div class="row">
+  <div class="col s12 m8 offset-m2">
+    <main>
+      <article>
+        <header>
+          <h1>Posts</h1>
+        </header>
+        
+        
+      </article>
+      <ul>
+        
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/towards-readable-clis/"
+            >2019-08-17 | Maybe we Should Stop Creating Inscrutable CLIs</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/roadmap-presentation-tips/"
+            >2019-07-13 | Some Tips for Delivering an Effective Roadmap Presentation</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/jira-cli-fu/"
+            >2019-07-03 | How to Automate Common Jira Tasks with Go Jira Custom Commands</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/why-pms-should-study-statistics/"
+            >2019-06-02 | Why PMs Should Study Statistics: An Interactive Essay</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/lost-local-optima/"
+            >2019-05-11 | Some thoughts on the moral implications of building habit-forming products</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/apple-q1-revenue-forecast/"
+            >2019-04-17 | iPhone Q1 Revenue Forecast</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/cassandra-project/"
+            >2019-03-30 | The Cassandra Project: Towards Better Product Management via Better Forecasting</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/big-disruption-review/"
+            >2019-03-23 | Hilarious Heresy: A Review of Jessica Powell’s &#34;The Big Disruption&#34;</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/okr-problems/"
+            >2019-03-01 | Some problems with the impossibility of achieving OKRs</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/how-lean-became-profound/"
+            >2019-02-02 | How The Lean Principle Became Profound</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/better-cohort-analysis/"
+            >2018-12-29 | How Startups Can Do Better Cohort Analyses</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/one-year-meditating/"
+            >2018-12-18 | Meditation One Year Later</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/programmer-passion-worse/"
+            >2018-11-09 | How Passion for Programming Can Make us Worse at our Jobs</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/business-and-cartesian-demon/"
+            >2018-09-12 | Business and the Cartesian Demon: How not to Study Business</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/push-notification-meditation/"
+            >2018-09-05 | Cigarettes and Texts: Self-knowledge, Self-control, and Meditation</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/teaching-programming/"
+            >2018-07-28 | Some thoughts on how to teach programming</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/uncle-bob-trump/"
+            >2018-06-30 | Maybe We Should Go Easy on Uncle Bob</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/internet-trends-2018/"
+            >2018-06-09 | Mobile Down, Smart Speakers Up: 2 Notable Trends from this Year&#39;s Internet Trends Report</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/patterns-principles-and-tools-for-testing-react-native-apps/"
+            >2018-05-18 | Patterns Principles and Tools for Testing Your React (Native) Apps</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/rest-in-2018/"
+            >2018-04-24 | The so-called &#39;RESTful&#39; web in 2018 and beyond</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/my-first-1000-minutes-meditating/"
+            >2018-03-09 | From Panic Attacks to Yoga Mats: Startups, Leadership, and my first 1000 minutes Meditating</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/ya-better-recognize/"
+            >2017-11-24 | Ya Better Recognize</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/hacker-vs-hustler-reflecting-on-one-year-at-unikey/"
+            >2017-11-03 | Hacker vs. Hustler: Reflecting on One Year at UniKey</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/react-native-at-an-iot-startup/"
+            >2017-10-22 | React Native at an IoT Startup</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/how-to-abuse-kotlin-extension-functions/"
+            >2017-05-26 | How to Abuse Kotlin Extension Functions</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/not-needing-dagger-is-a-smell-pt-1/"
+            >2017-05-12 | Not Needing Dagger is a Code Smell (Pt. 1)</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/setting-up-a-jenkins-pipeline-for-android-testing/"
+            >2017-04-28 | Setting up a Jenkins Pipeline for Android Testing</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/android-testing-calisthenics-domain-objects/"
+            >2017-04-14 | Android Testing Calisthenics: Domain Objects</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/"
+            >2017-04-09 | Test Driving away Coupling in Activities</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/why-cryptography-for-android-developers/"
+            >2017-03-25 | Why Cryptography?</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/"
+            >2017-03-19 | Why Im Skeptical about Kotlin Coroutines for Android Development</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/"
+            >2017-03-10 | What Unit Tests are Trying to Tell us About Activities Pt 2</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/some-resources-for-learning-how-to-test-android-apps/"
+            >2017-03-03 | Some Resources for Learning how to Test Android Apps</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt1/"
+            >2017-02-25 | What Unit Tests are Trying to Tell us about Activities: Pt. 1</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/towards-godless-android-development-how-and-why-i-kill-god-objects/"
+            >2017-02-18 | Towards Godless Android Development: How and Why I Kill God Objects</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/why-android-testing-is-so-hard-historical-edition/"
+            >2017-02-09 | Why Android Testing is so Hard: Historical Edition</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/against-singletons-for-android-data-loading/"
+            >2017-02-04 | Why I Avoid Singletons for Android Data Loading</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/espresso-test-addiction/"
+            >2017-01-28 | Espresso Test Addiction: An Anti-pattern</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/exploiting-android-specific-seams-for-testing-and-flexibility/"
+            >2017-01-21 | Exploiting Android-Specific Seams for Testing and Flexibility</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/tdd-is-greater-than-the-principle-of-single-responsibility/"
+            >2017-01-14 | TDD &gt; The Principle of Single Responsibility</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/why-i-dont-use-roboletric/"
+            >2017-01-06 | Why I Don&#39;t use Robolectric</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/what-should-we-unit-test/"
+            >2017-01-01 | What Should we Unit Test?</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/"
+            >2016-12-27 | How we Misuse Mocks for Android Tests</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/build-variants-and-link-seams/"
+            >2016-12-18 | Build Variants and Link Seams</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/object-seams-and-mvp-for-testability/"
+            >2016-12-09 | Object Seams and MVP for Testability</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/"
+            >2016-12-03 | What makes Android Apps Testable?</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/why-we-should-probably-write-more-tests-for-our-android-apps/"
+            >2016-11-07 | Why we Should Probably Write More Tests for Our Android Apps</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/using-git-submodules-effectively/"
+            >2016-10-23 | Using Git Submodules Effectively</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/3-ways-of-getting-to-green/"
+            >2016-10-16 | 3 Ways of &#39;Getting to Green&#39;</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/the-goal-of-refactoring-during-tdd/"
+            >2016-10-16 | The goal of refactoring During TDD</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/tdd-and-startups/"
+            >2016-10-16 | TDD and Startups</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/capital-intensive-mvps/"
+            >2016-08-12 | Capital Intensive MVPs</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/on-selling-your-soul/"
+            >2016-08-09 | On Selling your Soul: Notes on Gregg Pollack&#39;s Founder&#39;s Talk</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/unit-testable-recycler-views/"
+            >2016-08-08 | Unit Testable RecyclerViews</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/"
+            >2016-07-23 | RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/an-espresso-test-recorder-deep-dive/"
+            >2016-07-07 | An Espresso Test Recorder Deep Dive</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/why-dont-we-have-a-unit-test-recorder/"
+            >2016-07-01 | Why don&#39;t we have a unit test recorder?</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/vice-a-regression-test-generation-library/"
+            >2016-06-22 | Vice: A Regression Test Generation Library</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/"
+            >2016-06-16 | How to Safely move Logic out of Activities</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/"
+            >2016-06-14 | Why we Should Stop Putting Logic in Activities</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/a-new-way-of-learning-android-development/"
+            >2016-06-11 | A New way of Learning (Android Development)</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/"
+            >2016-06-09 | Testing Strategies with a React/Redux Architecture</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/react-and-redux-like-architectures-for-android/"
+            >2016-06-08 | How React-and-Redux-like Architectures for Android can make Testing Easier</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/"
+            >2016-06-07 | PSA: Dont Use Espresso Idling Resources like Google does</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/process-vs-procedure-recursion/"
+            >2016-04-06 | Process vs. Procedure Recursion</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/abstraction-scope-and-bound-variables/"
+            >2016-04-06 | Abstraction, Scope, and Bound Variables</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/sicp-111-117/"
+            >2016-03-29 | Sicp 1.1.1-1.1.7</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/testing-package-implmentation-details-from-the-outside/"
+            >2016-02-03 | Testing Package Implementation from &#39;the Outside&#39;</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/table-driven-tests-with-gomock/"
+            >2016-01-23 | Table-driven tests with Gomock</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/integration-tests-in-go/"
+            >2016-01-22 | Integration Tests in Go</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/post/getting-started-with-gomock/"
+            >2016-01-20 | Getting started with Gomock</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/"
+            >2016-01-14 | Should we use mocking libraries for go testing?</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/07/17/making-a-tdd-based-hackernews-client-for-android/"
+            >2015-07-17 | Making a TDD-based HackerNews client for Android</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/"
+            >2015-07-14 | Why Having Global Static References to Application Contexts is Probably not the Best Idea</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/"
+            >2015-07-09 | 6 Things I wish I Knew before I Wrote my first Android App</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/"
+            >2015-07-08 | My Response to Hannes Dorfmann on &#34;the Circular Dependency Problem&#34;</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/"
+            >2015-07-07 | MVPR: A Flexible, Testable Architecture for Android (Pt. 1)</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/06/26/im-taking-a-brief-hiatus-from-blogging-here/"
+            >2015-06-26 | I&#39;m taking a brief hiatus from blogging here...</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/06/25/taylor-swift-photographers-and-working-for-nothing/"
+            >2015-06-25 | Taylor Swift, Photographers, and &#34;working for nothing&#34;</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/06/19/introduction-to-rxjava-for-android-pt-2/"
+            >2015-06-19 | Introduction to RxJava for Android (Pt. 2)</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/06/16/introduction-to-rxjava-for-android-the-talk/"
+            >2015-06-17 | Introduction to RxJava for Android: The Talk</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/06/12/an-introduction-to-rxjava-for-android/"
+            >2015-06-12 | An Introduction to RxJava for Android (Pt. 1)</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/06/07/developer-golf/"
+            >2015-06-07 | Developer Golf</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/"
+            >2015-06-06 | Unit Testing Dynamically Constructed Views</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/"
+            >2015-05-31 | Towards A Unit Testable Fork of Google&#39;s IOSched App</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/"
+            >2015-05-29 | An Introduction to Unit Testing on Android</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/"
+            >2015-05-22 | What I&#39;ve Learned From Trying to Make An Android App Unit Testable</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/"
+            >2015-05-09 | Android Unit Testing Guides</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/"
+            >2015-05-08 | How to Make Our Android Apps Unit Testable (Pt. 2)</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/"
+            >2015-05-01 | How to Make Our Android Apps Unit Testable (Pt. 1)</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/"
+            >2015-04-24 | Why Android Unit Testing Is So Hard (Pt. 2)</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/"
+            >2015-04-17 | Why Android Unit Testing is so Hard (Pt 1)</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/04/16/is-mark-zuckerberg-a-douche-bag/"
+            >2015-04-16 | Is Mark Zuckerberg a Douche-bag?</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/"
+            >2015-04-11 | Against Android Unit Tests</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/04/06/dont-call-it-mvp/"
+            >2015-04-06 | Don&#39;t call it &#34;MVP&#34;</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/"
+            >2015-03-24 | How to Keep your RxJava Subscribers from Leaking</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/02/22/why-pirating-is-probably-wrong-java/"
+            >2015-02-22 | Why Pirating is Probably Wrong (.java)</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/01/24/why-ayn-rands-psychology-is-probably-wrong/"
+            >2015-01-24 | Why Ayn Rand&#39;s Psychology is Probably Wrong (or trivial)</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2015/01/18/build-apps-smarter-with-archiva-and-gradle/"
+            >2015-01-18 | Build Apps Smarter With Archiva and Gradle</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2014/10/03/an-alternative-multiproject-setup-for-android-studio/"
+            >2014-10-03 | An Alternative Multiproject Setup for Android Studio</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2014/05/27/some-responses-to-your-comments-on-why-paul-graham-is-sort-of-wrong-about-philosophy/"
+            >2014-05-27 | A response to Your Comments on &#34;Why Paul Graham is (sort of) wrong about philosophy&#34;</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2014/05/26/why-paul-graham-is-sort-of-wrong-about-philosophy/"
+            >2014-05-26 | Why Paul Graham is (sort of) Wrong About Philosophy</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2014/05/22/how-to-break-into-a-mobile-dev-career-in-10-months-or-less/"
+            >2014-05-22 | How to Break into a Mobile Dev Career in 10 months or less</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2014/05/21/why-ill-probably-try-to-manipulate-you-2/"
+            >2014-05-21 | Why I&#39;ll Probably Try to Manipulate You</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2014/04/24/should-the-idea-person-get-extra-equity/"
+            >2014-04-24 | Should the Idea Person get Extra Equity?</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/2014/04/22/why-im-glad-my-dream-job-didnt-work-out/"
+            >2014-04-22 | Why I&#39;m Glad my Dream Job Didn&#39;t work out</a
+          >
+        </li>
+        
+      </ul>
+    </main>
+  </div>
 </div>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.js"></script>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.fitvids.js"></script>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/index.js"></script>
+<div class="rc-scout" style="display: none;"></div>    
 
+        </div><script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var elems = document.querySelectorAll(".sidenav");
+    var instances = M.Sidenav.init(elems, {});
+  });
+</script>
 <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
 
-</body>
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-63544399-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
 
+
+</body>
 </html>

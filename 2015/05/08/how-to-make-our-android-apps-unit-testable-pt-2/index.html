@@ -1,251 +1,90 @@
 <!DOCTYPE html>
-<html lang="en-us">
-<head>
-
-    <style type="text/css">
-      #mc_embed_signup {
-        margin-top: 50px;
-        margin-bottom: 50px;        
-        display: flex;
-        justify-content: center;
-        font:14px "Open Sans",Arial,sans-serif;
-      }
-      #mc_embed_signup input.button {
-        background: black;
-      }
-    </style>
-
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-    
-
-
-    
-        <meta name="twitter:card" content="summary"/>
-    
-
-
-
-<meta name="twitter:title" content="How to Make Our Android Apps Unit Testable (Pt. 2)"/>
-<meta name="twitter:description" content=""/>
-<meta name="twitter:site" content="@philosohacker"/>
-
-
-
-  	<meta property="og:title" content="How to Make Our Android Apps Unit Testable (Pt. 2) &middot; Philosophical Hacker" />
-  	<meta property="og:site_name" content="Philosophical Hacker" />
-  	<meta property="og:url" content="https://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/" />
-    
-    
-        
-            <meta property="og:image" content="https://www.philosophicalhacker.com/images/black.jpg"/>
-        
-    
-
-    
-    <meta property="og:description" content="" />
-  	<meta property="og:type" content="article" />
-    <meta property="og:image" content="https://www.philosophicalhacker.com/" />
-    <meta property="article:published_time" content="2015-05-08T11:46:13Z" />
-
-    
-    <meta property="article:tag" content="android" />
-    
-    <meta property="article:tag" content="testing" />
-    
-    
-
-    <title>How to Make Our Android Apps Unit Testable (Pt. 2) &middot; Philosophical Hacker</title>
-
-    
-    <meta name="description" content="" />
-    
-
-    <meta name="HandheldFriendly" content="True" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="shortcut icon" href="https://www.philosophicalhacker.com/images/favicon.ico">
-	  <link rel="apple-touch-icon" href="https://www.philosophicalhacker.com/images/apple-touch-icon.png" />
-
-    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/screen.css" />
-    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/nav.css" />
-    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
-
-    
-
-    
-      
-          <link href="https://www.philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
-      
-      
-    
-    <meta name="generator" content="Hugo 0.54.0" />
-
-    <link rel="canonical" href="https://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/" />
-    
-  
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-63544399-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
-  
-
-
-    
-      
-    
-    <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "publisher": {
-        "@type": "Organization",
-        "name": 
-    },
-    "author": {
-        "@type": "Person",
-        "name": ,
-        
-        "url": ,
-        "sameAs": [
-            
-            
-             
-             
-             
-             
-             
-            
-        ]
-    },
-    "headline": How to Make Our Android Apps Unit Testable (Pt. 2),
-    "name": How to Make Our Android Apps Unit Testable (Pt. 2),
-    "wordCount": 1376,
-    "timeRequired": "PT7M",
-    "inLanguage": {
-      "@type": "Language",
-      "alternateName": en
-    },
-    "url": https://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/,
-    "datePublished": 2015-05-08T11:46Z,
-    "dateModified": 2015-05-08T11:46Z,
-    
-    "keywords": android, testing,
-    "description": ,
-    "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": https://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/
+<html><head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+  />
+  <style>
+    #content img {
+      max-width: 100%;
     }
-}
-    </script>
-    
+    #mc_embed_signup label {
+      color: white;
+    }
+    #mc_embed_signup input.email {
+      color: white;
+      border-color: white;
+    }
 
-
-    
-
-    
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-63544399-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
-    
-
-    
+    #mc_embed_signup input.button {
+      background-color: #ee6e73;
+    }
+    .rc-scout .rc-scout__link:link {
+      color: white;
+    }
+    .browser-default-uls ul {
+      padding-left: 30px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+    .browser-default-uls ul > li {
+      list-style-type: disc!important;
+    }
+  </style>
+  <title>Philosophical Hacker</title>
 </head>
-
-<body class="nav-closed">
-
-  <div class="nav">
-    <h3 class="nav-title">Menu</h3>
-    <a href="#" class="nav-close">
-        <span class="hidden">Close</span>
-    </a>
-    <ul>
-        
-        
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="/">Home</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="https://www.oreilly.com/programming/free/rxjava-for-android-app-development.csp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development">RxJava O&#39;Reilly Book</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="/talk">Talks</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="https://github.com/kmdupr33">Github</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="/note">Notes</a>
-            </li>
-        
+<body><nav>
+  <div class="nav-wrapper green">
+    <a
+      href="/"
+      class="brand-logo"
+      style="margin-left: 10px;"
+      >Philosophical Hacker</a
+    >
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger"
+      ><i class="material-icons">menu</i></a
+    >
+    <ul class="right hide-on-med-and-down">
+      <li><a href="/about/me">About</a></li>
+      
+      <li><a href="/note">Notes</a></li>
+      <li>
+        <a
+          href="https://www.oreilly.com/library/view/~/9781492048343/?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"
+          >RxJava O'Reilly Ebook</a
+        >
+      </li>
     </ul>
+  </div>
+  <ul class="sidenav" id="mobile-demo">
+    <li><a href="/about/me">About</a></li>
     
-    
-    <a class="subscribe-button icon-feed" href="https://www.philosophicalhacker.com/index.xml">Subscribe</a>
-    
-</div>
-<span class="nav-cover"></span>
+    <li><a href="/note">Notes</a></li>
+    <li>
+      <a
+        href="https://www.oreilly.com/library/view/~/9781492048343/?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"
+        >Rx Java O'Reilly Ebook</a
+      >
+    </li>
+  </ul>
+</nav>
+<div id="content" class="browser-default-uls">
 
-
- <div class="site-wrapper">
-  
-            <header class="main-header post-head no-cover">
-                <nav class="main-nav clearfix">
-                      
-                    <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a> 
-                </nav>
-            </header>
-
-
-
-            <main class="content" role="main">
-
-
-
-
-                <article class="post post">
-
-                    <header class="post-header">
-                        <h1 class="post-title">How to Make Our Android Apps Unit Testable (Pt. 2)</h1>
-
-                        <section class="post-meta">
-                            
-                            <time class="post-date" datetime=" 2015-05-08T11:46:13Z ">
-            May 8, 2015
-          </time>  
-                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/android/">#android</a></span> 
-                            <span class="post-tag small"><a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a></span> 
-                            <strong>&middot; 7 minute read</strong>
-                        </section>
-                    </header>
-
-                    <section class="post-content">
-                        <p>In <a href="http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">my last post</a>, I introduced the “The Square Way” of structuring our android code. I said that The Square Way is a generalization of the approach that Square used to make the logic within their <code>Fragment</code>s unit testable. I also showed how The Square Way would have us rewrite the <code>SessionCalendarService</code> within Google’s IOSched app so that we could unit test the business logic within it. As we’ll see in this post, The Square Way also makes it easier/possible for us to unit test UI app component business logic.</p>
+<div class="row">
+  <div class="col s12 m8 offset-m2">
+      <section id="main">          
+          <h1 id="title">How to Make Our Android Apps Unit Testable (Pt. 2)</h1>
+          <p id="date"> Fri May 8, 2015 | 7 Minute read </p>
+          <div>
+                <article id="content">
+                   <p>In <a href="http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">my last post</a>, I introduced the “The Square Way” of structuring our android code. I said that The Square Way is a generalization of the approach that Square used to make the logic within their <code>Fragment</code>s unit testable. I also showed how The Square Way would have us rewrite the <code>SessionCalendarService</code> within Google’s IOSched app so that we could unit test the business logic within it. As we’ll see in this post, The Square Way also makes it easier/possible for us to unit test UI app component business logic.</p>
 
 <h1 id="this-article-has-dependencies">This Article has “Dependencies”</h1>
 
@@ -259,7 +98,8 @@
 
 <p>Here’s what <code>onStop()</code> looks like currently:</p>
 
-<script type="application/javascript" src="//gist.github.com/kmdupr33/4c90e155dcaf6c4e0147.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/4c90e155dcaf6c4e0147.js"></script>
+
 
 <p>One problem with this code, as I’ve mentioned before, is that the code that launches the <code>SessionCalendarService</code> does not belong to a method on an dependency that’s been injected into the <code>SessionDetailActivity</code>. Following The Square Way fixes this problem. The first step for restructuring this code to follow The Square Way is to move the business logic from the <code>SessionDetailActivity</code> to a business object. The folks at Square have a name for a business object that contains the business logic that used to live in an <code>Activity</code> (or <code>Fragment</code>, etc.): they call it a “Presenter.”</p>
 
@@ -267,15 +107,18 @@
 
 <p>Here’s what the equivalent of <code>onStop()</code> would look like within the <code>SessionDetailPresenter</code>:</p>
 
-<script type="application/javascript" src="//gist.github.com/kmdupr33/5e06819aec1694453ff3.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/5e06819aec1694453ff3.js"></script>
+
 
 <p>The key thing to note here is that the <code>SessionDetailPresenter</code>’s dependencies are passed into its constructor. Because these dependencies are injected, we now have a way of verifying the post-act-state of a unit test against <code>SessionDetailPresenter</code>’s <code>onViewTranslatorStopped()</code> method:</p>
 
-<script type="application/javascript" src="//gist.github.com/kmdupr33/c2edd738031bb9314268.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/c2edd738031bb9314268.js"></script>
+
 
 <p>Although we now have a way of verifying post-act-state for our test, this is not enough. This test, as it’s written, will fail. To see why, let’s take a second look at <code>onViewTranslatorStopped()</code>:</p>
 
-<script type="application/javascript" src="//gist.github.com/kmdupr33/bee17bc98248e662f748.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/bee17bc98248e662f748.js"></script>
+
 
 <p>The code within onViewTranslatorStopped() is wrapped in an if-statement. It only executes if the starred button state is different from the state in which it was initialized. Recall that <code>mInitStarred</code> is initialized in a Loader callback. IOSched checks the database for whether the session has been added to the user’s calendar and uses information to update the UI appropriately once the user returns to the <code>SessionDetailActivity</code>. In the above unit test, <code>mInitStarred</code> will have a default value of false and <code>mStarred</code> will also have a default value of false, so the code within the if-statement will never execute.</p>
 
@@ -283,27 +126,33 @@
 
 <p>Both of these problems are particular examples of a general problem I pointed out with android unit testing: we often lack sufficient control over the pre-act-state of our test. However, because we’ve injected a <code>SessionRepositoryManager</code> into the <code>SessionDetailPresenter</code>, we can determine the values of <code>mSessionStart</code> and <code>mInitStarred</code>. <code>SessionRepositoryManager</code> is an Android-agnostic interface¹:</p>
 
-<script type="application/javascript" src="//gist.github.com/kmdupr33/310eee93627547b34c22.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/310eee93627547b34c22.js"></script>
+
 
 <p>However, when we create the <code>SessionDetailPresenter</code>, we inject an android-specific implementation of the <code>SessionRepositoryManager</code> that wraps a <code>LoaderManager</code>:</p>
 
-<script type="application/javascript" src="//gist.github.com/kmdupr33/f22e6ee78bf4c40901a5.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/f22e6ee78bf4c40901a5.js"></script>
+
 
 <p>Because <code>SessionRepositoryManager</code> is just an interface, we can easily define a MockRepositoryManager to facilitate unit testing:</p>
 
-<script type="application/javascript" src="//gist.github.com/kmdupr33/54d1b6a42139dcae8c2e.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/54d1b6a42139dcae8c2e.js"></script>
+
 
 <p>Notice that we can specify which values we’d like the <code>MockSessionRepositoryManager</code> to return when there’s a call to <code>initRepository()</code> by passing in a <code>Session</code> object into its constructor. Values like <code>mSessionStart</code> within the <code>SessionDetailPresenter</code> will be initialized with the <code>startTimeStamp</code> instance var on the <code>Session</code> model object. Now that we have control over these values, we almost have what we need to complete the arrange-step of a unit test for <code>onViewTranslatorStopped()</code>:</p>
 
-<script type="application/javascript" src="//gist.github.com/kmdupr33/472d6cd32f935475773d.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/472d6cd32f935475773d.js"></script>
+
 
 <p>I say “almost” above because there’s still one part of <code>onViewTranslatorStopped()</code> that the above test code doesn’t cover. At the bottom of <code>onViewTranslatorStopped()</code> there’s a block of code that will run only if <code>mStarred</code> is true. This code launches a service that will remind will remind the user attend and/or rate the session they’ve added to their calendar:</p>
 
-<script type="application/javascript" src="//gist.github.com/kmdupr33/5e06819aec1694453ff3.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/5e06819aec1694453ff3.js"></script>
+
 
 <p>To make this code run, we need to make sure that <code>mStarred</code> is true. We can do this by calling the <code>SessionDetailPresenter</code>’s onSessionStarred() method, a method that’s called by the <code>SessionDetailViewTranslator</code> (or, if you like confusing names, you would just call this the “SessionDetailView”) when the user taps the star button:</p>
 
-<script type="application/javascript" src="//gist.github.com/kmdupr33/144b53d71871e18e4c3e.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/144b53d71871e18e4c3e.js"></script>
+
 
 <p>With all of these pieces in place, we finally have everything we need to write a unit test against <code>onViewTranslatorStopped()</code>.</p>
 
@@ -336,18 +185,22 @@
 <li>Technically this interface isn’t android agnostic because its main method takes a Bundle as an argument. I suspect that this won’t pose a problem. A Bundle is trivial; it’s not something that we’d ever want to test. Mocking it, moreover, shouldn&rsquo;t be difficult.</li>
 <li>At Droidcon Montreal, Richa Khandelwal over at Coursera suggested <a href="https://speakerdeck.com/richk/clean-android-architecture">a cleaner, more testable architecture</a> that would probably make it even easier to write unit tests.</li>
 </ol>
-                    </section>
-
-
-                    <footer class="post-footer">
-
-
-                         
+                </article>
+          </div>
+        </section>                
+  </div>
+  
+</div>
+<footer class="page-footer green text-white">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+            
 <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
 <div id="mc_embed_signup">
 <form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
     <div id="mc_embed_signup_scroll">
-	<label for="mce-EMAIL">Subscribe to Philosophical Hacker</label>
+	<label for="mce-EMAIL">Get Email Updates</label>
 	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
     
     <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
@@ -356,68 +209,70 @@
 </form>
 </div>
 
- 
-<section class="share">
-  <h4>Share this post</h4>
-  <a class="icon-twitter" style="font-size: 1.4em" href="https://twitter.com/share?text=How%20to%20Make%20Our%20Android%20Apps%20Unit%20Testable%20%28Pt.%202%29&nbsp;-&nbsp;Philosophical%20Hacker&amp;url=https%3a%2f%2fwww.philosophicalhacker.com%2f2015%2f05%2f08%2fhow-to-make-our-android-apps-unit-testable-pt-2%2f"
-      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
-      <span class="hidden">Twitter</span>
-  </a>
-  <a class="icon-facebook" style="font-size: 1.4em" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fwww.philosophicalhacker.com%2f2015%2f05%2f08%2fhow-to-make-our-android-apps-unit-testable-pt-2%2f"
-      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
-      <span class="hidden">Facebook</span>
-  </a>
-  <a class="icon-pinterest" style="font-size: 1.4em" href="http://pinterest.com/pin/create/button/?url=https%3a%2f%2fwww.philosophicalhacker.com%2f2015%2f05%2f08%2fhow-to-make-our-android-apps-unit-testable-pt-2%2f&amp;description=How%20to%20Make%20Our%20Android%20Apps%20Unit%20Testable%20%28Pt.%202%29"
-      onclick="window.open(this.href, 'pinterest-share','width=580,height=296');return false;">
-      <span class="hidden">Pinterest</span>
-  </a>
-  <a class="icon-google-plus" style="font-size: 1.4em" href="https://plus.google.com/share?url=https%3a%2f%2fwww.philosophicalhacker.com%2f2015%2f05%2f08%2fhow-to-make-our-android-apps-unit-testable-pt-2%2f"
-     onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
-      <span class="hidden">Google+</span>
-  </a>
-</section>
 
- 
-
-
-
-
-                    </footer>
-                </article>
-
-            </main>
-
-             <aside class="read-next">
-  
-      <a class="read-next-story" style="no-cover" href="/2015/05/09/android-unit-testing-guides/">
-          <section class="post">
-              <h2>Android Unit Testing Guides</h2>
+            <div class="rc-scout" style="text-align: center;"></div>    
+        </div>
+        <aside id="meta">            
+            <div>
+                
+                <div>                  
+                  <a class="grey-text text-lighten-3" href="https://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">Previous: How to Make Our Android Apps Unit Testable (Pt. 1)</a>
+                </div>
+                
+                
+                <div>                  
+                  <a class="grey-text text-lighten-3" href="https://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/">Next: Android Unit Testing Guides</a>
+                </div>
+                
+            </div>
+        </aside>  
+        <div class="col l4 offset-l2 s12">
+          <h5 class="white-text">Tags</h5>
+          <ul>              
               
-          </section>
-      </a>
-  
-  
-      <a class="read-next-story prev" style="no-cover" href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">
-          <section class="post">
-              <h2>How to Make Our Android Apps Unit Testable (Pt. 1)</h2>
-          </section>
-      </a>
-  
-</aside>
-  <div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
-<footer class="site-footer clearfix">
-    <section class="copyright"><a href="">Philosophical Hacker</a> </section>
-    
-    <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
-    
-</footer>
-</div>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.js"></script>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.fitvids.js"></script>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/index.js"></script>
+              <ul id="tags">
+                
+                  <li> <a class="grey-text text-lighten-3" href="https://www.philosophicalhacker.com/tags/android">android</a> </li>
+                
+                  <li> <a class="grey-text text-lighten-3" href="https://www.philosophicalhacker.com/tags/testing">testing</a> </li>
+                
+              </ul>
+                          
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      © 2019 Matt Dupree
+      </div>
+    </div>    
+  </footer>        
 
+
+        </div><script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var elems = document.querySelectorAll(".sidenav");
+    var instances = M.Sidenav.init(elems, {});
+  });
+</script>
 <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
 
-</body>
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-63544399-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
 
+
+</body>
 </html>

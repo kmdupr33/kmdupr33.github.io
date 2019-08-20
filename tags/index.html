@@ -1,501 +1,525 @@
 <!DOCTYPE html>
-<html lang="en-us">
-<head>
+<html><head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+  />
+  <style>
+    #content img {
+      max-width: 100%;
+    }
+    #mc_embed_signup label {
+      color: white;
+    }
+    #mc_embed_signup input.email {
+      color: white;
+      border-color: white;
+    }
 
-    <style type="text/css">
-      #mc_embed_signup {
-        margin-top: 50px;
-        margin-bottom: 50px;        
-        display: flex;
-        justify-content: center;
-        font:14px "Open Sans",Arial,sans-serif;
-      }
-      #mc_embed_signup input.button {
-        background: black;
-      }
-    </style>
-
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-    
-
-
-    <meta name="twitter:card" content="summary"/>
-    <meta name="twitter:image" content="https://www.philosophicalhacker.com/images/black.jpg"/>
-
-
-
-<meta name="twitter:title" content="Tags"/>
-<meta name="twitter:description" content="Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur"/>
-<meta name="twitter:site" content="@philosohacker"/>
-
-
-
-  	<meta property="og:title" content="Tags &middot; Philosophical Hacker" />
-  	<meta property="og:site_name" content="Philosophical Hacker" />
-  	<meta property="og:url" content="https://www.philosophicalhacker.com/tags/" />
-    
-    
-        
-            <meta property="og:image" content="https://www.philosophicalhacker.com/images/black.jpg"/>
-        
-    
-
-    
-    <meta property="og:type" content="website" />
-    <meta property="og:description" content="Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur" />
-    
-
-    <title>Tags &middot; Philosophical Hacker</title>
-
-    
-    <meta name="description" content="Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur" />
-    
-
-    <meta name="HandheldFriendly" content="True" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="shortcut icon" href="https://www.philosophicalhacker.com/images/favicon.ico">
-	  <link rel="apple-touch-icon" href="https://www.philosophicalhacker.com/images/apple-touch-icon.png" />
-
-    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/screen.css" />
-    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/nav.css" />
-    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
-
-    
-
-    
-      
-          <link href="https://www.philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
-      
-      
-        <link href="https://www.philosophicalhacker.com/tags/index.xml" rel="alternate" type="application/rss+xml" title="Tags &middot; Philosophical Hacker" />
-      
-    
-    <meta name="generator" content="Hugo 0.54.0" />
-
-    <link rel="canonical" href="https://www.philosophicalhacker.com/tags/" />
-    
-  
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-63544399-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
-  
-
-
-    
-      
-    
-    <script type="application/ld+json">
-    {
-    "@context": "https://schema.org",
-    "@type": "Website",
-    "publisher": {
-        "@type": "Person",
-        "name": ,
-        
-        "url": ,
-        "sameAs": [
-            
-            
-             
-             
-             
-             
-             
-            
-        ]
-    },
-    "url": https://www.philosophicalhacker.com/,
-    "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": https://www.philosophicalhacker.com/
-    },
-    "description": Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur
-}
-  </script>
-    
-
-
-    
-
-    
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-63544399-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
-    
-
-    
+    #mc_embed_signup input.button {
+      background-color: #ee6e73;
+    }
+    .rc-scout .rc-scout__link:link {
+      color: white;
+    }
+    .browser-default-uls ul {
+      padding-left: 30px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+    .browser-default-uls ul > li {
+      list-style-type: disc!important;
+    }
+  </style>
+  <title>Philosophical Hacker</title>
 </head>
-
-<body class="nav-closed">
-
-  <div class="nav">
-    <h3 class="nav-title">Menu</h3>
-    <a href="#" class="nav-close">
-        <span class="hidden">Close</span>
-    </a>
-    <ul>
-        
-        
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="/">Home</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="https://www.oreilly.com/programming/free/rxjava-for-android-app-development.csp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development">RxJava O&#39;Reilly Book</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="/talk">Talks</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="https://github.com/kmdupr33">Github</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="/note">Notes</a>
-            </li>
-        
+<body><nav>
+  <div class="nav-wrapper green">
+    <a
+      href="/"
+      class="brand-logo"
+      style="margin-left: 10px;"
+      >Philosophical Hacker</a
+    >
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger"
+      ><i class="material-icons">menu</i></a
+    >
+    <ul class="right hide-on-med-and-down">
+      <li><a href="/about/me">About</a></li>
+      
+      <li><a href="/note">Notes</a></li>
+      <li>
+        <a
+          href="https://www.oreilly.com/library/view/~/9781492048343/?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"
+          >RxJava O'Reilly Ebook</a
+        >
+      </li>
     </ul>
+  </div>
+  <ul class="sidenav" id="mobile-demo">
+    <li><a href="/about/me">About</a></li>
     
-    
-    <a class="subscribe-button icon-feed" href="https://www.philosophicalhacker.com/tags/index.xml">Subscribe</a>
-    
-</div>
-<span class="nav-cover"></span>
-
-
- <div class="site-wrapper">
-
-
-
-
-	 
-  <header class="main-header tag-head" style="background-image: url(https://www.philosophicalhacker.com/images/black.jpg)">
-  
-
-    <nav class="main-nav overlay clearfix">
-      
-      
-          <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
-      
-    </nav>
-    <div class="vertical">
-        <div class="main-header-content inner">
-            <h1 class="page-title">Tags</h1>
-            <h2 class="page-description">
-                
-            </h2>
-        </div>
-    </div>
-</header>
-
-<main class="content" role="main">
-    
-
-	<div class="extra-pagination inner">
-    <nav class="pagination" role="navigation">
-	
-	<span class="page-number">Page 1 of 7</span>
-	
-	    <a class="older-posts" href="/tags/page/2/">Older Posts &rarr;</a>
-	
+    <li><a href="/note">Notes</a></li>
+    <li>
+      <a
+        href="https://www.oreilly.com/library/view/~/9781492048343/?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"
+        >Rx Java O'Reilly Ebook</a
+      >
+    </li>
+  </ul>
 </nav>
-
-	</div>
-
-	
-	   
-<article class="post tags">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/tags/advertising/">Advertising</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p> <a class="read-more" href="/tags/advertising/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2014-05-21T04:05:04Z">
-            21 May 2014
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post tags">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/tags/agile/">Agile</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p> <a class="read-more" href="/tags/agile/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2017-05-03T08:57:08-04:00">
-            3 May 2017
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post tags">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/tags/analytics/">Analytics</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p> <a class="read-more" href="/tags/analytics/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2019-06-02T08:22:51-04:00">
-            2 Jun 2019
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post tags">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/tags/android/">Android</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p> <a class="read-more" href="/tags/android/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2017-05-26T18:48:58-04:00">
-            26 May 2017
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post tags">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/tags/android-studio/">Android Studio</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p> <a class="read-more" href="/tags/android-studio/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2014-10-03T03:02:54Z">
-            3 Oct 2014
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post tags">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/tags/architecture/">Architecture</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p> <a class="read-more" href="/tags/architecture/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2017-05-26T18:48:58-04:00">
-            26 May 2017
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post tags">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/tags/business/">Business</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p> <a class="read-more" href="/tags/business/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2019-04-17T19:38:20-04:00">
-            17 Apr 2019
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post tags">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/tags/career-advice/">Career Advice</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p> <a class="read-more" href="/tags/career-advice/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2014-05-22T23:47:26Z">
-            22 May 2014
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post tags">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/tags/ci/">Ci</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p> <a class="read-more" href="/tags/ci/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2017-04-28T17:39:22-04:00">
-            28 Apr 2017
-        </time>
-    </footer>
-</article>
-
-	
-	   
-<article class="post tags">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/tags/clis/">Clis</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p> <a class="read-more" href="/tags/clis/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2019-08-17T10:45:06-04:00">
-            17 Aug 2019
-        </time>
-    </footer>
-</article>
-
-	
-
-	<nav class="pagination" role="navigation">
-	
-	<span class="page-number">Page 1 of 7</span>
-	
-	    <a class="older-posts" href="/tags/page/2/">Older Posts &rarr;</a>
-	
-</nav>
-
-</main>
-
-
-
-<div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
-<footer class="site-footer clearfix">
-    <section class="copyright"><a href="">Philosophical Hacker</a> </section>
-    
-    <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
-    
-</footer>
+<div id="content" class="browser-default-uls">
+<div class="row">
+  <div class="col s12 m8 offset-m2">
+    <main>
+      <article>
+        <header>
+          <h1>Tags</h1>
+        </header>
+        
+        
+      </article>
+      <ul>
+        
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/clis/"
+            >2019-08-17 | clis</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/programming/"
+            >2019-08-17 | programming</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/product-management/"
+            >2019-07-13 | product management</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/roadmaps/"
+            >2019-07-13 | roadmaps</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/jira/"
+            >2019-07-03 | jira</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/project-management/"
+            >2019-07-03 | project management</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/analytics/"
+            >2019-06-02 | analytics</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/statistics/"
+            >2019-06-02 | statistics</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/ethics/"
+            >2019-05-11 | ethics</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/business/"
+            >2019-04-17 | business</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/forecasting/"
+            >2019-04-17 | forecasting</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/product-managment/"
+            >2019-03-30 | product managment</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/startups/"
+            >2019-03-30 | startups</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/io-psychology/"
+            >2019-03-01 | io psychology</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/lean-startup/"
+            >2019-02-02 | lean startup</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/meditation/"
+            >2018-12-18 | meditation</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/philosophy/"
+            >2018-09-12 | philosophy</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/psychology/"
+            >2018-09-12 | psychology</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/teaching/"
+            >2018-07-28 | teaching</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/politics/"
+            >2018-06-30 | politics</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/programmers/"
+            >2018-06-30 | programmers</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/react/"
+            >2018-05-18 | react</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/react-native/"
+            >2018-05-18 | react native</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/testing/"
+            >2018-05-18 | testing</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/graphql/"
+            >2018-04-24 | graphql</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/rest/"
+            >2018-04-24 | rest</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/SPAs/"
+            >2018-04-24 | SPAs</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/leadership/"
+            >2018-03-09 | leadership</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/io-psych/"
+            >2017-11-24 | io psych</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/management/"
+            >2017-11-24 | management</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/entrepreneurship/"
+            >2017-11-03 | entrepreneurship</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/iot/"
+            >2017-10-22 | iot</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/software/"
+            >2017-05-29 | software</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/android/"
+            >2017-05-26 | android</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/architecture/"
+            >2017-05-26 | architecture</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/kotlin/"
+            >2017-05-26 | kotlin</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/dependency-injection/"
+            >2017-05-13 | dependency injection</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/discrete-math/"
+            >2017-05-13 | discrete math</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/agile/"
+            >2017-05-03 | agile</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/oo-programming/"
+            >2017-05-03 | oo programming</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/xp/"
+            >2017-05-03 | xp</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/ci/"
+            >2017-04-28 | ci</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/security/"
+            >2017-03-25 | security</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/coroutines/"
+            >2017-03-19 | coroutines</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/rxjava/"
+            >2017-03-19 | rxjava</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/loaders/"
+            >2017-02-04 | loaders</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/git/"
+            >2016-10-23 | git</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/TDD/"
+            >2016-10-16 | TDD</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/tdd-by-example/"
+            >2016-10-16 | tdd by example</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/marketing/"
+            >2016-08-09 | marketing</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/espresso/"
+            >2016-07-07 | espresso</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/regression-testing/"
+            >2016-07-01 | regression testing</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/refactoring/"
+            >2016-06-16 | refactoring</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/sicp/"
+            >2016-03-29 | sicp</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/go/"
+            >2016-02-03 | go</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/coding/"
+            >2015-01-24 | coding</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/android-studio/"
+            >2014-10-03 | android studio</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/multiproject-setups/"
+            >2014-10-03 | multiproject setups</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/paul-graham/"
+            >2014-05-27 | paul graham</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/career-advice/"
+            >2014-05-22 | career advice</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/networking/"
+            >2014-05-22 | networking</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/programming-jobs/"
+            >2014-05-22 | programming jobs</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/advertising/"
+            >2014-05-21 | advertising</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/life/"
+            >2014-05-21 | life</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/equity/"
+            >2014-04-24 | equity</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/founders-dilemmas/"
+            >2014-04-24 | founder&#39;s dilemmas</a
+          >
+        </li>
+        
+        <li>
+          <a href="https://www.philosophicalhacker.com/tags/noam-wasserman/"
+            >2014-04-24 | noam wasserman</a
+          >
+        </li>
+        
+      </ul>
+    </main>
+  </div>
 </div>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.js"></script>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.fitvids.js"></script>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/index.js"></script>
+<div class="rc-scout" style="display: none;"></div>    
 
+        </div><script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var elems = document.querySelectorAll(".sidenav");
+    var instances = M.Sidenav.init(elems, {});
+  });
+</script>
 <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
 
-</body>
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-63544399-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
 
+
+</body>
 </html>

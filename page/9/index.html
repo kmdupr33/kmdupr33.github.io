@@ -1,895 +1,603 @@
 <!DOCTYPE html>
-<html lang="en-us">
-<head>
+<html><head>
+	<meta name="generator" content="Hugo 0.57.2" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+  />
+  <style>
+    #content img {
+      max-width: 100%;
+    }
+    #mc_embed_signup label {
+      color: white;
+    }
+    #mc_embed_signup input.email {
+      color: white;
+      border-color: white;
+    }
 
-    <style type="text/css">
-      #mc_embed_signup {
-        margin-top: 50px;
-        margin-bottom: 50px;        
-        display: flex;
-        justify-content: center;
-        font:14px "Open Sans",Arial,sans-serif;
-      }
-      #mc_embed_signup input.button {
-        background: black;
-      }
-    </style>
-
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-    
-
-
-    <meta name="twitter:card" content="summary"/>
-    <meta name="twitter:image" content="https://www.philosophicalhacker.com/images/black.jpg"/>
-
-
-
-<meta name="twitter:title" content="Philosophical Hacker"/>
-<meta name="twitter:description" content="Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur"/>
-<meta name="twitter:site" content="@philosohacker"/>
-
-
-
-  	<meta property="og:title" content="Philosophical Hacker" />
-  	<meta property="og:site_name" content="Philosophical Hacker" />
-  	<meta property="og:url" content="https://www.philosophicalhacker.com/" />
-    
-    
-        
-            <meta property="og:image" content="https://www.philosophicalhacker.com/images/black.jpg"/>
-        
-    
-
-    
-    <meta property="og:type" content="website" />
-    <meta property="og:description" content="Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur" />
-    
-
-    <title>Philosophical Hacker</title>
-
-    
-    <meta name="description" content="Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur" />
-    
-
-    <meta name="HandheldFriendly" content="True" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel="shortcut icon" href="https://www.philosophicalhacker.com/images/favicon.ico">
-	  <link rel="apple-touch-icon" href="https://www.philosophicalhacker.com/images/apple-touch-icon.png" />
-
-    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/screen.css" />
-    <link rel="stylesheet" type="text/css" href="https://www.philosophicalhacker.com/css/nav.css" />
-    <link href="https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:400,700,700italic,400italic|Open+Sans:700,400|Inconsolata" />
-
-    
-
-    
-      
-      
-        <link href="https://www.philosophicalhacker.com/index.xml" rel="alternate" type="application/rss+xml" title="Philosophical Hacker" />
-      
-    
-    <meta name="generator" content="Hugo 0.54.0" />
-
-    <link rel="canonical" href="https://www.philosophicalhacker.com/" />
-    
-  
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-63544399-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
-  
-
-
-    
-      
-    
-    <script type="application/ld+json">
-    {
-    "@context": "https://schema.org",
-    "@type": "Website",
-    "publisher": {
-        "@type": "Person",
-        "name": ,
-        
-        "url": ,
-        "sameAs": [
-            
-            
-             
-             
-             
-             
-             
-            
-        ]
-    },
-    "url": https://www.philosophicalhacker.com/,
-    "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": https://www.philosophicalhacker.com/
-    },
-    "description": Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur
-}
-  </script>
-    
-
-
-    
-
-    
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-63544399-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
-    
-
-    
+    #mc_embed_signup input.button {
+      background-color: #ee6e73;
+    }
+    .rc-scout .rc-scout__link:link {
+      color: white;
+    }
+    .browser-default-uls ul {
+      padding-left: 30px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+    .browser-default-uls ul > li {
+      list-style-type: disc!important;
+    }
+  </style>
+  <title>Philosophical Hacker</title>
 </head>
-
-<body class="nav-closed">
-
-  <div class="nav">
-    <h3 class="nav-title">Menu</h3>
-    <a href="#" class="nav-close">
-        <span class="hidden">Close</span>
-    </a>
-    <ul>
-        
-        
-        
-            
-            <li class="nav-opened nav-current" role="presentation">
-            	<a href="/">Home</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="https://www.oreilly.com/programming/free/rxjava-for-android-app-development.csp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development">RxJava O&#39;Reilly Book</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="/talk">Talks</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="https://github.com/kmdupr33">Github</a>
-            </li>
-        
-            
-            <li class="nav-opened" role="presentation">
-            	<a href="/note">Notes</a>
-            </li>
-        
+<body><nav>
+  <div class="nav-wrapper green">
+    <a
+      href="/"
+      class="brand-logo"
+      style="margin-left: 10px;"
+      >Philosophical Hacker</a
+    >
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger"
+      ><i class="material-icons">menu</i></a
+    >
+    <ul class="right hide-on-med-and-down">
+      <li><a href="/about/me">About</a></li>
+      
+      <li><a href="/note">Notes</a></li>
+      <li>
+        <a
+          href="https://www.oreilly.com/library/view/~/9781492048343/?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"
+          >RxJava O'Reilly Ebook</a
+        >
+      </li>
     </ul>
-    
-    
-    <a class="subscribe-button icon-feed" href="https://www.philosophicalhacker.com/index.xml">Subscribe</a>
-    
-</div>
-<span class="nav-cover"></span>
-
-
- <div class="site-wrapper">
-
-
-
-
-  <header class="main-header" style="background-image: url(https://www.philosophicalhacker.com/images/black.jpg)">
-  
-
-
-    <nav class="main-nav overlay clearfix">
-        
-        
-            <a class="menu-button" href="#"><span class="burger">&#9776;</span><span class="word">Menu</span></a>
-        
-    </nav>
-    <div class="vertical">
-        <div class="main-header-content inner">
-            
-                <a class="bloglogo" href="https://www.linkedin.com/in/k-matthew-dupree-44672178" target="_blank">
-                    <span class="icon-linkedin"></span>
-                </a>
-            &nbsp;
-            
-            
-                        
-            
-                <a class="bloglogo" href="https://twitter.com/philosohacker" target="_blank">
-                    <span class="icon-twitter"></span>
-                </a>
-            &nbsp;
-            
-            
-            
-            
-            
-            
-
-            <h1 class="page-title">Philosophical Hacker</h1>
-            <h2 class="page-description">Thoughts on building stuff (products, startups, and code) from a wannabe philosophy professor turned wannabe tech entrepreneur</h2>
-        </div>
-    </div>
-    <a class="scroll-down icon-arrow-left" href="#content"><span class="hidden">Scroll Down</span></a>
-</header>
-
-
-<main id="content" class="content" role="main">
-
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-
-    
-
-    
-    
-    
-
-    <div class="extra-pagination inner">
-        <nav class="pagination" role="navigation">
-	
-	    <a class="newer-posts" href="/page/8/">&larr; Newer Posts</a>
-	
-	<span class="page-number">Page 9 of 11</span>
-	
-	    <a class="older-posts" href="/page/10/">Older Posts &rarr;</a>
-	
+  </div>
+  <ul class="sidenav" id="mobile-demo">
+    <li><a href="/about/me">About</a></li>
+    
+    <li><a href="/note">Notes</a></li>
+    <li>
+      <a
+        href="https://www.oreilly.com/library/view/~/9781492048343/?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"
+        >Rx Java O'Reilly Ebook</a
+      >
+    </li>
+  </ul>
 </nav>
-
+<div id="content" class="browser-default-uls">
+<main aria-role="main">
+  <div class="homepage-content">
+    
+    
+  </div>
+  <div>
+    
+    <div class="row">
+  <div class="col s12 offset-m2 m8">
+    <div class="card">
+        
+      <div class="card-content">                    
+          
+          <span class="card-title"
+            ><a href="https://www.philosophicalhacker.com/post/getting-started-with-gomock/"> Getting started with Gomock</a></span
+          > 
+                    
+          <div class="post-meta">
+            Wed, Jan 20, 2016 - 900 Words
+          </div>
+        <p>In <a href="http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing">my last post</a>, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&rsquo;s a brief tutorial on how to get started with gomock.</p>
+      </div>
+        <div class="card-action">
+          <a href="https://www.philosophicalhacker.com/post/getting-started-with-gomock/"><nobr>Read more →</nobr></a>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
 
     
+    <div class="row">
+  <div class="col s12 offset-m2 m8">
+    <div class="card">
         
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/06/16/introduction-to-rxjava-for-android-the-talk/">Introduction to RxJava for Android: The Talk</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p>Earlier today, I gave my Intro To RxJava talk. I&rsquo;m not thrilled at how clear I was at explaining certain aspects of RxJava, but here&rsquo;s the video nonetheless. My talk starts at 28:32. Hopefully, I&rsquo;ll do a better job when I finish the written version of this talk.
-If you want to hear a hilarious take down of the design of the new Pizza Hut app, check out Ian&rsquo;s talk that happens before mine. <a class="read-more" href="/2015/06/16/introduction-to-rxjava-for-android-the-talk/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
+      <div class="card-content">                    
+          
+          <span class="card-title"
+            ><a href="https://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/"> Should we use mocking libraries for go testing?</a></span
+          > 
+                    
+          <div class="post-meta">
+            Thu, Jan 14, 2016 - 1300 Words
+          </div>
+        <p>A few weeks ago, I started learning go. Since I&rsquo;m a wannabe TDD-er, I took a look at some resources on testing go code. I stumbled upon <a href="https://talks.golang.org/2014/testing.slide#1">Andrew Gerrand&rsquo;s excellent Testing Techniques talk</a> in which he says this:</p>
 
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/rxjava/">#rxjava</a>,
-            
-        
-        <time class="post-date" datetime="2015-06-17T01:48:45Z">
-            17 Jun 2015
-        </time>
-    </footer>
-</article>
+<blockquote>Go eschews a lot of things, including mocks and fakes.</blockquote>
 
-    
-        
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/06/12/an-introduction-to-rxjava-for-android/">An Introduction to RxJava for Android (Pt. 1)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>I&rsquo;m taking a brief break from talking about testing. I&rsquo;ll resume my discussion of how <a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">I&rsquo;m making Google&rsquo;s IOSched app unit testable</a> after I&rsquo;ve posted the content from <a href="http://www.meetup.com/University-Android/events/222048562/">my upcoming talk on RxJava</a>.</p>
+<p>&ldquo;Alright cool,&rdquo; I thought to myself. I&rsquo;m down to &ldquo;do as the gophers do&rdquo; and eschew mocks. Later on during his talk, Andrew Gerrand mentions <a href="https://github.com/golang/mock">gomock</a>, a mocking library, and reluctantly says</p>
 
-<p> <a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg" alt="rxjava_prezi_rxjava_def" /></a></p> <a class="read-more" href="/2015/06/12/an-introduction-to-rxjava-for-android/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
+<blockquote>[mocking libraries like gomock] are fine, but I find that on balance the hand-written fakes tend be easier to reason about and clearer to see what's going on, but I'm not an enterprise go programmer so maybe people do need that so I don't know, but that's my advice.</blockquote>
 
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/rxjava/">#rxjava</a>,
-            
-        
-        <time class="post-date" datetime="2015-06-12T12:34:53Z">
-            12 Jun 2015
-        </time>
-    </footer>
-</article>
+<p>Of course, after hearing that, I felt a little confused and unsure whether I should refrain from using mocking libraries in go. To make matters worse, I took a look at gomock and was surprised to find that its written by two engineers at Google.</p>
+
+<p>At that point, it seemed that the question of whether we should use a mocking library while testing go code is a bit of a contentious question, even within Google. I found the seeming contentious nature of this question pretty unhelpful and confusing when I was trying to get a handle on how to write good go code. However, it led me to do some research on the pros and cons of mocking libraries vs hand-written mocks, and in this post, I present the conclusions I came to based on my research:</p>
+
+<ol>
+<li><p>The apparent contentiousness about whether to use use a mocking library if probably partially due to vague terminology.</p></li>
+
+<li><p>If we are clear about our terms, the argument against using mocking libraries is not very compelling.</p></li>
+</ol>
+      </div>
+        <div class="card-action">
+          <a href="https://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/"><nobr>Read more →</nobr></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
     
+    <div class="row">
+  <div class="col s12 offset-m2 m8">
+    <div class="card">
         
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/06/07/developer-golf/">Developer Golf</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><h2 id="developer-golf-http-www-philosophicalhacker-com-wp-content-uploads-2015-06-developer-golf-png-http-www-philosophicalhacker-com-wp-content-uploads-2015-06-developer-golf-png"><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/06/Developer-golf.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/06/Developer-golf.png" alt="Developer golf" /></a></h2>
-
-<h2 id="what-is-developer-golf">What is Developer Golf?</h2>
-
-<p>Developer golf is a fun way to measure developer performance. It turns our job into a game of producing the most lines of high quality (bug free) code.</p> <a class="read-more" href="/2015/06/07/developer-golf/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        
-        <time class="post-date" datetime="2015-06-07T13:16:29Z">
-            7 Jun 2015
-        </time>
-    </footer>
-</article>
+      <div class="card-content">                    
+          
+          <span class="card-title"
+            ><a href="https://www.philosophicalhacker.com/2015/07/17/making-a-tdd-based-hackernews-client-for-android/"> Making a TDD-based HackerNews client for Android</a></span
+          > 
+                    
+          <div class="post-meta">
+            Fri, Jul 17, 2015 - 800 Words
+          </div>
+        <p>I&rsquo;m using TDD to write a HackerNews client for Android. This post (and the ones that will likely follow it) share a little bit about some of the techniques I used to follow a TDD-based work-flow for developing this application. It also discusses the architecture that arises when Android apps are built with testability in mind from the ground up.</p>
+      </div>
+        <div class="card-action">
+          <a href="https://www.philosophicalhacker.com/2015/07/17/making-a-tdd-based-hackernews-client-for-android/"><nobr>Read more →</nobr></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
     
+    <div class="row">
+  <div class="col s12 offset-m2 m8">
+    <div class="card">
         
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/06/06/unit-testing-dynamically-constructed-views/">Unit Testing Dynamically Constructed Views</a></h2>
-    </header>
-    <section class="post-excerpt">
+      <div class="card-content">                    
+          
+          <span class="card-title"
+            ><a href="https://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/"> Why Having Global Static References to Application Contexts is Probably not the Best Idea</a></span
+          > 
+                    
+          <div class="post-meta">
+            Tue, Jul 14, 2015 - 1300 Words
+          </div>
+        <p>In my last post, I went over <a href="http://www.philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/">6 things I wish I knew before I wrote my first Android app</a>. One of the things I listed in that post was this:</p>
+
+<blockquote>
+<ol>
+<li>Don’t have static references to Contexts</li>
+</ol>
+</blockquote>
+
+<p>The reason I warned against this is that static references to Contexts can cause memory leaks. An astute reader pointed out that a static reference to an application Context wouldn&rsquo;t cause a memory leak since the application Context is around for the lifetime the app is running anyway. I then qualified my warning by saying:</p>
+
+<blockquote>Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but I wouldn’t recommend that you do that either.</blockquote>
+
+<p>In this post, I want to say a little more about why think having and using a static reference to an application Context is <em>less-than-ideal</em>. I emphasize &ldquo;less-than-ideal&rdquo; in the previous sentence as a way of highlighting what I&rsquo;m not saying: I&rsquo;m not saying that a kitten dies every time you use a static reference to an application Context. Once again, @codestandards is hilarious and relevant here:</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Please, for the sake of the kittens. <a href="http://t.co/xaj7pNDVfH">pic.twitter.com/xaj7pNDVfH</a></p>&mdash; Code Standards (@codestandards) <a href="https://twitter.com/codestandards/status/570224843536277504?ref_src=twsrc%5Etfw">February 24, 2015</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>Instead, all I&rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps.</p>
+      </div>
+        <div class="card-action">
+          <a href="https://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/"><nobr>Read more →</nobr></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+    <div class="row">
+  <div class="col s12 offset-m2 m8">
+    <div class="card">
         
-            <p><p>Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&rsquo;ve fetched or in response to some input. The <code>SessionDetailActivity</code> in Google&rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the <code>SessionDetailActivity</code>&rsquo;s view hierarchy.</p>
+      <div class="card-content">                    
+          
+          <span class="card-title"
+            ><a href="https://www.philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/"> 6 Things I wish I Knew before I Wrote my first Android App</a></span
+          > 
+                    
+          <div class="post-meta">
+            Thu, Jul 9, 2015 - 1200 Words
+          </div>
+        <p>My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&rsquo;t even bother listing it on my resume&rsquo; anymore. That app wouldn&rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.</p>
+
+<p>Here&rsquo;s a list of things to keep in mind as you&rsquo;re writing your first Android apps. These lessons are derived from actual mistakes that I made in the source code of my first app, mistakes that I&rsquo;ll be showing below. Keeping these things in mind will help you write an app that you can be a little prouder of.</p>
+
+<p>Of course, if you&rsquo;re doing your job right as a student of Android development, you&rsquo;ll probably hate your app later regardless. As @codestandards says,</p>
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">If the code you wrote a year ago doesn&#39;t seem bad to you, you&#39;re probably not learning enough.</p>&mdash; Code Standards (@codestandards) <a href="https://twitter.com/codestandards/status/601373392059518976?ref_src=twsrc%5Etfw">May 21, 2015</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>If you&rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&rsquo;ve never been guilty of making the mistakes I demo in those items.</p>
+      </div>
+        <div class="card-action">
+          <a href="https://www.philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/"><nobr>Read more →</nobr></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+    <div class="row">
+  <div class="col s12 offset-m2 m8">
+    <div class="card">
+        
+      <div class="card-content">                    
+          
+          <span class="card-title"
+            ><a href="https://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/"> My Response to Hannes Dorfmann on &#34;the Circular Dependency Problem&#34;</a></span
+          > 
+                    
+          <div class="post-meta">
+            Wed, Jul 8, 2015 - 1600 Words
+          </div>
+        <p>In <a href="http://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/">my last post</a>, I argued that there are two disadvantages to <code>Activities</code> and Presenters. The first disadvantage is that they are often bloated classes. The second disadvantage is that these classes often have a circular dependency between themselves and their Views. Yesterday, Hannes Dorfmann made a comment on my post that was so thoughtful and excellent that I think its worth dedicating an entire post to responding to it.</p>
+      </div>
+        <div class="card-action">
+          <a href="https://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/"><nobr>Read more →</nobr></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+    <div class="row">
+  <div class="col s12 offset-m2 m8">
+    <div class="card">
+        
+      <div class="card-content">                    
+          
+          <span class="card-title"
+            ><a href="https://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/"> MVPR: A Flexible, Testable Architecture for Android (Pt. 1)</a></span
+          > 
+                    
+          <div class="post-meta">
+            Tue, Jul 7, 2015 - 1700 Words
+          </div>
+        <blockquote>Thorough unit testing helps us improve the internal quality because, to be tested, a unit has to be structured to run outside the system in a test fixture. A unit test for an object needs to create the object, provide its dependencies, interact with it, and check that it behaved as expected. So, for a class to be easy to unit-test, the class must have explicit dependencies that can easily be substituted and clear responsibilities that can easily be invoked and verified. In software engineering terms, that means that the code must be loosely coupled and highly cohesive —in other words, well-designed.
+
+Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_</blockquote>
+
+<p>Lately, I&rsquo;ve been working towards making Google&rsquo;s IO app unit testable. A part of the reason I&rsquo;m doing this is to test the claims that Freeman and Pryce make in the above quotation about unit testing. Although I&rsquo;m still not even done with refactoring one Activity in Google&rsquo;s IOSched app, I&rsquo;m already finding some truth to what they&rsquo;re saying.</p>
+
+<p>The <code>Activity</code> that I&rsquo;ve been working on is the <code>SessionDetailActivity</code>. If you&rsquo;ve been following me for a while, you know exactly what Activity I&rsquo;m talking about, but if you&rsquo;re tuning in the first time, here&rsquo;s what the <code>SessionDetailActivity</code> UI looks like:</p>
 
 <p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png" alt="IO Testing Talk-04" /></a></p>
 
-<p>In this screenshot, the &ldquo;Distribute,&rdquo; &ldquo;Android,&rdquo; and &ldquo;Games&rdquo; tags are added to the view hierarchy based on the tags associated with the &rdquo;Going global with Google Play&rdquo; IO session. In this post, I&rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the <code>SesisonDetailActivity</code>&rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards <a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">making Google&rsquo;s IOSched app unit testable</a>.</p> <a class="read-more" href="/2015/06/06/unit-testing-dynamically-constructed-views/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
+<p>As I mentioned in <a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">the post that introduced this series</a>, there have been several challenges to making the <code>SessionDetailActivity</code> unit testable. Unit testing its dynamically constructed views was a challenge that I discussed in <a href="http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/">my last post in this series</a>, but in that post, I noted that my strategy for testing dynamically constructed views wasn&rsquo;t entirely clean because of a circular dependency between <code>Views</code> and <code>Presenters</code>.</p>
 
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-06-06T11:08:03Z">
-            6 Jun 2015
-        </time>
-    </footer>
-</article>
+<p>This circular dependency is a symptom of a larger problem with how we structure our Android applications: both <code>Activities</code> and <code>Presenters</code> violate the principle of single responsibility. They are often responsible for at least two things: binding data to a <code>View</code> and responding to user input. This is a part of the reason why <a href="https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/SessionDetailActivity.java">the <code>SessionDetailActivity</code></a>, a class that&rsquo;s supposed to serve as a model for Android development, is over 1000 lines long.</p>
 
-    
-        
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">Towards A Unit Testable Fork of Google&#39;s IOSched App</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>In my recent <a href="http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/">Against Android Unit Tests</a> series, I discussed the difficulties of unit testing android applications and proposed a different way of building applications that would enhance their unit testability. My proposal in that series was really largely a rough sketch of what it would take to make parts of Google&rsquo;s IOSched app unit testable.</p>
-
-<p>More recently, I&rsquo;ve started to fill in the details of that proposal by forking the IOSched repo and refactoring it to make it unit testable. In the next few posts, I&rsquo;ll be discussing some of the challenges that arose when attempting to make the <code>SessionDetailActivity</code> unit testable within the IOSched app. In this post, I want to provide a broad overview of the challenges I&rsquo;ll be discussing.</p> <a class="read-more" href="/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-31T20:11:16Z">
-            31 May 2015
-        </time>
-    </footer>
-</article>
-
-    
-        
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/29/making-the-most-of-android-studios-unit-testing-support/">An Introduction to Unit Testing on Android</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>Yesterday at IO Extended Orlando, I gave a talk on testing. What follows is a written version of the presentation I gave.</p>
-
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png"><img src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png" alt="IO Testing Talk-01" /></a></p>
-
-<p>Android 1.2 introduced unit testing support. Now, we can run junit tests on the jvm while we&rsquo;re developing our apps. During my talk, we&rsquo;ll discuss the following questions:</p>
-
-<ul>
-<li><p>Why should anyone care about this new feature?</p></li>
-
-<li><p>What the heck is unit testing anyways?</p></li>
-</ul>
-
-<p>Briefly, I&rsquo;ll also mention some of the challenges of writing unit tests for Android.</p> <a class="read-more" href="/2015/05/29/making-the-most-of-android-studios-unit-testing-support/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-29T11:23:14Z">
-            29 May 2015
-        </time>
-    </footer>
-</article>
-
-    
-        
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">What I&#39;ve Learned From Trying to Make An Android App Unit Testable</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>For the past few posts, I&rsquo;ve introduced and showed how we would apply The Square Way of building Android applications. The primary motivation for The Square Way was to increase the unit testability of our applications. As I stated in the <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">introduction to this series</a>, most tests in Android are slow, instrumentation tests and/or tests that rely on third-party frameworks like Roboletric. The Square Way was supposed to help us write fast unit tests that didn&rsquo;t rely on any third-party frameworks.</p>
-
-<p>Now that we&rsquo;ve discussed <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">why unit testing in Android is so difficult</a> and seen how <a href="http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">The Square Way resolves those difficulties</a>, we are finally in a position to assess The Square Way as a whole as a method of creating unit testable Android applications. That assessment is the subject of this article. My assessment consists of the following three claims:</p>
+<p>I think there&rsquo;s a better way to structure our applications. In the next few posts, I&rsquo;ll propose a new architecture that has the following properties:</p>
 
 <ol>
-<li><p>Removing all compile time dependencies on the Android SDK is not necessary for us write fast unit tests for Android. (Its also not really a practical thing to try to do anyway.)</p></li>
+<li><p>It breaks up the multiple responsibilities typically handled by <code>Presenters</code> and <code>Activities</code></p></li>
 
-<li><p>Provided that we redefine The Square Way so that it does not require us to remove compile-time dependencies on the Android SDK, the only problem that arises when trying to apply The Square Way is simply writing all of boilerplate code. Fortunately, much of this boilerplate can be written for us by Android Studio.</p></li>
+<li><p>It breaks the circular dependency that traditionally exists between Views on the one hand and Activities or Presenters on the other hand.</p></li>
 
-<li><p>Dependency Injection is really the main &ldquo;active ingredient&rdquo; that allows The Square Way enhance the unit testability of our applications.</p></li>
-</ol> <a class="read-more" href="/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
+<li><p>It enables us to use constructor dependency injection for all of our objects that present data to the user and respond to user input.</p></li>
 
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-22T12:29:28Z">
-            22 May 2015
-        </time>
-    </footer>
-</article>
+<li><p>It makes our ui-related business logic classes easier to unit test, impossible to construct without the dependencies necessary to fulfill their responsibilities, and (slightly) more amenable to the use of composition and polymorphism to extend and/or modify object behavior.</p></li>
+</ol>
+
+<p>In this post, I will try to give some reasons why we might consider a new architecture for Android development in the first place.</p>
+      </div>
+        <div class="card-action">
+          <a href="https://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/"><nobr>Read more →</nobr></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
     
+    <div class="row">
+  <div class="col s12 offset-m2 m8">
+    <div class="card">
         
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/09/android-unit-testing-guides/">Android Unit Testing Guides</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>In <a href="http://philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/">my last post</a>, I showed how we can apply The Square Way to UI app component classes. More specifically I showed how The Square Way would have us rewrite the <code>SessionDetailActivity</code> so that we could unit test its <code>onStop()</code> method. At the end of my last post, I said that I&rsquo;d be spending this and the next post doing an overall assessment of The Square Way.</p>
-
-<p>I actually won&rsquo;t be doing that this post. I&rsquo;ll be postponing the overall assessment of The Square Way until the next few posts. Instead, what I want to do in this post is simply present a few unit-testability guides. These cheatsheets summarize much of what&rsquo;s been covered in the past few posts and provide you with simplified steps to follow if you are interested in enhancing your application&rsquo;s unit-testability via The Square Way.</p> <a class="read-more" href="/2015/05/09/android-unit-testing-guides/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-09T13:20:54Z">
-            9 May 2015
-        </time>
-    </footer>
-</article>
+      <div class="card-content">                    
+          
+          <span class="card-title"
+            ><a href="https://www.philosophicalhacker.com/2015/06/26/im-taking-a-brief-hiatus-from-blogging-here/"> I&#39;m taking a brief hiatus from blogging here...</a></span
+          > 
+                    
+          <div class="post-meta">
+            Fri, Jun 26, 2015 - 100 Words
+          </div>
+        &hellip;so that I can focus on ensuring that Droid Journal has a successful inaugural edition. I did, however, just post on Droid Journal&rsquo;s blog.
+      </div>
+        <div class="card-action">
+          <a href="https://www.philosophicalhacker.com/2015/06/26/im-taking-a-brief-hiatus-from-blogging-here/"><nobr>Read more →</nobr></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
     
+    <div class="row">
+  <div class="col s12 offset-m2 m8">
+    <div class="card">
         
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/">How to Make Our Android Apps Unit Testable (Pt. 2)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>In <a href="http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">my last post</a>, I introduced the “The Square Way” of structuring our android code. I said that The Square Way is a generalization of the approach that Square used to make the logic within their <code>Fragment</code>s unit testable. I also showed how The Square Way would have us rewrite the <code>SessionCalendarService</code> within Google’s IOSched app so that we could unit test the business logic within it. As we’ll see in this post, The Square Way also makes it easier/possible for us to unit test UI app component business logic.</p> <a class="read-more" href="/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
+      <div class="card-content">                    
+          
+          <span class="card-title"
+            ><a href="https://www.philosophicalhacker.com/2015/06/25/taylor-swift-photographers-and-working-for-nothing/"> Taylor Swift, Photographers, and &#34;working for nothing&#34;</a></span
+          > 
+                    
+          <div class="post-meta">
+            Thu, Jun 25, 2015 - 1700 Words
+          </div>
+        <p>If you don&rsquo;t already know, here&rsquo;s a quick run down of what&rsquo;s happening with the whole Taylor Swift/Apple/Indie Artists debacle: Last month, Apple released its streaming service and offered a three month trial period to users for free. During the trial period, they weren&rsquo;t planning on paying the artists whose music was streamed by the service. Last week, Taylor Swift published <a href="http://taylorswift.tumblr.com/post/122071902085/to-apple-love-taylor">an open letter to Apple</a> in which she basically claimed that Apple was wronging artists by not paying them for three months. Two days ago, Jason Sheldon produced a contract that he had to sign to photograph one of Swift&rsquo;s older tours, and because the contract allows for his work to be used indefinitely without compensating him for each use, <a href="http://petapixel.com/2015/06/22/an-open-response-to-taylor-swifts-rant-against-apple/">he basically calls Swift a hypocrite</a>. <a href="http://money.cnn.com/2015/06/23/media/taylor-swift-photographer-response/">Swift&rsquo;s spokesman said that Sheldon is misrepresenting the contract</a>. A few hours ago, Joel Goodman, another freelance photographer, <a href="http://consequenceofsound.net/2015/06/newly-leaked-contract-stipulates-taylor-swift-can-destroy-equipment-of-defiant-photographers/">leaked a contract for the 1989 tour that contains even stricter rules</a>.</p>
 
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-08T11:46:13Z">
-            8 May 2015
-        </time>
-    </footer>
-</article>
+<p>This debacle raises two philosophical questions:</p>
 
-    
-        
-<article class="post post">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">How to Make Our Android Apps Unit Testable (Pt. 1)</a></h2>
-    </header>
-    <section class="post-excerpt">
-        
-            <p><p>Unit testing Android apps is hard, and sometimes it can be impossible. For <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">the past two posts</a>, I’ve been explaining why android unit testing is so difficult. The main conclusion from <a href="http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/">the last post</a> is that it is difficult/impossible to unit test our Android applications because of the way we are encouraged to structure them. Google seems to want us to put our business logic in app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s, etc.). This approach to writing Android applications is what I have been calling the “standard way.”</p>
+<ol>
+<li><p>Is Swift a hypocrite?</p></li>
 
-<p>In this post, I outline an alternative approach to structuring Android applications that will make it easier to unit test them. As I pointed out in <a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/">the introduction to this series</a>, the approach that I suggest is a generalization of the approach that Square uses to <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html">remove Fragments from their applications</a>. Since this approach is inspired by the folks at Square, I will call it “the square way.”</p>
+<li><p>Have musicians like Swift or photographers like Sheldon even given a compelling argument for why they&rsquo;ve been treated wrongly in the first place?</p></li>
+</ol>
 
-<p>The heart of the square way way is this: remove all business logic from app component classes (e.g., <code>Activity</code>s, <code>Fragment</code>s, <code>Service</code>s) and place that logic into “business objects,” POJO objects whose dependencies are injected, android-specific implementations of android-agnostic interfaces. If we follow the square way of developing our apps, we will be in a better position to unit test them. In this post, I explain how the square way would have us refactor non-UI app components like the <code>SessionCalendarService</code> I’ve been discussing for the past few posts.</p> <a class="read-more" href="/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/">&raquo;</a></p>
-        
-    </section>
-    <footer class="post-meta">
-        
-        
-            
-            
-        
-
-        
-        
-        on
-            
-                <a href="https://www.philosophicalhacker.com/tags/android/">#android</a>,
-            
-                <a href="https://www.philosophicalhacker.com/tags/testing/">#testing</a>,
-            
-        
-        <time class="post-date" datetime="2015-05-01T11:30:24Z">
-            1 May 2015
-        </time>
-    </footer>
-</article>
+<p>I do think Swift is a hypocrite, but I don&rsquo;t think that it really matters because neither Swift nor Sheldon has given us a good reason to think that artists are being wronged by companies like Apple and Firefly Entertainment. Let me try to convince you to see things my way.</p>
+      </div>
+        <div class="card-action">
+          <a href="https://www.philosophicalhacker.com/2015/06/25/taylor-swift-photographers-and-working-for-nothing/"><nobr>Read more →</nobr></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
     
+    <div class="row">
+  <div class="col s12 offset-m2 m8">
+    <div class="card">
+        
+      <div class="card-content">                    
+          
+          <span class="card-title"
+            ><a href="https://www.philosophicalhacker.com/2015/06/19/introduction-to-rxjava-for-android-pt-2/"> Introduction to RxJava for Android (Pt. 2)</a></span
+          > 
+                    
+          <div class="post-meta">
+            Fri, Jun 19, 2015 - 1500 Words
+          </div>
+        <p>I concluded my last post by summing up what we&rsquo;ve seen so far and what we still need to understand about RxJava:</p>
 
-    <nav class="pagination" role="navigation">
-	
-	    <a class="newer-posts" href="/page/8/">&larr; Newer Posts</a>
-	
-	<span class="page-number">Page 9 of 11</span>
-	
-	    <a class="older-posts" href="/page/10/">Older Posts &rarr;</a>
-	
-</nav>
+<blockquote>We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that’s interested. We still don’t know, however, what it means for a data stream to be “functionally transformed” nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I’ll have to tackle in the second part of this written version of my upcoming RxJava talk.</blockquote>
+
+<p>In this post, I&rsquo;ll fill in the missing gaps in our understanding of my initial statement of what RxJava allows us to do.</p>
+      </div>
+        <div class="card-action">
+          <a href="https://www.philosophicalhacker.com/2015/06/19/introduction-to-rxjava-for-android-pt-2/"><nobr>Read more →</nobr></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+    <div class="row">
+      <div class="col s12 offset-m2 m8 ">
+        
+
+<ul class="pagination">
+    
+    <li class="page-item">
+        <a href="/" class="page-link" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+    </li>
+    
+    <li class="page-item">
+    <a href="/page/8/" class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+    </li>
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li class="page-item"><a class="page-link" href="/">1</a></li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li class="page-item"><a class="page-link" href="/page/2/">2</a></li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li class="page-item"><a class="page-link" href="/page/3/">3</a></li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li class="page-item disabled"><span aria-hidden="true">&nbsp;&hellip;&nbsp;</span></li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li class="page-item"><a class="page-link" href="/page/8/">8</a></li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li class="page-item active"><a class="page-link" href="/page/9/">9</a></li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li class="page-item"><a class="page-link" href="/page/10/">10</a></li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li class="page-item disabled"><span aria-hidden="true">&nbsp;&hellip;&nbsp;</span></li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li class="page-item"><a class="page-link" href="/page/13/">13</a></li>
+    
+    
+    <li class="page-item">
+    <a href="/page/10/" class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+    </li>
+    
+    <li class="page-item">
+        <a href="/page/13/" class="page-link" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+    </li>
+    
+</ul>
 
 
-
+      </div>
+    </div>    
+  </div>
 </main>
 
-<div class="rc-scout" style="margin-top: 50px; text-align: center;"></div>
-<footer class="site-footer clearfix">
-    <section class="copyright"><a href="">Philosophical Hacker</a> </section>
-    
-    <section class="poweredby">Proudly generated by <a class="icon-hugo" href="http://gohugo.io">HUGO</a>, with <a class="icon-theme" href="https://github.com/vjeantet/hugo-theme-casper">Casper</a> theme</section>
-    
-</footer>
-</div>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.js"></script>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/jquery.fitvids.js"></script>
-<script type="text/javascript" src="https://www.philosophicalhacker.com/js/index.js"></script>
-
+        </div><script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var elems = document.querySelectorAll(".sidenav");
+    var instances = M.Sidenav.init(elems, {});
+  });
+</script>
 <script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
 
-</body>
+  
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-63544399-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
 
+
+</body>
 </html>
