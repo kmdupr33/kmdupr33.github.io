@@ -157,7 +157,7 @@
 
 <p>Also wrong. Not all tests are equally helpful in achieving confidence in our code. Some can actually be harmful. It took me a while to figure this out. I&rsquo;ve been saying this for a while now, but whenever I say it, people always look at me like I&rsquo;m nuts. Maybe breaking down the argument in writing will help.</p>
 
-<p>The basic idea here is that tests have a cost and that sometimes their cost can outweigh their benefit <em>even if we do a good job writing our tests.</em> If that seems obvious to you, you&rsquo;ll want to skip out on the rest of this. It&rsquo;s only going to get less interesting from here. If that idea seems outrageous to you, stick around. I&rsquo;m going to try to convince you that not all tests are worth writing and try to show you that a few of the programmers who popularized automated testing probably think this is true too.</p>
+<p>The basic idea here is that tests have a cost and that sometimes their cost can outweigh their benefit <em>even if we do a good job writing our tests.</em> If that seems obvious to you, you&rsquo;ll want to skip out on the rest of this. It&rsquo;s only going to get less interesting from here. If that idea seems outrageous to you, stick around. I&rsquo;m going to try to convince you that not all tests are worth writing<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> and try to show you that a few of the programmers who popularized automated testing probably think this is true too.</p>
 
 <h2 id="cracks-in-the-surface">Cracks in the Surface</h2>
 
@@ -166,7 +166,7 @@
 <p>Let&rsquo;s start with a story from Gerard Mezaros, author of <em>xUnit Test Patters</em>, a book that has been blessed by Kent Beck:</p>
 
 <blockquote>
-<p>White the time spent writing new tests and writing production code seemed to staying more or less constant, the amount of time spent modifying existing tests was increasing&hellip;When a developer asked me to pair on a task and we spent 90% of the time modifying existing tests to accommodate a relatively minor change, I knew we had to change something&hellip;<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
+<p>White the time spent writing new tests and writing production code seemed to staying more or less constant, the amount of time spent modifying existing tests was increasing&hellip;When a developer asked me to pair on a task and we spent 90% of the time modifying existing tests to accommodate a relatively minor change, I knew we had to change something&hellip;<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
 </blockquote>
 
 <p>Eventually, Mezaros figured out why this was happening and wrote a book about how to avoid this sort of situation. The whole premise of the book and his consultancy is that its possible for the cost of tests to outweigh their value. He&rsquo;s sad when people don&rsquo;t call him in early enough because if he&rsquo;s too late, &ldquo;the client will likely muddle through less than satisfied with how TDD and automated unit testing worked&ndash;and the word goes out that automated testing is a waste of time.&rdquo;</p>
@@ -190,11 +190,11 @@
 <li>Conditionals</li>
 <li>Loops</li>
 <li>Operations</li>
-<li>Polymorphism<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></li>
+<li>Polymorphism<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></li>
 </ul>
 </blockquote>
 
-<p>I want to highlight how playful and non-specific Beck is here on this subject. His answer is not &ldquo;test everything,&rdquo; and the answer that he does give is pretty chill and ad hoc.<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></p>
+<p>I want to highlight how playful and non-specific Beck is here on this subject. His answer is not &ldquo;test everything,&rdquo; and the answer that he does give is pretty chill and ad hoc.<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup></p>
 
 <p>Here Beck doesn&rsquo;t say that writing tests when you&rsquo;re &ldquo;not afraid&rdquo; or &ldquo;bored&rdquo; can actually be harmful, but if we try our hand at a more precise answer to the question of what to test, we&rsquo;ll see how this can be true. To do that, we&rsquo;ll need to get clearer on the cost and the value of a test.</p>
 
@@ -217,7 +217,7 @@
 </script>
 
 
-<p>Design insight is the next benefit. Tests force us to write more flexible code, which is great. But, what if the code doesn&rsquo;t need to flexible?<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup> Again, we&rsquo;ve got to introduce the probability that the tested code will change to understand the value of the design insight:</p>
+<p>Design insight is the next benefit. Tests force us to write more flexible code, which is great. But, what if the code doesn&rsquo;t need to flexible?<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup> Again, we&rsquo;ve got to introduce the probability that the tested code will change to understand the value of the design insight:</p>
 
 
 
@@ -342,14 +342,16 @@
 <hr />
 
 <ol>
-<li id="fn:1">Gerard Meszaros, <em>xUnit Test Patterns</em>, 26.
+<li id="fn:1">Turns out I&rsquo;m not the first person to explicitly argue this (shocker). Brian Marick, an OG Agile Manifesto signatory and testing/agile consultant, <a href="https://twitter.com/marick/status/1175418565635268608">pointed out on twitter</a> that he argued for this 20+ years ago <a href="http://www.exampler.com/testing-com/writings/automate.pdf">here</a>.
  <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2">Kent Beck, <em>TDD By Example</em>, 201.
+<li id="fn:2">Gerard Meszaros, <em>xUnit Test Patterns</em>, 26.
  <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3">I was shocked when I first read this. I felt silly. I was <em>so serious</em> about testing, and Kent Beck is over here making jokes and just screwing around. It was good for me. Got me lighten up a little. Why so serious?
+<li id="fn:3">Kent Beck, <em>TDD By Example</em>, 201.
  <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:4">Or what if you&rsquo;re like Dave Thomas and you don&rsquo;t need test pressure to make good design decisions?
+<li id="fn:4">I was shocked when I first read this. I felt silly. I was <em>so serious</em> about testing, and Kent Beck is over here making jokes and just screwing around. It was good for me. Got me lighten up a little. Why so serious?
  <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+<li id="fn:5">Or what if you&rsquo;re like Dave Thomas and you don&rsquo;t need test pressure to make good design decisions?
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
 </ol>
 </div>
 
