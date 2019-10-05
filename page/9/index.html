@@ -128,6 +128,30 @@
       <div class="card-content">
         
         <span class="card-title"
+          ><a href="https://www.philosophicalhacker.com/post/process-vs-procedure-recursion/"> Process vs. Procedure Recursion</a></span
+        >
+        
+        <div class="post-meta">
+          Wed, Apr 6, 2016 - 200 Words
+        </div>
+        Just because a procedure is recursive, doesn&rsquo;t mean the process that it generates is recursive. A procedure is recursive when that procedure refers to itself in order to evaluate.
+(defn factorial [x] (letfn [(fact-iter [product counter max-count] (if (&gt; counter max-count) product (fact-iter (* counter product) (inc counter) max-count)) )] (fact-iter 1 1 n)) )  fact-iter, in the above code, is a recursive procedure, but the process it generates is not recursive.
+      </div>
+      <div class="card-action">
+        <a href="https://www.philosophicalhacker.com/post/process-vs-procedure-recursion/"><nobr>Read more →</nobr></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+    <div class="row">
+  <div class="col s12 offset-m3 m6">
+    <div class="card">
+      
+      <div class="card-content">
+        
+        <span class="card-title"
           ><a href="https://www.philosophicalhacker.com/post/abstraction-scope-and-bound-variables/"> Abstraction, Scope, and Bound Variables</a></span
         >
         
@@ -361,39 +385,6 @@ Clarifying Terms As I&rsquo;ve said before, many terms in software are vague or 
       </div>
       <div class="card-action">
         <a href="https://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/"><nobr>Read more →</nobr></a>
-      </div>
-    </div>
-  </div>
-</div>
-
-    
-    <div class="row">
-  <div class="col s12 offset-m3 m6">
-    <div class="card">
-      
-      <div class="card-content">
-        
-        <span class="card-title"
-          ><a href="https://www.philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/"> 6 Things I wish I Knew before I Wrote my first Android App</a></span
-        >
-        
-        <div class="post-meta">
-          Thu, Jul 9, 2015 - 1200 Words
-        </div>
-        <p>My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&rsquo;t even bother listing it on my resume&rsquo; anymore. That app wouldn&rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.</p>
-
-<p>Here&rsquo;s a list of things to keep in mind as you&rsquo;re writing your first Android apps. These lessons are derived from actual mistakes that I made in the source code of my first app, mistakes that I&rsquo;ll be showing below. Keeping these things in mind will help you write an app that you can be a little prouder of.</p>
-
-<p>Of course, if you&rsquo;re doing your job right as a student of Android development, you&rsquo;ll probably hate your app later regardless. As @codestandards says,</p>
-
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">If the code you wrote a year ago doesn&#39;t seem bad to you, you&#39;re probably not learning enough.</p>&mdash; Code Standards (@codestandards) <a href="https://twitter.com/codestandards/status/601373392059518976?ref_src=twsrc%5Etfw">May 21, 2015</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-
-<p>If you&rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&rsquo;ve never been guilty of making the mistakes I demo in those items.</p>
-      </div>
-      <div class="card-action">
-        <a href="https://www.philosophicalhacker.com/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/"><nobr>Read more →</nobr></a>
       </div>
     </div>
   </div>
