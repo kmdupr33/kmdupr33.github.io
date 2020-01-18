@@ -1,130 +1,11 @@
 <!DOCTYPE html>
-<html><head>
-  <meta charset="UTF-8" />
-  <meta
-    name="description"
-    content=""
-  />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <link
-    href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    rel="stylesheet"
-  />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-  />
-  <link href="/css/all.min.css" rel="stylesheet" />
-  <style>
-    #content {
-      font-size: 18px;
-      line-height: 1.7;
-    }
-    #content img {
-      max-width: 100%;
-      display: block;
-      margin: 0 auto;
-    }
-    #mc_embed_signup label {
-      color: white;
-    }
-    #mc_embed_signup input.email {
-      color: white;
-      border-color: white;
-    }
-
-    #mc_embed_signup input.button {
-      background-color: #ee6e73;
-    }
-    .rc-scout .rc-scout__link:link {
-      color: white;
-    }
-    .browser-default-uls ul {
-      padding-left: 30px;
-      margin-top: 10px;
-      margin-bottom: 15px;
-    }
-    .browser-default-uls ul > li {
-      list-style-type: disc !important;
-    }
-    pre {
-      overflow: auto;
-      padding: 15px;
-    }
-  </style>
-  <title> What Unit Tests are Trying to Tell us about Activities: Pt. 1 | Philosophical Hacker </title>
-  
-  
-</head>
-<body><nav>
-  <div class="nav-wrapper green">
-    <a
-      href="/"
-      class="brand-logo"
-      style="margin-left: 10px;"
-      >Philosophical Hacker</a
-    >
-    <a href="#" data-target="mobile-demo" class="sidenav-trigger"
-      ><i class="material-icons">menu</i></a
-    >
-    <ul class="right hide-on-med-and-down">      
-      <li><a href="/about/me">About</a></li>
-      <li><a href="/talk">Talks</a></li>
-      <li><a href="/note">Notes</a></li>
-      <li>
-        <a
-          href="https://www.oreilly.com/library/view/~/9781492048343/?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"
-          >RxJava O'Reilly Ebook</a
-        >
-      </li>
-      <li>
-          <a href="https://twitter.com/philosohacker"
-            ><i class="fab fa-twitter"></i
-          ></a>
-        </li>
-        <li>
-          <a href="https://www.linkedin.com/in/k-matthew-dupree-44672178/"
-            ><i class="fab fa-linkedin-in"></i
-          ></a>
-        </li>
-    </ul>
-  </div>
-  <ul class="sidenav" id="mobile-demo">    
-    <li><a href="/about/me">About</a></li>
-    <li><a href="/talk">Talks</a></li>
-    <li><a href="/note">Notes</a></li>
-    <li>
-      <a
-        href="https://www.oreilly.com/library/view/~/9781492048343/?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"
-        >Rx Java O'Reilly Ebook</a
-      >
-    </li>
-    <li>
-        <a href="https://twitter.com/philosohacker"
-          ><i class="fab fa-twitter"></i
-        ></a>
-      </li>
-      <li>
-        <a href="https://www.linkedin.com/in/k-matthew-dupree-44672178/"
-          ><i class="fab fa-linkedin-in"></i
-        ></a>
-      </li>
-  </ul>
-</nav>
-<div id="content" class="browser-default-uls">
-
-    <img style="filter: brightness(.4); width: 100%;" src="/images/broken-brick.jpg"/>
-
-<div class="row">
-  <div class="col s12 m8 l6 offset-m2 offset-l3">
-      <section id="main">          
-          <h1 id="title">What Unit Tests are Trying to Tell us about Activities: Pt. 1</h1>
-          
-          <p id="date" class="grey-text text-darken-1i"> Sat Feb 25, 2017 | 5 Minute read </p>
-          <div>
-                <article id="content">
-                   
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>What Unit Tests are Trying to Tell us about Activities: Pt. 1&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.23e33545b91049b616ac4ba673cc5ec6dd32e3023e7f08dbbeef7202014a10af6bd328c6400a99dc5f681b085a7bb8bf.css" integrity="sha384-I&#43;M1RbkQSbYWrEumc8xext0y4wI&#43;fwjbvu9yAgFKEK9r0yjGQAqZ3F9oGwhae7i/"><body>
+    <div class="base-body"><section id="header" class="site header max-body-width">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www.oreilly.com/programming/free/rxjava-for-android-app-development.csp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><div id="content" class="max-body-width"><section class="article header">
+    <h1 class="article title">What Unit Tests are Trying to Tell us about Activities: Pt. 1</h1><p class="article date">2017-02-25</p></section><article class="article markdown-body">
 
 <p><code>Activity</code>s and <code>Fragment</code>s, perhaps by <a href="/post/why-android-testing-is-so-hard-historical-edition/">some strange historical accidents</a>, have been seen as <em>the optimal</em> building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&rsquo;s call this idea &ndash; the idea that <code>Activity</code>s and <code>Fragment</code>s are the best building blocks for our apps &ndash; &ldquo;android-centric&rdquo; architecture.</p>
 
@@ -185,97 +66,26 @@
 <hr />
 
 <p>Image Credit: Maret Hosemann, &ldquo;Der Bruch,&rdquo; <a href="https://creativecommons.org/licenses/by/2.0/legalcode">Creative Commons 2.0</a></p>
-
-                </article>
-          </div>
-        </section>                
-  </div>
-  
+</article><section class="article labels"><a class="article tag" href=/tags/android/>android</a><a class="article tag" href=/tags/testing/>testing</a><a class="article tag" href=/tags/architecture/>architecture</a></section><section class="article navigation"><p><a class="link" href="/post/some-resources-for-learning-how-to-test-android-apps/"><span class="li"></span>Some Resources for Learning how to Test Android Apps</a></p><p><a class="link" href="/post/towards-godless-android-development-how-and-why-i-kill-god-objects/"><span class="li"></span>Towards Godless Android Development: How and Why I Kill God Objects</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><div
+  style="display:flex; flex-direction:row; flex-wrap:wrap; justify-content:space-between;"
+>
+  <p style="flex-shrink: 0;">&copy; 2020 Matt Dupree
+  </p>
 </div>
-<footer class="page-footer green text-white">
-    <div class="container">
-      <div class="row">
-        <div class="col l6 s12">
-            
-<link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css">
-<div id="mc_embed_signup">
-<form action="//appspot.us11.list-manage.com/subscribe/post?u=9612e1a3261cb5689813bf38b&amp;id=0c5f737d6c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div id="mc_embed_signup_scroll">
-	<label for="mce-EMAIL">Get Email Updates</label>
-	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
-    
-    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_9612e1a3261cb5689813bf38b_0c5f737d6c" tabindex="-1" value=""></div>
-    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
-    </div>
-</form>
-</div>
-
-
-            <div class="rc-scout" style="text-align: center;"></div>    
-        </div>
-        <aside id="meta">            
-            <div>
-                
-                <div>                  
-                  <a class="grey-text text-lighten-3" href="https://www.philosophicalhacker.com/post/towards-godless-android-development-how-and-why-i-kill-god-objects/">Previous: Towards Godless Android Development: How and Why I Kill God Objects</a>
-                </div>
-                
-                
-                <div>                  
-                  <a class="grey-text text-lighten-3" href="https://www.philosophicalhacker.com/post/some-resources-for-learning-how-to-test-android-apps/">Next: Some Resources for Learning how to Test Android Apps</a>
-                </div>
-                
-            </div>
-        </aside>  
-        <div class="col l4 offset-l2 s12">
-          <h5 class="white-text">Tags</h5>
-          <ul>              
-              
-              <ul id="tags">
-                
-                  <li> <a class="grey-text text-lighten-3" href="https://www.philosophicalhacker.com/tags/android">android</a> </li>
-                
-                  <li> <a class="grey-text text-lighten-3" href="https://www.philosophicalhacker.com/tags/testing">testing</a> </li>
-                
-                  <li> <a class="grey-text text-lighten-3" href="https://www.philosophicalhacker.com/tags/architecture">architecture</a> </li>
-                
-              </ul>
-                          
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="footer-copyright">
-      <div class="container">
-      © 2019 Matt Dupree
-      </div>
-    </div>    
-  </footer>        
-
-
-        </div><script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var elems = document.querySelectorAll(".sidenav");
-    var instances = M.Sidenav.init(elems, {});
-  });
-</script>
-<script async defer src="https://www.recurse-scout.com/loader.js?t=b7a91d718a76fe21289fbe7d51a58f19"></script>
-
-  
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script>
 <script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
 	ga('create', 'UA-63544399-1', 'auto');
 	
 	ga('send', 'pageview');
 }
 </script>
-
-
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</div>
 </body>
+
 </html>

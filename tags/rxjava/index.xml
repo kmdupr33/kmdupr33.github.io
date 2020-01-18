@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>rxjava on Philosophical Hacker</title>
-    <link>https://www.philosophicalhacker.com/tags/rxjava/</link>
+    <link>/tags/rxjava/</link>
     <description>Recent content in rxjava on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 19 Mar 2017 00:34:58 -0400</lastBuildDate>
     
-	<atom:link href="https://www.philosophicalhacker.com/tags/rxjava/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/tags/rxjava/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Why Im Skeptical about Kotlin Coroutines for Android Development</title>
-      <link>https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/</link>
+      <link>/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/</link>
       <pubDate>Sun, 19 Mar 2017 00:34:58 -0400</pubDate>
       
-      <guid>https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/</guid>
+      <guid>/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/</guid>
       <description>A few weeks ago, the folks working on Kotlin announced the 1.1 release. Kotlin&amp;rsquo;s 1.1 release has experiment support for coroutines. Here&amp;rsquo;s the elevator pitch for coroutines from their blog post announcing the release:
  Asynchronous programming is taking over the world, and the only thing that is holding us back is that non-blocking code adds considerable complexity to our systems. Kotlin now offers means to tame this complexity by making coroutines first-class citizens in the language through the single primitive: suspending functions.</description>
     </item>
     
     <item>
       <title>RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava</title>
-      <link>https://www.philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</link>
+      <link>/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</link>
       <pubDate>Sat, 23 Jul 2016 15:43:29 -0400</pubDate>
       
-      <guid>https://www.philosophicalhacker.com/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</guid>
+      <guid>/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;Loaders are awesome&amp;hellip;they&amp;rsquo;re essentially the best practice implementation of asynchronous data loading in your Activities.&lt;/p&gt;
 
@@ -36,10 +36,10 @@
     
     <item>
       <title>Introduction to RxJava for Android (Pt. 2)</title>
-      <link>https://www.philosophicalhacker.com/2015/06/19/introduction-to-rxjava-for-android-pt-2/</link>
+      <link>/2015/06/19/introduction-to-rxjava-for-android-pt-2/</link>
       <pubDate>Fri, 19 Jun 2015 12:19:14 +0000</pubDate>
       
-      <guid>https://www.philosophicalhacker.com/2015/06/19/introduction-to-rxjava-for-android-pt-2/</guid>
+      <guid>/2015/06/19/introduction-to-rxjava-for-android-pt-2/</guid>
       <description>&lt;p&gt;I concluded my last post by summing up what we&amp;rsquo;ve seen so far and what we still need to understand about RxJava:&lt;/p&gt;
 
 &lt;blockquote&gt;We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that’s interested. We still don’t know, however, what it means for a data stream to be “functionally transformed” nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I’ll have to tackle in the second part of this written version of my upcoming RxJava talk.&lt;/blockquote&gt;
@@ -49,20 +49,20 @@
     
     <item>
       <title>Introduction to RxJava for Android: The Talk</title>
-      <link>https://www.philosophicalhacker.com/2015/06/16/introduction-to-rxjava-for-android-the-talk/</link>
+      <link>/2015/06/16/introduction-to-rxjava-for-android-the-talk/</link>
       <pubDate>Wed, 17 Jun 2015 01:48:45 +0000</pubDate>
       
-      <guid>https://www.philosophicalhacker.com/2015/06/16/introduction-to-rxjava-for-android-the-talk/</guid>
+      <guid>/2015/06/16/introduction-to-rxjava-for-android-the-talk/</guid>
       <description>Earlier today, I gave my Intro To RxJava talk. I&amp;rsquo;m not thrilled at how clear I was at explaining certain aspects of RxJava, but here&amp;rsquo;s the video nonetheless. My talk starts at 28:32. Hopefully, I&amp;rsquo;ll do a better job when I finish the written version of this talk.
 If you want to hear a hilarious take down of the design of the new Pizza Hut app, check out Ian&amp;rsquo;s talk that happens before mine.</description>
     </item>
     
     <item>
       <title>An Introduction to RxJava for Android (Pt. 1)</title>
-      <link>https://www.philosophicalhacker.com/2015/06/12/an-introduction-to-rxjava-for-android/</link>
+      <link>/2015/06/12/an-introduction-to-rxjava-for-android/</link>
       <pubDate>Fri, 12 Jun 2015 12:34:53 +0000</pubDate>
       
-      <guid>https://www.philosophicalhacker.com/2015/06/12/an-introduction-to-rxjava-for-android/</guid>
+      <guid>/2015/06/12/an-introduction-to-rxjava-for-android/</guid>
       <description>&lt;p&gt;I&amp;rsquo;m taking a brief break from talking about testing. I&amp;rsquo;ll resume my discussion of how &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;I&amp;rsquo;m making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt; after I&amp;rsquo;ve posted the content from &lt;a href=&#34;http://www.meetup.com/University-Android/events/222048562/&#34;&gt;my upcoming talk on RxJava&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt; &lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg&#34; alt=&#34;rxjava_prezi_rxjava_def&#34; /&gt;&lt;/a&gt;&lt;/p&gt;</description>
@@ -70,10 +70,10 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
     
     <item>
       <title>How to Keep your RxJava Subscribers from Leaking</title>
-      <link>https://www.philosophicalhacker.com/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/</link>
+      <link>/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/</link>
       <pubDate>Tue, 24 Mar 2015 23:56:32 +0000</pubDate>
       
-      <guid>https://www.philosophicalhacker.com/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/</guid>
+      <guid>/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/</guid>
       <description>Edit: Shortly after writing this, I realized that the solution that I present here isn&amp;rsquo;t very good. I&amp;rsquo;m leaving it here just in case it can serve as a building block for better solutions.
 Sometimes you don&amp;rsquo;t have control over the lifecycle of your Subscribers. In these cases, to avoid leaking your Subscriber, you have to unsubscribe from your Observable when you&amp;rsquo;re notified that your Subscriber is about to be destroyed.</description>
     </item>
