@@ -7,6 +7,8 @@
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www.oreilly.com/programming/free/rxjava-for-android-app-development.csp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><div id="content" class="max-body-width"><section class="article header">
     <h1 class="article title">What Unit Tests are Trying to Tell us about Activities: Pt. 1</h1><p class="article date">2017-02-25</p></section><article class="article markdown-body">
 
+<p><img src="/images/broken-brick.jpg" alt="" /></p>
+
 <p><code>Activity</code>s and <code>Fragment</code>s, perhaps by <a href="/post/why-android-testing-is-so-hard-historical-edition/">some strange historical accidents</a>, have been seen as <em>the optimal</em> building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&rsquo;s call this idea &ndash; the idea that <code>Activity</code>s and <code>Fragment</code>s are the best building blocks for our apps &ndash; &ldquo;android-centric&rdquo; architecture.</p>
 
 <p>This series of posts is about the connection between the testability of android-centric architecture and the other problems that are now leading Android developers to reject it; it&rsquo;s about how our unit tests are trying to tell us that <code>Activity</code>s and <code>Fragment</code>s don&rsquo;t make the best building blocks for our apps because they force us to write code with <em>tight coupling</em> and <em>low cohesion</em>.</p>

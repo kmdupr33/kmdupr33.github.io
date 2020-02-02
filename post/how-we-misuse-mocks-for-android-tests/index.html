@@ -7,6 +7,8 @@
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www.oreilly.com/programming/free/rxjava-for-android-app-development.csp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><div id="content" class="max-body-width"><section class="article header">
     <h1 class="article title">How we Misuse Mocks for Android Tests</h1><p class="article date">2016-12-27</p></section><article class="article markdown-body">
 
+<p><img src="/images/tools.jpg" alt="" /></p>
+
 <p>Mocks are a pretty standard tool in our android developer tool belt. The extent to which we should use this tool for unit testing is a complicated and controversial issue.<sup>1</sup> Within the Android community specifically, I think that a part of the controversy is due to confusion over the intended use of mocks. More specifically, some android developers seem intent on mocking types they don&rsquo;t own and on verifying all interactions of a target class with a collaborator.</p>
 
 <p>It turns out that these two practices are not recommended by the folks who invented mocks because they have well-known have disadvantages. These disadvantages are precisely the ones that people seem to cite when they argue against mocks. There may be good arguments against mocks, but citing disadvantages of using them in a way that they aren&rsquo;t meant to be used is about as compelling as arguing that we shouldn&rsquo;t use hammers because they aren&rsquo;t good for fastening screws.</p>

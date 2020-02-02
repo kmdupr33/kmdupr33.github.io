@@ -7,6 +7,8 @@
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www.oreilly.com/programming/free/rxjava-for-android-app-development.csp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><div id="content" class="max-body-width"><section class="article header">
     <h1 class="article title">An Espresso Test Recorder Deep Dive</h1><p class="article date">2016-07-07</p></section><article class="article markdown-body">
 
+<p><img src="/images/diving-suit.jpg" alt="" /></p>
+
 <p>I&rsquo;ve been working on <a href="http://www.philosophicalhacker.com/post/why-dont-we-have-a-unit-test-recorder/">a unit test recorder</a> for Android. After struggling to find a way to implement the unit test recorder,<sup>1</sup> I decided to take a look at how Google implements the espresso test recorder. This post presents what I found when I dug into the source code of the espresso test recorder.</p>
 
 <h3 id="collecting-user-interaction-info">Collecting User Interaction Info</h3>
