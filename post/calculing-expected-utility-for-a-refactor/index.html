@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Why and How we Should Calculate Expected Utility of Refactorings&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.84cf837efd0071386a60c3b2f888dea2bbaf7d32bd47e2a195707c2ce0b9a62f313d7b4279fc97c53a5084f2a27550a1.css" integrity="sha384-hM&#43;Dfv0AcThqYMOy&#43;IjeoruvfTK9R&#43;KhlXB8LOC5pi8xPXtCefyXxTpQhPKidVCh">
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<body>
+    <div class="base-body"><section id="header" class="site header max-body-width">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www.oreilly.com/programming/free/rxjava-for-android-app-development.csp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><div id="content" class="max-body-width"><section class="article header">
+    <h1 class="article title">Why and How we Should Calculate Expected Utility of Refactorings</h1><p class="article date">2020-04-29</p></section><article class="article markdown-body">
+
+<blockquote>
+<p>In my experience, most applications are a mess&hellip;Changes are commonly made under urgent time pressure, which drives applications towards disorder&hellip;Velocity gradually slows, and everyone comes to hate the application, their job, and their life.</p>
+
+<p>&mdash;Sandi Metz, <a href="https://www.sandimetz.com/blog/2017/6/1/the-half-life-of-code">&ldquo;The Half-Life of Code&rdquo;</a></p>
+</blockquote>
+
+<hr />
+
+<h2 id="why">Why</h2>
+
+<p>Many of us work in codebases that are not easy to work with, codebases that we want to make better. The way that we typically choose what parts of the codebase get made better, however, is sub-optimal. The two dominant methods I&rsquo;ve seen are:</p>
+
+<ol>
+<li>Fix code in areas of the codebase we happen to be currently working in.<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> (&ldquo;I&rsquo;m here. might as well fix it.&rdquo;)</li>
+<li>Fix code in areas of the codebase we touched in the recent past. (&ldquo;Doing X last sprint sucked because the code is bad. Let&rsquo;s fix it.&rdquo;)</li>
+</ol>
+
+<p>Neither of these methods are ideal.</p>
+
+<p>The first problem with them is that the link between code that we&rsquo;re working on now and code that we&rsquo;ve worked on recently, on the one hand, and code that needs to changed in the future, on the other, is tenuous. Just because code changed recently, doesn&rsquo;t mean it&rsquo;ll change again in the near the future. The second problem: even when the link between current and future changes is strong, these methods give us no point of reference for understanding how frequently the code we&rsquo;ve recently touched changes vs. how frequently other code changes.</p>
+
+<p>Why does this matter? If we refactor code that won&rsquo;t be read or changed much in the future, we aren&rsquo;t helping ourselves much. What good is readable code that won&rsquo;t be read? What good is changeable code that won&rsquo;t be changed? It&rsquo;s worse than this actually: while we were making a particular piece of bad code better, we missed an opportunity to refactor code that will be changed more frequently in the future.</p>
+
+<p>What should we do about this? We should try to <em>estimate</em> the relative expected utility of a refactor. This will be hard &mdash; just like estimating expecting utility always is &mdash; but it&rsquo;s better than not doing it at all.</p>
+
+<p>We don&rsquo;t just throw up our hands when evaluating two different economic policies, for example, simply because it&rsquo;s hard to estimate the likely impact of those policies. We accept that our evaluation will be imperfect and we do the best we can.</p>
+
+<h2 id="how">How</h2>
+
+<p>How can we do this? Broadly, we have to estimate how likely it is that a file will change, relative how likely it is that other files will change.</p>
+
+<h3 id="leaning-on-past-changes">Leaning on past changes</h3>
+
+<p>Insofar as we can take past changes as an indicator of future ones, our job is relatively easy and git gets us most of the information we need.<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup> We can sum up the diffs of all files in the codebase and assign a value to individual files that reflects the percentage of diffs it contains relative to the diffs of the whole codebase. If we&rsquo;re looking at refactoring a file, we can just look up it&rsquo;s score before taking the plunge.</p>
+
+<p>This nasty thing will get me a score for a file (<a href="/post/towards-readable-clis/">sorry not sorry</a>):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-zsh" data-lang="zsh"><span style="color:#66d9ef">$((</span><span style="color:#f92672">(</span><span style="color:#66d9ef">$(</span>git diff --shortstat <span style="color:#66d9ef">$(</span>git rev-list HEAD | tail -n <span style="color:#ae81ff">1</span><span style="color:#66d9ef">)</span> HEAD content/post/how-to-study-business.md | cut -d , -f <span style="color:#ae81ff">2</span>,3 | cut -d <span style="color:#e6db74">&#34; &#34;</span> -f <span style="color:#ae81ff">2</span>,4 | sed -e <span style="color:#e6db74">&#39;s/ / + /g&#39;</span><span style="color:#66d9ef">)</span><span style="color:#f92672">)</span> <span style="color:#f92672">/</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">$(</span>git diff --shortstat <span style="color:#66d9ef">$(</span>git rev-list HEAD | tail -n <span style="color:#ae81ff">1</span><span style="color:#66d9ef">)</span> HEAD | cut -d , -f <span style="color:#ae81ff">2</span>,3 | cut -d <span style="color:#e6db74">&#34; &#34;</span> -f <span style="color:#ae81ff">2</span>,4 | sed -e <span style="color:#e6db74">&#39;s/ / + /g&#39;</span><span style="color:#66d9ef">)</span>.0<span style="color:#66d9ef">))</span><span style="color:#f92672">)</span></code></pre></div>
+<p>The more people that touch a file, the higher score that file should have. Readability matters more when you have more people editing a file because a single person can rely on their memory as a crutch if their code isn&rsquo;t readable. <code>git blame</code> will get us that info. I&rsquo;m not even going to try to to merge that into the above zsh-monstrosity.</p>
+
+<h3 id="looking-to-the-future">Looking to the future</h3>
+
+<p>Insofar as past changes don&rsquo;t indicate future ones, things get more challenging. What we need here is a mapping between a product roadmap and the files that will likely be touched to execute on that roadmap. This mapping doesn&rsquo;t have to be perfect, of course. Tagging files and directories with their corresponding product/roadmap areas seems like a good start. This could be done via comments like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#75715e">/** changes-for: accounts */</span>
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">login</span>() {
+  <span style="color:#75715e">/* */</span>
+}
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isLoggedIn</span>() {
+  <span style="color:#75715e">/* */</span>
+}
+</code></pre></div>
+<p>Or we could simply place files in certain directories to mark that all files in that directory are associated with certain product areas.</p>
+
+<p>Once we have this mapping, we need to do a similar calculation we did with git diffs. We want to score a file based on the proportion of times we project it&rsquo;ll need to be changed to address upcoming roadmap items. Suppose we have two files:</p>
+
+<table>
+<thead>
+<tr>
+<th>Files</th>
+<th align="center">Changes for</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>login.js</td>
+<td align="center">accounts</td>
+</tr>
+
+<tr>
+<td>project.js</td>
+<td align="center">projects</td>
+</tr>
+</tbody>
+</table>
+
+<p>And you have 3 roadmap items:</p>
+
+<table>
+<thead>
+<tr>
+<th>Tasks</th>
+<th align="center">area</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Implement rename project</td>
+<td align="center">projects</td>
+</tr>
+
+<tr>
+<td>Implement google login</td>
+<td align="center">accounts</td>
+</tr>
+
+<tr>
+<td>Implement archive project</td>
+<td align="center">projects</td>
+</tr>
+</tbody>
+</table>
+
+<p><code>project.js</code>&rsquo;s score would be twice as high as <code>login.js</code> because it&rsquo;s associated with tasks that appear twice on the roadmap. To automate the calculation of this part of the score, we&rsquo;d need some sort of analysis on the tagged files in the codebase that would pull tagged tasks from whatever project management tool we&rsquo;re using.</p>
+
+<h3 id="combining-both-types-of-scores">Combining both types of scores</h3>
+
+<p>How should we combine this information? We should strongly weight the roadmap information, so a formula for the relative expected utility for refactoring a file would be something like:</p>
+
+<pre><code>Past-changes-based score * .35 + roadmap score * .65
+</code></pre>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>We all want to work in great codebases. Unfortunately, we don&rsquo;t seem to have the practices and the tooling to make optimal choices about which part of our codebases we improve. Estimating expected utility of all the refactors we might make is a step in the right direction. To do this, we can use information about past changes sourced from git and information about expected future changes by building a mapping between files that will need to change in response to the <em>types</em> of upcoming roadmap tasks.</p>
+
+<hr />
+
+<h3 id="notes">Notes</h3>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1">This method comes in two flavors. We might think that making the refactor will facilitate the current change we want to make. Martin Fowler talks about this in <em>Refactoring</em>. We might also just think that the refactor will make future changes easier.
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><code>git diff --dirstat</code> would be perfect if worked with files.
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article><section class="article labels"><a class="article tag" href=/tags/programming/>programming</a><a class="article tag" href=/tags/refactoring/>refactoring</a></section><section class="article navigation"><p><a class="link" href="/post/data-point-for-job-seeking-devs/"><span class="li"></span>My Mid-Career Job-Hunt: A Data Point for Job-Seeking Devs</a class="link">
+    </p></section></div><section id="footer" class="footer max-body-width"><div
+  style="display:flex; flex-direction:row; flex-wrap:wrap; justify-content:space-between;"
+>
+  <p style="flex-shrink: 0;">&copy; 2020 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-63544399-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</div>
+</body>
+
+</html>
