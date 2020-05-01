@@ -47,7 +47,7 @@
 
 <p>Insofar as we can take past changes as an indicator of future ones, our job is relatively easy and git gets us most of the information we need.<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup> We can sum up the diffs of all files in the codebase and assign a value to individual files that reflects the percentage of diffs it contains relative to the diffs of the whole codebase. If we&rsquo;re looking at refactoring a file, we can just look up it&rsquo;s score before taking the plunge.</p>
 
-<p>This little script will get me a score for a file:<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></p>
+<p>This little script will get me a score for a file (Thanks, <a href="https://blog.d46.us/">Joe</a>)<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/usr/bin/env bash
 </span><span style="color:#75715e"></span>set -euo pipefail
 
