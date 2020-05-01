@@ -50,15 +50,21 @@
 <p>This little script will get me a score for a file:<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/usr/bin/env bash
 </span><span style="color:#75715e"></span>set -euo pipefail
+
 file<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+
 last_sha<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>git rev-list HEAD | tail -n <span style="color:#ae81ff">1</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+
 <span style="color:#66d9ef">function</span> sum_numbers<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
   perl -lane <span style="color:#e6db74">&#39;$t+=$_ for @F; print $t&#39;</span>
 <span style="color:#f92672">}</span>
+
 file_diffs_sum<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>git diff --shortstat <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>last_sha<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>file<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> | sum_numbers<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
 all_diffs_sum<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>git diff --shortstat <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>last_sha<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> | sum_numbers<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+
 echo <span style="color:#e6db74">&#34;file_diffs: </span><span style="color:#e6db74">${</span>file_diffs_sum<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
 echo <span style="color:#e6db74">&#34;all_diffs: </span><span style="color:#e6db74">${</span>all_diffs_sum<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+
 score<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;scale=5 ; </span><span style="color:#e6db74">${</span>file_diffs_sum<span style="color:#e6db74">}</span><span style="color:#e6db74"> / </span><span style="color:#e6db74">${</span>all_diffs_sum<span style="color:#e6db74">}</span><span style="color:#e6db74"> * 100&#34;</span> | bc<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
 echo <span style="color:#e6db74">&#34;Score: </span><span style="color:#e6db74">${</span>score<span style="color:#e6db74">}</span><span style="color:#e6db74"> percent&#34;</span></code></pre></div>
 <p>The more people that touch a file, the higher score that file should have. Readability matters more when you have more people editing a file because a single person can rely on their memory as a crutch if their code isn&rsquo;t readable. <code>git blame</code> will get us that info. I&rsquo;m not even going to try to to merge that into the above zsh-monstrosity.</p>
