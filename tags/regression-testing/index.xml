@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>regression testing on Philosophical Hacker</title>
     <link>/tags/regression-testing/</link>
@@ -19,6 +19,7 @@
       <guid>https://www.philosophicalhacker.com/post/why-dont-we-have-a-unit-test-recorder/</guid>
       <description>Last week, I introduced Vice, a proof of concept regression test generation library. Vice generates regression tests simply by exercising the code we want to test.
 This is neat, but there&amp;rsquo;s already something else out there that does something like this, and ultimately, Vice as it stands doesn&amp;rsquo;t answer a fundamental question I have about regression tests: if we can record functional UI tests using the espresso test recorder or apple&amp;rsquo;s test recorder, why don&amp;rsquo;t we have a unit test recorder?</description>
+      
     </item>
     
     <item>
@@ -28,6 +29,7 @@ This is neat, but there&amp;rsquo;s already something else out there that does s
       
       <guid>https://www.philosophicalhacker.com/post/vice-a-regression-test-generation-library/</guid>
       <description>Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&amp;hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&amp;hellip;Cover and Modify is a different way of making changes.</description>
+      
     </item>
     
   </channel>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Android on Philosophical Hacker</title>
     <link>/categories/Android/</link>
@@ -18,6 +18,7 @@
       
       <guid>https://www.philosophicalhacker.com/2015/07/17/making-a-tdd-based-hackernews-client-for-android/</guid>
       <description>&lt;p&gt;I&amp;rsquo;m using TDD to write a HackerNews client for Android. This post (and the ones that will likely follow it) share a little bit about some of the techniques I used to follow a TDD-based work-flow for developing this application. It also discusses the architecture that arises when Android apps are built with testability in mind from the ground up.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -45,6 +46,7 @@
 
 
 &lt;p&gt;Instead, all I&amp;rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -64,6 +66,7 @@
 
 
 &lt;p&gt;If you&amp;rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&amp;rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&amp;rsquo;ve never been guilty of making the mistakes I demo in those items.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -73,6 +76,7 @@
       
       <guid>https://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/</guid>
       <description>&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/&#34;&gt;my last post&lt;/a&gt;, I argued that there are two disadvantages to &lt;code&gt;Activities&lt;/code&gt; and Presenters. The first disadvantage is that they are often bloated classes. The second disadvantage is that these classes often have a circular dependency between themselves and their Views. Yesterday, Hannes Dorfmann made a comment on my post that was so thoughtful and excellent that I think its worth dedicating an entire post to responding to it.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -108,6 +112,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&
 &lt;/ol&gt;
 
 &lt;p&gt;In this post, I will try to give some reasons why we might consider a new architecture for Android development in the first place.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -121,6 +126,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&
 &lt;blockquote&gt;We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that’s interested. We still don’t know, however, what it means for a data stream to be “functionally transformed” nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I’ll have to tackle in the second part of this written version of my upcoming RxJava talk.&lt;/blockquote&gt;
 
 &lt;p&gt;In this post, I&amp;rsquo;ll fill in the missing gaps in our understanding of my initial statement of what RxJava allows us to do.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -131,6 +137,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&
       <guid>https://www.philosophicalhacker.com/2015/06/16/introduction-to-rxjava-for-android-the-talk/</guid>
       <description>Earlier today, I gave my Intro To RxJava talk. I&amp;rsquo;m not thrilled at how clear I was at explaining certain aspects of RxJava, but here&amp;rsquo;s the video nonetheless. My talk starts at 28:32. Hopefully, I&amp;rsquo;ll do a better job when I finish the written version of this talk.
 If you want to hear a hilarious take down of the design of the new Pizza Hut app, check out Ian&amp;rsquo;s talk that happens before mine.</description>
+      
     </item>
     
     <item>
@@ -142,6 +149,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       <description>&lt;p&gt;I&amp;rsquo;m taking a brief break from talking about testing. I&amp;rsquo;ll resume my discussion of how &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;I&amp;rsquo;m making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt; after I&amp;rsquo;ve posted the content from &lt;a href=&#34;http://www.meetup.com/University-Android/events/222048562/&#34;&gt;my upcoming talk on RxJava&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt; &lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg&#34; alt=&#34;rxjava_prezi_rxjava_def&#34; /&gt;&lt;/a&gt;&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -155,6 +163,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34; alt=&#34;IO Testing Talk-04&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;In this screenshot, the &amp;ldquo;Distribute,&amp;rdquo; &amp;ldquo;Android,&amp;rdquo; and &amp;ldquo;Games&amp;rdquo; tags are added to the view hierarchy based on the tags associated with the &amp;rdquo;Going global with Google Play&amp;rdquo; IO session. In this post, I&amp;rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the &lt;code&gt;SesisonDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt;.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -166,6 +175,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       <description>&lt;p&gt;In my recent &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Against Android Unit Tests&lt;/a&gt; series, I discussed the difficulties of unit testing android applications and proposed a different way of building applications that would enhance their unit testability. My proposal in that series was really largely a rough sketch of what it would take to make parts of Google&amp;rsquo;s IOSched app unit testable.&lt;/p&gt;
 
 &lt;p&gt;More recently, I&amp;rsquo;ve started to fill in the details of that proposal by forking the IOSched repo and refactoring it to make it unit testable. In the next few posts, I&amp;rsquo;ll be discussing some of the challenges that arose when attempting to make the &lt;code&gt;SessionDetailActivity&lt;/code&gt; unit testable within the IOSched app. In this post, I want to provide a broad overview of the challenges I&amp;rsquo;ll be discussing.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -187,6 +197,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;/ul&gt;
 
 &lt;p&gt;Briefly, I&amp;rsquo;ll also mention some of the challenges of writing unit tests for Android.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -206,6 +217,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 
 &lt;li&gt;&lt;p&gt;Dependency Injection is really the main &amp;ldquo;active ingredient&amp;rdquo; that allows The Square Way enhance the unit testability of our applications.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;</description>
+      
     </item>
     
     <item>
@@ -217,6 +229,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       <description>&lt;p&gt;In &lt;a href=&#34;http://philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;my last post&lt;/a&gt;, I showed how we can apply The Square Way to UI app component classes. More specifically I showed how The Square Way would have us rewrite the &lt;code&gt;SessionDetailActivity&lt;/code&gt; so that we could unit test its &lt;code&gt;onStop()&lt;/code&gt; method. At the end of my last post, I said that I&amp;rsquo;d be spending this and the next post doing an overall assessment of The Square Way.&lt;/p&gt;
 
 &lt;p&gt;I actually won&amp;rsquo;t be doing that this post. I&amp;rsquo;ll be postponing the overall assessment of The Square Way until the next few posts. Instead, what I want to do in this post is simply present a few unit-testability guides. These cheatsheets summarize much of what&amp;rsquo;s been covered in the past few posts and provide you with simplified steps to follow if you are interested in enhancing your application&amp;rsquo;s unit-testability via The Square Way.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -226,6 +239,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       
       <guid>https://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/</guid>
       <description>&lt;p&gt;In &lt;a href=&#34;http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;my last post&lt;/a&gt;, I introduced the “The Square Way” of structuring our android code. I said that The Square Way is a generalization of the approach that Square used to make the logic within their &lt;code&gt;Fragment&lt;/code&gt;s unit testable. I also showed how The Square Way would have us rewrite the &lt;code&gt;SessionCalendarService&lt;/code&gt; within Google’s IOSched app so that we could unit test the business logic within it. As we’ll see in this post, The Square Way also makes it easier/possible for us to unit test UI app component business logic.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -239,6 +253,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;p&gt;In this post, I outline an alternative approach to structuring Android applications that will make it easier to unit test them. As I pointed out in &lt;a href=&#34;http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;the introduction to this series&lt;/a&gt;, the approach that I suggest is a generalization of the approach that Square uses to &lt;a href=&#34;https://corner.squareup.com/2014/10/advocating-against-android-fragments.html&#34;&gt;remove Fragments from their applications&lt;/a&gt;. Since this approach is inspired by the folks at Square, I will call it “the square way.”&lt;/p&gt;
 
 &lt;p&gt;The heart of the square way way is this: remove all business logic from app component classes (e.g., &lt;code&gt;Activity&lt;/code&gt;s, &lt;code&gt;Fragment&lt;/code&gt;s, &lt;code&gt;Service&lt;/code&gt;s) and place that logic into “business objects,” POJO objects whose dependencies are injected, android-specific implementations of android-agnostic interfaces. If we follow the square way of developing our apps, we will be in a better position to unit test them. In this post, I explain how the square way would have us refactor non-UI app components like the &lt;code&gt;SessionCalendarService&lt;/code&gt; I’ve been discussing for the past few posts.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -256,6 +271,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;p&gt;Before I do that, let me say again that showing that the difficulty of testing Android applications is caused by the standard structure of android apps is important for the overarching goal of this series of articles. This series is an attempt to argue that we should consider restructuring our applications so that they do not explicitly depend on the Android SDK and its an attempt to present a robust architecture that will enhance the testability of Android applications. You can read the introduction to this series &lt;a href=&#34;http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;here&lt;/a&gt;. With that said, I can move on to trying to demonstrate the central claim of this post.&lt;/p&gt;
 
 &lt;p&gt;There’s a standard way of developing android applications. Sample code and open source code alike both place an app’s business logic within Android app component classes, namely, Activities, Services, and Fragments. Going forward, I’m going to refer to this practice as “the standard way.” Here’s the central claim of this post: As long as we follow the “standard way”, we’re going to write code that’s either difficult or impossible to unit test. In other words, the untestable code that I pointed out in my last article is not a fluke. The standard way prevents us from unit testing key pieces of our applications.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -285,6 +301,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;p&gt;So, Android unit testing is hard. That much is clear. Why Android unit testing is so difficult, however, is less clear. Its true that a part of the difficulty with Android unit testing has to do with the nonsense that you have to overcome to get Roboletric started so that you can run your tests at a decent speed, but I think that there’s a deeper reason why we are having a hard time testing our applications: the way that Google has written the Android SDK and the way that Google encourages us to structure our applications makes testing difficult and, in some cases, impossible.&lt;/p&gt;
 
 &lt;p&gt;I realize that this is a bold claim, so I will spend the entire post trying to establish it. In the following post, I’ll try to say more about how the “standard” way of developing Android applications encourages us to write code that is difficult/impossible to write sensible unit tests against. These posts are a part of a series in which I’m exploring the viability of enhancing the testability of Android applications by restructuring them so that application code does not directly depend on the Android SDK. Showing why the standard architecture for Android development makes testing difficult will both motivate and inform my alternative proposal for structuring Android applications, a proposal that I will outline in the fourth post of the series.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -295,6 +312,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       <guid>https://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/</guid>
       <description>Edit: Since I&amp;rsquo;ve written this, I&amp;rsquo;ve come to realize that making unit testable Android apps does not require us to remove compile-time dependencies on the Android SDK. I talk about this realization in the post that concludes this series.
 Even the best among us admit that they struggle with testing their Android apps. Jake Wharton has said explicitly that the Android platform has traditionally been very difficult to test.¹ In the inaugural episode of their (excellent) podcast, Don Felker and Kaushik Gopal have echoed similar sentiments.</description>
+      
     </item>
     
     <item>
@@ -305,6 +323,7 @@ Even the best among us admit that they struggle with testing their Android apps.
       <guid>https://www.philosophicalhacker.com/2015/04/06/dont-call-it-mvp/</guid>
       <description>Lately there&amp;rsquo;s been a lot of discussion about an alternative architectural pattern for Android development. The acronym that&amp;rsquo;s being used to denote this alternative pattern is &amp;rdquo;MVP.&amp;rdquo; I think that &amp;ldquo;MVP&amp;rdquo; is an inaccurate and confusing designation for this pattern. In this post, I will say why I think &amp;ldquo;MVP&amp;rdquo; is a bad name for the pattern, and I&amp;rsquo;ll suggest a different name for referring to it.
 What is &amp;rdquo;MVP?</description>
+      
     </item>
     
     <item>
@@ -315,6 +334,7 @@ What is &amp;rdquo;MVP?</description>
       <guid>https://www.philosophicalhacker.com/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/</guid>
       <description>Edit: Shortly after writing this, I realized that the solution that I present here isn&amp;rsquo;t very good. I&amp;rsquo;m leaving it here just in case it can serve as a building block for better solutions.
 Sometimes you don&amp;rsquo;t have control over the lifecycle of your Subscribers. In these cases, to avoid leaking your Subscriber, you have to unsubscribe from your Observable when you&amp;rsquo;re notified that your Subscriber is about to be destroyed.</description>
+      
     </item>
     
     <item>
@@ -324,6 +344,7 @@ Sometimes you don&amp;rsquo;t have control over the lifecycle of your Subscriber
       
       <guid>https://www.philosophicalhacker.com/2015/01/18/build-apps-smarter-with-archiva-and-gradle/</guid>
       <description>Dependency management in both Eclipse and Android Studio can be a serious pain. Now that we have gradle, there’s a better way to build android apps: we can configure our library projects to publish maven artifacts to a maven repository and we can configure our app projects to consume those artifacts. Once projects are setup to produce and consume maven artifacts, building an app with many dependencies becomes much more manageable.</description>
+      
     </item>
     
     <item>
@@ -335,6 +356,7 @@ Sometimes you don&amp;rsquo;t have control over the lifecycle of your Subscriber
       <description>Google&amp;rsquo;s Gradle Plugin user guide recommends a method for configuring your gradle files to build multiple projects. That method has some shortcomings. In this post, I will briefly explain Google&amp;rsquo;s recommended configuration, note its shortcomings, and recommend a different way to configure your gradle files to support multi-project setups in Android Studio.
 The Google Way 
 This picture illustrates how Google suggests we handle multi-project setups: our main &amp;ldquo;app&amp;rdquo; module is supposed to depend on library modules that reside within the project directory.</description>
+      
     </item>
     
   </channel>

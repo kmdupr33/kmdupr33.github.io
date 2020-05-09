@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>rxjava on Philosophical Hacker</title>
     <link>/tags/rxjava/</link>
@@ -19,6 +19,7 @@
       <guid>https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/</guid>
       <description>A few weeks ago, the folks working on Kotlin announced the 1.1 release. Kotlin&amp;rsquo;s 1.1 release has experiment support for coroutines. Here&amp;rsquo;s the elevator pitch for coroutines from their blog post announcing the release:
  Asynchronous programming is taking over the world, and the only thing that is holding us back is that non-blocking code adds considerable complexity to our systems. Kotlin now offers means to tame this complexity by making coroutines first-class citizens in the language through the single primitive: suspending functions.</description>
+      
     </item>
     
     <item>
@@ -32,6 +33,7 @@
 
 &lt;p&gt;-Reto Meier, Developing Android Apps Udacity Course&lt;/p&gt;
 &lt;/blockquote&gt;</description>
+      
     </item>
     
     <item>
@@ -45,6 +47,7 @@
 &lt;blockquote&gt;We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that’s interested. We still don’t know, however, what it means for a data stream to be “functionally transformed” nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I’ll have to tackle in the second part of this written version of my upcoming RxJava talk.&lt;/blockquote&gt;
 
 &lt;p&gt;In this post, I&amp;rsquo;ll fill in the missing gaps in our understanding of my initial statement of what RxJava allows us to do.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -55,6 +58,7 @@
       <guid>https://www.philosophicalhacker.com/2015/06/16/introduction-to-rxjava-for-android-the-talk/</guid>
       <description>Earlier today, I gave my Intro To RxJava talk. I&amp;rsquo;m not thrilled at how clear I was at explaining certain aspects of RxJava, but here&amp;rsquo;s the video nonetheless. My talk starts at 28:32. Hopefully, I&amp;rsquo;ll do a better job when I finish the written version of this talk.
 If you want to hear a hilarious take down of the design of the new Pizza Hut app, check out Ian&amp;rsquo;s talk that happens before mine.</description>
+      
     </item>
     
     <item>
@@ -66,6 +70,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       <description>&lt;p&gt;I&amp;rsquo;m taking a brief break from talking about testing. I&amp;rsquo;ll resume my discussion of how &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;I&amp;rsquo;m making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt; after I&amp;rsquo;ve posted the content from &lt;a href=&#34;http://www.meetup.com/University-Android/events/222048562/&#34;&gt;my upcoming talk on RxJava&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt; &lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg&#34; alt=&#34;rxjava_prezi_rxjava_def&#34; /&gt;&lt;/a&gt;&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -76,6 +81,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       <guid>https://www.philosophicalhacker.com/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/</guid>
       <description>Edit: Shortly after writing this, I realized that the solution that I present here isn&amp;rsquo;t very good. I&amp;rsquo;m leaving it here just in case it can serve as a building block for better solutions.
 Sometimes you don&amp;rsquo;t have control over the lifecycle of your Subscribers. In these cases, to avoid leaking your Subscriber, you have to unsubscribe from your Observable when you&amp;rsquo;re notified that your Subscriber is about to be destroyed.</description>
+      
     </item>
     
   </channel>

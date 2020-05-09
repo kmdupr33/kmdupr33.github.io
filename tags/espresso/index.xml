@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>espresso on Philosophical Hacker</title>
     <link>/tags/espresso/</link>
@@ -19,6 +19,7 @@
       <guid>https://www.philosophicalhacker.com/post/an-espresso-test-recorder-deep-dive/</guid>
       <description>I&amp;rsquo;ve been working on a unit test recorder for Android. After struggling to find a way to implement the unit test recorder,1 I decided to take a look at how Google implements the espresso test recorder. This post presents what I found when I dug into the source code of the espresso test recorder.
 Collecting User Interaction Info Before I took a look at the source for the espresso recorder, I half expected to find some fancy bytecode manipulation of the sort we see for the proguard or jacoco transformers.</description>
+      
     </item>
     
   </channel>

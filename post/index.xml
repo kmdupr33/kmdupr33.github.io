@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Posts on Philosophical Hacker</title>
     <link>/post/</link>
@@ -20,6 +20,7 @@
       <description>In my experience, most applications are a mess&amp;hellip;Changes are commonly made under urgent time pressure, which drives applications towards disorder&amp;hellip;Velocity gradually slows, and everyone comes to hate the application, their job, and their life.
 &amp;mdash;Sandi Metz, &amp;ldquo;The Half-Life of Code&amp;rdquo;
  Why Many of us work in codebases that are not easy to work with, codebases that we want to make better. The way that we typically choose what parts of the codebase get made better, however, is sub-optimal.</description>
+      
     </item>
     
     <item>
@@ -29,6 +30,7 @@
       
       <guid>https://www.philosophicalhacker.com/post/data-point-for-job-seeking-devs/</guid>
       <description>I wrapped up my job search recently, and I&amp;rsquo;m happy to say that I&amp;rsquo;ll be joining a YC-backed startup called &amp;ldquo;Heap.&amp;rdquo; I thought I&amp;rsquo;d share a little bit about my job search in case the information may benefit other job-seeking devs. I&amp;rsquo;ll go over the pipeline of places I applied to and the result of each application. I&amp;rsquo;ll also talk about things like salary, resume formatting, coding challenge prep, and interviewing.</description>
+      
     </item>
     
     <item>
@@ -40,6 +42,7 @@
       <description>I&amp;rsquo;m actually always suspicious when I&amp;rsquo;m writing up a pattern or a technique if I can&amp;rsquo;t talk about reasons when you shouldn&amp;rsquo;t use and trade-offs against it. If I can&amp;rsquo;t find arguments against it, then I&amp;rsquo;m worrying that I&amp;rsquo;m not really analyzing things properly.
 &amp;ndash;Martin Fowler, &amp;ldquo;Is TDD Dead?&amp;rdquo;, 35:00
  DI is useful. It&amp;rsquo;s great. It makes your code more flexible, testable, etc. Dagger? Also useful. Great. My favorite DI library.</description>
+      
     </item>
     
     <item>
@@ -51,6 +54,7 @@
       <description>Testing seems to be like going to gym. Everyone feels like &amp;ldquo;yeah. I should be testing. I should be going to the gym everyday.&amp;rdquo;
 Koushik Goupal, Fragmented, &amp;ldquo;Episode 13,&amp;rdquo; 12:01
  Remember those gimmicky fitness products that made you think you could &amp;ldquo;get fit&amp;rdquo; without actually going to the gym/dieting/etc? Because I live in Orlando and have seen the Carousel of Progress at the Magic Kingdom a bunch of times, the first example of this kind of gimmicky product that comes to mind is a thing called an &amp;ldquo;exercise belt.</description>
+      
     </item>
     
     <item>
@@ -61,6 +65,7 @@ Koushik Goupal, Fragmented, &amp;ldquo;Episode 13,&amp;rdquo; 12:01
       <guid>https://www.philosophicalhacker.com/post/gradient-descent-for-kotlin-programmers/</guid>
       <description>Introduction Gradient descent is an algorithm that&amp;rsquo;s used to solve supervised learning and deep learning problems. Here I&amp;rsquo;m going to try to give you an idea of why the algorithm works and how you&amp;rsquo;d implement it in Kotlin. I&amp;rsquo;ll also show the algorithm working with a simple kaggle dataset involving video game sales and ratings.
 Everything I cover here is covered in Andrew Ng&amp;rsquo;s excellent Coursera machine learning course with the exception of the Kotlin implementation of gradient descent.</description>
+      
     </item>
     
     <item>
@@ -71,6 +76,7 @@ Everything I cover here is covered in Andrew Ng&amp;rsquo;s excellent Coursera m
       <guid>https://www.philosophicalhacker.com/post/dagger-2-years-later/</guid>
       <description>&amp;hellip;in software, feedback cycles tend to be on the order of months, if not years&amp;hellip;It’s during the full lifetime of a project that a developer gains experience writing code, source controlling it, modifying it, testing it, and living with previous design and architecture decisions during maintenance phases. With everything I’ve just described, a developer is lucky to have a first try of less than six months&amp;hellip;
 &amp;ndash;Erik Dietrich, &amp;ldquo;How Developers Stop Learning: Rise of the Expert Beginner&amp;rdquo;</description>
+      
     </item>
     
     <item>
@@ -84,6 +90,7 @@ Eric Steven Raymond, The Art of Unix Programming
   Programs must be written for people to read, and only incidentally for machines to execute.
 Abelson et. al., Structure and Interpretation of Computer Programs
  I just wrote this little bash-ism the other day for removing all attachments from a jira ticket:</description>
+      
     </item>
     
     <item>
@@ -93,6 +100,7 @@ Abelson et. al., Structure and Interpretation of Computer Programs
       
       <guid>https://www.philosophicalhacker.com/post/roadmap-presentation-tips/</guid>
       <description>&lt;p&gt;I recently delivered a presentation of our (outcome-based) roadmap. Several people approached me after the presentation to tell me that they found it useful and informative, so I thought I’d jot down some of the things that I think contributed to the warm reception of the presentation. Hopefully, these tips will come in handy both for others and for my future self.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -103,6 +111,7 @@ Abelson et. al., Structure and Interpretation of Computer Programs
       <guid>https://www.philosophicalhacker.com/post/jira-cli-fu/</guid>
       <description>in all but small teams I typically recommend separate people for the separate roles [of product managment and project management]. But in every case I believe that developing strong project management skills is a big advantage for product managers – at the least your product will get to market faster, and it could make the difference between getting your product shipped at all.
 &amp;ndash;Marty Cagan, &amp;ldquo;Ebay&amp;rsquo;s Secret Weapon&amp;rdquo;</description>
+      
     </item>
     
     <item>
@@ -112,6 +121,7 @@ Abelson et. al., Structure and Interpretation of Computer Programs
       
       <guid>https://www.philosophicalhacker.com/why-pms-should-study-statistics/</guid>
       <description>Marty Cagan &amp;ndash; seasoned product manager and author of a book and blog that makes practically every recommended reading list for new product managers &amp;ndash; says that there are two academic courses that “every product manager should take”: finance and computer science. In this interactive essay, I suggest we add another course to this list: statistics. A strong understanding of statistics facilitates three key responsibilities of product managment: understanding analytics, implementing cooprorate change, and making accurate forecasts.</description>
+      
     </item>
     
     <item>
@@ -122,6 +132,7 @@ Abelson et. al., Structure and Interpretation of Computer Programs
       <guid>https://www.philosophicalhacker.com/post/lost-local-optima/</guid>
       <description>I recently finished the book Hooked: How to build habit-forming products
 I challenged the author&amp;rsquo;s view on the moral permissibility of creating habit forming products here on medium (It was picked up by product coalition and selected by medium curators 🙌) and again as an interactive essay using idyll.</description>
+      
     </item>
     
     <item>
@@ -133,6 +144,7 @@ I challenged the author&amp;rsquo;s view on the moral permissibility of creating
       <description>This is my first crack at making a forecast as a part of what I&amp;rsquo;m calling the &amp;ldquo;Cassandra Project.&amp;rdquo; The gist of the motivation for the project is that product management and entrepreneurship requires smart bets on the future and that you can&amp;rsquo;t get good at making smart bets on the future without practice. You can read more here.
 The forecast I&amp;rsquo;m making relates to this question:
  Will the percent change in iPhone revenue growth from Q1 2018 to Q1 2019 be greater than the percent change in revenue growth from Q4 2017 to Q4 2018?</description>
+      
     </item>
     
     <item>
@@ -143,6 +155,7 @@ The forecast I&amp;rsquo;m making relates to this question:
       <guid>https://www.philosophicalhacker.com/post/cassandra-project/</guid>
       <description>Product managers have to make bets on the future. If you think for a few seconds about the types of risk that product managers are charged with managing, this becomes obvious. Product managers &amp;mdash; as Marty Cagan points out &amp;mdash; must manage risk around:
   value risk (whether customers will buy it or users will choose to use it) usability risk (whether users can figure out how to use it) feasibility risk (whether our engineers can build what we need with the time, skills and technology we have) business viability risk (whether this solution also works for the various aspects of our business)   All of these require some betting on the future, but managing value risk and business viability risk in particular require forecasting that can be especially difficult to do.</description>
+      
     </item>
     
     <item>
@@ -154,6 +167,7 @@ The forecast I&amp;rsquo;m making relates to this question:
       <description>If I had to pick a few words to describe Jessica Powell’s The Big Disruption they’d be the words “hilarious heresy.”
 &amp;ldquo;Hilarious&amp;rdquo; because the book is surprisingly funny. My wife actually kept commenting on how much I was chuckling as I read the book.
 &amp;ldquo;Heresy&amp;rdquo; because it’s a good way of capturing what Powell is doing in the book with all of her criticisms: she’s challenging the silicon valley gospel that tech companies are here to save the world, and given all of the attention and good will towards those companies, “heresy” feels like an appropriate label for this message.</description>
+      
     </item>
     
     <item>
@@ -164,6 +178,7 @@ The forecast I&amp;rsquo;m making relates to this question:
       <guid>https://www.philosophicalhacker.com/post/okr-problems/</guid>
       <description>In many ways, OKRs are a neat way of structuring goals for a company. According to Marty Cagan, product managers should be especially interested in OKRs as a goal setting framework since they are a better way of tracking product work than a &amp;ldquo;product roadmap.&amp;rdquo; I agree with Cagan. OKRs are often better than typical product road maps.
 However, there’s an aspect of OKRs that I think is morally and psychologically problematic: the idea that OKRs should be impossible to entirely achieve.</description>
+      
     </item>
     
     <item>
@@ -174,6 +189,7 @@ However, there’s an aspect of OKRs that I think is morally and psychologically
       <guid>https://www.philosophicalhacker.com/post/how-lean-became-profound/</guid>
       <description>There are certain books that are required reading for product managers. Eric Reis&amp;rsquo; The Lean Startup and Marty Cagan&amp;rsquo;s Inspired both come to mind. They&amp;rsquo;re great books with lots of useful techniques and important ideas.
 Lately, however, the fact that these books are popular and useful has struck me as rather odd. If you take a step back from these books &amp;mdash; and the many books, articles, talks, podcasts, etc.</description>
+      
     </item>
     
     <item>
@@ -185,6 +201,7 @@ Lately, however, the fact that these books are popular and useful has struck me 
       <description>If you&amp;rsquo;ve ever looked at analytics for software products, you&amp;rsquo;ve probably run across a graph that looks like this:
 Graphs like this one depict cohort analyses.1 This particular graph is from Google Analytics. Apple also has one for app analytics. So does Fabric.2
 Cohort analyses can be very useful. For example, Eric Reis, in The Lean Startup, recounts how cohort analysis helped his startup realize that their efforts at improving their product weren&amp;rsquo;t working:</description>
+      
     </item>
     
     <item>
@@ -195,6 +212,7 @@ Cohort analyses can be very useful. For example, Eric Reis, in The Lean Startup,
       <guid>https://www.philosophicalhacker.com/post/one-year-meditating/</guid>
       <description>This past November 26th marked my one year anniversary of the day I started meditating. I wanted to jot down some miscellaneous thoughts about the journey that I haven&amp;rsquo;t already covered in my posts about meditation, startups, and leadership or my post about meditation, addiction, and smart phones. Here I go.
 Improvement isn&amp;rsquo;t Perfectly Linear So it turns out that in spite of my goal to meditate every day this past year, I only actually managed to meditate ~ 273 out of 365 days (almost 75%).</description>
+      
     </item>
     
     <item>
@@ -205,6 +223,7 @@ Improvement isn&amp;rsquo;t Perfectly Linear So it turns out that in spite of my
       <guid>https://www.philosophicalhacker.com/post/programmer-passion-worse/</guid>
       <description>&amp;ldquo;Good programmers are passionate about what they do&amp;rdquo; is basically a platitude in our industry. 🙄 On the whole, this may be true, but lately I&amp;rsquo;ve been interested in how our passion for programming might get in the way of us doing well for the companies we work for and may even lead to us being worse at programming specifically. 🤔
 Here are some ways I think this passion can make us worse at what we do:</description>
+      
     </item>
     
     <item>
@@ -215,6 +234,7 @@ Here are some ways I think this passion can make us worse at what we do:</descri
       <guid>https://www.philosophicalhacker.com/post/business-and-cartesian-demon/</guid>
       <description>A few hundred years ago, Renè Descartes, the fella who brought us the Cartesian coordinate system 📉, isolated himself for a while to figure out (among other things) whether we can know anything for certain. The result of his retreat was his Meditations on First Philosophy, one of the most important philosophical texts of the modern era and one of my personal favorites.
 Early on in his Meditations, he decides that it&amp;rsquo;d be useful to engage in a thought experiment.</description>
+      
     </item>
     
     <item>
@@ -226,6 +246,7 @@ Early on in his Meditations, he decides that it&amp;rsquo;d be useful to engage 
       <description>A few months ago, I stumbled upon something I found hard to believe:
 Some people continue smoking cigarettes because they are unaware of how bad it tastes.
 Although it was counter-intuitive, I had pretty good reason to believe it, as it was suggested by Judson Brewer, a psychiatrist who developed a mindfulness-based smoking cessation program that&amp;rsquo;s supposedly superior to the standard one developed by the American Lung Association. 😮</description>
+      
     </item>
     
     <item>
@@ -236,6 +257,7 @@ Although it was counter-intuitive, I had pretty good reason to believe it, as it
       <guid>https://www.philosophicalhacker.com/post/teaching-programming/</guid>
       <description>I almost gave up on becoming a programmer. I took two years of college-level programming in high school and I didn&amp;rsquo;t particularly care for it. Although I did fairly well in those classes, at the time, I probably had something like the following thoughts about programming:
  I&amp;rsquo;ve given this a fair shake. I&amp;rsquo;ve taken two years of classes, and I&amp;rsquo;ve decided that programming is some tedious bullshit 💩. I need to find something else.</description>
+      
     </item>
     
     <item>
@@ -246,6 +268,7 @@ Although it was counter-intuitive, I had pretty good reason to believe it, as it
       <guid>https://www.philosophicalhacker.com/post/uncle-bob-trump/</guid>
       <description>Edit: James Shore, the guy who attempted to shame Uncle Bob on Twitter, has fairly pointed out that I&amp;rsquo;ve omitted some of the context that makes his shaming appear more reasonable. I&amp;rsquo;ve edited this post to include more of that context.
  Holy crap! In case you missed it, Uncle Bob got excoriated on Twitter earlier this week for a comment he made about the media&amp;rsquo;s coverage of the separation of immigrant children from their parents.</description>
+      
     </item>
     
     <item>
@@ -256,6 +279,7 @@ Although it was counter-intuitive, I had pretty good reason to believe it, as it
       <guid>https://www.philosophicalhacker.com/post/internet-trends-2018/</guid>
       <description>I&amp;rsquo;m a big fan of KPCB&amp;rsquo;s internet trends report, and I&amp;rsquo;ve been following their reports for the last few years. This year, I&amp;rsquo;ve decided to clip and comment on what I think are some notable trends they&amp;rsquo;ve captured for 2018. Here are 2 trends that really stood out to me from this year&amp;rsquo;s report, along with some commentary.
 1. The End of Mobile&amp;rsquo;s Golden Era  Mobile&amp;rsquo;s growth has been slowing for years and others have already noted the effects of this.</description>
+      
     </item>
     
     <item>
@@ -267,6 +291,7 @@ Although it was counter-intuitive, I had pretty good reason to believe it, as it
       <description>Here&amp;rsquo;s a written version of my recent React Orlando talk:
 I want to talk about some patterns, principles, and tools for testing react native applications. I&amp;rsquo;m going to focus a lot on the &amp;ldquo;patterns and principles&amp;rdquo; part of the testing equation because, as we all know, the improper use of tools can actually be worse than not having those tools at all.
 Michael Scott&amp;rsquo;s misuse of the fork-lift in Daryl&amp;rsquo;s warehouse came to mind while I was pondering this truth, and it turns out there&amp;rsquo;s a gif of this exact moment in the show.</description>
+      
     </item>
     
     <item>
@@ -279,6 +304,7 @@ Michael Scott&amp;rsquo;s misuse of the fork-lift in Daryl&amp;rsquo;s warehouse
  Should new APIs created in 2018 be RESTful or be built using graphql or be something else entirely?
  While pondering and researching this question, I&amp;rsquo;ve stumbled upon some broader realizations like,
  Most web APIs and SPAs aren&amp;rsquo;t actually RESTful. 😨 In fact, I&amp;rsquo;ve never worked with a completely RESTful API. We&amp;rsquo;re reinventing the wheel and making our lives harder &amp;mdash; on the server and on the client &amp;mdash; by ignoring the standards around REST APIs 😞 The same force that explains our half-ass adoption of REST (i.</description>
+      
     </item>
     
     <item>
@@ -289,6 +315,7 @@ Michael Scott&amp;rsquo;s misuse of the fork-lift in Daryl&amp;rsquo;s warehouse
       <guid>https://www.philosophicalhacker.com/post/my-first-1000-minutes-meditating/</guid>
       <description>About a year and a half ago, I was sitting in my Manhattan studio apartment trying to write an html lexer in python. I was about half way through my batch at the Recurse Center, and I was frustrated with my lack of progress towards my learning goals and intimidated by all of the absurdly smart people around me.
 While writing the lexer, I got hung up on an odd piece of python syntax.</description>
+      
     </item>
     
     <item>
@@ -300,6 +327,7 @@ While writing the lexer, I got hung up on an odd piece of python syntax.</descri
       <description>Recently, I&amp;rsquo;ve picked up Psychologically Healthy Organizations from the APA to learn more about, among other things, the importance of recognition in the workplace. Here I want to share some highlights from the APA&amp;rsquo;s work on employee recognition in the workplace.
 Recognition Meaningfully Shapes Performance The authors of Peopleware make some strong claims about team composition and the extent to which people can change in the workplace:
  For most efforts, success or failure is in the cards from the moment the team is formed and the initial directions set out&amp;hellip;managers are unlikely to change their people in any meaningful way.</description>
+      
     </item>
     
     <item>
@@ -313,6 +341,7 @@ Family: (incredulously) Really?
 Me: Yeah. The people are smart, passionate, and the company seems promising.
 Family: (sarcastically) Ok. So you&amp;rsquo;ll stick around for 6 months then?
  Two Wednesdays ago marked my 1 year anniversary at UniKey, and as the above dialog suggests, this is pretty weird for me. I&amp;rsquo;ve never been at a job for a year before, so this 1st ever anniversary in my career has given me the urge to reflect a bit on a couple of questions:</description>
+      
     </item>
     
     <item>
@@ -324,6 +353,7 @@ Family: (sarcastically) Ok. So you&amp;rsquo;ll stick around for 6 months then?
       <description>If you saw a toilet seat in a movie theater, you&amp;rsquo;d probably think to yourself, &amp;ldquo;Wait a minute. You don&amp;rsquo;t use that in here.
 Many of us have a similar reaction when we think of using react native at an IoT startup:
  Wait a minute. React Native is fine for light-weight apps, but IoT companies need apps that make heavy use of the phone&amp;rsquo;s hardware, so don&amp;rsquo;t use it in this situation.</description>
+      
     </item>
     
     <item>
@@ -334,6 +364,7 @@ Many of us have a similar reaction when we think of using react native at an IoT
       <guid>https://www.philosophicalhacker.com/post/how-to-abuse-kotlin-extension-functions/</guid>
       <description>I&amp;rsquo;ve got a &amp;ldquo;sweet tooth,&amp;rdquo; which, in my case, is just a euphemism for me saying that I&amp;rsquo;m addicted to sugar. I&amp;rsquo;m young now, but I know that this addiction won&amp;rsquo;t end well once my metabolism slows down, so I try go to the gym.
 Unfortunately, when I leave the gym, I often think to myself, &amp;ldquo;I just worked out, so I can snag that Oreo McFlurry I&amp;rsquo;ve been craving all day.</description>
+      
     </item>
     
     <item>
@@ -345,6 +376,7 @@ Unfortunately, when I leave the gym, I often think to myself, &amp;ldquo;I just 
       <description>A code smell is a surface indication that usually corresponds to a deeper problem in the system&amp;hellip;smells don&amp;rsquo;t always indicate a problem&amp;hellip;You have to look deeper to see if there is an underlying problem there.
 &amp;ndash;Martin Fowler
  Some people don&amp;rsquo;t think Dagger is very useful. I&amp;rsquo;m a bit suspicious of these people. An application that doesn&amp;rsquo;t need Dagger smells. It suggests that there might be something wrong with the application&amp;rsquo;s architecture.</description>
+      
     </item>
     
     <item>
@@ -356,6 +388,7 @@ Unfortunately, when I leave the gym, I often think to myself, &amp;ldquo;I just 
       <description>Some tests are fast. You can run 1000s of them in seconds. These are the tests that are the heart and soul of TDD, so you run them every chance you get.
 There are other tests that aren&amp;rsquo;t so fast. Because they&amp;rsquo;re slow, you don&amp;rsquo;t want to run them often. You&amp;rsquo;ve got better things to do than to sit and wait for test results to come through.
 Unfortunately, the less you run your slow tests, the less valuable they are.</description>
+      
     </item>
     
     <item>
@@ -367,6 +400,7 @@ Unfortunately, the less you run your slow tests, the less valuable they are.</de
       <description>Imagine that you&amp;rsquo;ve never run a single mile in your life. You know that exercising is good for your health, so you decide that you&amp;rsquo;re going to take up running. Strangely, however, you also decide that you&amp;rsquo;re going to begin your journey towards physical fitness by running a marathon tomorrow.
 That&amp;rsquo;s obviously a bad idea.
 Less obviously, deciding to go from no experience with testing to writing tests for an already existing Android app is also a bad idea.</description>
+      
     </item>
     
     <item>
@@ -377,6 +411,7 @@ Less obviously, deciding to go from no experience with testing to writing tests 
       <guid>https://www.philosophicalhacker.com/post/test-driving-away-coupling-in-activities/</guid>
       <description>Activitys and Fragments, perhaps by some strange historical accidents, have been seen as the optimal building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&amp;rsquo;s call this idea &amp;ndash; the idea that Activitys and Fragments are the best building blocks for our apps &amp;ndash; &amp;ldquo;android-centric&amp;rdquo; architecture.
 This series of posts is about the connection between the testability of android-centric architecture and the other problems that are now leading Android developers to reject it; it&amp;rsquo;s about how our unit tests are trying to tell us that Activitys and Fragments &amp;ndash; like the cracking bricks in the above image &amp;ndash; don&amp;rsquo;t make the best building blocks for our apps because they tempt us to write code with tight coupling and low cohesion.</description>
+      
     </item>
     
     <item>
@@ -388,6 +423,7 @@ This series of posts is about the connection between the testability of android-
       <description>We as engineers somewhere have a level somewhere where everything beneath that is a black box&amp;hellip;
 Jake Wharton, Fragmented Episode 7, 1:12:00
  For a while now, anything security or crypto related on Android has been a black box for me. For example, when I read the docs on Android&amp;rsquo;s KeyStore class or hear about Android&amp;rsquo;s Fingerprint authentication functionality on Fragmented, I often feel like I&amp;rsquo;m just barely understanding what&amp;rsquo;s being said.</description>
+      
     </item>
     
     <item>
@@ -398,6 +434,7 @@ Jake Wharton, Fragmented Episode 7, 1:12:00
       <guid>https://www.philosophicalhacker.com/post/why-im-skeptical-about-kotlin-coroutines-for-android-development/</guid>
       <description>A few weeks ago, the folks working on Kotlin announced the 1.1 release. Kotlin&amp;rsquo;s 1.1 release has experiment support for coroutines. Here&amp;rsquo;s the elevator pitch for coroutines from their blog post announcing the release:
  Asynchronous programming is taking over the world, and the only thing that is holding us back is that non-blocking code adds considerable complexity to our systems. Kotlin now offers means to tame this complexity by making coroutines first-class citizens in the language through the single primitive: suspending functions.</description>
+      
     </item>
     
     <item>
@@ -408,6 +445,7 @@ Jake Wharton, Fragmented Episode 7, 1:12:00
       <guid>https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/</guid>
       <description>Activitys and Fragments, perhaps by some strange historical accidents, have been seen as the optimal building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&amp;rsquo;s call this idea &amp;ndash; the idea that Activitys and Fragments are the best building blocks for our apps &amp;ndash; &amp;ldquo;android-centric&amp;rdquo; architecture.
 This series of posts is about the connection between the testability of android-centric architecture and the other problems that are now leading Android developers to reject it; it&amp;rsquo;s about how our unit tests are trying to tell us that Activitys and Fragments don&amp;rsquo;t make the best building blocks for our apps because they force us to write code with tight coupling and low cohesion.</description>
+      
     </item>
     
     <item>
@@ -418,6 +456,7 @@ This series of posts is about the connection between the testability of android-
       <guid>https://www.philosophicalhacker.com/post/some-resources-for-learning-how-to-test-android-apps/</guid>
       <description>Someone recently asked me how I &amp;ldquo;know so much&amp;rdquo; about testing android apps. After disabusing them of the notion that I know a lot about testing, I said that I&amp;rsquo;d write up a blog post of some helpful resources I&amp;rsquo;ve found and send it to them. This is that blog post.
 The resources are divided into books, articles, talks, and podcasts. I&amp;rsquo;ve marked resources that I think are essential with a &amp;ldquo;*&amp;rdquo;.</description>
+      
     </item>
     
     <item>
@@ -428,6 +467,7 @@ The resources are divided into books, articles, talks, and podcasts. I&amp;rsquo
       <guid>https://www.philosophicalhacker.com/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt1/</guid>
       <description>Activitys and Fragments, perhaps by some strange historical accidents, have been seen as the optimal building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&amp;rsquo;s call this idea &amp;ndash; the idea that Activitys and Fragments are the best building blocks for our apps &amp;ndash; &amp;ldquo;android-centric&amp;rdquo; architecture.
 This series of posts is about the connection between the testability of android-centric architecture and the other problems that are now leading Android developers to reject it; it&amp;rsquo;s about how our unit tests are trying to tell us that Activitys and Fragments don&amp;rsquo;t make the best building blocks for our apps because they force us to write code with tight coupling and low cohesion.</description>
+      
     </item>
     
     <item>
@@ -441,6 +481,7 @@ This series of posts is about the connection between the testability of android-
 &amp;ndash;Friedrich Nietszche (probably)
  Godlessness in the context of OO-programming &amp;ndash; unlike godlessness in a broader context &amp;ndash; is uncontroversially a good thing. Some may want gods in school or gods in government, but &amp;ndash; all other things being equal &amp;ndash; no one really wants gods in their programs.
 In android development specifically, we have a god that we all know and love to hate: Context.</description>
+      
     </item>
     
     <item>
@@ -452,6 +493,7 @@ In android development specifically, we have a god that we all know and love to 
       <description>As a profession, we also tend to be abysmally ignorant of our own history.
 David West, Object Thinking
  Almost two years ago, I wrote a couple articles that attempted to answer the question, &amp;ldquo;Why is testing Android apps so hard?&amp;rdquo; In those posts, I suggested that the standard architecture of Android applications is what makes testing difficult. This explanation of the difficulty of testing android apps raises a deeper, more historical question: why did an architecture that makes testing difficult became the default way of building Android apps in the first place?</description>
+      
     </item>
     
     <item>
@@ -462,6 +504,7 @@ David West, Object Thinking
       <guid>https://www.philosophicalhacker.com/post/against-singletons-for-android-data-loading/</guid>
       <description>Imagine for a moment that there&amp;rsquo;s an annoying fly buzzing around your guests at a BBQ you&amp;rsquo;re hosting. You and your guests swat at it a few times, but no one manages to nail the sucker. You run into the house to grab a fly swatter, but you find that even if you wait for the fly to settle down somewhere, you can&amp;rsquo;t quite smash it.
 Frustrated and desperate, you decide to evacuate the party (and the state), get your hands on a nuke, and nuke the fly along with your backyard and neighborhood.</description>
+      
     </item>
     
     <item>
@@ -473,6 +516,7 @@ Frustrated and desperate, you decide to evacuate the party (and the state), get 
       <description>More than 1000 apps&amp;hellip;they have espresso tests for the first time using the test recorder&amp;hellip;espresso adoption has also grown since the introduction of [the espresso test recorder].
 Android Developers Backstage, Episode 37 Espresso Test Recorder, 31:10
   Record-playback tools are almost always a bad idea for any kind of automation, since they resist changeability and obstruct useful abstractions. They are only worth having as a tool to generate fragments of scripts which you can then edit as a proper programming language&amp;hellip;</description>
+      
     </item>
     
     <item>
@@ -482,6 +526,7 @@ Android Developers Backstage, Episode 37 Espresso Test Recorder, 31:10
       
       <guid>https://www.philosophicalhacker.com/post/exploiting-android-specific-seams-for-testing-and-flexibility/</guid>
       <description>As I pointed out throughout my series of posts on writing testable Android applications, the key to writing testable Android apps, is creating and exploiting seams. During these posts, I pointed out two types of seams that are available in any OO programming language and any programming environment. In this post, I want to highlight some Android-specific seams that we can leverage to make our applications more testable and flexible.</description>
+      
     </item>
     
     <item>
@@ -493,6 +538,7 @@ Android Developers Backstage, Episode 37 Espresso Test Recorder, 31:10
       <description>The programmer, like the poet, works only slightly removed from pure thought-stuff. He builds his castles in the air, from air, creating by exertion of the imagination. Few media of creation are so flexible, so easy to polish and rework, so readily capable of realizing grand conceptual structures&amp;hellip;
 Fred Brooks, The Mythical Man-Month
  Grand structures &amp;ndash; whether they are conceptual, programmatic, or physical &amp;ndash; require strong foundations. This is true in two senses.</description>
+      
     </item>
     
     <item>
@@ -503,6 +549,7 @@ Fred Brooks, The Mythical Man-Month
       <guid>https://www.philosophicalhacker.com/post/why-i-dont-use-roboletric/</guid>
       <description>The more that I learn about testing, the more suspicious of Robolectric I get. I&amp;rsquo;m honestly starting to think that many of the heros of unit testing (e.g., Kent Beck, Michael Feathers, Steve Freeman, and Nat Pryce) would be pretty suspicious of Robolectric. Here are my concerns:
  Robolectric is largely1 a set of mocks for a set of types we don&amp;rsquo;t own. Mocking types we don&amp;rsquo;t own is not recommended by the folks who invented mocks.</description>
+      
     </item>
     
     <item>
@@ -513,6 +560,7 @@ Fred Brooks, The Mythical Man-Month
       <guid>https://www.philosophicalhacker.com/post/what-should-we-unit-test/</guid>
       <description>When I go to work, I&amp;rsquo;m afraid of three things. I worry that
  the new feature I&amp;rsquo;m implementing won&amp;rsquo;t work as expected the code I&amp;rsquo;m tweaking will break functionality that used to work the application isn&amp;rsquo;t architected in a way that makes it easy for me to adapt it to ever-changing business requirements  Automated testing is supposed to help alleviate all three of these fears, but when we&amp;rsquo;re first getting started with automated testing, it can be difficult to know where to start.</description>
+      
     </item>
     
     <item>
@@ -522,6 +570,7 @@ Fred Brooks, The Mythical Man-Month
       
       <guid>https://www.philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/</guid>
       <description>Mocks are a pretty standard tool in our android developer tool belt. The extent to which we should use this tool for unit testing is a complicated and controversial issue.1 Within the Android community specifically, I think that a part of the controversy is due to confusion over the intended use of mocks. More specifically, some android developers seem intent on mocking types they don&amp;rsquo;t own and on verifying all interactions of a target class with a collaborator.</description>
+      
     </item>
     
     <item>
@@ -532,6 +581,7 @@ Fred Brooks, The Mythical Man-Month
       <guid>https://www.philosophicalhacker.com/post/build-variants-and-link-seams/</guid>
       <description>This post is just another installment in a series of posts that are a written version of my Florida dev fest talk. Last time, we talked about object seams and how they make our apps more testable. This time, we&amp;rsquo;ll talk about how link seams help you write more testable apps and how build variants are used to create link seams.
 What are link seams?  “[code] contains calls to code in other files.</description>
+      
     </item>
     
     <item>
@@ -543,6 +593,7 @@ What are link seams?  “[code] contains calls to code in other files.</descript
       <description>In my last post, a continuation of a written version of the talk I gave at Florida dev fest, I tried to give an answer to the question, &amp;ldquo;What makes apps testable?&amp;rdquo; The answer: seams. Seams make apps testable, and in this post, I want to talk about a particular kind of seam: object seams.
 The key insight behind object seams in this:
  The fundamental thing to recognize is that when we look at a call in an object-oriented program, it does not define which method will actually be executed.</description>
+      
     </item>
     
     <item>
@@ -553,6 +604,7 @@ The key insight behind object seams in this:
       <guid>https://www.philosophicalhacker.com/post/what-makes-android-apps-testable/</guid>
       <description>&lt;p&gt;&lt;img src=&#34;https://www.philosophicalhacker.com/images/ascending-and-descending-escher.jpg&#34; alt=&#34;&#34; /&gt;
 This post is a continuation of my attempt to reproduce &lt;a href=&#34;https://devfestflorida.org/schedule/day1?sessionId=113&#34;&gt;my recent DevFest talk&lt;/a&gt; in written form.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -564,6 +616,7 @@ This post is a continuation of my attempt to reproduce &lt;a href=&#34;https://d
       <description>This past weekend, I had the privilege of speaking about writing testable Android apps at Florida DevFest. This post is a written version of one of the major points I made in my presentation.
 Let&amp;rsquo;s start off with two descriptions of attitudes towards testing. The first comes from Kaushik Goupal (he&amp;rsquo;s describing an attitude, not endorsing it):
  Testing seems to be like going to gym. Everyone feels like &amp;ldquo;yeah.</description>
+      
     </item>
     
     <item>
@@ -573,6 +626,7 @@ Let&amp;rsquo;s start off with two descriptions of attitudes towards testing. Th
       
       <guid>https://www.philosophicalhacker.com/post/using-git-submodules-effectively/</guid>
       <description>I used to think git submodules were categorically evil. This was naive, as most choices in software development are about tradeoffs. A part of the reason I had this simplistic view was because of an article called &amp;ldquo;Why your Company Shouldn&amp;rsquo;t use Git Submodules.&amp;rdquo; I took a second look at this article recently and I read the docs on git submodules. What follows are some more nuanced thoughts on how and when git submodules can be used effectively.</description>
+      
     </item>
     
     <item>
@@ -583,6 +637,7 @@ Let&amp;rsquo;s start off with two descriptions of attitudes towards testing. Th
       <guid>https://www.philosophicalhacker.com/post/3-ways-of-getting-to-green/</guid>
       <description>A part of the TDD work flow is getting a failing test to pass as quickly as possible. This makes sense if we think about how TDD is supposed to help us take smaller steps when we&amp;rsquo;re writing programs. Beck goes over three ways of getting a test to pass quickly in the fist part of TDD By Example.
 The first method is to fake it. Just hard code whatever values you need to to get the tests to pass.</description>
+      
     </item>
     
     <item>
@@ -594,6 +649,7 @@ The first method is to fake it. Just hard code whatever values you need to to ge
       <description>Red, green, refactor. That&amp;rsquo;s the TDD flow. That much was obvious to me.
 However, refactoring is a pretty broad term. There are many reasons you may want to refactor code and as a result of this, I didn&amp;rsquo;t really understand what exactly was supposed to happen during the refactor step of the TDD loop until I finished the first part of Kent Beck&amp;rsquo;s TDD by Example.
 Actually, in the first description of TDD, Beck uses a more helpful description of the &amp;ldquo;refactor step.</description>
+      
     </item>
     
     <item>
@@ -604,6 +660,7 @@ Actually, in the first description of TDD, Beck uses a more helpful description 
       <guid>https://www.philosophicalhacker.com/post/tdd-and-startups/</guid>
       <description>Kent Beck introduces TDD by Example with a little story meant to show the business value of automated testing:
  Early one Friday, the boss came to Ward Cunningham to introduce him to Peter, a prospective customer for WyCash, the bond portfolio management system the company was selling. Peter said&amp;hellip;&amp;ldquo;I&amp;rsquo;m starting a new bond fund, and my strategy requires that I handle bonds in different currencies.” The boss turned to Ward, “Well, can we do it?</description>
+      
     </item>
     
     <item>
@@ -613,6 +670,7 @@ Actually, in the first description of TDD, Beck uses a more helpful description 
       
       <guid>https://www.philosophicalhacker.com/post/capital-intensive-mvps/</guid>
       <description>According to Eric Reis, MVPs allow us to test our business&amp;rsquo; most important &amp;ldquo;hypotheses.&amp;rdquo; This is supposed to help us &amp;ldquo;fail faster,&amp;rdquo; but I&amp;rsquo;m finding that there are real differences in how much effort we have to put into our MVPs before we can validate our business hypotheses. In other words, some MVPs are more capital intensive than others. This is a big deal because you often can&amp;rsquo;t get favorable investment terms until you&amp;rsquo;ve shown that you&amp;rsquo;ve got product-market fit.</description>
+      
     </item>
     
     <item>
@@ -624,6 +682,7 @@ Actually, in the first description of TDD, Beck uses a more helpful description 
       <description>If you&amp;rsquo;re going to be successful, Richard, you need to learn to be an asshole.
 Erlich Bachman, Silicon Valley
  For those of you who don&amp;rsquo;t know, I was recently accepted into Starter Studio, an Orlando-based incubator to work on University Android, a codeacademy-like program for learning Android development. Every Monday night, Starter Studio brings in successful founders to talk about things they&amp;rsquo;ve learned along the way to success.</description>
+      
     </item>
     
     <item>
@@ -633,6 +692,7 @@ Erlich Bachman, Silicon Valley
       
       <guid>https://www.philosophicalhacker.com/post/unit-testable-recycler-views/</guid>
       <description>&lt;p&gt;When building our Android apps, we can often wind up with a decent amount of code in our &lt;code&gt;RecyclerView.Adapter&lt;/code&gt;s that we want to test. In this article, I briefly suggest two ways of structuring our &lt;code&gt;RecyclerView&lt;/code&gt;-related classes so that we can accomplish this.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -646,6 +706,7 @@ Erlich Bachman, Silicon Valley
 
 &lt;p&gt;-Reto Meier, Developing Android Apps Udacity Course&lt;/p&gt;
 &lt;/blockquote&gt;</description>
+      
     </item>
     
     <item>
@@ -656,6 +717,7 @@ Erlich Bachman, Silicon Valley
       <guid>https://www.philosophicalhacker.com/post/an-espresso-test-recorder-deep-dive/</guid>
       <description>I&amp;rsquo;ve been working on a unit test recorder for Android. After struggling to find a way to implement the unit test recorder,1 I decided to take a look at how Google implements the espresso test recorder. This post presents what I found when I dug into the source code of the espresso test recorder.
 Collecting User Interaction Info Before I took a look at the source for the espresso recorder, I half expected to find some fancy bytecode manipulation of the sort we see for the proguard or jacoco transformers.</description>
+      
     </item>
     
     <item>
@@ -666,6 +728,7 @@ Collecting User Interaction Info Before I took a look at the source for the espr
       <guid>https://www.philosophicalhacker.com/post/why-dont-we-have-a-unit-test-recorder/</guid>
       <description>Last week, I introduced Vice, a proof of concept regression test generation library. Vice generates regression tests simply by exercising the code we want to test.
 This is neat, but there&amp;rsquo;s already something else out there that does something like this, and ultimately, Vice as it stands doesn&amp;rsquo;t answer a fundamental question I have about regression tests: if we can record functional UI tests using the espresso test recorder or apple&amp;rsquo;s test recorder, why don&amp;rsquo;t we have a unit test recorder?</description>
+      
     </item>
     
     <item>
@@ -675,6 +738,7 @@ This is neat, but there&amp;rsquo;s already something else out there that does s
       
       <guid>https://www.philosophicalhacker.com/post/vice-a-regression-test-generation-library/</guid>
       <description>Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&amp;hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&amp;hellip;Cover and Modify is a different way of making changes.</description>
+      
     </item>
     
     <item>
@@ -685,6 +749,7 @@ This is neat, but there&amp;rsquo;s already something else out there that does s
       <guid>https://www.philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/</guid>
       <description>In my last post, I argued that we should stop putting our app logic in Activitys and Fragments because it makes both unit testing and functional testing our apps more difficult. In this post, I&amp;rsquo;ll try to suggest a method of safely removing app logic from our Activitys and Fragments, drawing on a central idea discussed in Michael Feathers&amp;rsquo; Working Effectively with Legacy Code: characterization tests.
 In the first section, I briefly introduce the idea of characterization tests.</description>
+      
     </item>
     
     <item>
@@ -694,6 +759,7 @@ In the first section, I briefly introduce the idea of characterization tests.</d
       
       <guid>https://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/</guid>
       <description>A while back, I wrote a series of articles about why unit testing Android apps is so difficult and what we can do to make our apps more unit testable. The upshot of the those articles is that dependency injection makes it easier to unit test our Android apps and we can&amp;rsquo;t get proper dependency injection just by using Dagger (or any other DI framework for that matter) to inject dependencies into our Activitys (or Fragments).</description>
+      
     </item>
     
     <item>
@@ -703,6 +769,7 @@ In the first section, I briefly introduce the idea of characterization tests.</d
       
       <guid>https://www.philosophicalhacker.com/post/a-new-way-of-learning-android-development/</guid>
       <description>I&amp;rsquo;m working on a new way of learning android development. I call it &amp;ldquo;University Android.&amp;rdquo; The first lesson is available now. Check it out.</description>
+      
     </item>
     
     <item>
@@ -713,6 +780,7 @@ In the first section, I briefly introduce the idea of characterization tests.</d
       <guid>https://www.philosophicalhacker.com/post/testing-strategies-with-a-react-redux-architecture/</guid>
       <description>In my last post, I briefly introduced the principles behind React and Redux. I said that React is about making what gets rendered to the screen a function of some view-state object. I also said that Redux is about making updates to the screen a function of the current view-state object and an action describing a user&amp;rsquo;s interaction with the view.
 In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis testing.</description>
+      
     </item>
     
     <item>
@@ -724,6 +792,7 @@ In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis t
       <description>I think there&amp;rsquo;s a lot of value in seeing what else is happening, even if you&amp;rsquo;re not a master of one of those other languages. As long as you&amp;rsquo;re being exposed to it, you&amp;rsquo;re opening your mind up to different ways of approaching problems and solving problems and different techniques.
 Jake Wharton, Fragmented, Episode 6, 27:45-28:20
  React and Redux are libraries that have taken the web development world by storm.</description>
+      
     </item>
     
     <item>
@@ -734,6 +803,7 @@ Jake Wharton, Fragmented, Episode 6, 27:45-28:20
       <guid>https://www.philosophicalhacker.com/post/psa-dont-use-esprsso-idling-resources-like-this/</guid>
       <description>Roman Nurik: &amp;hellip;That&amp;rsquo;s actually one of the harder things with writing good sample code. People are going to be copying and pasting the heck out of it so you can&amp;rsquo;t take those shortcuts that you sometimes hopefully aren&amp;rsquo;t taking.
 Chet Haase: I always take the shortcuts. That&amp;rsquo;s one of the more interesting things that the developer relations group does in general&amp;hellip;we will put together tests and sample code for the features that we work but we really don&amp;rsquo;t have the time to dive in deeply and do it in a real context.</description>
+      
     </item>
     
     <item>
@@ -744,6 +814,7 @@ Chet Haase: I always take the shortcuts. That&amp;rsquo;s one of the more intere
       <guid>https://www.philosophicalhacker.com/post/process-vs-procedure-recursion/</guid>
       <description>Just because a procedure is recursive, doesn&amp;rsquo;t mean the process that it generates is recursive. A procedure is recursive when that procedure refers to itself in order to evaluate.
 (defn factorial [x] (letfn [(fact-iter [product counter max-count] (if (&amp;gt; counter max-count) product (fact-iter (* counter product) (inc counter) max-count)) )] (fact-iter 1 1 n)) )  fact-iter, in the above code, is a recursive procedure, but the process it generates is not recursive.</description>
+      
     </item>
     
     <item>
@@ -755,6 +826,7 @@ Chet Haase: I always take the shortcuts. That&amp;rsquo;s one of the more intere
       <description>Here&amp;rsquo;s my big take away from sicp section 1.1.8:
 Abstraction requires Scope and Bound Variables Procedures (or functions or methods) let us abstract our code. Abstraction is about dividing our program into identifiable tasks that can be reused in the construction of other (identifiable) tasks in our program, which can in turn be used to construct more complex identifiable tasks, etc.
 In order for procedures to enable us to abstract our code, parameter names of a procedure must only have meaning within body of that procedure.</description>
+      
     </item>
     
     <item>
@@ -765,6 +837,7 @@ In order for procedures to enable us to abstract our code, parameter names of a 
       <guid>https://www.philosophicalhacker.com/post/sicp-111-117/</guid>
       <description>Today was my first work day at the Recurse Center. Yesterday, I found out that there&amp;rsquo;s an SICP study group. I&amp;rsquo;ve been wanting to study SICP for a while now, so naturally I joined. What follows are my thoughts and key take-aways from sections 1.1.1-1.1.7.
 Declarative vs. Procedural Knowledge Abelson et al. open the book with a really interesting distinction between declarative and procedural knowledge. Moreover, they suggest that the most significant achievement of computer science is that it provides a way for us to study procedural knowledge.</description>
+      
     </item>
     
     <item>
@@ -775,6 +848,7 @@ Declarative vs. Procedural Knowledge Abelson et al. open the book with a really 
       <guid>https://www.philosophicalhacker.com/post/testing-package-implmentation-details-from-the-outside/</guid>
       <description>Sometimes you need to test a package&amp;rsquo;s implementation from outside of the package containing the implementation you&amp;rsquo;d like to test. This post briefly covers why this need arises and how we can meet that need. Much of the information here is already covered in Andrew Gerrand&amp;rsquo;s testing techniques talk, so if you&amp;rsquo;ve watched that, you&amp;rsquo;ll probably only think the last section of this post is interesting.
 Why? Like I just said, sometimes you need to test a package&amp;rsquo;s implementation from outside of the package containing the implementation you&amp;rsquo;d like to test.</description>
+      
     </item>
     
     <item>
@@ -784,6 +858,7 @@ Why? Like I just said, sometimes you need to test a package&amp;rsquo;s implemen
       
       <guid>https://www.philosophicalhacker.com/post/table-driven-tests-with-gomock/</guid>
       <description>Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&amp;rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.</description>
+      
     </item>
     
     <item>
@@ -794,6 +869,7 @@ Why? Like I just said, sometimes you need to test a package&amp;rsquo;s implemen
       <guid>https://www.philosophicalhacker.com/post/integration-tests-in-go/</guid>
       <description>Although Go has support for testing built in to its toolchain, certain kinds of testing can be a bit tricky. For example, it may not be immediately obvious how you would go about writing and running integration tests in go. This post contains info on how to write and run integration tests for your go code.
 Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague or ambiguous.</description>
+      
     </item>
     
     <item>
@@ -803,6 +879,7 @@ Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague
       
       <guid>https://www.philosophicalhacker.com/post/getting-started-with-gomock/</guid>
       <description>&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing&#34;&gt;my last post&lt;/a&gt;, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&amp;rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&amp;rsquo;s a brief tutorial on how to get started with gomock.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -828,6 +905,7 @@ Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague
 
 &lt;li&gt;&lt;p&gt;If we are clear about our terms, the argument against using mocking libraries is not very compelling.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;</description>
+      
     </item>
     
     <item>
@@ -837,6 +915,7 @@ Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague
       
       <guid>https://www.philosophicalhacker.com/2015/07/17/making-a-tdd-based-hackernews-client-for-android/</guid>
       <description>&lt;p&gt;I&amp;rsquo;m using TDD to write a HackerNews client for Android. This post (and the ones that will likely follow it) share a little bit about some of the techniques I used to follow a TDD-based work-flow for developing this application. It also discusses the architecture that arises when Android apps are built with testability in mind from the ground up.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -864,6 +943,7 @@ Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague
 
 
 &lt;p&gt;Instead, all I&amp;rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -883,6 +963,7 @@ Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague
 
 
 &lt;p&gt;If you&amp;rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&amp;rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&amp;rsquo;ve never been guilty of making the mistakes I demo in those items.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -892,6 +973,7 @@ Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague
       
       <guid>https://www.philosophicalhacker.com/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/</guid>
       <description>&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/&#34;&gt;my last post&lt;/a&gt;, I argued that there are two disadvantages to &lt;code&gt;Activities&lt;/code&gt; and Presenters. The first disadvantage is that they are often bloated classes. The second disadvantage is that these classes often have a circular dependency between themselves and their Views. Yesterday, Hannes Dorfmann made a comment on my post that was so thoughtful and excellent that I think its worth dedicating an entire post to responding to it.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -927,6 +1009,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&
 &lt;/ol&gt;
 
 &lt;p&gt;In this post, I will try to give some reasons why we might consider a new architecture for Android development in the first place.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -936,6 +1019,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&
       
       <guid>https://www.philosophicalhacker.com/2015/06/26/im-taking-a-brief-hiatus-from-blogging-here/</guid>
       <description>&amp;hellip;so that I can focus on ensuring that Droid Journal has a successful inaugural edition. I did, however, just post on Droid Journal&amp;rsquo;s blog.</description>
+      
     </item>
     
     <item>
@@ -955,6 +1039,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&
 &lt;/ol&gt;
 
 &lt;p&gt;I do think Swift is a hypocrite, but I don&amp;rsquo;t think that it really matters because neither Swift nor Sheldon has given us a good reason to think that artists are being wronged by companies like Apple and Firefly Entertainment. Let me try to convince you to see things my way.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -968,6 +1053,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&
 &lt;blockquote&gt;We now know what an asynchronous data stream is and we know that RxJava uses the Observer pattern to deliver these streams to everyone that’s interested. We still don’t know, however, what it means for a data stream to be “functionally transformed” nor do we know how RxJava allows us to represent anything as an asynchronous data stream that can be created and consumed on any thread. These are questions I’ll have to tackle in the second part of this written version of my upcoming RxJava talk.&lt;/blockquote&gt;
 
 &lt;p&gt;In this post, I&amp;rsquo;ll fill in the missing gaps in our understanding of my initial statement of what RxJava allows us to do.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -978,6 +1064,7 @@ Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&
       <guid>https://www.philosophicalhacker.com/2015/06/16/introduction-to-rxjava-for-android-the-talk/</guid>
       <description>Earlier today, I gave my Intro To RxJava talk. I&amp;rsquo;m not thrilled at how clear I was at explaining certain aspects of RxJava, but here&amp;rsquo;s the video nonetheless. My talk starts at 28:32. Hopefully, I&amp;rsquo;ll do a better job when I finish the written version of this talk.
 If you want to hear a hilarious take down of the design of the new Pizza Hut app, check out Ian&amp;rsquo;s talk that happens before mine.</description>
+      
     </item>
     
     <item>
@@ -989,6 +1076,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       <description>&lt;p&gt;I&amp;rsquo;m taking a brief break from talking about testing. I&amp;rsquo;ll resume my discussion of how &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;I&amp;rsquo;m making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt; after I&amp;rsquo;ve posted the content from &lt;a href=&#34;http://www.meetup.com/University-Android/events/222048562/&#34;&gt;my upcoming talk on RxJava&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt; &lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def.jpg&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/06/rxjava_prezi_rxjava_def-1024x791.jpg&#34; alt=&#34;rxjava_prezi_rxjava_def&#34; /&gt;&lt;/a&gt;&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -1002,6 +1090,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;h2 id=&#34;what-is-developer-golf&#34;&gt;What is Developer Golf?&lt;/h2&gt;
 
 &lt;p&gt;Developer golf is a fun way to measure developer performance. It turns our job into a game of producing the most lines of high quality (bug free) code.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -1015,6 +1104,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;&gt;&lt;img src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34; alt=&#34;IO Testing Talk-04&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;In this screenshot, the &amp;ldquo;Distribute,&amp;rdquo; &amp;ldquo;Android,&amp;rdquo; and &amp;ldquo;Games&amp;rdquo; tags are added to the view hierarchy based on the tags associated with the &amp;rdquo;Going global with Google Play&amp;rdquo; IO session. In this post, I&amp;rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the &lt;code&gt;SesisonDetailActivity&lt;/code&gt;&amp;rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards &lt;a href=&#34;http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/&#34;&gt;making Google&amp;rsquo;s IOSched app unit testable&lt;/a&gt;.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -1026,6 +1116,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       <description>&lt;p&gt;In my recent &lt;a href=&#34;http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;Against Android Unit Tests&lt;/a&gt; series, I discussed the difficulties of unit testing android applications and proposed a different way of building applications that would enhance their unit testability. My proposal in that series was really largely a rough sketch of what it would take to make parts of Google&amp;rsquo;s IOSched app unit testable.&lt;/p&gt;
 
 &lt;p&gt;More recently, I&amp;rsquo;ve started to fill in the details of that proposal by forking the IOSched repo and refactoring it to make it unit testable. In the next few posts, I&amp;rsquo;ll be discussing some of the challenges that arose when attempting to make the &lt;code&gt;SessionDetailActivity&lt;/code&gt; unit testable within the IOSched app. In this post, I want to provide a broad overview of the challenges I&amp;rsquo;ll be discussing.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -1047,6 +1138,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;/ul&gt;
 
 &lt;p&gt;Briefly, I&amp;rsquo;ll also mention some of the challenges of writing unit tests for Android.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -1066,6 +1158,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 
 &lt;li&gt;&lt;p&gt;Dependency Injection is really the main &amp;ldquo;active ingredient&amp;rdquo; that allows The Square Way enhance the unit testability of our applications.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;</description>
+      
     </item>
     
     <item>
@@ -1077,6 +1170,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       <description>&lt;p&gt;In &lt;a href=&#34;http://philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/&#34;&gt;my last post&lt;/a&gt;, I showed how we can apply The Square Way to UI app component classes. More specifically I showed how The Square Way would have us rewrite the &lt;code&gt;SessionDetailActivity&lt;/code&gt; so that we could unit test its &lt;code&gt;onStop()&lt;/code&gt; method. At the end of my last post, I said that I&amp;rsquo;d be spending this and the next post doing an overall assessment of The Square Way.&lt;/p&gt;
 
 &lt;p&gt;I actually won&amp;rsquo;t be doing that this post. I&amp;rsquo;ll be postponing the overall assessment of The Square Way until the next few posts. Instead, what I want to do in this post is simply present a few unit-testability guides. These cheatsheets summarize much of what&amp;rsquo;s been covered in the past few posts and provide you with simplified steps to follow if you are interested in enhancing your application&amp;rsquo;s unit-testability via The Square Way.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -1086,6 +1180,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       
       <guid>https://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/</guid>
       <description>&lt;p&gt;In &lt;a href=&#34;http://philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/&#34;&gt;my last post&lt;/a&gt;, I introduced the “The Square Way” of structuring our android code. I said that The Square Way is a generalization of the approach that Square used to make the logic within their &lt;code&gt;Fragment&lt;/code&gt;s unit testable. I also showed how The Square Way would have us rewrite the &lt;code&gt;SessionCalendarService&lt;/code&gt; within Google’s IOSched app so that we could unit test the business logic within it. As we’ll see in this post, The Square Way also makes it easier/possible for us to unit test UI app component business logic.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -1099,6 +1194,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;p&gt;In this post, I outline an alternative approach to structuring Android applications that will make it easier to unit test them. As I pointed out in &lt;a href=&#34;http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;the introduction to this series&lt;/a&gt;, the approach that I suggest is a generalization of the approach that Square uses to &lt;a href=&#34;https://corner.squareup.com/2014/10/advocating-against-android-fragments.html&#34;&gt;remove Fragments from their applications&lt;/a&gt;. Since this approach is inspired by the folks at Square, I will call it “the square way.”&lt;/p&gt;
 
 &lt;p&gt;The heart of the square way way is this: remove all business logic from app component classes (e.g., &lt;code&gt;Activity&lt;/code&gt;s, &lt;code&gt;Fragment&lt;/code&gt;s, &lt;code&gt;Service&lt;/code&gt;s) and place that logic into “business objects,” POJO objects whose dependencies are injected, android-specific implementations of android-agnostic interfaces. If we follow the square way of developing our apps, we will be in a better position to unit test them. In this post, I explain how the square way would have us refactor non-UI app components like the &lt;code&gt;SessionCalendarService&lt;/code&gt; I’ve been discussing for the past few posts.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -1116,6 +1212,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;p&gt;Before I do that, let me say again that showing that the difficulty of testing Android applications is caused by the standard structure of android apps is important for the overarching goal of this series of articles. This series is an attempt to argue that we should consider restructuring our applications so that they do not explicitly depend on the Android SDK and its an attempt to present a robust architecture that will enhance the testability of Android applications. You can read the introduction to this series &lt;a href=&#34;http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/&#34;&gt;here&lt;/a&gt;. With that said, I can move on to trying to demonstrate the central claim of this post.&lt;/p&gt;
 
 &lt;p&gt;There’s a standard way of developing android applications. Sample code and open source code alike both place an app’s business logic within Android app component classes, namely, Activities, Services, and Fragments. Going forward, I’m going to refer to this practice as “the standard way.” Here’s the central claim of this post: As long as we follow the “standard way”, we’re going to write code that’s either difficult or impossible to unit test. In other words, the untestable code that I pointed out in my last article is not a fluke. The standard way prevents us from unit testing key pieces of our applications.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -1145,6 +1242,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;p&gt;So, Android unit testing is hard. That much is clear. Why Android unit testing is so difficult, however, is less clear. Its true that a part of the difficulty with Android unit testing has to do with the nonsense that you have to overcome to get Roboletric started so that you can run your tests at a decent speed, but I think that there’s a deeper reason why we are having a hard time testing our applications: the way that Google has written the Android SDK and the way that Google encourages us to structure our applications makes testing difficult and, in some cases, impossible.&lt;/p&gt;
 
 &lt;p&gt;I realize that this is a bold claim, so I will spend the entire post trying to establish it. In the following post, I’ll try to say more about how the “standard” way of developing Android applications encourages us to write code that is difficult/impossible to write sensible unit tests against. These posts are a part of a series in which I’m exploring the viability of enhancing the testability of Android applications by restructuring them so that application code does not directly depend on the Android SDK. Showing why the standard architecture for Android development makes testing difficult will both motivate and inform my alternative proposal for structuring Android applications, a proposal that I will outline in the fourth post of the series.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -1156,6 +1254,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       <description>&lt;p&gt;Facebook has been catching a lot of heat in Europe lately. A &lt;a href=&#34;http://www.law.kuleuven.be/icri/en/news/item/facebooks-revised-policies-and-terms-v1-2.pdf&#34;&gt;61 page critical analysis of Facebook&amp;rsquo;s data use policy&lt;/a&gt; was recently produced by Katholieke Universiteit Leuven, Belgium&amp;rsquo;s designated privacy watchdog. The report claimed that Facebook&amp;rsquo;s Data Use Policy (DUP) was violating European privacy law, or, to put the claim more crudely (and less accurately), that Mark Zuckerberg is a douche-bag for creating Facebook.&lt;/p&gt;
 
 &lt;p&gt;In this post, I present an &lt;em&gt;imaginary&lt;/em&gt; (philosophical) dialog between Belgium and Mark Zuckerberg. &lt;em&gt;Imaginary&lt;/em&gt; Zuckerberg will try to fend off the specific criticisms lodged by Belgium. I&amp;rsquo;m hoping the dialog will kick off a discussion on whether imaginary Zuckerberg&amp;rsquo;s defense was successful and what other responses Zuckerberg might have that could be philosophically compelling. In other words, I want this post to kick off a discussion in which we&amp;rsquo;ll try to settle the question of whether Zuckerberg is a douche-bag.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -1166,6 +1265,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
       <guid>https://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/</guid>
       <description>Edit: Since I&amp;rsquo;ve written this, I&amp;rsquo;ve come to realize that making unit testable Android apps does not require us to remove compile-time dependencies on the Android SDK. I talk about this realization in the post that concludes this series.
 Even the best among us admit that they struggle with testing their Android apps. Jake Wharton has said explicitly that the Android platform has traditionally been very difficult to test.¹ In the inaugural episode of their (excellent) podcast, Don Felker and Kaushik Gopal have echoed similar sentiments.</description>
+      
     </item>
     
     <item>
@@ -1176,6 +1276,7 @@ Even the best among us admit that they struggle with testing their Android apps.
       <guid>https://www.philosophicalhacker.com/2015/04/06/dont-call-it-mvp/</guid>
       <description>Lately there&amp;rsquo;s been a lot of discussion about an alternative architectural pattern for Android development. The acronym that&amp;rsquo;s being used to denote this alternative pattern is &amp;rdquo;MVP.&amp;rdquo; I think that &amp;ldquo;MVP&amp;rdquo; is an inaccurate and confusing designation for this pattern. In this post, I will say why I think &amp;ldquo;MVP&amp;rdquo; is a bad name for the pattern, and I&amp;rsquo;ll suggest a different name for referring to it.
 What is &amp;rdquo;MVP?</description>
+      
     </item>
     
     <item>
@@ -1186,6 +1287,7 @@ What is &amp;rdquo;MVP?</description>
       <guid>https://www.philosophicalhacker.com/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/</guid>
       <description>Edit: Shortly after writing this, I realized that the solution that I present here isn&amp;rsquo;t very good. I&amp;rsquo;m leaving it here just in case it can serve as a building block for better solutions.
 Sometimes you don&amp;rsquo;t have control over the lifecycle of your Subscribers. In these cases, to avoid leaking your Subscriber, you have to unsubscribe from your Observable when you&amp;rsquo;re notified that your Subscriber is about to be destroyed.</description>
+      
     </item>
     
     <item>
@@ -1195,6 +1297,7 @@ Sometimes you don&amp;rsquo;t have control over the lifecycle of your Subscriber
       
       <guid>https://www.philosophicalhacker.com/2015/02/22/why-pirating-is-probably-wrong-java/</guid>
       <description> </description>
+      
     </item>
     
     <item>
@@ -1205,6 +1308,7 @@ Sometimes you don&amp;rsquo;t have control over the lifecycle of your Subscriber
       <guid>https://www.philosophicalhacker.com/2015/01/24/why-ayn-rands-psychology-is-probably-wrong/</guid>
       <description>Edit: Some have pointed out that I&amp;rsquo;ve misrepresented Ayn Rand&amp;rsquo;s position in this post. From what I can tell, they are right. Either way, I still think the argument presented here is interesting and accurate as long as we change the conclusion to &amp;rdquo;Psychological egoism is probably wrong (or trivial)&amp;rdquo;
 I’ve met a surprising number of people in my life who believe that no one is capable of altruism. These people believe that everyone always acts to further their own interests.</description>
+      
     </item>
     
     <item>
@@ -1214,6 +1318,7 @@ I’ve met a surprising number of people in my life who believe that no one is 
       
       <guid>https://www.philosophicalhacker.com/2015/01/18/build-apps-smarter-with-archiva-and-gradle/</guid>
       <description>Dependency management in both Eclipse and Android Studio can be a serious pain. Now that we have gradle, there’s a better way to build android apps: we can configure our library projects to publish maven artifacts to a maven repository and we can configure our app projects to consume those artifacts. Once projects are setup to produce and consume maven artifacts, building an app with many dependencies becomes much more manageable.</description>
+      
     </item>
     
     <item>
@@ -1225,6 +1330,7 @@ I’ve met a surprising number of people in my life who believe that no one is 
       <description>Google&amp;rsquo;s Gradle Plugin user guide recommends a method for configuring your gradle files to build multiple projects. That method has some shortcomings. In this post, I will briefly explain Google&amp;rsquo;s recommended configuration, note its shortcomings, and recommend a different way to configure your gradle files to support multi-project setups in Android Studio.
 The Google Way 
 This picture illustrates how Google suggests we handle multi-project setups: our main &amp;ldquo;app&amp;rdquo; module is supposed to depend on library modules that reside within the project directory.</description>
+      
     </item>
     
     <item>
@@ -1236,6 +1342,7 @@ This picture illustrates how Google suggests we handle multi-project setups: o
       <description>First, I want to thank you guys for reading, criticizing, and commenting on my post. Given that there&amp;rsquo;s so many other excellent things you could have been reading, I&amp;rsquo;m honored that you spent a little time on what I&amp;rsquo;ve written.
 Now, let&amp;rsquo;s respond to some comments:
 Credentials A couple of comments came up about my &amp;ldquo;credentials.&amp;rdquo; Here&amp;rsquo;s some info: I studied philosophy and religion as an undergrad at the University of Central Florida.</description>
+      
     </item>
     
     <item>
@@ -1249,6 +1356,7 @@ Credentials A couple of comments came up about my &amp;ldquo;credentials.&amp;rd
  This failure is the result of failing to search for useful knowledge.
  We can do philosophy better if we filter out thoughts that don’t meet a usefulness criterion.
   While I agree with a lot of what Graham says about philosophy in his essay, I think Graham is wrong on some of the more important points he makes.</description>
+      
     </item>
     
     <item>
@@ -1258,6 +1366,7 @@ Credentials A couple of comments came up about my &amp;ldquo;credentials.&amp;rd
       
       <guid>https://www.philosophicalhacker.com/2014/05/22/how-to-break-into-a-mobile-dev-career-in-10-months-or-less/</guid>
       <description>A little less than a year ago, I decided that the philosophy professor scam was too risky for my wife and I. Instead, I decided to pursue a career in app development (and maybe do a tech startup). About 10 months after that decision, I got two internships at two companies as an Android Developer.¹ Hopefully, one of these internships will turn in to a full-time gig (and I have some reason to think that this will happen).</description>
+      
     </item>
     
     <item>
@@ -1267,6 +1376,7 @@ Credentials A couple of comments came up about my &amp;ldquo;credentials.&amp;rd
       
       <guid>https://www.philosophicalhacker.com/2014/05/21/why-ill-probably-try-to-manipulate-you-2/</guid>
       <description>I became a hippie when I was a freshman in college. When I say I became a hippie, I don&amp;rsquo;t mean that I wore tie dye t-shirts all the time, smoked a lot of weed, and listened to &amp;ldquo;All you need is love&amp;rdquo; all day. I was a hippie even though I owned zero tie dye t-shirts, wasn&amp;rsquo;t cool enough to get invited to the weed parties, and had never heard that famous Beatles song that more conventional hippies love.</description>
+      
     </item>
     
     <item>
@@ -1276,6 +1386,7 @@ Credentials A couple of comments came up about my &amp;ldquo;credentials.&amp;rd
       
       <guid>https://www.philosophicalhacker.com/2014/04/24/should-the-idea-person-get-extra-equity/</guid>
       <description>As I mentioned in my last post, I have some ideas for a startup, and I&amp;rsquo;m excited to start working on them.¹ Unfortunately, doing a startup raises a lot of questions that I, as a former wannabe philosophy professor, haven&amp;rsquo;t really considered. Since its probably not a good idea to dive in to a venture that I don&amp;rsquo;t really understand, it seems like I should spend some time wrestling with what we might call &amp;ldquo;startup questions.</description>
+      
     </item>
     
     <item>
@@ -1287,6 +1398,7 @@ Credentials A couple of comments came up about my &amp;ldquo;credentials.&amp;rd
       <description>For the past 5 years of my life, I&amp;rsquo;ve dreamed of having a job where I would get paid to think about interesting and important ideas and to try to get young people to be so passionate about those ideas that they would want to fight anyone who disagrees with them.
 For the past 5 years, I hoped I was going to be a philosophy professor
 I say &amp;ldquo;hoped&amp;rdquo; because I&amp;rsquo;ve always realized that philosophy professors have a sweet gig and a scandalous job description.</description>
+      
     </item>
     
   </channel>

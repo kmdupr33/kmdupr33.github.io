@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>multiproject setups on Philosophical Hacker</title>
     <link>/tags/multiproject-setups/</link>
@@ -20,6 +20,7 @@
       <description>Google&amp;rsquo;s Gradle Plugin user guide recommends a method for configuring your gradle files to build multiple projects. That method has some shortcomings. In this post, I will briefly explain Google&amp;rsquo;s recommended configuration, note its shortcomings, and recommend a different way to configure your gradle files to support multi-project setups in Android Studio.
 The Google Way 
 This picture illustrates how Google suggests we handle multi-project setups: our main &amp;ldquo;app&amp;rdquo; module is supposed to depend on library modules that reside within the project directory.</description>
+      
     </item>
     
   </channel>

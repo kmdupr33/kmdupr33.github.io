@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>go on Philosophical Hacker</title>
     <link>/tags/go/</link>
@@ -19,6 +19,7 @@
       <guid>https://www.philosophicalhacker.com/post/testing-package-implmentation-details-from-the-outside/</guid>
       <description>Sometimes you need to test a package&amp;rsquo;s implementation from outside of the package containing the implementation you&amp;rsquo;d like to test. This post briefly covers why this need arises and how we can meet that need. Much of the information here is already covered in Andrew Gerrand&amp;rsquo;s testing techniques talk, so if you&amp;rsquo;ve watched that, you&amp;rsquo;ll probably only think the last section of this post is interesting.
 Why? Like I just said, sometimes you need to test a package&amp;rsquo;s implementation from outside of the package containing the implementation you&amp;rsquo;d like to test.</description>
+      
     </item>
     
     <item>
@@ -28,6 +29,7 @@ Why? Like I just said, sometimes you need to test a package&amp;rsquo;s implemen
       
       <guid>https://www.philosophicalhacker.com/post/table-driven-tests-with-gomock/</guid>
       <description>Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&amp;rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.</description>
+      
     </item>
     
     <item>
@@ -38,6 +40,7 @@ Why? Like I just said, sometimes you need to test a package&amp;rsquo;s implemen
       <guid>https://www.philosophicalhacker.com/post/integration-tests-in-go/</guid>
       <description>Although Go has support for testing built in to its toolchain, certain kinds of testing can be a bit tricky. For example, it may not be immediately obvious how you would go about writing and running integration tests in go. This post contains info on how to write and run integration tests for your go code.
 Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague or ambiguous.</description>
+      
     </item>
     
     <item>
@@ -47,6 +50,7 @@ Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague
       
       <guid>https://www.philosophicalhacker.com/post/getting-started-with-gomock/</guid>
       <description>&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing&#34;&gt;my last post&lt;/a&gt;, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&amp;rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&amp;rsquo;s a brief tutorial on how to get started with gomock.&lt;/p&gt;</description>
+      
     </item>
     
     <item>
@@ -72,6 +76,7 @@ Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague
 
 &lt;li&gt;&lt;p&gt;If we are clear about our terms, the argument against using mocking libraries is not very compelling.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;</description>
+      
     </item>
     
   </channel>

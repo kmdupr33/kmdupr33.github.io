@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>refactoring on Philosophical Hacker</title>
     <link>/tags/refactoring/</link>
@@ -20,6 +20,7 @@
       <description>In my experience, most applications are a mess&amp;hellip;Changes are commonly made under urgent time pressure, which drives applications towards disorder&amp;hellip;Velocity gradually slows, and everyone comes to hate the application, their job, and their life.
 &amp;mdash;Sandi Metz, &amp;ldquo;The Half-Life of Code&amp;rdquo;
  Why Many of us work in codebases that are not easy to work with, codebases that we want to make better. The way that we typically choose what parts of the codebase get made better, however, is sub-optimal.</description>
+      
     </item>
     
     <item>
@@ -30,6 +31,7 @@
       <guid>https://www.philosophicalhacker.com/post/how-to-safely-move-logic-out-of-activities/</guid>
       <description>In my last post, I argued that we should stop putting our app logic in Activitys and Fragments because it makes both unit testing and functional testing our apps more difficult. In this post, I&amp;rsquo;ll try to suggest a method of safely removing app logic from our Activitys and Fragments, drawing on a central idea discussed in Michael Feathers&amp;rsquo; Working Effectively with Legacy Code: characterization tests.
 In the first section, I briefly introduce the idea of characterization tests.</description>
+      
     </item>
     
   </channel>
