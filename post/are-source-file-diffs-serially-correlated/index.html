@@ -263,6 +263,10 @@ acf_matrix <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">
 
 <p>I&rsquo;ve only looked at one repo here, and it&rsquo;s a library project. Libraries may have different editing patterns than applications. I would expect edits to be more serially correlated in libraries as compared to applications, but that could be completely wrong. I&rsquo;d rather make the source code I wrote for this analysis more readable and reusable so that people can just run the analysis on their repo instead of trying to make a more convincing general claim about editing patterns of different types of projects. If it turns out there are project types with strongly serially correlated edits, great! The campground rule will serve those projects very well.</p>
 
+<h4 id="counting-diff-sizes-vs-counting-whether-a-file-is-edited-at-all">Counting diff sizes vs. counting whether a file is edited at all</h4>
+
+<p>I&rsquo;ve opted to count diff sizes here, which could make the autocorrelation look worse than if I simply counted whether a file was edited. In the case of the react repo, the median monthly serial correlation is if we ignore diff sizes is the same, but there is a lot less variability in the data with this way of counting (267 outliers vs 558). In this particular case, there isn&rsquo;t much of a difference between the counting methods, and in general, it&rsquo;s not clear that one method of counting is strictly better. If we only count whether a file is edited, we&rsquo;re losing some information about how big the diff is and that does seem to matter in determining whether a file will be edited in the future.</p>
+
 <h3 id="objections">Objections</h3>
 
 <h4 id="what-about-the-benefit-of-refactoring-on-future-reading-of-files">What about the benefit of refactoring on future reading of files?</h4>
