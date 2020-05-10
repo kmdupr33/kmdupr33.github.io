@@ -30,7 +30,7 @@
 
 <p>Here&rsquo;s another common attitude: we don&rsquo;t get enough time to refactor.<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
 
-<p>These attitudes are related: the above camping rule can lead to sub-optimal decisions about what code gets refactored. Those sub-optimal decisions make us slower at building software than we could be, which means &mdash; among other things &mdash; that we have less time to refactor.<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
+<p>These attitudes are related: the above camping rule can lead to sub-optimal decisions about what code gets refactored. Those sub-optimal decisions can make us slower at building software than we could be, which means &mdash; among other things &mdash; that we have less time to refactor.<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
 
 <p>How often do these sub-optimal decisions happen? The answer depends on how close the link is between current edits and future ones. I&rsquo;ve already claimed that <a href="/post/calculing-expected-utility-for-a-refactor/">the link here is tenuous and suggested an alternative way of thinking about what code we should refactor</a>, but here I measure the link between diffs (diff = number of lines changed) at time t and diffs at time t + 1. In other words, this post is about the extent to which diffs are serially correlated across months and quarters.</p>
 
@@ -234,7 +234,13 @@ packages/react-dom/src/events/SyntheticWheelEvent.js : 0 43 0 0 0 0 0 0 18 0 0 0
 acf_matrix <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">t</span>(<span style="color:#66d9ef">array</span>(<span style="color:#66d9ef">unlist</span>(auto_correlations), dim<span style="color:#f92672">=</span><span style="color:#66d9ef">c</span>(<span style="color:#ae81ff">2</span>, <span style="color:#66d9ef">length</span>(auto_correlations))))</code></pre></div>
 <p>From here, we can calculate all the stats we covered in the results section with simple calls to <code>apply</code>.</p>
 
-<h2 id="conclusion-caveats-and-future-directions">Conclusion: Caveats and Future Directions</h2>
+<h2 id="caveats-objections-and-future-directions">Caveats, Objections, and Future Directions</h2>
+
+<p>This analysis is far from perfect. In this section, I address some limitations and objections to it. Along the way, I point to the future directions suggested by these caveats and objections.</p>
+
+<h3 id="caveats">Caveats</h3>
+
+<h4 id="refactoring-helps-us-now-too">Refactoring helps us now too</h4>
 
 <p>Refactoring&rsquo;s benefits aren&rsquo;t limited to making future changes easier. Sometimes, refactoring makes the current task easier. As Kent Beck says,</p>
 
@@ -242,15 +248,21 @@ acf_matrix <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
-<p>When refactoring is justified solely because it makes current work easier, we should refactor.</p>
+<p>When refactoring is justified solely because it makes current work easier, we should refactor. For example, sometimes refactoring helps us understand the code we&rsquo;re changing. The above analysis doesn&rsquo;t challenge the value of this kind of refactoring. In cases where we appeal to the future benefits of refactoring, the above data suggests<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup> we should be more cautious.</p>
 
-<p>In cases where we appeal to the future benefits of refactoring, the above data suggests<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup> we should be more cautious.</p>
+<h4 id="libraries-vs-apps-and-does-this-result-generalize">Libraries vs. Apps and does this result generalize?</h4>
 
-<p>One obvious objection here is that a refactored file may be beneficial even if no one is editing that file in the future. Even if a file is merely read in the future, the refactoring could be useful. Two things here. First, insofar as viewing files are correlated with editing them, this objection lacks force. Second, insofar as viewing files doesn&rsquo;t correlate with editing them, we have another interesting direction to pursue in figuring out how to make better refactoring decisions. Let&rsquo;s not speculate here about the relationship between reading and editing files. We&rsquo;ve built god knows how many event tracking tools for other purposes. Let&rsquo;s build a system that tracks how often source files are read. If someone built this and showed that file edits were serially correlated with file views, I&rsquo;d welcome that as a step forward.</p>
+<p>I&rsquo;ve only looked at one repo here, and it&rsquo;s a library project. Libraries may have different editing patterns than applications. I would expect edits to be more serially correlated in libraries as compared to applications, but that could be completely wrong. I&rsquo;d rather make the source code I wrote for this analysis more readable and reusable so that people can just run the analysis on their repo instead of trying to make a more convincing general claim about editing patterns of different types of projects. If it turns out there are project types with strongly serially correlated edits, great! The campground rule will serve those projects very well.</p>
 
-<p>Another obvious objection is to restate the motivation for the campground rule, which is the idea that <em>in theory</em>, if we always slightly improve code we happen to touch, we&rsquo;ll slowly work towards a state where the most touched files are the easiest to change. In my admittedly short career, I&rsquo;ve never seen or heard of a codebase evolving according to this theory. The problem here may be that, <em>in practice</em> suboptimal refactoring decisions don&rsquo;t allow teams to get enough momentum to refactor the parts of the codebase that matter most; they just wind up firefighting all the time. It&rsquo;s easy to see how this could happen: our decisions to refactor code now affect &mdash; among other things &mdash; what future refactoring opportunities we will have. One question worth exploring is how often theory diverges from practice in this regard.</p>
+<h3 id="objections">Objections</h3>
 
-<p>Setting aside the possibility of theory diverging from practice, we&rsquo;d be better off if we knew what refactorings were most useful ahead of time instead of hoping we&rsquo;ll eventually wind up with the most touched files being pristine. More mature industries don&rsquo;t rely on this sort of wishful thinking. Instead, they have sophisticated techniques for determining where to invest their time.</p>
+<h4 id="what-about-the-benefit-of-refactoring-on-future-reading-of-files">What about the benefit of refactoring on future reading of files?</h4>
+
+<p>One obvious objection here is that a refactored file may be beneficial even if no one is editing that file in the future. Even if a file is merely read in the future, the refactoring could be useful. Two things here. First, insofar as viewing files are correlated with editing them, this objection lacks force. Second, insofar as viewing files doesn&rsquo;t correlate with editing them, we have another interesting direction to pursue in figuring out how to make better refactoring decisions. Let&rsquo;s not speculate here about the relationship between reading and editing files. We&rsquo;ve built god knows how many event tracking tools for other purposes. Let&rsquo;s build a system that tracks how often source files are read. If someone built this and showed that file views were serially correlated, I&rsquo;d welcome that as a step forward.</p>
+
+<h4 id="won-t-we-eventually-wind-up-in-an-okay-codebase-if-we-consistently-follow-the-campground-rule">Won&rsquo;t we eventually wind up in an okay codebase if we consistently follow the campground rule?</h4>
+
+<p>Another obvious objection is to restate the motivation for the campground rule, which is the idea that <em>in theory</em>, if we always slightly improve code we happen to touch, we&rsquo;ll slowly work towards a state where the most touched files are the easiest to change. That may happen, but we&rsquo;d be better off if we knew what refactorings were most useful ahead of time instead of hoping we&rsquo;ll eventually wind up with the most touched files being pristine. More mature industries don&rsquo;t rely on this sort of wishful thinking. Instead, they have sophisticated techniques for determining where to invest their time.</p>
 
 <p>For example, Disney doesn&rsquo;t tell their technicians to do preventative maintenance for every ride, churro deep fryer, and AV system they happen to be touching. Instead, they make statistically informed guesses at when those machines will fail and balance the cost of doing preventative maintenance now against everything else they might do to streamline their operations. We should have tools and practices like this as software engineers. <a href="/post/calculing-expected-utility-for-a-refactor/">I&rsquo;ve already made some suggestions in this direction</a>, but I more interested in seeing more discussion about how we move in this direction than I am in pushing my particular solution.</p>
 
