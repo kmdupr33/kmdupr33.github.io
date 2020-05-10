@@ -69,47 +69,11 @@ packages/react-dom/src/client/ReactDOMHostConfig.js : 1061 101 113 737
 
 <p>The results are presented as box and whisker plots of these auto-correlations over 1686 files in the react repo. This enables us to easily see the medians of the correlations across all files and the spread of the auto-correlations for all files, and it&rsquo;ll help us avoid being mislead by outliers.</p>
 
-<p>The box plots and their values are calculated with the <code>boxplot</code> R function with it&rsquo;s default parameters.</p>
+<p>The histograms are plotted with the <code>hist</code> R function with it&rsquo;s default parameters.</p>
 
 <h3 id="monthly-serial-correlations">Monthly serial correlations</h3>
 
 <p><img src="./monthly.png" alt="monthly serial correlations" /></p>
-
-<table>
-<thead>
-<tr>
-<th>Plot Element</th>
-<th align="center">Correlation Value</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>Lower Whisker</td>
-<td align="center">-0.17594560</td>
-</tr>
-
-<tr>
-<td>Lower Quartile</td>
-<td align="center">-0.11864899</td>
-</tr>
-
-<tr>
-<td>Median</td>
-<td align="center">-0.09848485</td>
-</tr>
-
-<tr>
-<td>Upper Quartile</td>
-<td align="center">-0.07985543</td>
-</tr>
-
-<tr>
-<td>Upper Whisker</td>
-<td align="center">-0.02370654</td>
-</tr>
-</tbody>
-</table>
 
 <p>Two things I want to highlight here.</p>
 
@@ -131,42 +95,6 @@ packages/shared/ReactTypes.js : 0 114 90 20 7 10 5 12 19 3 64 7
 <h3 id="quarterly-serial-correlations">Quarterly serial correlations</h3>
 
 <p><img src="./quarterly.png" alt="quarterly serial correlations" /></p>
-
-<table>
-<thead>
-<tr>
-<th>Plot Element</th>
-<th align="center">Correlation Value</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>Lower Whisker</td>
-<td align="center">-0.49975466</td>
-</tr>
-
-<tr>
-<td>Lower Quartile</td>
-<td align="center">-0.25000000</td>
-</tr>
-
-<tr>
-<td>Median</td>
-<td align="center">-0.08333333</td>
-</tr>
-
-<tr>
-<td>Upper Quartile</td>
-<td align="center">-0.08333333</td>
-</tr>
-
-<tr>
-<td>Upper Whisker</td>
-<td align="center">0.16098329</td>
-</tr>
-</tbody>
-</table>
 
 <p>Here&rsquo;s the quarterly serial correlations. 117 outliers this time. <em>75%</em> of the files have a correlation value of -.083 or less.</p>
 
