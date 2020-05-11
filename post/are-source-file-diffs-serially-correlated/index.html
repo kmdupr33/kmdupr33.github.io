@@ -30,7 +30,7 @@
 
 <p>Here&rsquo;s another common attitude: we don&rsquo;t get enough time to refactor.<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
 
-<p>These attitudes are related: the above camping rule can lead to sub-optimal decisions about what code gets refactored. Those sub-optimal decisions can make us slower at building software than we could be, which means &mdash; among other things &mdash; that we have less time to refactor.<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
+<p>These attitudes are related: <em>insofar as we hope to make future work easier</em><sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>, the above camping rule can lead to sub-optimal decisions about what code gets refactored. Those sub-optimal decisions can make us slower at building software than we could be, which means &mdash; among other things &mdash; that we have less time to refactor.<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></p>
 
 <p>How often do these sub-optimal decisions happen? The answer depends on how close the link is between current edits and future ones. I&rsquo;ve already claimed that <a href="/post/calculing-expected-utility-for-a-refactor/">the link here is tenuous and suggested an alternative way of thinking about what code we should refactor</a>, but here I measure the link between diffs (diff = number of lines changed) at time t and diffs at time t + 1. In other words, this post is about the extent to which diffs are serially correlated across months and quarters.</p>
 
@@ -106,7 +106,7 @@ packages/shared/ReactTypes.js : 0 114 90 20 7 10 5 12 19 3 64 7
 
 <h3 id="bash-git">Bash + Git</h3>
 
-<p>First, I wrote a bash script that asked git for the diffs for every file in the repo over the last year and broke those diffs into monthly buckets. <code>git diff --numstat</code> and <code>git log --format=format:%H --before $before --after $after</code> were especially useful here. Here&rsquo;s are the highlights of the bash script<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>:</p>
+<p>First, I wrote a bash script that asked git for the diffs for every file in the repo over the last year and broke those diffs into monthly buckets. <code>git diff --numstat</code> and <code>git log --format=format:%H --before $before --after $after</code> were especially useful here. Here&rsquo;s are the highlights of the bash script<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
 </span><span style="color:#75715e"></span>
 months<span style="color:#f92672">=(</span><span style="color:#e6db74">&#39;May-2019:June-2019&#39;</span> <span style="color:#e6db74">&#39;June-2019:July-2019&#39;</span> <span style="color:#e6db74">&#39;July-2019:Aug-2019&#39;</span> <span style="color:#e6db74">&#39;Aug-2019:Sept-2019&#39;</span> <span style="color:#e6db74">&#39;Sept-2019:Oct-2019&#39;</span> <span style="color:#e6db74">&#39;Oct-2019:Nov-2019&#39;</span> <span style="color:#e6db74">&#39;Nov-2019:Dec-2019&#39;</span> <span style="color:#e6db74">&#39;Dec-2019:Jan-2020&#39;</span> <span style="color:#e6db74">&#39;Jan-2020:Feb-2020&#39;</span> <span style="color:#e6db74">&#39;Feb-2020:March-2020&#39;</span> <span style="color:#e6db74">&#39;March-2020:April-2020&#39;</span> <span style="color:#e6db74">&#39;April-2020:May-2020&#39;</span><span style="color:#f92672">)</span>
@@ -147,7 +147,7 @@ April-2020:May-2020 1 0 scripts/rollup/validate/eslintrc.umd.js
 April-2020:May-2020 19 19 scripts/shared/inlinedHostConfigs.js
 </code></pre>
 
-<h3 id="r-jupyter-4">R + Jupyter<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup></h3>
+<h3 id="r-jupyter-5">R + Jupyter<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup></h3>
 
 <p>From here, it&rsquo;s easy to import this into R as a data frame and to combine the lines added a lines deleted into a Total Diff column:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">changes <span style="color:#f92672">&lt;-</span> read.table(<span style="color:#e6db74">&#39;./react.txt&#39;</span>, header<span style="color:#f92672">=</span><span style="color:#66d9ef">TRUE</span>)
@@ -185,7 +185,7 @@ acf_matrix <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
-<p>When refactoring is justified solely because it makes current work easier, we should refactor. For example, sometimes refactoring helps us understand the code we&rsquo;re changing. The above analysis doesn&rsquo;t challenge the value of this kind of refactoring. In cases where we appeal to the future benefits of refactoring, the above data suggests<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup> we should be more cautious.</p>
+<p>When refactoring is justified solely because it makes current work easier, we should refactor. For example, sometimes refactoring helps us understand the code we&rsquo;re changing. The above analysis doesn&rsquo;t challenge the value of this kind of refactoring. In cases where we appeal to the future benefits of refactoring, the above data suggests<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">6</a></sup> we should be more cautious.</p>
 
 <h4 id="libraries-vs-apps-and-does-this-result-generalize">Libraries vs. Apps and does this result generalize?</h4>
 
@@ -215,14 +215,16 @@ acf_matrix <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">
 <ol>
 <li id="fn:1">Fowler says this in <em>Refactoring</em>.
  <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2">Easy example: Management isn&rsquo;t rushing your work. You happen to have plenty of time to finish the ticket you&rsquo;re currently working on, so you clean things up a bit while you work and commit your code, feeling like a real boy scout coder. Then, for whatever reason, you fall behind while working on the next feature. You realize that you&rsquo;re working in a part of the codebase that a) changes very frequently and b) implements the most important feature for the business. Unfortunately, you don&rsquo;t have the time to refactor this code while you work. You bemoan the lack of time that management gives you for refactoring.
+<li id="fn:2">See <a href="#refactoring-helps-us-now-too">this caveat</a> for why this phrase is italicized.
  <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3">The rest of the bash script is <a href="./serial-correlation.sh">here</a>.
+<li id="fn:3">Easy example: Management isn&rsquo;t rushing your work. You happen to have plenty of time to finish the ticket you&rsquo;re currently working on, so you clean things up a bit while you work and commit your code, feeling like a real boy scout coder. Then, for whatever reason, you fall behind while working on the next feature. You realize that you&rsquo;re working in a part of the codebase that a) changes very frequently and b) implements the most important feature for the business. Unfortunately, you don&rsquo;t have the time to refactor this code while you work. You bemoan the lack of time that management gives you for refactoring.
  <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:4">You can see the entire notebook <a href="./Are Code Diffs Serially Correlated.ipynb">here</a>.
+<li id="fn:4">The rest of the bash script is <a href="./serial-correlation.sh">here</a>.
  <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
-<li id="fn:5">I refuse to treat data as a plural noun. It&rsquo;s weird, and people have been saying that it&rsquo;s fine for it be singular for decades. See <em>Elements of Style</em>, for example.
+<li id="fn:5">You can see the entire notebook <a href="./Are Code Diffs Serially Correlated.ipynb">here</a>.
  <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:6">I refuse to treat data as a plural noun. It&rsquo;s weird, and people have been saying that it&rsquo;s fine for it be singular for decades. See <em>Elements of Style</em>, for example.
+ <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
 </ol>
 </div>
 </article><section class="article labels"><a class="tag" href=/tags/programming/>programming</a><a class="tag" href=/tags/refactoring/>refactoring</a><a class="tag" href=/tags/statistics/>statistics</a></section></div>
@@ -263,6 +265,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-</body>
+<script src="/js/core.min.89c15fc55ff3c5c6e8969e3360a498d2342b475e4373a62125495d46a82ed52f7a96eed224d426d7d0866f5f50ec7392.js" integrity="sha384-icFfxV/zxcbolp4zYKSY0jQrR15Dc6YhJUldRqgu1S96lu7SJNQm19CGb19Q7HOS"></script></body>
 
 </html>
