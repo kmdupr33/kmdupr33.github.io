@@ -21,7 +21,7 @@
 <li>how do I get 👆 those two things on the cheap</li>
 </ul>
 <p>I’ve also been getting into machine learning and data science recently, so I thought it’d be useful to answer them using some data science tools. This post sums up what I learned about vehicle safety based on the <a href="https://www.iihs.org/api/datastoredocument/status-report/pdf/55/2">Insurance Institute for Highway Safety’s data on traffic fatalities by make and model</a>.</p>
-<p>The tldr: drivers are less likely to die in a traffic accident if the vehicle they drive is heavier and larger. However, interestingly, there does <em>seem</em> to be a point of diminishing returns where additional weight and size doesn’t seem to make as much of a difference in whether drivers die in accidents. In fact, there <em>may</em> actually be a point of negative returns where additional weight and size was associated with more driver deaths. We’ll be able to see all of this with a few ggplot2 plots.</p>
+<p>The tldr: drivers are less likely to die in a traffic accident if the vehicle they drive is heavier and larger. However, interestingly, there does <em>seem</em> to be a point of diminishing returns where additional weight and size doesn’t seem to make as much of a difference in whether drivers die in accidents. In fact, there <em>may</em> actually be a point of negative returns where additional weight and size is associated with more driver deaths. We’ll be able to see all of this with a few ggplot2 plots.</p>
 <p>(“seem” and “may” are emphasized because the analysis I’ve done here merely suggests the above conclusions. A more complete sample of IIHS’s data would increase confidence in these conclusions.)</p>
 <div id="data-prep" class="section level2">
 <h2>Data prep</h2>
@@ -36,14 +36,14 @@ fatalities_by_weight_and_size &lt;- read_csv(&#39;./vehicle-fatalities.csv&#39;,
 rand_rows &lt;- sample(nrow(fatalities_by_weight_and_size))
 head(fatalities_by_weight_and_size[rand_rows,])</code></pre>
 <pre><code>## # A tibble: 6 x 6
-##   `Make and Model`        Class         Size       Weight  Volume Fatalities
-##   &lt;chr&gt;                   &lt;chr&gt;         &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;
-## 1 Lexus GX 460 4WD Luxury SUV           Large        5130 1051392          3
-## 2 ford focus              car           small        2935  718272         68
-## 3 Nissan Leaf 4-door      car           Small        3323  747250          5
-## 4 Subaru Outback          Station wagon Midsize      3580  902880          3
-## 5 Nissan Sentra           car           small        2823  740922         81
-## 6 GMC Yukon XL 1500 4WD   SUV           Very large   5800 1342656          0</code></pre>
+##   `Make and Model`                         Class Size   Weight Volume Fatalities
+##   &lt;chr&gt;                                    &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+## 1 Kia Forte                                car   small    2804 705600         89
+## 2 Lexus NX 200t 4WD Luxury                 SUV   Midsi…   4050 875420          0
+## 3 Chevrolet Trax 2WD                       suv   small    3124 764400         73
+## 4 Acura RDX 2WD Luxury                     SUV   Midsi…   3946 885040          4
+## 5 Chevrolet Sonic                          car   small    2733 641920         98
+## 6 Land Rover Range Rover Evoque 4WD Luxury SUV   Small    3615 825600          0</code></pre>
 <p>We don’t ultimately care about the size and class columns, but let’s quickly normalize them to all be lower-case, just in case we’ll care later:</p>
 <pre class="r"><code>to_lower_factor &lt;- function(f) {
   factor(tolower(as.character(f)))
