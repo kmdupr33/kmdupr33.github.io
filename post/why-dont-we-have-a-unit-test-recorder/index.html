@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Why don&#39;t we have a unit test recorder?&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Why don&#39;t we have a unit test recorder?&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Why don&#39;t we have a unit test recorder?" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,34 +10,19 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Why don't we have a unit test recorder?</h1><p class="article date">2016-07-01</p></section><article class="article markdown-body">
-
-<p>Last week, I introduced Vice, a <em>proof of concept</em> regression test generation library. Vice generates regression tests simply by exercising the code we want to test.</p>
-
-<p>This is neat, but there&rsquo;s already <a href="https://github.com/dmcg/okey-doke">something else out there that does something like this</a>, and ultimately, Vice as it stands doesn&rsquo;t answer a fundamental question I have about regression tests: if we can record functional UI tests using <a href="http://android-developers.blogspot.com/2016/05/android-studio-22-preview-new-ui.html">the espresso test recorder</a> or <a href="https://developer.apple.com/library/mac/documentation/ToolsLanguages/Conceptual/Xcode_Overview/RecordingUITests.html">apple&rsquo;s test recorder</a>, why don&rsquo;t we have a <em>unit test recorder</em>?<sup>1</sup></p>
-
+    <h1 class="article title">Why don't we have a unit test recorder?</h1><p class="article date">2016-07-01</p></section><article class="article markdown-body"><p>Last week, I introduced Vice, a <em>proof of concept</em> regression test generation library. Vice generates regression tests simply by exercising the code we want to test.</p>
+<p>This is neat, but there&rsquo;s already <a href="https://github.com/dmcg/okey-doke"target="_blank">something else out there that does something like this</a>, and ultimately, Vice as it stands doesn&rsquo;t answer a fundamental question I have about regression tests: if we can record functional UI tests using <a href="http://android-developers.blogspot.com/2016/05/android-studio-22-preview-new-ui.html"target="_blank">the espresso test recorder</a> or <a href="https://developer.apple.com/library/mac/documentation/ToolsLanguages/Conceptual/Xcode_Overview/RecordingUITests.html"target="_blank">apple&rsquo;s test recorder</a>, why don&rsquo;t we have a <em>unit test recorder</em>?<!-- raw HTML omitted -->1<!-- raw HTML omitted --></p>
 <p>This past week, I&rsquo;ve been exploring potential ways creating a unit test recorder with special attention to implementing this functionality for Android development. In this post, I present an overall strategy for doing this and I present what I&rsquo;ve learned so far vis-a-vis practically implementing this strategy for Android development.</p>
-
 <h3 id="the-strategy">The Strategy</h3>
-
 <p>Call the classes for which we want to generate tests &ldquo;target classes.&rdquo;</p>
-
-<p>As I said <a href="http://www.philosophicalhacker.com/post/vice-a-regression-test-generation-library/">before</a>, Vice already works by rewriting target classes so that instances of those classes record their method invocations. More specifically, these instances record both the arguments and return value of their method invocations. Let&rsquo;s call these rewritten classes &ldquo;Recorders.&rdquo;</p>
-
+<p>As I said <a href="http://www.philosophicalhacker.com/post/vice-a-regression-test-generation-library/"target="_blank">before</a>, Vice already works by rewriting target classes so that instances of those classes record their method invocations. More specifically, these instances record both the arguments and return value of their method invocations. Let&rsquo;s call these rewritten classes &ldquo;Recorders.&rdquo;</p>
 <p>Once this information is recorded, we can use it to generate regression tests that ensure that the behavior of our code remains unchanged. Those tests simply assert that target classes either a) return proper values or b) interact appropriately with their collaborators when their methods are invoked.</p>
-
 <p>Making Vice into a test recording library is as simple as rewriting the <em>providers</em> of instances of the target classes so that these methods return a recorder.</p>
-
-<p>When I say &ldquo;provider&rdquo; here, I just mean any method that is responsible for providing an object <em>that is used by our application</em>. Providers may be constructors, ordinary factory methods, or special methods in some DI-framework module class (e.g., <code>@Provides</code> annotated methods in <a href="http://google.github.io/dagger/">Dagger</a>).</p>
-
+<p>When I say &ldquo;provider&rdquo; here, I just mean any method that is responsible for providing an object <em>that is used by our application</em>. Providers may be constructors, ordinary factory methods, or special methods in some DI-framework module class (e.g., <code>@Provides</code> annotated methods in <a href="http://google.github.io/dagger/"target="_blank">Dagger</a>).</p>
 <p>If <em>all</em> the instances in an application are recorders, then generating unit tests should be fairly trivial. As I see it, the central problem of creating a a unit test recorder is figuring out how to rewrite providers so that they return recorders instead of ordinary instances.</p>
-
 <h3 id="learnings">Learnings</h3>
-
-<h4 id="bytebuddy-alone-won-t-work">Bytebuddy alone won&rsquo;t work</h4>
-
+<h4 id="bytebuddy-alone-wont-work">Bytebuddy alone won&rsquo;t work</h4>
 <p>Doing this on Android was trickier than I first imagined. I thought that I could just use Bytebuddy to rewrite providers to return recorders like this:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Override
 <span style="color:#fff;font-weight:bold">public</span> List&lt;RecordingObject&gt; rewrite(Method providers, <span style="color:#fff;font-weight:bold">boolean</span> isAndroid) {
     <span style="color:#007f7f">//...
@@ -60,35 +45,30 @@
     });
     <span style="color:#fff;font-weight:bold">return</span> recorders;
 }</code></pre></div>
-
 <p>The hope here was that we could simply pass in an array of method or constructor references and use Bytebuddy to rewrite those providers to return recorders. Unfortunately, I didn&rsquo;t read notice this line in the Bytebuddy docs:</p>
-
 <blockquote>
 <p>&hellip;with the ART runtime which succeeds the Dalvik virtual machine, Android applications are compiled into native machine code before being installed on an Android device. As a result, Byte Buddy cannot longer [sic.] redefine or rebase classes as long as an applications is not explicitly deployed together with its Java sources as there is otherwise no intermediate code representation to interpret.</p>
 </blockquote>
-
 <p>Since we can&rsquo;t redefine classes using Bytebuddy alone, this approach turns out to be a dead end.</p>
-
 <h4 id="some-alternative-implementation-approaches">Some alternative implementation approaches</h4>
-
 <p>Dexmaker is a library that allows us to write dex files at runtime. I believe that dexmaker is used so that we can use mockito with Android, but I&rsquo;m not sure. If dexmaker is in fact used for this purpose, it could be a useful tool for creating a unit test recorder on Android.</p>
-
-<p>Another possibility is to leverage <a href="http://tools.android.com/tech-docs/new-build-system/transform-api">the Transform api</a> that&rsquo;s a part of the Android gradle plugin. This api allows us to manipulate java bytecode before that code is converted to dex bytecode. At first glance, this approach appears to be preferable to the former one for the following reasons:</p>
-
+<p>Another possibility is to leverage <a href="http://tools.android.com/tech-docs/new-build-system/transform-api"target="_blank">the Transform api</a> that&rsquo;s a part of the Android gradle plugin. This api allows us to manipulate java bytecode before that code is converted to dex bytecode. At first glance, this approach appears to be preferable to the former one for the following reasons:</p>
 <ol>
-<li><p>We can probably use Bytebuddy here since other users of the Transform api seem to have had some success using similar libraries (viz., javassist and webasm). See, for example, <a href="https://github.com/nsk-mironov/smuggler/blob/master/smuggler-compiler/build.gradle">smuggler</a> and <a href="https://github.com/realm/realm-java/blob/467bd4b0cb61cf3479f9fa550005b9fd492bc112/realm-transformer/build.gradle">the realm transformer</a>.</p></li>
-
-<li><p>We&rsquo;re rewriting our providers at build time rather than runtime, which will presumably make for a smoother app running experience.</p></li>
-
-<li><p>Because we rewriting our providers at build time, we may be able to take advantage of incremental builds.</p></li>
-
-<li><p>Rewriting the providers at runtime isn&rsquo;t really <em>required</em> for the functionality that we want. By using the transform api, we plugging in to an extension point that&rsquo;s well supported by Android.</p></li>
+<li>
+<p>We can probably use Bytebuddy here since other users of the Transform api seem to have had some success using similar libraries (viz., javassist and webasm). See, for example, <a href="https://github.com/nsk-mironov/smuggler/blob/master/smuggler-compiler/build.gradle"target="_blank">smuggler</a> and <a href="https://github.com/realm/realm-java/blob/467bd4b0cb61cf3479f9fa550005b9fd492bc112/realm-transformer/build.gradle"target="_blank">the realm transformer</a>.</p>
+</li>
+<li>
+<p>We&rsquo;re rewriting our providers at build time rather than runtime, which will presumably make for a smoother app running experience.</p>
+</li>
+<li>
+<p>Because we rewriting our providers at build time, we may be able to take advantage of incremental builds.</p>
+</li>
+<li>
+<p>Rewriting the providers at runtime isn&rsquo;t really <em>required</em> for the functionality that we want. By using the transform api, we plugging in to an extension point that&rsquo;s well supported by Android.</p>
+</li>
 </ol>
-
 <p>I&rsquo;ll be trying out these alternative approaches in the coming week. Hopefully, next time I&rsquo;ll have a working unit test recorder!</p>
-
 <h3 id="notes">Notes</h3>
-
 <ol>
 <li>In case its not obvious, this seems like an important question because unit-level tests can run much more quickly than functional UI tests, so they can actually serve as, to use Michael Feathers&rsquo; metaphor, a &ldquo;software vice&rdquo; when we&rsquo;re refactoring or adding features. Having to wait 5+ minutes to know if you&rsquo;re changes have broken anything is way too long for functional UI tests to be useful feedback while programming.</li>
 </ol>

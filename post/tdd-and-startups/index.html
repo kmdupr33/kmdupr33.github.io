@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>TDD and Startups&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>TDD and Startups&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="TDD and Startups" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,40 +10,26 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">TDD and Startups</h1><p class="article date">2016-10-16</p></section><article class="article markdown-body">
-
-<p>Kent Beck introduces <em>TDD by Example</em> with a little story meant to show the business value of automated testing:</p>
-
+    <h1 class="article title">TDD and Startups</h1><p class="article date">2016-10-16</p></section><article class="article markdown-body"><p>Kent Beck introduces <em>TDD by Example</em> with a little story meant to show the business value of automated testing:</p>
 <blockquote>
 <p>Early one Friday, the boss came to Ward Cunningham to introduce him to Peter, a prospective customer for WyCash, the bond portfolio management system the company was selling. Peter said&hellip;&ldquo;I&rsquo;m starting a new bond fund, and my strategy requires that I handle bonds in different currencies.” The boss turned to Ward, “Well, can we do it?&rdquo;&hellip;The trick now was to make space for the new functionality without breaking anything that already worked. What would happen if Ward just ran the tests? After the addition of a few unimplemented operations to Currency, the bulk of the tests passed. By the end of the day, all of the tests were passing. Ward checked the code into the build and went to the boss. “We can do it,” he said confidently. Let&rsquo;s think a bit about this story. In two days, the potential market was multiplied several fold, multiplying the value of WyCash several fold. The ability to create so much business value so quickly was no accident, however.</p>
 </blockquote>
-
 <p>This little parable actually reminded me of the way that Steve Freeman and Nat Pryce talk about the business value of automated testing in <em>Growing Object Oriented Software Guided by Tests</em>:</p>
-
 <blockquote>
 <p>We’ve found that we need two technical foundations if we want to grow a system reliably and to cope with the unanticipated changes that always happen. First, we need constant testing to catch regression errors, so we can add new features without breaking existing ones. For systems of any interesting size, frequent manual testing is just impractical&hellip;Second, we need to keep the code as simple as possible, so it’s easier to understand and modify&hellip;The test suites in the feedback loops protect us against our own mistakes as we improve (and therefore change) the code.</p>
 </blockquote>
-
 <p>I think these two snippets are making similar points: automated tests can create immense business value because it allows deep changes to be made to an existing system while preserving confidence that the system will continue working as expected. I think this ability is especially important for startups who are trying to find product-market fit or beat out a competitor.</p>
-
-<p>I sometimes suspect that Facebook&rsquo;s success over Friendster and MySpace is partially due to the fact that they had the automated tests in place to experiment a ton with the features of Facebook and that these experiments let them iterate faster (Zuckerberg actually talks about this in <a href="https://www.youtube.com/watch?v=Lb4IcGF5iTQ">his &ldquo;How to Build the Future&rdquo; episode</a>). Iterating faster, according to Eric Reis in <em>The Lean Startup</em>, isn&rsquo;t just the key to maximizing chances of building something people want. It&rsquo;s also a great way to gain a competitive edge:</p>
-
+<p>I sometimes suspect that Facebook&rsquo;s success over Friendster and MySpace is partially due to the fact that they had the automated tests in place to experiment a ton with the features of Facebook and that these experiments let them iterate faster (Zuckerberg actually talks about this in <a href="https://www.youtube.com/watch?v=Lb4IcGF5iTQ"target="_blank">his &ldquo;How to Build the Future&rdquo; episode</a>). Iterating faster, according to Eric Reis in <em>The Lean Startup</em>, isn&rsquo;t just the key to maximizing chances of building something people want. It&rsquo;s also a great way to gain a competitive edge:</p>
 <blockquote>
 <p>The reason to build a new team to pursue an idea is that you believe you can accelerate through the Build-Measure-Learn feedback loop faster than anyone else can. If that’s true, it makes no difference what the competition knows. If it’s not true, a startup has much bigger problems&hellip;</p>
 </blockquote>
-
-<p>I actually think this is one of the most under-rated arguments for TDD. When considering whether to write tests, I suspect a lot of developers think, &ldquo;Well, I can get it working without tests, so why bother writing them?&rdquo; Unfortunately, this overlooks the key issue, which, if Beck, Freeman and Pryce, and Reis are right, is this: &ldquo;How can I structure my system so that I can make the biggest possible changes while maintaining confidence that the functionality is correct?&rdquo;<sup>1</sup> If TDD folks are right, moreover, the answer to this key question is of course to do TDD.</p>
-
+<p>I actually think this is one of the most under-rated arguments for TDD. When considering whether to write tests, I suspect a lot of developers think, &ldquo;Well, I can get it working without tests, so why bother writing them?&rdquo; Unfortunately, this overlooks the key issue, which, if Beck, Freeman and Pryce, and Reis are right, is this: &ldquo;How can I structure my system so that I can make the biggest possible changes while maintaining confidence that the functionality is correct?&ldquo;<!-- raw HTML omitted -->1<!-- raw HTML omitted --> If TDD folks are right, moreover, the answer to this key question is of course to do TDD.</p>
 <p>If this is right, then it means that a comment that Beck makes later on in the first part of TDD by Example may need refinement. He says:</p>
-
 <blockquote>
 <p>For TDD to make economic sense, you&rsquo;ll need to be able to either write twice as many lines per day as before, or write half as many lines for the same functionality. You&rsquo;ll have to measure and see what effect TDD has on your own practice. Be sure to factor debugging, integrating, and explaining time into your metrics, though.</p>
 </blockquote>
-
 <p>This remark may in fact be consistent with the idea that there&rsquo;s immense value in the flexible architectures that emerge as a result of TDD. Its hard to tell exactly what Beck is saying here. Beck&rsquo;s intent aside, I think this passage should have made it clearer that there&rsquo;s a lot of value in being able to change code confidently, and this may make TDD worth it even if we wind up writing more code when we factor in the code we need to write tests.</p>
-
 <h3 id="notes">Notes:</h3>
-
 <ol>
 <li>Of course, if you&rsquo;re not building a product whose features are likely to change, then this argument for testing doesn&rsquo;t apply.</li>
 </ol>

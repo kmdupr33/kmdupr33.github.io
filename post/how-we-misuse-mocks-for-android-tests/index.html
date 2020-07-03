@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>How we Misuse Mocks for Android Tests&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>How we Misuse Mocks for Android Tests&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="How we Misuse Mocks for Android Tests" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,39 +10,26 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">How we Misuse Mocks for Android Tests</h1><p class="article date">2016-12-27</p></section><article class="article markdown-body">
-
-<p><img src="/images/tools.jpg" alt="" /></p>
-
-<p>Mocks are a pretty standard tool in our android developer tool belt. The extent to which we should use this tool for unit testing is a complicated and controversial issue.<sup>1</sup> Within the Android community specifically, I think that a part of the controversy is due to confusion over the intended use of mocks. More specifically, some android developers seem intent on mocking types they don&rsquo;t own and on verifying all interactions of a target class with a collaborator.</p>
-
+    <h1 class="article title">How we Misuse Mocks for Android Tests</h1><p class="article date">2016-12-27</p></section><article class="article markdown-body"><p><img  src="/images/tools.jpg"
+        alt/></p>
+<p>Mocks are a pretty standard tool in our android developer tool belt. The extent to which we should use this tool for unit testing is a complicated and controversial issue.<!-- raw HTML omitted -->1<!-- raw HTML omitted --> Within the Android community specifically, I think that a part of the controversy is due to confusion over the intended use of mocks. More specifically, some android developers seem intent on mocking types they don&rsquo;t own and on verifying all interactions of a target class with a collaborator.</p>
 <p>It turns out that these two practices are not recommended by the folks who invented mocks because they have well-known have disadvantages. These disadvantages are precisely the ones that people seem to cite when they argue against mocks. There may be good arguments against mocks, but citing disadvantages of using them in a way that they aren&rsquo;t meant to be used is about as compelling as arguing that we shouldn&rsquo;t use hammers because they aren&rsquo;t good for fastening screws.</p>
-
 <p>In this post, we&rsquo;ll look at two ways I&rsquo;ve seen mocks misused. Hopefully, by pointing out the intended use of mocks, we&rsquo;ll find them more useful for unit testing android applications.</p>
-
 <h3 id="too-many-verifications">Too many verifications</h3>
-
 <p>A common complaint about mocks is that they tie tests too closely with the implementation details of the target code. Since we want our tests to help us refactor those implementation details with confidence, this coupling ruins one of the major advantages of writing tests.</p>
-
 <p>There are two things we can say in response to this complaint.</p>
-
 <p>First, Steve Freeman and Nat Pryce, the folks who really pioneered the use of mocks in testing, are well aware that this can occur when using mocks. This is why they recommend that we &ldquo;write few expectations&rdquo; in our tests using mocks:</p>
-
 <blockquote>
-<p>A colleague, Romilly Cocking, when he first started working with us, was surprised by how few expectations we usually write in a unit test. Just like “everyone” has now learned to avoid too many assertions in a test, we try to avoid too many expectations. If we have more than a few, then either we’re trying to test too large a unit, or we’re locking down too many of the object’s interactions.<sup>2</sup></p>
+<p>A colleague, Romilly Cocking, when he first started working with us, was surprised by how few expectations we usually write in a unit test. Just like “everyone” has now learned to avoid too many assertions in a test, we try to avoid too many expectations. If we have more than a few, then either we’re trying to test too large a unit, or we’re locking down too many of the object’s interactions.<!-- raw HTML omitted -->2<!-- raw HTML omitted --></p>
 </blockquote>
-
-<p>Second, whether a particular object&rsquo;s interaction with a collaborator is an implementation detail depends on how we think about object-oriented programming and on the most compelling interpretation of OO I&rsquo;m aware of, some interactions with collaborators aren&rsquo;t really implementation details. Freeman puts this nicely <a href="http://higherorderlogic.com/2013/01/some-mocks/">here</a>:</p>
-
+<p>Second, whether a particular object&rsquo;s interaction with a collaborator is an implementation detail depends on how we think about object-oriented programming and on the most compelling interpretation of OO I&rsquo;m aware of, some interactions with collaborators aren&rsquo;t really implementation details. Freeman puts this nicely <a href="http://higherorderlogic.com/2013/01/some-mocks/"target="_blank">here</a>:</p>
 <blockquote>
 <p>Some of us think about objects in terms of Alan Kay’s emphasis on message passing, others don’t. In my world, I’m interested in the protocols of how objects communicate, not what’s inside them, so testing based on interactions is a natural fit.</p>
 </blockquote>
-
 <p>I think a compelling example of an object interacting with a collaborator in a way that isn&rsquo;t an implementation detail is actually a <code>Presenter</code> interacting with a <code>View</code> in MVP. Take, for example, this <code>Presenter</code> that we talked about in <a href="/post/object-seams-and-mvp-for-testability/">my post on MVP and object seams</a></p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">class</span> Presenter {
 
-  <span style="color:#fff;font-weight:bold">public</span> void presentCards() {
+  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> presentCards() {
 
     <span style="color:#fff;font-weight:bold">if</span> (mIsAttendeeAtVenue) {
 
@@ -54,39 +41,33 @@
     }
   }
 }</code></pre></div>
-
-<p>In this snippet, the <code>Presenter</code>&rsquo;s responsibility is to display the appropriate cards depending on various factors. When we write a test that includes the line <code>verify(mExploreView).addMessageOptInCard()</code>, we&rsquo;re merely making sure that the <code>Presenter</code> does its job. We&rsquo;re concerned with the &ldquo;what,&rdquo; not with the &ldquo;how.&rdquo; If <code>mExploreView</code> wants to change how it actually adds a message opt in card, we don&rsquo;t care. If the implementation of <code>MessageSettings.hasAnsweredMessagePrompt</code> changes, again, we don&rsquo;t care.</p>
-
-<h3 id="mocking-types-we-don-t-own">Mocking Types We Don&rsquo;t Own</h3>
-
+<p>In this snippet, the <code>Presenter</code>'s responsibility is to display the appropriate cards depending on various factors. When we write a test that includes the line <code>verify(mExploreView).addMessageOptInCard()</code>, we&rsquo;re merely making sure that the <code>Presenter</code> does its job. We&rsquo;re concerned with the &ldquo;what,&rdquo; not with the &ldquo;how.&rdquo; If <code>mExploreView</code> wants to change how it actually adds a message opt in card, we don&rsquo;t care. If the implementation of <code>MessageSettings.hasAnsweredMessagePrompt</code> changes, again, we don&rsquo;t care.</p>
+<h3 id="mocking-types-we-dont-own">Mocking Types We Don&rsquo;t Own</h3>
 <p>Although the exceptions thrown by running android unit tests that exercise unmocked android dependencies suggests otherwise, we shouldn&rsquo;t be in the business of mocking types we don&rsquo;t own. Again, Freeman and Pryce are explicit about the disadvantages of doing this:</p>
-
 <blockquote>
 <p>We find that tests that mock external libraries often need to be complex to get the code into the right state for the functionality we need to exercise. The mess in such tests is telling us that the design isn’t right but, instead of fixing the problem by improving the code, we have to carry the extra complexity in both code and test. A second risk is that we have to be sure that the behavior we stub or mock matches what the external library will actually do.</p>
 </blockquote>
-
 <p>This second risk is actually something that Jake Wharton has commented on explicitly in the context of using robolectric for Android testing:</p>
-
 <blockquote>
 <p>[With robolectric], you end up testing the wrong thing&hellip;your test is testing the robolectric implementation of these lifecycles and these mechanisms&hellip;the fact that you&rsquo;re relying on those behaviors&hellip;it&rsquo;s going to devalue the actual test itself.</p>
-
+</blockquote>
+<blockquote>
 <p>-Jake Wharton, Fragmented Podcast Episode 7 4:10</p>
 </blockquote>
-
 <p>The approach recommended by Freeman and Pryce &ndash; and the approach that I strive to follow when writing tests for my code &ndash; is to instead write an adapter layer that translates requests from our application to the third party library, which in this case is the Android SDK. The <code>View</code> in MVP is often a part of this adapter layer, as it translates requests made in the language of our application into code that talks directly to the Android SDK.</p>
-
 <h3 id="conclusion">Conclusion</h3>
-
-<p>So, don&rsquo;t make too many verifications on your mocks and don&rsquo;t mock types you don&rsquo;t own. Following this advice &ndash; advice that&rsquo;s given by the inventors of mocks &ndash; will make your tests simpler and less tied to implementation details of the class you&rsquo;re trying to test.<sup>3</sup> If we follow this advice, I think we&rsquo;ll find that mocks are a very apt tool for unit testing android applications.</p>
-
+<p>So, don&rsquo;t make too many verifications on your mocks and don&rsquo;t mock types you don&rsquo;t own. Following this advice &ndash; advice that&rsquo;s given by the inventors of mocks &ndash; will make your tests simpler and less tied to implementation details of the class you&rsquo;re trying to test.<!-- raw HTML omitted -->3<!-- raw HTML omitted --> If we follow this advice, I think we&rsquo;ll find that mocks are a very apt tool for unit testing android applications.</p>
 <h3 id="notes">Notes</h3>
-
 <ol>
-<li><p>See <a href="http://martinfowler.com/articles/mocksArentStubs.html">&ldquo;Mocks Aren&rsquo;t Stubs&rdquo;</a> and <a href="http://higherorderlogic.com/2013/01/some-mocks/">&ldquo;Some Mocks&rdquo;</a> for example.</p></li>
-
-<li><p>&ldquo;Growing Object Oriented Software Guided by Tests,&rdquo; 319.</p></li>
-
-<li><p>I actually think following these two pieces of advice leads to a virtuous circle: if you only mock types you own, then you have to define types in the language of your application. This makes your test less coupled to implementation details, as stubbing these types in the arrange step of your unit test will actually just feel like you&rsquo;re declaratively specifying preconditions in the language of your application. Conversely, there&rsquo;s a vicious cycle caused by mocking types you don&rsquo;t own. You&rsquo;re tests are going to be more tied to implementation details and because mocking types we don&rsquo;t own winds up being complicated, its especially painful to change tests when implementation details need to change.</p></li>
+<li>
+<p>See <a href="http://martinfowler.com/articles/mocksArentStubs.html"target="_blank">&ldquo;Mocks Aren&rsquo;t Stubs&rdquo;</a> and <a href="http://higherorderlogic.com/2013/01/some-mocks/"target="_blank">&ldquo;Some Mocks&rdquo;</a> for example.</p>
+</li>
+<li>
+<p>&ldquo;Growing Object Oriented Software Guided by Tests,&rdquo; 319.</p>
+</li>
+<li>
+<p>I actually think following these two pieces of advice leads to a virtuous circle: if you only mock types you own, then you have to define types in the language of your application. This makes your test less coupled to implementation details, as stubbing these types in the arrange step of your unit test will actually just feel like you&rsquo;re declaratively specifying preconditions in the language of your application. Conversely, there&rsquo;s a vicious cycle caused by mocking types you don&rsquo;t own. You&rsquo;re tests are going to be more tied to implementation details and because mocking types we don&rsquo;t own winds up being complicated, its especially painful to change tests when implementation details need to change.</p>
+</li>
 </ol>
 </article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/what-should-we-unit-test/"><span class="li iconfont icon-article"></span>What Should we Unit Test?</a></p><p><a class="link" href="/post/build-variants-and-link-seams/"><span class="li iconfont icon-article"></span>Build Variants and Link Seams</a></p></section><section class="article discussion"><div id="disqus_thread"></div>

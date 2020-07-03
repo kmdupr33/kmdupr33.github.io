@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Testing Package Implementation from &#39;the Outside&#39;&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Testing Package Implementation from &#39;the Outside&#39;&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Testing Package Implementation from &#39;the Outside&#39;" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,35 +10,21 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Testing Package Implementation from 'the Outside'</h1><p class="article date">2016-02-03</p></section><article class="article markdown-body">
-
-<p>Sometimes you need to test a package&rsquo;s implementation from outside of the package containing the implementation you&rsquo;d like to test. This post briefly covers why this need arises and how we can meet  that need. Much of the information here is already covered in Andrew Gerrand&rsquo;s <a href="https://www.youtube.com/watch?v=ndmB0bj7eyw">testing techniques talk</a>, so if you&rsquo;ve watched that, you&rsquo;ll probably only think the last section of this post is interesting.</p>
-
+    <h1 class="article title">Testing Package Implementation from 'the Outside'</h1><p class="article date">2016-02-03</p></section><article class="article markdown-body"><p>Sometimes you need to test a package&rsquo;s implementation from outside of the package containing the implementation you&rsquo;d like to test. This post briefly covers why this need arises and how we can meet  that need. Much of the information here is already covered in Andrew Gerrand&rsquo;s <a href="https://www.youtube.com/watch?v=ndmB0bj7eyw"target="_blank">testing techniques talk</a>, so if you&rsquo;ve watched that, you&rsquo;ll probably only think the last section of this post is interesting.</p>
 <h3 id="why">Why?</h3>
-
 <p>Like I just said, sometimes you need to test a package&rsquo;s implementation from outside of the package containing the implementation you&rsquo;d like to test. Typically, this situation happens because of circular dependency.</p>
-
 <p>For example, because the testing package depends on the fmt package, the standard library authors couldn&rsquo;t place the tests for the fmt package within the fmt package itself without introducing a circular dependency. To avoid this circular dependency, the fmt tests are actually located in the fmt_test package.</p>
-
-<p>Don&rsquo;t believe me? Have <a href="https://github.com/golang/go/blob/master/src/fmt/fmt_test.go">a look</a>.</p>
-
-<p>Here&rsquo;s another example: as I said in <a href="http://www.philosophicalhacker.com/post/getting-started-with-gomock/">my post on gomock</a>, you can often wind up with circular dependencies while using gomock. You&rsquo;re tests will depend on the package containing your mocks and your mocks will depend on the package containing the interfaces it mocks. If your tests are in the same package as the code you&rsquo;re mocking, then you&rsquo;ll introduce a circular dependency between package containing the code you want to test and the package containing your mocks. Again, the solution here is to move your tests outside of the package containing the code you want to test.</p>
-
+<p>Don&rsquo;t believe me? Have <a href="https://github.com/golang/go/blob/master/src/fmt/fmt_test.go"target="_blank">a look</a>.</p>
+<p>Here&rsquo;s another example: as I said in <a href="http://www.philosophicalhacker.com/post/getting-started-with-gomock/"target="_blank">my post on gomock</a>, you can often wind up with circular dependencies while using gomock. You&rsquo;re tests will depend on the package containing your mocks and your mocks will depend on the package containing the interfaces it mocks. If your tests are in the same package as the code you&rsquo;re mocking, then you&rsquo;ll introduce a circular dependency between package containing the code you want to test and the package containing your mocks. Again, the solution here is to move your tests outside of the package containing the code you want to test.</p>
 <p>Although the tests are outside of the package you are testing, you may still want to test the implementation details of that package. In other words, you may want to test parts of that package&rsquo;s un-exported interface. For example, the authors of the standard library wanted to test the <code>isSpace()</code> function from the fmt package.</p>
-
 <h3 id="how">How</h3>
-
 <p>In order to test the <code>isSpace()</code> function from outside of the fmt package, the standard lib authors created a export_test.go file in the fmt package. This file simply exports the parts of the un-exported interface that they wanted to test:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007f7f">//export_test.go
 </span><span style="color:#007f7f"></span><span style="color:#fff;font-weight:bold">package</span> fmt
 
 <span style="color:#fff;font-weight:bold">var</span> IsSpace = isSpace</code></pre></div>
-
 <p>This file ensures that the <code>isSpace()</code> function is available to the fmt tests as <code>IsSpace()</code>. Importantly, because this file has a _test.go prefix, it is only compiled when the <code>go test</code> command is run, thereby ensuring that no clients outside of the testing package can access the <code>isSpace()</code> function.</p>
-
 <p>Sometimes, however, we want to test more than just an un-exported function from a package. Sometimes, we may want to test the methods of an un-exported struct. Say you&rsquo;ve got a struct like <code>lruCache</code>:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007f7f">//cache.go
 </span><span style="color:#007f7f"></span>
 <span style="color:#fff;font-weight:bold">type</span> lruCache <span style="color:#fff;font-weight:bold">struct</span> {
@@ -54,19 +40,14 @@
 }
 
 Now, suppose you wanted to test the <span style="color:#0ff;font-weight:bold">`GetGopher()`</span> method. This can be accomplished by combining the above technique with <span style="color:#fff;font-weight:bold">struct</span> embedding:</code></pre></div>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007f7f">//export_test.go
 </span><span style="color:#007f7f"></span>
 <span style="color:#fff;font-weight:bold">type</span> LRUCache <span style="color:#fff;font-weight:bold">struct</span> {
 	lruCache
 }</code></pre></div>
-
 <p>Now, in order for this to work, the <code>GetGopher()</code> method has to be exported. This doesn&rsquo;t break encapsulation, however, because an exported method on an un-exported type will still be unaccessible to clients outside of the package.</p>
-
 <h3 id="conclusion">Conclusion</h3>
-
 <p>You just learned how to test package implementation details from &ldquo;the outside.&rdquo; This will come in handy when you break a circular dependency between your test code and the package you&rsquo;re testing by placing the test code outside of the package you&rsquo;re testing.</p>
-
 <p>You&rsquo;re welcome.</p>
 </article><section class="article labels"><a class="tag" href=/tags/go/>go</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/sicp-111-117/"><span class="li iconfont icon-article"></span>Sicp 1.1.1-1.1.7</a></p><p><a class="link" href="/post/table-driven-tests-with-gomock/"><span class="li iconfont icon-article"></span>Table-driven tests with Gomock</a></p></section><section class="article discussion"><div id="disqus_thread"></div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>An Intro to Gradient Descent for Kotlin Programmers&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>An Intro to Gradient Descent for Kotlin Programmers&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="An Intro to Gradient Descent for Kotlin Programmers" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,18 +10,11 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">An Intro to Gradient Descent for Kotlin Programmers</h1><p class="article date">2019-09-01</p></section><article class="article markdown-body">
-
-<script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script>
-
+    <h1 class="article title">An Intro to Gradient Descent for Kotlin Programmers</h1><p class="article date">2019-09-01</p></section><article class="article markdown-body"><!-- raw HTML omitted -->
 <h2 id="introduction">Introduction</h2>
-
-<p>Gradient descent is an algorithm that&rsquo;s used to solve supervised learning and deep learning problems. Here I&rsquo;m going to try to give you an idea of why the algorithm works and how you&rsquo;d implement it in Kotlin. I&rsquo;ll also show the algorithm working with <a href="https://www.kaggle.com/rush4ratio/video-game-sales-with-ratings">a simple kaggle dataset involving video game sales and ratings</a>.</p>
-
-<p>Everything I cover here is covered in <a href="https://www.coursera.org/learn/machine-learning">Andrew Ng&rsquo;s excellent Coursera machine learning course</a> with the exception of the Kotlin implementation of gradient descent. If you <em>really</em> want a clear and definitive introduction to gradient descent, I recommend that course over this article. Here I&rsquo;m mostly interested in solidifying what I&rsquo;ve learned by sharing it.</p>
-
+<p>Gradient descent is an algorithm that&rsquo;s used to solve supervised learning and deep learning problems. Here I&rsquo;m going to try to give you an idea of why the algorithm works and how you&rsquo;d implement it in Kotlin. I&rsquo;ll also show the algorithm working with <a href="https://www.kaggle.com/rush4ratio/video-game-sales-with-ratings"target="_blank">a simple kaggle dataset involving video game sales and ratings</a>.</p>
+<p>Everything I cover here is covered in <a href="https://www.coursera.org/learn/machine-learning"target="_blank">Andrew Ng&rsquo;s excellent Coursera machine learning course</a> with the exception of the Kotlin implementation of gradient descent. If you <em>really</em> want a clear and definitive introduction to gradient descent, I recommend that course over this article. Here I&rsquo;m mostly interested in solidifying what I&rsquo;ve learned by sharing it.</p>
 <h2 id="our-toy-problem">Our Toy Problem</h2>
-
 
 
 <div id="videogameSales"></div>
@@ -31,13 +24,9 @@
   Plotly.newPlot('videogameSales', data, layout, {staticChart: true, responsive: true});
 </script>
 
-
-<p>Here&rsquo;s a plot of a bunch of video games from 2010 to 2016. On the X axis, we have a meta-critic score. On the y-axis, we see the number of sales in North America in millions. Looking at the data, it looks like there is some sort of relationship between meta-critic score and game sales.<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> Our toy problem is this: we want to write a program that can give a prediction of video game sales based on metric critic score.</p>
-
-<p>If we were looking at this in excel or google sheets, we&rsquo;d just tick the &ldquo;draw trendline&rdquo; checkbox on our chart options and be almost done with our machine learning problem. Excel is fine for some supervised learning tasks, but it won&rsquo;t work for harder problems, which is where gradient descent becomes essential.<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup> Although gradient descent is probably overkill for this toy problem, we&rsquo;re going to use it anyway since presumably whatever boring learning algorithm that&rsquo;s been sitting in excel for decades can&rsquo;t scale to more interesting contemporary ML problems.</p>
-
+<p>Here&rsquo;s a plot of a bunch of video games from 2010 to 2016. On the X axis, we have a meta-critic score. On the y-axis, we see the number of sales in North America in millions. Looking at the data, it looks like there is some sort of relationship between meta-critic score and game sales.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> Our toy problem is this: we want to write a program that can give a prediction of video game sales based on metric critic score.</p>
+<p>If we were looking at this in excel or google sheets, we&rsquo;d just tick the &ldquo;draw trendline&rdquo; checkbox on our chart options and be almost done with our machine learning problem. Excel is fine for some supervised learning tasks, but it won&rsquo;t work for harder problems, which is where gradient descent becomes essential.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> Although gradient descent is probably overkill for this toy problem, we&rsquo;re going to use it anyway since presumably whatever boring learning algorithm that&rsquo;s been sitting in excel for decades can&rsquo;t scale to more interesting contemporary ML problems.</p>
 <p>Anyway, if we drew the line of best fit for the above data, it&rsquo;d look like this:</p>
-
 
 
 <div id="games-with-line"></div>
@@ -47,41 +36,35 @@
   Plotly.newPlot('games-with-line', data, layout, {staticChart: true, responsive: true});
 </script>
 
-
 <p>If you remember your high-school algebra, equations for lines like this look like this:</p>
-
 
 
 <div id="linear-equation-formula"></div>
 <script>
   addEventListener("DOMContentLoaded", () => {
-    katex.render("y = mx \x2b b", document.getElementById("linear-equation-formula"), {
+    katex.render("y = mx \u002b b", document.getElementById("linear-equation-formula"), {
       throwOnError: false,
       displayMode: true
     });
   });
 </script>
 
-
 <p>So, our problem here is really this: How do we figure out what <code>m</code> and <code>b</code> are given the above video game data? Or, how would we implement the following kotlin function:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">findLearningParameters</span>(videoGameData: Array&lt;Pair&lt;Int, Int&gt;&gt;): Pair&lt;Int, Int&gt; {
   <span style="color:#75715e">//...
 </span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span> Pair(m, b)
-}</code></pre></div>
-<p>This is really the crux of the problem because once we this function implemented, it&rsquo;s trivial to write a program that can predict video game sales based on meta-critic score:</p>
+}
+</code></pre></div><p>This is really the crux of the problem because once we this function implemented, it&rsquo;s trivial to write a program that can predict video game sales based on meta-critic score:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">predictVideoGameSales</span>(
   metaCriticScore: Int,
   learningParameters: Pair&lt;Int, Int&gt;
 ) {
   <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>m, b) = learningParameters
   <span style="color:#66d9ef">return</span> metaCriticScore * m + b
-}</code></pre></div>
-<p>What we want is for the learning parameters to be such that the difference between the predicted values (given by the line of best fit) and all the actual values is minimized. This difference <em>depends</em> on the values we choose for <code>x</code> and <code>b</code>; it&rsquo;s a function of those variables. This function is called the &ldquo;cost function,&rdquo; so another way of putting our problem is to say that we&rsquo;re trying to find values of <code>x</code> and <code>b</code> that minimize the cost function.</p>
-
+}
+</code></pre></div><p>What we want is for the learning parameters to be such that the difference between the predicted values (given by the line of best fit) and all the actual values is minimized. This difference <em>depends</em> on the values we choose for <code>x</code> and <code>b</code>; it&rsquo;s a function of those variables. This function is called the &ldquo;cost function,&rdquo; so another way of putting our problem is to say that we&rsquo;re trying to find values of <code>x</code> and <code>b</code> that minimize the cost function.</p>
 <h2 id="solution">Solution</h2>
-
 <p>To start understanding how we&rsquo;d solve this problem, we need to take a closer look at the cost function. What exactly is it? Let&rsquo;s start with a thought experiment: suppose we choose 0 as the values for <code>x</code> and <code>b</code>. What would the difference be between the <em>actual values</em> from our data set and the predicted values? The following table with the first five data points tries to capture this:</p>
-
 <table>
 <thead>
 <tr>
@@ -91,7 +74,6 @@
 <th>(predicted - actual)^2</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>61</td>
@@ -99,28 +81,24 @@
 <td>0</td>
 <td>225</td>
 </tr>
-
 <tr>
 <td>97</td>
 <td>7.02</td>
 <td>0</td>
 <td>49</td>
 </tr>
-
 <tr>
 <td>97</td>
 <td>9.66</td>
 <td>0</td>
 <td>93.3</td>
 </tr>
-
 <tr>
 <td>88</td>
 <td>9.04</td>
 <td>0</td>
 <td>81.7216</td>
 </tr>
-
 <tr>
 <td>87</td>
 <td>9.7</td>
@@ -129,24 +107,20 @@
 </tr>
 </tbody>
 </table>
-
 <p>One way to summarize this table would be to take the average of the squared difference between the predicted value and the actual value and divide by 2. That&rsquo;s our cost function, which we&rsquo;ll call <code>J</code>. Formally, that&rsquo;s:</p>
-
 
 
 <div id="cost-function"></div>
 <script>
   addEventListener("DOMContentLoaded", () => {
-    katex.render("J(m, b) = \\dfrac{1}{2} \\sum_{k=1}^n ((mx \x2b b) - actual)^2 \/ n", document.getElementById("cost-function"), {
+    katex.render("J(m, b) = \\dfrac{1}{2} \\sum_{k=1}^n ((mx \u002b b) - actual)^2 \/ n", document.getElementById("cost-function"), {
       throwOnError: false,
       displayMode: true
     });
   });
 </script>
 
-
 <p>where n is the number of video games in our data set. (If we were to use this equation on the above table, we&rsquo;d get 54.31.) Let&rsquo;s ignore <code>b</code> for a second and rewrite our equation:</p>
-
 
 
 <div id="cost-function-ignoring-b"></div>
@@ -159,9 +133,7 @@
   });
 </script>
 
-
 <p>Remember: <code>x</code> and <code>actual</code> aren&rsquo;t variables here, we&rsquo;ll be able to plug in values from our data, so we&rsquo;re really just looking at a quadratic function and you probably remember from high-school that quadratic functions look like this:</p>
-
 
 
 <div id="quadratic-equations"></div>
@@ -186,13 +158,9 @@
   {staticChart: true, responsive: true});
 </script>
 
-
 <p>The x-axis in this case is <code>m</code> and the y axis tells us how far off <code>m</code> is from where it needs to be. This graph tells us that <code>0</code> is our best choice for <code>m</code> since choosing <code>0</code> will actually minimize the cost function. This isn&rsquo;t true of our actual data set, but the basic idea of gradient descent applies regardless and this graph is (probably) cleaner to look at.</p>
-
 <p>At the highest level, the way gradient descent works is that we take a guess at the optimal value of <code>m</code>, then we modify our guess by a small amount called the &ldquo;learning rate&rdquo; and repeat until we aren&rsquo;t getting any better. This is how the algorithm got its name: we&rsquo;re slowing descending down the gradient until we get to the minimum.</p>
-
 <p>With that, we can start to fill in more of our <code>findLearningParameters</code> function:</p>
-
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">findLearningParameters</span>(videoGameData: Array&lt;Pair&lt;Double, Double&gt;&gt;): Pair&lt;Double, Double&gt; {
 <span style="color:#66d9ef">val</span> learningRate = .<span style="color:#ae81ff">0003</span>
 <span style="color:#66d9ef">var</span> guess = Pair(<span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">0.0</span>)
@@ -203,21 +171,18 @@
 </span>}
 <span style="color:#66d9ef">return</span> guess
 }</code></pre></div>
-
 <p>The highlighted lines point to some functions that need explaining. You should be able to guess at what <code>cost</code> does: it computes how bad our guess at <code>m</code> and <code>b</code> are with the aforementioned formula:</p>
-
 
 
 <div id="cost-function-2"></div>
 <script>
   addEventListener("DOMContentLoaded", () => {
-    katex.render("J(m, b) = \\sum_{k=1}^n ((mx \x2b b) - actual)^2 \/ n", document.getElementById("cost-function-2"), {
+    katex.render("J(m, b) = \\sum_{k=1}^n ((mx \u002b b) - actual)^2 \/ n", document.getElementById("cost-function-2"), {
       throwOnError: false,
       displayMode: true
     });
   });
 </script>
-
 
 <p>So, the implementation is just this:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">cost</span>(videoGameData: Array&lt;Pair&lt;Double, Double&gt;&gt;, learningParameters: Pair&lt;Double, Double&gt;): Double =
@@ -225,13 +190,10 @@
             <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>m, b) = learningParameters
             <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>x, y) = pair
             acc + ((((m * x) + b) - y).pow(<span style="color:#ae81ff">2</span>)/<span style="color:#ae81ff">2</span>)
-        } / videoGameData.size</code></pre></div>
-<p>The reason we are using the cost function is to monitor progress on the gradient descent. As the for-loop executes, <code>cost</code> should be going down.</p>
-
+        } / videoGameData.size
+</code></pre></div><p>The reason we are using the cost function is to monitor progress on the gradient descent. As the for-loop executes, <code>cost</code> should be going down.</p>
 <p>Understanding the implementation of <code>updateGuess</code> requires a little detour into basic calculus.</p>
-
 <p>If we look at our graph of <code>m</code> and <code>J(m)</code> and remember that the derivative of a function gives us the slope of the tangent line, we have what we need to see the central insight that makes gradient descent possible. So, let&rsquo;s ask: What happens if we compute the derivative of this function and draw the tangent lines for <code>m = 1</code> and <code>m=-1</code> in this graph?</p>
-
 
 
 <div id="quadratic-equations-with-deriv"></div>
@@ -267,15 +229,13 @@
   );
 </script>
 
-
 <p>The tangent line for m=1 has a <em>positive</em> slope, which means the derivative of <code>J(m)</code> at that point will be positive. The tangent line for m=-1 has a <em>negative</em> slope, which means the derivative of <code>J(m)</code> at that point will be negative. If m=1, we want our next guess at <code>m</code> to be less and if m=-1, we want our next guess to be more. We can easily achieve this by subtracting the derivative, and if we do this, we wind up with the heart of the gradient descent algorithm:</p>
-
 <p>
 
 <div id="update-rule-m"></div>
 <script>
   addEventListener("DOMContentLoaded", () => {
-    katex.render("m\x27 = m - \\alpha \\frac{\\partial J}{\\partial m}J(m,b)", document.getElementById("update-rule-m"), {
+    katex.render("m\u0027 = m - \\alpha \\frac{\\partial J}{\\partial m}J(m,b)", document.getElementById("update-rule-m"), {
       throwOnError: false,
       displayMode: true
     });
@@ -287,14 +247,13 @@
 <div id="update-rule-b"></div>
 <script>
   addEventListener("DOMContentLoaded", () => {
-    katex.render("b\x27 = b - \\alpha \\frac{\\partial J}{\\partial b}J(m,b)", document.getElementById("update-rule-b"), {
+    katex.render("b\u0027 = b - \\alpha \\frac{\\partial J}{\\partial b}J(m,b)", document.getElementById("update-rule-b"), {
       throwOnError: false,
       displayMode: true
     });
   });
 </script>
 </p>
-
 <p>We&rsquo;ve got some partial derivatives here because we&rsquo;re working with multiple variables, and in general, there may be many more learning parameters than <code>m</code> and <code>b</code> if we have more features/variables in our learning problem (e.g., we may think that game studio is a predictor/variable that could tell us something about game sales). This detail doesn&rsquo;t really matter for getting the gist of gradient descent. Here&rsquo;s the kotlin:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">updateGuess</span>(
         guess: Pair&lt;Double, Double&gt;,
@@ -313,21 +272,20 @@
         <span style="color:#66d9ef">val</span> newM = m - (learningRate * mGradient)
         <span style="color:#66d9ef">val</span> newB = b - (learningRate * bGradient)
         <span style="color:#66d9ef">return</span> Pair(newM, newB)
-    }</code></pre></div>
-<p>Running this code gives us <code>.0281</code> for <code>m</code> and <code>-.804</code> for <code>b</code>, which is pretty darn close to that line of best fit we saw earlier.</p>
-
+    }
+</code></pre></div><p>Running this code gives us <code>.0281</code> for <code>m</code> and <code>-.804</code> for <code>b</code>, which is pretty darn close to that line of best fit we saw earlier.</p>
 <h2 id="notes">Notes</h2>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1">The relationship isn&rsquo;t as strong as I suspected. They say being a game dev is rough. Maybe this is evidence of that. Maybe the data just isn&rsquo;t very good.
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2">I&rsquo;m betting excel and google sheets use the &ldquo;normal equation&rdquo; method of linear regression rather than gradient descent, which is <a href="https://www.coursera.org/learn/machine-learning/supplement/bjjZW/normal-equation">apparently ok if you&rsquo;re dealing with a linear regression problem with less than 10k features</a>. I also doubt it can handle more than one variable without any sort of extension.
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p>The relationship isn&rsquo;t as strong as I suspected. They say being a game dev is rough. Maybe this is evidence of that. Maybe the data just isn&rsquo;t very good. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>I&rsquo;m betting excel and google sheets use the &ldquo;normal equation&rdquo; method of linear regression rather than gradient descent, which is <a href="https://www.coursera.org/learn/machine-learning/supplement/bjjZW/normal-equation"target="_blank">apparently ok if you&rsquo;re dealing with a linear regression problem with less than 10k features</a>. I also doubt it can handle more than one variable without any sort of extension. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article><section class="article labels"><a class="tag" href=/tags/machine-learning/>machine learning</a><a class="tag" href=/tags/kotlin/>kotlin</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/maybe-dont-write-that-test/"><span class="li iconfont icon-article"></span>Maybe Don't Write That Test</a></p><p><a class="link" href="/post/dagger-2-years-later/"><span class="li iconfont icon-article"></span>Dagger 2, 2 Years Later</a></p></section></div></section><section id="footer"><div
   style="display:flex; flex-direction:row; flex-wrap:wrap; justify-content:space-between;"

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>The so-called &#39;RESTful&#39; web in 2018 and beyond&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>The so-called &#39;RESTful&#39; web in 2018 and beyond&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="The so-called &#39;RESTful&#39; web in 2018 and beyond" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,71 +10,57 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">The so-called 'RESTful' web in 2018 and beyond</h1><p class="article date">2018-04-24</p></section><article class="article markdown-body">
-
-<p>Recently, I&rsquo;ve been wondering,</p>
-
+    <h1 class="article title">The so-called 'RESTful' web in 2018 and beyond</h1><p class="article date">2018-04-24</p></section><article class="article markdown-body"><p>Recently, I&rsquo;ve been wondering,</p>
 <blockquote>
 <p>Should new APIs created in 2018 be RESTful or be built using graphql or be something else entirely?</p>
 </blockquote>
-
 <p>While pondering and researching this question, I&rsquo;ve stumbled upon some broader realizations like,</p>
-
 <ul>
 <li>Most web APIs and SPAs aren&rsquo;t actually RESTful. 😨 In fact, I&rsquo;ve never worked with a completely RESTful API.</li>
 <li>We&rsquo;re reinventing the wheel and making our lives harder &mdash; on the server and on the client &mdash; by ignoring the standards around REST APIs 😞</li>
 <li>The same force that explains our half-ass adoption of REST (i.e., crappy internet) also explains the popularity of graphql and this force is actually what often makes REST a bad trade-off (I&rsquo;ve actually stumbled upon the part of Roy Fielding&rsquo;s dissertation that recognizes this trade-off!)</li>
 <li>There&rsquo;s a way to capture the compelling and still unfulfilled promises of REST in graphql (viz., by embedding hypermedia controls in our graphql APIs) 👍️</li>
 </ul>
-
 <p>I thought these realizations were pretty interesting and worth sharing. Here I go.</p>
-
-<h3 id="restful-apis">&ldquo;RESTful&rdquo; 😒 APIs</h3>
-
+<h3 id="restful--apis">&ldquo;RESTful&rdquo; 😒 APIs</h3>
 <p>I&rsquo;m not going to give a complete definition of REST here, but one thing that most so-called RESTful APIs are missing is &ldquo;hypermedia.&rdquo; It turns out that Roy Fielding, the creator of REST, has actually explicitly complained about this:</p>
-
 <blockquote>
-<p>What needs to be done to make the REST architectural style clear on the notion that hypertext is a constraint? In other words, if the engine of application state (and hence the API) is not being driven by hypertext, then it cannot be RESTful and cannot be a REST API. Period. Is there some broken manual somewhere that needs to be fixed?<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
+<p>What needs to be done to make the REST architectural style clear on the notion that hypertext is a constraint? In other words, if the engine of application state (and hence the API) is not being driven by hypertext, then it cannot be RESTful and cannot be a REST API. Period. Is there some broken manual somewhere that needs to be fixed?<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 </blockquote>
-
-<p>That was written in 2008, but Leonard Richardson et. al. basically have said they same thing in their excellent 2013 book <em>RESTful Web APIs</em>,<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup> and reflecting on my experience of <em>consuming</em> &ldquo;RESTful APIs&rdquo; and the REST constraint of &ldquo;hypermedia as the engine of application state,&rdquo; (HATEOS) it seems like Fielding&rsquo;s complaint is just as valid today as it was 8 years ago.</p>
-
+<p>That was written in 2008, but Leonard Richardson et. al. basically have said they same thing in their excellent 2013 book <em>RESTful Web APIs</em>,<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> and reflecting on my experience of <em>consuming</em> &ldquo;RESTful APIs&rdquo; and the REST constraint of &ldquo;hypermedia as the engine of application state,&rdquo; (HATEOS) it seems like Fielding&rsquo;s complaint is just as valid today as it was 8 years ago.</p>
 <p>Let me lift Richardson et. al.&rsquo;s explanation of the HATEOS constraint out of their book, just so you can do a mental check yourself to see if you&rsquo;ve ever worked with a RESTful API:</p>
-
 <blockquote>
 <ol>
-<li><p>All application state is kept on the client side. Changes to application state are the client&rsquo;s responsibility.</p></li>
-
-<li><p>The client can only change its application state by making an HTTP request and processing the response.</p></li>
-
-<li><p>How does the client know which requests it can make next? By looking at the hypermedia controls in the representations it&rsquo;s received so far.</p></li>
-
-<li><p>Therefore, hypermedia controls are the driving force behind changes in application state.<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></p></li>
+<li>
+<p>All application state is kept on the client side. Changes to application state are the client&rsquo;s responsibility.</p>
+</li>
+<li>
+<p>The client can only change its application state by making an HTTP request and processing the response.</p>
+</li>
+<li>
+<p>How does the client know which requests it can make next? By looking at the hypermedia controls in the representations it&rsquo;s received so far.</p>
+</li>
+<li>
+<p>Therefore, hypermedia controls are the driving force behind changes in application state.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+</li>
 </ol>
 </blockquote>
-
 <p>Looking at each point here, my checklist on typical projects looks like this:</p>
-
 <ol>
 <li>✅ 😎</li>
 <li>🚫 Application state changes without talking to the server in both mobile apps and web SPAs</li>
 <li>🚫 Nope. The client knows which requests to make next becuase I&rsquo;ve hardcoded those requests into my client based on the docs of an API.</li>
 <li>🚫 No one even talks about hypermedia.</li>
 </ol>
-
-<h3 id="we-re-reinventing-the-wheel">We&rsquo;re reinventing the wheel</h3>
-
-<p>Fielding and his REST folks aren&rsquo;t being pedantic in pointing out that we&rsquo;re missing hypermedia in our &ldquo;REST&rdquo; APIs. Richardson et. al. actually call hypermedia &ldquo;the single most important aspect of REST,&rdquo;<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup> and they make a pretty compelling case that hypermedia matters.</p>
-
+<h3 id="were-reinventing-the-wheel">We&rsquo;re reinventing the wheel</h3>
+<p>Fielding and his REST folks aren&rsquo;t being pedantic in pointing out that we&rsquo;re missing hypermedia in our &ldquo;REST&rdquo; APIs. Richardson et. al. actually call hypermedia &ldquo;the single most important aspect of REST,&quot;<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> and they make a pretty compelling case that hypermedia matters.</p>
 <p>Richardson et. al. give us a nice example of why hypermedia and standards matter by spending quite a bit of time spelling out how we could save a lot of code and time on the server and on the client if we stopped inventing fiat standards for how collections work in our APIs. What if all JSON payloads for all APIs that wanted to talk about collections of resources had some <em>the same way of telling clients</em>:</p>
-
 <ol>
 <li>How to fetch additional details about an item in a collection?</li>
 <li>How to fetch the next or previous page of items in a collection?</li>
-<li>How to add an additional item to a collection?<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup></li>
+<li>How to add an additional item to a collection?<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></li>
 </ol>
-
-<p>There are a bunch of standards that try to add hypermedia to collections. Here&rsquo;s one called &ldquo;collection+json&rdquo; (modified from <a href="http://amundsen.com/media-types/collection/examples/">the original example</a>) just so you can get an idea:</p>
+<p>There are a bunch of standards that try to add hypermedia to collections. Here&rsquo;s one called &ldquo;collection+json&rdquo; (modified from <a href="http://amundsen.com/media-types/collection/examples/"target="_blank">the original example</a>) just so you can get an idea:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
   <span style="color:#f92672">&#34;href&#34;</span> : <span style="color:#e6db74">&#34;http://example.org/friends/&#34;</span>,
   <span style="color:#f92672">&#34;links&#34;</span>: [
@@ -102,36 +88,26 @@
       {<span style="color:#f92672">&#34;name&#34;</span> : <span style="color:#e6db74">&#34;avatar&#34;</span>, <span style="color:#f92672">&#34;value&#34;</span> : <span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#f92672">&#34;prompt&#34;</span> : <span style="color:#e6db74">&#34;Avatar&#34;</span>}
     ]
   }
-} </code></pre></div>
-<p>Here&rsquo;s how a payload like this would enable standard client state transitions:</p>
-
+} 
+</code></pre></div><p>Here&rsquo;s how a payload like this would enable standard client state transitions:</p>
 <ol>
 <li>If you want get more info about an item in a collection, you make a GET request to that item&rsquo;s <code>href</code> property.</li>
 <li>If you want to get the next page, you make a GET request to the <code>href</code> property belonging to the <code>link</code> whose <code>rel</code> property is &ldquo;next.&rdquo;</li>
 <li>If you want to add an item to a collection, you make a POST request at the top-level <code>href</code> and pass in a json body that has a structure suggested by the top-level <code>template</code> property.</li>
 </ol>
-
 <p>API designers wouldn&rsquo;t have to think about how to structure their collection JSON or about how to structure pagination or about the structure of HTTP request needed to add a new item to the collection.</p>
-
 <p>Programmers working on clients could use client libraries that make implementing paging through data much simpler. The client library would know how to find the API call to make to display data for the next page in the collection. Or, they could use a library that makes it easy to navigate from a list to an item. The client library would know and could make the request for an item within a collection automatically once a user taps a button.</p>
-
 <h3 id="why-the-half-ass-adoption-of-rest-and-why-graphql">Why the half-ass adoption of REST and why graphql?</h3>
-
 <p>Obligatory P&amp;R reference:</p>
-
-<p><img src="/images/swanson-wisdom.jpg" alt="&quot;Never half-ass two things. Whole ass one thing. Ron Swanson&quot;" /></p>
-
-<p>Anyway, with all of the lip service being paid to the RESTful web, how is it that we find ourselves in a situation where most of our services aren&rsquo;t RESTful and we&rsquo;re reinventing the wheel? Why has our adoption of REST been mostly<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">6</a></sup> half-assed?</p>
-
-<p>The relevant force here is &ldquo;crappy internet.&rdquo;<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">7</a></sup> Even with the improvements brought on by SPDY and HTTP 2,<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">8</a></sup> crappy internet &mdash; especially on phones &mdash; makes it hard to create software that</p>
-
+<p><img  src="/images/swanson-wisdom.jpg"
+        alt="&amp;ldquo;Never half-ass two things. Whole ass one thing. Ron Swanson&amp;rdquo;"/></p>
+<p>Anyway, with all of the lip service being paid to the RESTful web, how is it that we find ourselves in a situation where most of our services aren&rsquo;t RESTful and we&rsquo;re reinventing the wheel? Why has our adoption of REST been mostly<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup> half-assed?</p>
+<p>The relevant force here is &ldquo;crappy internet.&quot;<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup> Even with the improvements brought on by SPDY and HTTP 2,<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup> crappy internet &mdash; especially on phones &mdash; makes it hard to create software that</p>
 <ol>
 <li>feels fast</li>
 <li>works with limited connectivity</li>
 </ol>
-
 <p>The &ldquo;feels fast&rdquo; constraint drives the push towards SPAs. With SPA&rsquo;s, the whole point is to avoid talking to server for every application state transition, which runs directly counter to REST. This makes the idea of hypermedia in particular an anathema. Hypermedia gives the client the resource and application state transitions it can make &ldquo;just in time.&rdquo; It turns out that REST&rsquo;s &ldquo;just in time&rdquo; delivery of hypermedia controls takes too damn long.</p>
-
 <p>This wouldn&rsquo;t be so bad if it weren&rsquo;t for the &ldquo;limited connectivity&rdquo; issue. Hypermedia increases the size of resource representations. The above collection+json friends collection payload could look like this:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
   <span style="color:#f92672">&#34;items&#34;</span> : [
@@ -140,75 +116,66 @@
       <span style="color:#f92672">&#34;email&#34;</span>:<span style="color:#e6db74">&#34;jdoe@exmaple.org&#34;</span>      
     }      
   ]  
-} </code></pre></div>
-<p>This is much more compact than the JSON payload with hypermedia controls. If we&rsquo;re working with spotty connections and limited data, the more compact our messages, the better.</p>
-
+} 
+</code></pre></div><p>This is much more compact than the JSON payload with hypermedia controls. If we&rsquo;re working with spotty connections and limited data, the more compact our messages, the better.</p>
 <p>It turns out this same force &mdash; crappy internet &mdash; is what&rsquo;s driving adoption of graphql, and if we look specifically at what what people want out of graphql, we&rsquo;ll find that they&rsquo;re just making a different trade-off than the one that the pioneers of REST &mdash; <em>with eyes wide open</em> &mdash; made when it was being formulated.</p>
-
 <p>In his dissertation, Fielding recognizes that RESTful APIs could result in extra calls <em>and</em> more information than is needed for certain clients:</p>
-
 <blockquote>
-<p>Implementations are decoupled from the services they provide, which encourages independent evolvability. The trade-off though, is that a uniform interface degrades efficiency, since information is transferred in a standardized form rather than one which is specific to an application&rsquo;s needs. The REST interface is designed to be efficient for large-grain hypermedia data transfer, optimizing for the common case of the Web, but resulting in an interface that is not optimal for other forms of architectural interaction.<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">9</a></sup></p>
+<p>Implementations are decoupled from the services they provide, which encourages independent evolvability. The trade-off though, is that a uniform interface degrades efficiency, since information is transferred in a standardized form rather than one which is specific to an application&rsquo;s needs. The REST interface is designed to be efficient for large-grain hypermedia data transfer, optimizing for the common case of the Web, but resulting in an interface that is not optimal for other forms of architectural interaction.<sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup></p>
 </blockquote>
-
 <p>By including a &ldquo;uniform interface&rdquo; as a part of REST, Fielding traded client efficiency for independent evolvability.</p>
-
 <p>Because of the issues with the internet connectivity, for some companies, <em>this has actually turned out to be a bad trade-off</em>. If you look at why companies are adopting graphql, it looks like the more urgent problem is actually client efficiency.</p>
-
-<p>Both facebook and github &mdash; probably the two biggest adopters of graphql &mdash; mention how important it is that their clients can ask for many resources in one request and they talk about how useful it is for their clients to get exactly what they&rsquo;ve asked for and nothing more.<sup class="footnote-ref" id="fnref:10"><a href="#fn:10">10</a></sup></p>
-
-<p>Facebook&rsquo;s need for client efficiency is so strong that they&rsquo;ve basically just <em>given up on independent evolvability.</em> In <a href="https://www.youtube.com/watch?v=zVNrqo9XGOs">his 2016 GraphQL Summit keynote</a>, Lee Byron noted that facebook just hasn&rsquo;t made a breaking change to their API in four years.</p>
-
-<h3 id="graphql-rest-the-good-parts">GraphQL + REST, the good parts</h3>
-
+<p>Both facebook and github &mdash; probably the two biggest adopters of graphql &mdash; mention how important it is that their clients can ask for many resources in one request and they talk about how useful it is for their clients to get exactly what they&rsquo;ve asked for and nothing more.<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup></p>
+<p>Facebook&rsquo;s need for client efficiency is so strong that they&rsquo;ve basically just <em>given up on independent evolvability.</em> In <a href="https://www.youtube.com/watch?v=zVNrqo9XGOs"target="_blank">his 2016 GraphQL Summit keynote</a>, Lee Byron noted that facebook just hasn&rsquo;t made a breaking change to their API in four years.</p>
+<h3 id="graphql--rest-the-good-parts">GraphQL + REST, the good parts</h3>
 <p>Even if we decide that in 2018 graphql is often a way of building web APIs, we don&rsquo;t <em>have</em> to give up on all of the benefits that come along with RESTful APIs. Specifically, we don&rsquo;t have to give up on the still unrealized benefit of hypermedia: standardized Web API interfaces that enable smarter clients which will save API designers and client programmers design and coding time.</p>
-
-<p>Marc-André Giroux over at Github has already started thinking about this, and has <a href="https://medium.com/@__xuorig__/graphql-mutation-design-hypermedia-graphql-api-faf03f3a898a">a neat post on how we can include hypermedia-esque info in graphql mutation</a> responses to inform the client which mutation it can perform next. Graphql has a concept of interfaces which can be adopted by the types we define, so there&rsquo;s no reason why we can&rsquo;t agree on a standard set of interfaces that have hypermedia controls describing which queries and mutations a client could make at a certain point.</p>
-
-<p>Phil Sturgeon takes the other side on this issue in his <a href="https://blog.apisyouwonthate.com/representing-state-in-rest-and-graphql-9194b291d127">&ldquo;Representing State in REST and GraphQL.&rdquo;</a> He thinks that trying to include hypermedia in a graphql would be &ldquo;a bit of a mess&rdquo; because he thinks Graphql was &ldquo;designed to exclude [hypermedia].&rdquo; The documentation for graphql doesn&rsquo;t mention hypermedia at all, and hypermedia isn&rsquo;t discussed in the couple of Lee Byron introductions to graphql that I&rsquo;ve watched, so I don&rsquo;t think graphql is at all intentional about excluding hypermedia.</p>
-
+<p>Marc-André Giroux over at Github has already started thinking about this, and has <a href="https://medium.com/@__xuorig__/graphql-mutation-design-hypermedia-graphql-api-faf03f3a898a"target="_blank">a neat post on how we can include hypermedia-esque info in graphql mutation</a> responses to inform the client which mutation it can perform next. Graphql has a concept of interfaces which can be adopted by the types we define, so there&rsquo;s no reason why we can&rsquo;t agree on a standard set of interfaces that have hypermedia controls describing which queries and mutations a client could make at a certain point.</p>
+<p>Phil Sturgeon takes the other side on this issue in his <a href="https://blog.apisyouwonthate.com/representing-state-in-rest-and-graphql-9194b291d127"target="_blank">&ldquo;Representing State in REST and GraphQL.&quot;</a> He thinks that trying to include hypermedia in a graphql would be &ldquo;a bit of a mess&rdquo; because he thinks Graphql was &ldquo;designed to exclude [hypermedia].&rdquo; The documentation for graphql doesn&rsquo;t mention hypermedia at all, and hypermedia isn&rsquo;t discussed in the couple of Lee Byron introductions to graphql that I&rsquo;ve watched, so I don&rsquo;t think graphql is at all intentional about excluding hypermedia.</p>
 <p>I think that Graphql &mdash; like JSON &mdash; can be a vehicle for hypermedia. It just depends on whether we want to start spending the time to invest in standard hypermedia-esque controls that work with Graphql.</p>
-
 <h3 id="conclusion">Conclusion</h3>
-
 <p>Of course, I could be wrong about all this. I haven&rsquo;t spent much time with graphql, but it definitely looks like in 2018 with our crappy internet issues, its worth looking into. Setting aside crappy internet, the convenience of having an application-specific interface make graphql worth considering.</p>
-
-<p>Both Fielding and Richardson et. al. are trying to support independent evolvability with REST, but it seems perfectly reasonable that we may find ourselves in situations where independent evolvability isn&rsquo;t the biggest problem we face.<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">11</a></sup> Having a convenient interface to work with on clients that are probably going to be updated that mitigate issues caused by spotty and slow internet connections with the option of adding hypermedia-esque controls seems like a pretty sweet stop to be in.</p>
-
+<p>Both Fielding and Richardson et. al. are trying to support independent evolvability with REST, but it seems perfectly reasonable that we may find ourselves in situations where independent evolvability isn&rsquo;t the biggest problem we face.<sup id="fnref:11"><a href="#fn:11" class="footnote-ref" role="doc-noteref">11</a></sup> Having a convenient interface to work with on clients that are probably going to be updated that mitigate issues caused by spotty and slow internet connections with the option of adding hypermedia-esque controls seems like a pretty sweet stop to be in.</p>
 <p>As long as there are other big issues aside from extensibility of APIs and the desire for smarter clients, the missing feature of most APIs that would make them truly RESTful (hypermedia) may only live on in a as an optional add on in REST-ish graphql APIs.</p>
-
-<hr />
-
+<hr>
 <h2 id="footnotes">Footnotes</h2>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1"><a href="http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven">&ldquo;Rest APIs must be Hyper-text Driven,&rdquo;</a> Roy Fielding.
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2">Not to be confused with their 2008 <em>RESTful Web Services</em>, which, given its raving review by DHH, seems to be <em>the book</em> on RESTful APIs.
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3"><em>RESTful Web APIs: Services for a changing world</em>, &ldquo;Appendix C: An API Designer&rsquo;s Guide to Fielding&rsquo;s Dissertation.&rdquo;
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:4">Ibid., &ldquo;Hypermedia is Hard.&rdquo;
- <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
-<li id="fn:5">Notice that these are all <em>hypermedia controls</em>; they all are ways of the server telling the client how to change its state my making an appropriate http request.
- <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
-<li id="fn:6">Interestingly, it seems like Google has been more aggressive in adopting some of the RESTful standards that most of us have ignored. (I&rsquo;m thinking specifically of JSON-LD, which is used in their page <a href="https://developers.google.com/search/docs/guides/search-features">data types for providing special UI around search results</a>.) This makes sense. Search engines have a vested interest in having us structure the web in such a way that a standard, non-human client can navigate the web using hypermedia controls.
- <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
-<li id="fn:7">I do wonder, however, how much more RESTful things would be if Mobile hadn&rsquo;t started its hype-train right in 2007, which, according to Richardson et. al. is the same time that REST was really getting its solid footing against SOAP. Just as REST was trying to capture our imaginations, mobile came along and stole the show, storming on to the scene with 0 affinity towards REST.
- <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
-<li id="fn:8">It looks like Facebook was actually an early adopter of SPDY and Http 2. Apparently, the performance improvements from this weren&rsquo;t good enough.
- <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
-<li id="fn:9"><em>Architectural Styles and the Design of Network-based Software Architectures</em>, &ldquo;5.1.5 Uniform Interface,&rdquo; Roy Thomas Fielding.
- <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
-<li id="fn:10">Facebook mentions these things directly on <a href="http://graphql.org">graphql.org</a>. Github mentions them in <a href="https://developer.github.com/v4/#why-is-github-using-graphql">their docs on why they&rsquo;re using graphql for v4 of their api</a>.
- <a class="footnote-return" href="#fnref:10"><sup>[return]</sup></a></li>
-<li id="fn:11">Richardson et. al. summarize the tradeoffs with REST and hypermedia nicely towards the end of their book. They say, &ldquo;If you have some way of forcing all your clients to upgrade in lockstep, you can give up &lsquo;Internet-scale.&rsquo; Then you can have a &lsquo;low entry-barrier&rsquo; and &lsquo;extensibility&rsquo; without needing to use &lsquo;distributed hypermedia&rsquo;.&rdquo; We can&rsquo;t force clients to upgrade, but automated browser and app updates definitely help us live without hypermedia.
- <a class="footnote-return" href="#fnref:11"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven"target="_blank">&ldquo;Rest APIs must be Hyper-text Driven,&quot;</a> Roy Fielding. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>Not to be confused with their 2008 <em>RESTful Web Services</em>, which, given its raving review by DHH, seems to be <em>the book</em> on RESTful APIs. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><em>RESTful Web APIs: Services for a changing world</em>, &ldquo;Appendix C: An API Designer&rsquo;s Guide to Fielding&rsquo;s Dissertation.&rdquo; <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p>Ibid., &ldquo;Hypermedia is Hard.&rdquo; <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p>Notice that these are all <em>hypermedia controls</em>; they all are ways of the server telling the client how to change its state my making an appropriate http request. <a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p>Interestingly, it seems like Google has been more aggressive in adopting some of the RESTful standards that most of us have ignored. (I&rsquo;m thinking specifically of JSON-LD, which is used in their page <a href="https://developers.google.com/search/docs/guides/search-features"target="_blank">data types for providing special UI around search results</a>.) This makes sense. Search engines have a vested interest in having us structure the web in such a way that a standard, non-human client can navigate the web using hypermedia controls. <a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p>I do wonder, however, how much more RESTful things would be if Mobile hadn&rsquo;t started its hype-train right in 2007, which, according to Richardson et. al. is the same time that REST was really getting its solid footing against SOAP. Just as REST was trying to capture our imaginations, mobile came along and stole the show, storming on to the scene with 0 affinity towards REST. <a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8" role="doc-endnote">
+<p>It looks like Facebook was actually an early adopter of SPDY and Http 2. Apparently, the performance improvements from this weren&rsquo;t good enough. <a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9" role="doc-endnote">
+<p><em>Architectural Styles and the Design of Network-based Software Architectures</em>, &ldquo;5.1.5 Uniform Interface,&rdquo; Roy Thomas Fielding. <a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:10" role="doc-endnote">
+<p>Facebook mentions these things directly on <a href="http://graphql.org"target="_blank">graphql.org</a>. Github mentions them in <a href="https://developer.github.com/v4/#why-is-github-using-graphql"target="_blank">their docs on why they&rsquo;re using graphql for v4 of their api</a>. <a href="#fnref:10" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:11" role="doc-endnote">
+<p>Richardson et. al. summarize the tradeoffs with REST and hypermedia nicely towards the end of their book. They say, &ldquo;If you have some way of forcing all your clients to upgrade in lockstep, you can give up &lsquo;Internet-scale.&rsquo; Then you can have a &lsquo;low entry-barrier&rsquo; and &lsquo;extensibility&rsquo; without needing to use &lsquo;distributed hypermedia&rsquo;.&rdquo; We can&rsquo;t force clients to upgrade, but automated browser and app updates definitely help us live without hypermedia. <a href="#fnref:11" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article><section class="article labels"><a class="tag" href=/tags/rest/>rest</a><a class="tag" href=/tags/graphql/>graphql</a><a class="tag" href=/tags/SPAs/>SPAs</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/patterns-principles-and-tools-for-testing-react-native-apps/"><span class="li iconfont icon-article"></span>Patterns Principles and Tools for Testing Your React (Native) Apps</a></p><p><a class="link" href="/post/my-first-1000-minutes-meditating/"><span class="li iconfont icon-article"></span>From Panic Attacks to Yoga Mats: Startups, Leadership, and my first 1000 minutes Meditating</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
 <script type="application/javascript">

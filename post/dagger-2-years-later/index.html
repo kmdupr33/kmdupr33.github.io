@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Dagger 2, 2 Years Later&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Dagger 2, 2 Years Later&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Dagger 2, 2 Years Later" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,36 +10,21 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Dagger 2, 2 Years Later</h1><p class="article date">2019-08-27</p></section><article class="article markdown-body">
-
-<blockquote>
+    <h1 class="article title">Dagger 2, 2 Years Later</h1><p class="article date">2019-08-27</p></section><article class="article markdown-body"><blockquote>
 <p>&hellip;in software, feedback cycles tend to be on the order of months, if not years&hellip;It’s during the full lifetime of a project that a developer gains experience writing code, source controlling it, modifying it, testing it, and <strong>living with previous design and architecture decisions during maintenance phases</strong>. With everything I’ve just described, a developer is lucky to have a first try of less than six months&hellip;</p>
-
 <p>&ndash;Erik Dietrich, &ldquo;How Developers Stop Learning: Rise of the Expert Beginner&rdquo;</p>
 </blockquote>
-
-<hr />
-
-<p>A few years ago, we started using Dagger 2 in our applications. We saw some quick wins and were able to do some neat things like <a href="https://github.com/JakeWharton/u2020#u2020">mock mode</a> for testing and better support our white-labelling process. However, as time went on, several members of our team developed an aversion to working on the Dagger code, and I must admit that even I occasionally found it frustrating to work with.</p>
-
+<hr>
+<p>A few years ago, we started using Dagger 2 in our applications. We saw some quick wins and were able to do some neat things like <a href="https://github.com/JakeWharton/u2020#u2020"target="_blank">mock mode</a> for testing and better support our white-labelling process. However, as time went on, several members of our team developed an aversion to working on the Dagger code, and I must admit that even I occasionally found it frustrating to work with.</p>
 <p>I want to say a little about why folks were frustrated and how I think we might have avoided that frustration. I still think using Dagger is a good idea, but there are some things I might have differently in how we adopted Dagger if we were starting today.</p>
-
 <h2 id="object-graph-first-dagger-second">Object-Graph First, Dagger Second</h2>
-
 <p>If you&rsquo;re writing an Object-oriented program, then you have objects that depend on each other. These objects and dependencies can be thought of as <a href="/note/what-is-an-object-graph/">an object graph</a>, where the nodes are objects and the edges are dependency relationships.</p>
-
 <p>When we first introduced Dagger into our code base, our object graph was a mess. Dependency relationships weren&rsquo;t always clear (thanks, <a href="/post/against-singletons-for-android-data-loading/">singletons</a>) and when they were clear, they didn&rsquo;t always seem sensible (e.g., Why does <em>this</em> depend on a <code>Context</code>?).</p>
-
 <p>By aggressively adopting Dagger with an existing messy object graph, we effectively <em>enshrined</em> our messy dependency relationships; we made it more difficult to change those relationships, and because the underlying graph was hard to understand, the Dagger code built on top of it was also more complicated than it needed to be.</p>
-
-<p>One concrete way this played out for us was how difficult it was to swap out dependencies for testing and white-labeling purposes. Because overriding modules isn&rsquo;t supported/recommended in Dagger 2, <a href="https://Dagger.dev/testing.html">the docs actually recommend some up-front design in how Dagger modules are structured</a>. As you can imagine, sensibly setting up <code>Component</code>s and <code>Module</code>s to support swapping dependencies can be tricky when the object graph is itself a mess.</p>
-
+<p>One concrete way this played out for us was how difficult it was to swap out dependencies for testing and white-labeling purposes. Because overriding modules isn&rsquo;t supported/recommended in Dagger 2, <a href="https://Dagger.dev/testing.html"target="_blank">the docs actually recommend some up-front design in how Dagger modules are structured</a>. As you can imagine, sensibly setting up <code>Component</code>s and <code>Module</code>s to support swapping dependencies can be tricky when the object graph is itself a mess.</p>
 <p>I think this mistake was partially driven by a poor understanding of what Dagger is for: it&rsquo;s just a library that just helps you write less code to create your object graph. The object graph is the thing you really care about, and it&rsquo;s the thing that should drive how you adopt Dagger in your app.</p>
-
 <p>Letting the object graph drive your Dagger adoption could mean a few things. It could mean waiting to adopt Dagger until your graph is cleaned up. It could also mean refraining from adding objects to Dagger when you can&rsquo;t do so in a way that moves you towards your desired object graph (instead of the one where <em>that random object</em> somehow depends on a <code>Context</code>).</p>
-
 <h2 id="maybe-cool-it-with-the-di">Maybe cool it with the DI</h2>
-
 <p>Consider the following code:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">View</span>(<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> context: Context) {
 
@@ -48,57 +33,44 @@
   <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">addView</span>(child: View) {
     children.add(child)
   }
-}</code></pre></div>
-<p><code>mutableListOf</code> returns an <code>ArrayList</code>, which means that <code>View</code> depends on a concrete implementation of <code>List</code>, which means we&rsquo;re violating the &ldquo;dependency inversion principle&rdquo; (one of the SOLID principles), which states:</p>
-
+}
+</code></pre></div><p><code>mutableListOf</code> returns an <code>ArrayList</code>, which means that <code>View</code> depends on a concrete implementation of <code>List</code>, which means we&rsquo;re violating the &ldquo;dependency inversion principle&rdquo; (one of the SOLID principles), which states:</p>
 <blockquote>
-<p>Depend upon Abstractions. Do not depend upon concretions.<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
+<p>Depend upon Abstractions. Do not depend upon concretions.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 </blockquote>
-
 <p>Although we&rsquo;re violating SOLID here, I suspect few of us would claim that we <em>need</em> to inject a <code>List</code> instead of having <code>View</code> create its own. Indeed, Uncle Bob himself may not even have a problem with this code since he says:</p>
-
 <blockquote>
-<p>&hellip;if you have tried and true modules that are concrete, but not volatile, depending upon them is not so bad. Since they are not likely to change, they are not likely to inject volatility into your design.<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
+<p>&hellip;if you have tried and true modules that are concrete, but not volatile, depending upon them is not so bad. Since they are not likely to change, they are not likely to inject volatility into your design.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 </blockquote>
-
-<p>Unfortunately for us, although DI was often unnecessary when we were depending on stable parts of our code, I was in a sort of do DI by default mode after we adopted Dagger. After all, I thought, Dagger makes DI so easy, why not just default to using DI, especially since &mdash; to quote Uncle Bob again &mdash; &ldquo;Non-volatility is not a replacement for the substitutability of an abstract interface.&rdquo;<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></p>
-
-<p>As you can imagine, doing this with an object graph that was messy meant that restructuring our Dagger-encrusted object graph was even more difficult. Using Dagger with a messy underlying object graph turns DI into a liability rather than a benefit, especially if your team likes to use <a href="https://martinfowler.com/bliki/InterfaceImplementationPair.html">interface implementation pairs</a> (which, for the record, I think are often a bad idea. I with Fowler on this.)</p>
-
+<p>Unfortunately for us, although DI was often unnecessary when we were depending on stable parts of our code, I was in a sort of do DI by default mode after we adopted Dagger. After all, I thought, Dagger makes DI so easy, why not just default to using DI, especially since &mdash; to quote Uncle Bob again &mdash; &ldquo;Non-volatility is not a replacement for the substitutability of an abstract interface.&quot;<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>As you can imagine, doing this with an object graph that was messy meant that restructuring our Dagger-encrusted object graph was even more difficult. Using Dagger with a messy underlying object graph turns DI into a liability rather than a benefit, especially if your team likes to use <a href="https://martinfowler.com/bliki/InterfaceImplementationPair.html"target="_blank">interface implementation pairs</a> (which, for the record, I think are often a bad idea. I with Fowler on this.)</p>
 <p>This isn&rsquo;t just a rehash of the above &ldquo;object-graph first&rdquo; point: If we could start over, I&rsquo;d probably cool it with the DI, even if I could add an object to Dagger&rsquo;s graph in a sensible way. Needing additional Dagger code to support injecting an interface costs something, and in some cases, that trade-off makes about as much sense as using Dagger to inject a <code>List</code> into the above <code>View</code>.</p>
-
 <h2 id="flattening-the-learning-curve">Flattening the Learning Curve</h2>
-
 <p>Dagger isn&rsquo;t trivial to learn, and if its used heavily in a code-base, it can be pretty intimidating. This is true for a few reasons:</p>
-
 <ul>
 <li>It generates code, so it appears to be magic to people who aren&rsquo;t familiar with how it works</li>
 <li>Many of the resources for learning Dagger assume some familiarity with dependency injection and previous DI libraries</li>
 <li>The naming of central elements of the Dagger API (namely, <code>Component</code>, <code>Subcomponent</code>, and <code>Module</code>) gives us little help in understanding their purpose</li>
 </ul>
-
 <p>Unfortunately, the docs don&rsquo;t do a great job of conveying the broader historical context and design considerations that went into the creation of dagger, and these considerations are quite helpful in addressing the above issues. However, I found that the talks about Dagger to be extremely helpful in addressing these issues.</p>
-
-<p><a href="https://youtu.be/oK_XtfXPkqw">Gregory Kick&rsquo;s talk</a> is linked in the user guide, but its easy to gloss over. Note to future self: It&rsquo;s worth the hour long detour for the team to watch. <a href="https://docs.google.com/document/d/1fwg-NsMKYtYxeEWe82rISIHjNrtdqonfiHgp8-PQ7m8/edit">The Dagger 2 design document</a> linked at the end of Kick&rsquo;s slides for his talk also has some useful context for understanding the why behind Dagger 2&rsquo;s design, and it has some useful comments on the distinction between component dependencies and <code>Subcomponents</code>.</p>
-
-<p><a href="https://jakewharton.com/dependency-injection-with-Dagger-2/">Jake Wharton&rsquo;s Dagger 2 talk</a> is also very helpful in understanding how the code generation works and gives some insight into how to think about <code>Component</code>s (they expose roots of an object graph).</p>
-
-<hr />
-
+<p><a href="https://youtu.be/oK_XtfXPkqw"target="_blank">Gregory Kick&rsquo;s talk</a> is linked in the user guide, but its easy to gloss over. Note to future self: It&rsquo;s worth the hour long detour for the team to watch. <a href="https://docs.google.com/document/d/1fwg-NsMKYtYxeEWe82rISIHjNrtdqonfiHgp8-PQ7m8/edit"target="_blank">The Dagger 2 design document</a> linked at the end of Kick&rsquo;s slides for his talk also has some useful context for understanding the why behind Dagger 2&rsquo;s design, and it has some useful comments on the distinction between component dependencies and <code>Subcomponents</code>.</p>
+<p><a href="https://jakewharton.com/dependency-injection-with-Dagger-2/"target="_blank">Jake Wharton&rsquo;s Dagger 2 talk</a> is also very helpful in understanding how the code generation works and gives some insight into how to think about <code>Component</code>s (they expose roots of an object graph).</p>
+<hr>
 <h2 id="notes">Notes</h2>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1">Bob Martin, <a href="https://web.archive.org/web/20150906155800/http://www.objectmentor.com/resources/articles/Principles_and_Patterns.pdf">&ldquo;Design Principles and Design Patterns,&rdquo;</a> 13.
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2">Ibid., 14.
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3">Ibid.
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p>Bob Martin, <a href="https://web.archive.org/web/20150906155800/http://www.objectmentor.com/resources/articles/Principles_and_Patterns.pdf"target="_blank">&ldquo;Design Principles and Design Patterns,&quot;</a> 13. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>Ibid., 14. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>Ibid. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/dependency-injection/>dependency injection</a><a class="tag" href=/tags/programming/>programming</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/gradient-descent-for-kotlin-programmers/"><span class="li iconfont icon-article"></span>An Intro to Gradient Descent for Kotlin Programmers</a></p><p><a class="link" href="/post/towards-readable-clis/"><span class="li iconfont icon-article"></span>Maybe we Should Stop Creating Inscrutable CLIs</a></p></section></div></section><section id="footer"><div
   style="display:flex; flex-direction:row; flex-wrap:wrap; justify-content:space-between;"

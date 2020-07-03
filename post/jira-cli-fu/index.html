@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>How to Automate Common Jira Tasks with Go Jira Custom Commands&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>How to Automate Common Jira Tasks with Go Jira Custom Commands&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="How to Automate Common Jira Tasks with Go Jira Custom Commands" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,58 +10,42 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">How to Automate Common Jira Tasks with Go Jira Custom Commands</h1><p class="article date">2019-07-03</p></section><article class="article markdown-body">
-
-<blockquote>
+    <h1 class="article title">How to Automate Common Jira Tasks with Go Jira Custom Commands</h1><p class="article date">2019-07-03</p></section><article class="article markdown-body"><blockquote>
 <p>in all but small teams I typically recommend separate people for the separate roles [of product managment and project management]. <strong>But in every case I believe that developing strong project management skills is a big advantage for product managers – at the least your product will get to market faster, and it could make the difference between getting your product shipped at all.</strong></p>
-
-<p>&ndash;Marty Cagan, <a href="https://svpg.com/ebays-secret-weapon/">&ldquo;Ebay&rsquo;s Secret Weapon&rdquo;</a></p>
+<p>&ndash;Marty Cagan, <a href="https://svpg.com/ebays-secret-weapon/"target="_blank">&ldquo;Ebay&rsquo;s Secret Weapon&rdquo;</a></p>
 </blockquote>
-
-<hr />
-
+<hr>
 <p>Every morning, I get the following slack message reminder:</p>
-
-<p><img src="/images/stay-on-top.png" alt="stay on top of products slack reminder" /></p>
-
-<p>For me, this is challenging because I work for <a href="http://www.unikey.com/wp-signup.php?new=unikey.com">a platform startup</a> that is supporting many products simultaneously and where the product team takes on some of the project management responsibilities. Jira helps with this challenge, but there are a few places where it falls short, and unfortunately, these days I don&rsquo;t have time to code up some custom program that talks to its API. Luckily, I stumbled upon a neat CLI for Jira.</p>
-
+<p><img  src="/images/stay-on-top.png"
+        alt="stay on top of products slack reminder"/></p>
+<p>For me, this is challenging because I work for <a href="http://www.unikey.com/wp-signup.php?new=unikey.com"target="_blank">a platform startup</a> that is supporting many products simultaneously and where the product team takes on some of the project management responsibilities. Jira helps with this challenge, but there are a few places where it falls short, and unfortunately, these days I don&rsquo;t have time to code up some custom program that talks to its API. Luckily, I stumbled upon a neat CLI for Jira.</p>
 <p>This post walks through how I&rsquo;ve been able to leverage this tool to improve my productivity. It&rsquo;s for busy technical PMs and programmers who are heavy Jira users.</p>
-
 <h3 id="problems-with-jira">Problems with Jira</h3>
-
 <p>Before we get into how to use this jira CLI, I want to say a little about the problems I was running into with Jira.</p>
-
 <p>The first problem was that removing a large number from attachments from a ticket is extremely tedious. You have to click a trash icon and a confirmation message on each attachment.</p>
-
-<p>The second problem was that there was no way for us to query for <em>epics</em> that were in a <code>To Do</code> state that had child <em>stories</em> that were in an <code>In Progress</code> state. We have a board of epics that&rsquo;s supposed to reflect what&rsquo;s being worked on at a high-level, and not being able to easily find epics whose state needed to be updated makes it hard to see what&rsquo;s actually being worked on.<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
-
+<p>The second problem was that there was no way for us to query for <em>epics</em> that were in a <code>To Do</code> state that had child <em>stories</em> that were in an <code>In Progress</code> state. We have a board of epics that&rsquo;s supposed to reflect what&rsquo;s being worked on at a high-level, and not being able to easily find epics whose state needed to be updated makes it hard to see what&rsquo;s actually being worked on.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <h3 id="an-introduction-to-go-jira">An introduction to go-jira</h3>
-
 <h4 id="installation">Installation</h4>
-
-<p>There&rsquo;s a few jira-clis out there. go-jira is the best one I&rsquo;ve found. I&rsquo;ve seen <a href="https://www.npmjs.com/package/jira-cli">the npm</a> and <a href="https://pypi.org/project/jira-cli/">python</a> modules for jira CLIs. They don&rsquo;t appear to be as well supported. It looks this go-based CLI came out of a skunkworks group at Netflix, and it&rsquo;s got over 1.5k stars on github.</p>
-
-<p>You can install <a href="https://github.com/go-jira/go-jira/releases">a pre-built binary</a> if you&rsquo;re running linux or windows. If you&rsquo;re on mac, you&rsquo;ll have to use the go package manager:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">go get gopkg.in/Netflix-Skunkworks/go-jira.v1/cmd/jira</code></pre></div>
-<h4 id="custom-commands">Custom Commands</h4>
-
+<p>There&rsquo;s a few jira-clis out there. go-jira is the best one I&rsquo;ve found. I&rsquo;ve seen <a href="https://www.npmjs.com/package/jira-cli"target="_blank">the npm</a> and <a href="https://pypi.org/project/jira-cli/"target="_blank">python</a> modules for jira CLIs. They don&rsquo;t appear to be as well supported. It looks this go-based CLI came out of a skunkworks group at Netflix, and it&rsquo;s got over 1.5k stars on github.</p>
+<p>You can install <a href="https://github.com/go-jira/go-jira/releases"target="_blank">a pre-built binary</a> if you&rsquo;re running linux or windows. If you&rsquo;re on mac, you&rsquo;ll have to use the go package manager:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">go get gopkg.in/Netflix-Skunkworks/go-jira.v1/cmd/jira
+</code></pre></div><h4 id="custom-commands">Custom Commands</h4>
 <p>The killer feature of jira go is the ability to add custom commands for doing common Jira tasks that aren&rsquo;t well-supported via the web interface. These custom commands are what allow you to solve problems like the ones I discussed <a href="#problems-with-jira">above</a>.</p>
-
 <p>The commands are specified in a config.yaml file. Mine looks like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">custom-commands:
-  - name: remove-attachments
-    help: removes all attachments from a given issue
-    args:
-      - name: ticket
-        required: <span style="color:#66d9ef">true</span>
-    script: ...
-  - name: list-active-untracked-work
-    help: lists tickets whose parent epic is still in the backlog
-    script: ...
-  - name: label-active-untracked-work
-    script: ...</code></pre></div>
-<p>The remove-attachments command is a nice demonstration of how you can take in arguments in your custom commands. This yaml tells go jira that the user should pass in the ticket key for the ticket whose attachments they want remove all at once. go jira automatically takes care of generating sane usage output when you try to misuse the command:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">custom-commands</span>:
+  - <span style="color:#66d9ef">name</span>: remove-attachments
+    <span style="color:#66d9ef">help</span>: removes all attachments from a given issue
+    <span style="color:#66d9ef">args</span>:
+      - <span style="color:#66d9ef">name</span>: ticket
+        <span style="color:#66d9ef">required</span>: <span style="color:#66d9ef">true</span>
+    <span style="color:#66d9ef">script</span>: ...
+  - <span style="color:#66d9ef">name</span>: list-active-untracked-work
+    <span style="color:#66d9ef">help</span>: lists tickets whose parent epic is still in the backlog
+    <span style="color:#66d9ef">script</span>: ...
+  - <span style="color:#66d9ef">name</span>: label-active-untracked-work
+    <span style="color:#66d9ef">script</span>: ...
+
+</code></pre></div><p>The remove-attachments command is a nice demonstration of how you can take in arguments in your custom commands. This yaml tells go jira that the user should pass in the ticket key for the ticket whose attachments they want remove all at once. go jira automatically takes care of generating sane usage output when you try to misuse the command:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">○ → jira remove-attachments
 usage: jira remove-attachments &lt;ticket&gt;
 
@@ -70,89 +54,60 @@ removes all attachments from a given issue
 Args:
   &lt;ticket&gt;
 
-ERROR Invalid Usage: required argument <span style="color:#e6db74">&#39;ticket&#39;</span> not provided</code></pre></div>
-<p>You can actually reference the passed argument using templating in the string passed into the script property:</p>
-
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">custom-commands:
-  - name: remove-attachments
-    help: removes all attachments from a given issue
-    args:
-      - name: ticket
-        required: <span style="color:#fff;font-weight:bold">true</span>
-<span style="display:block;width:100%;background-color:#191919">    script: jira attach list {{args.ticket}} ...</span></code></pre></div>
-
+ERROR Invalid Usage: required argument <span style="color:#e6db74">&#39;ticket&#39;</span> not provided
+</code></pre></div><p>You can actually reference the passed argument using templating in the string passed into the script property:</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#fff;font-weight:bold">custom-commands</span>:
+  - <span style="color:#fff;font-weight:bold">name</span>: remove-attachments
+    <span style="color:#fff;font-weight:bold">help</span>: removes all attachments from a given issue
+    <span style="color:#fff;font-weight:bold">args</span>:
+      - <span style="color:#fff;font-weight:bold">name</span>: ticket
+        <span style="color:#fff;font-weight:bold">required</span>: <span style="color:#fff;font-weight:bold">true</span>
+<span style="display:block;width:100%;background-color:#191919">    <span style="color:#fff;font-weight:bold">script</span>: jira attach list {{args.ticket}} ...</span></code></pre></div>
 <h4 id="command-templates">Command templates</h4>
-
-<p>Another killer feature that I&rsquo;ve used in conjunction with custom commands is the ability to tell jira-go how you want it do display output from a particular command using <a href="https://golang.org/pkg/text/template/">go templates</a>. You can see which templates are being used for a particular command by passing <code>-t -debug</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">jira view GOJIRA-321 -t debug</code></pre></div>
-<p>You can edit the default templates after you export them (to ~/jira.d/templates) with this command:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">jira export-templates</code></pre></div>
-<h3 id="some-useful-bashisms-for-custom-jira-commands">Some Useful Bashisms for Custom Jira Commands</h3>
-
+<p>Another killer feature that I&rsquo;ve used in conjunction with custom commands is the ability to tell jira-go how you want it do display output from a particular command using <a href="https://golang.org/pkg/text/template/"target="_blank">go templates</a>. You can see which templates are being used for a particular command by passing <code>-t -debug</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">jira view GOJIRA-321 -t debug
+</code></pre></div><p>You can edit the default templates after you export them (to ~/jira.d/templates) with this command:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">jira export-templates
+</code></pre></div><h3 id="some-useful-bashisms-for-custom-jira-commands">Some Useful Bashisms for Custom Jira Commands</h3>
 <p>(If you&rsquo;re already familiar with bash commands like <code>cut</code>, <code>sed</code>, and <code>xargs</code>, you won&rsquo;t gain anything from reading this section.)</p>
-
 <p>I want to briefly go over some bash commands that were helpful in building these commands. To do this, let&rsquo;s walk through the script property of the <code>remove-attachments</code> custom command:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">jira attach list <span style="color:#f92672">{{</span>args.ticket<span style="color:#f92672">}}</span> <span style="color:#ae81ff">\
 </span><span style="color:#ae81ff"></span>  | cut -sf <span style="color:#ae81ff">2</span> -d <span style="color:#ae81ff">\|</span> <span style="color:#ae81ff">\
 </span><span style="color:#ae81ff"></span>  | sed -n <span style="color:#e6db74">&#39;1!p&#39;</span> <span style="color:#ae81ff">\
 </span><span style="color:#ae81ff"></span>  | sed <span style="color:#e6db74">&#39;s/ //g&#39;</span> <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>  | xargs -L <span style="color:#ae81ff">1</span> -I % jira attach rm %</code></pre></div>
-<p>At a high-level, what we&rsquo;re doing here is taking the output of one jira-go command and massaging it so that it can serve as the input to another jira-go command.</p>
-
+</span><span style="color:#ae81ff"></span>  | xargs -L <span style="color:#ae81ff">1</span> -I % jira attach rm %
+</code></pre></div><p>At a high-level, what we&rsquo;re doing here is taking the output of one jira-go command and massaging it so that it can serve as the input to another jira-go command.</p>
 <h4 id="jira-attach-list">jira attach list</h4>
-
 <p>This is a standard go-jira command. Nothing to see here really.</p>
-
-<h4 id="args-ticket">{{args.ticket}}</h4>
-
+<h4 id="argsticket">{{args.ticket}}</h4>
 <p>This is where we read ticket key as a go template item as discussed <a href="#custom-commands">here</a>.</p>
-
-<h4 id="cut-sf-2-d">cut -sf 2 -d \|</h4>
-
+<h4 id="cut--sf-2--d-">cut -sf 2 -d \|</h4>
 <p>Cut allows you cut out portions of lines from text.</p>
-
 <p>-d allows you to specify a delimiter for splitting up lines. For example, if &ldquo;,&rdquo; is a delimiter, the line &ldquo;1,2,3&rdquo; will be split into an array like <code>[1, 2, 3]</code></p>
-
 <p>-f allows you to pick out which element in the above (1-indexed) array you want to cut from the line. So, -f 2 would pick out &ldquo;2&rdquo;.</p>
-
 <p>-s means skip lines that are missing the delimiter</p>
-
-<h4 id="sed-n-2s-gp">sed -n &lsquo;2s/  //gp&rsquo;</h4>
-
+<h4 id="sed--n-2s--gp">sed -n &lsquo;2s/  //gp&rsquo;</h4>
 <p>-n By default, each line of input is echoed to the standard output after all of the commands have been applied to it.  The -n option suppresses this behavior.</p>
-
 <h5 id="2">2</h5>
-
 <p>grab the second line of the input passed to you</p>
-
-<h5 id="s-g">s/  //g</h5>
-
-<p>replace &ldquo;  &rdquo; with &ldquo;&rdquo; globally</p>
-
+<h5 id="s--g">s/  //g</h5>
+<p>replace &quot;  &quot; with &quot;&rdquo; globally</p>
 <h5 id="p">p</h5>
-
 <p>then print the result</p>
-
-<h4 id="xargs-l-1-i-jira-attach-rm">xargs -L 1 -I % jira attach rm %</h4>
-
+<h4 id="xargs--l-1--i--jira-attach-rm-">xargs -L 1 -I % jira attach rm %</h4>
 <p>xargs executes a command for each -L number of lines of of some input. -I lets you specify the replacement string. The last argument is the command you want to execute, so here we&rsquo;re saying:</p>
-
 <p>&ldquo;execute <code>jira attach rm %</code> for each line of the input and replace <code>%</code> with a line of the input&rdquo;</p>
-
 <p>Because of the work we&rsquo;d done with the previous bash commands <code>%</code> will be replaced with the identifier of an attachment we want to remove.</p>
-
-<hr />
-
+<hr>
 <h3 id="notes">Notes</h3>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1">I know there&rsquo;s a <a href="https://marketplace.atlassian.com/apps/6820/scriptrunner-for-jira?hosting=cloud&amp;tab=overview">jira plugin</a> that <a href="https://community.atlassian.com/t5/Jira-questions/Filter-all-Epics-that-are-incomplete-but-only-have-Stories-that/qaq-p/233701">could be used to help with this</a>, but it&rsquo;s not free.
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p>I know there&rsquo;s a <a href="https://marketplace.atlassian.com/apps/6820/scriptrunner-for-jira?hosting=cloud&amp;tab=overview"target="_blank">jira plugin</a> that <a href="https://community.atlassian.com/t5/Jira-questions/Filter-all-Epics-that-are-incomplete-but-only-have-Stories-that/qaq-p/233701"target="_blank">could be used to help with this</a>, but it&rsquo;s not free. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article><section class="article labels"><a class="tag" href=/tags/jira/>jira</a><a class="tag" href=/tags/product-management/>product management</a><a class="tag" href=/tags/project-management/>project management</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/roadmap-presentation-tips/"><span class="li iconfont icon-article"></span>Some Tips for Delivering an Effective Roadmap Presentation</a></p><p><a class="link" href="/why-pms-should-study-statistics/"><span class="li iconfont icon-article"></span>Why PMs Should Study Statistics: An Interactive Essay</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
 <script type="application/javascript">

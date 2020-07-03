@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Why Cryptography?&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Why Cryptography?&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Why Cryptography?" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,34 +10,23 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Why Cryptography?</h1><p class="article date">2017-03-25</p></section><article class="article markdown-body">
-
-<blockquote>
+    <h1 class="article title">Why Cryptography?</h1><p class="article date">2017-03-25</p></section><article class="article markdown-body"><blockquote>
 <p>We as engineers somewhere have a level somewhere where everything beneath that is a black box&hellip;</p>
-
+</blockquote>
+<blockquote>
 <p>Jake Wharton, Fragmented Episode 7, 1:12:00</p>
 </blockquote>
-
-<p>For a while now, anything security or crypto related on Android has been a black box for me. For example, when I read <a href="https://developer.android.com/training/articles/keystore.html">the docs</a> on Android&rsquo;s <code>KeyStore</code> class or hear about Android&rsquo;s Fingerprint authentication functionality <a href="http://fragmentedpodcast.com/episodes/74/">on Fragmented</a>, I often feel like I&rsquo;m just barely understanding what&rsquo;s being said. Recently, that&rsquo;s started to change, as I&rsquo;ve started taking <a href="https://www.coursera.org/learn/crypto/">a Crypto course on Coursera</a>.</p>
-
-<p>This post is the first of several attempts to solidify the concepts I learn in that course by telling you about them and about how those concepts relate to Android development.<sup>1</sup> Hopefully, by the end of all of this, we&rsquo;ll both understand things like the <code>KeyStore</code> and HTTPS connections on Android a little better. This first post, however, isn&rsquo;t going to be very Android heavy, as I merely want to try to introduce cryptography by motivating why we need a <em>science</em> of cryptography in the first place. Let&rsquo;s get to it.</p>
-
+<p>For a while now, anything security or crypto related on Android has been a black box for me. For example, when I read <a href="https://developer.android.com/training/articles/keystore.html"target="_blank">the docs</a> on Android&rsquo;s <code>KeyStore</code> class or hear about Android&rsquo;s Fingerprint authentication functionality <a href="http://fragmentedpodcast.com/episodes/74/"target="_blank">on Fragmented</a>, I often feel like I&rsquo;m just barely understanding what&rsquo;s being said. Recently, that&rsquo;s started to change, as I&rsquo;ve started taking <a href="https://www.coursera.org/learn/crypto/"target="_blank">a Crypto course on Coursera</a>.</p>
+<p>This post is the first of several attempts to solidify the concepts I learn in that course by telling you about them and about how those concepts relate to Android development.<!-- raw HTML omitted -->1<!-- raw HTML omitted --> Hopefully, by the end of all of this, we&rsquo;ll both understand things like the <code>KeyStore</code> and HTTPS connections on Android a little better. This first post, however, isn&rsquo;t going to be very Android heavy, as I merely want to try to introduce cryptography by motivating why we need a <em>science</em> of cryptography in the first place. Let&rsquo;s get to it.</p>
 <h3 id="why-cryptography">Why Cryptography?</h3>
-
 <p>So, why do we need cryptography? This isn&rsquo;t the same as asking we need encryption. That&rsquo;s obvious and uninteresting: sometimes we want to communicate with others without other people knowing what we&rsquo;re saying. I don&rsquo;t want people to know my credit card number when I buy something on Amazon, for example.</p>
-
 <p>I&rsquo;m asking why we need cryptography, <em>a disciplined study of codes</em>? Why do the <code>KeyStore</code> docs or HTTPS seem so mysterious and complicated? Why can&rsquo;t we just roll our own intuitive, simple mechanism for encrypting information so that it can only be read by our intended recipient?</p>
-
 <p>Interestingly, people have been trying <em>and failing</em> to securely encrypt information for 1000s of years. Moreover, many of those attempts were not grounded in any kind of rigorous way of thinking about codes. In other words, they were simple, intuitive methods of encrypting information; they were attempts at encryption without cryptography.</p>
-
 <p>So that&rsquo;s why we need cryptography: our intuitive, simple methods of encryption provide no <em>guarantee</em> of security; security is hard.</p>
-
 <h3 id="a-bad-cipher">A Bad Cipher</h3>
-
 <p>Let&rsquo;s look at an example. Suppose we want to encrypt a message using a substitution cipher. A substitution cipher works by substituting letters in a message with other letters to generate an encrypted message. Here&rsquo;s a test of some code that does exactly that:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
-<span style="color:#fff;font-weight:bold">public</span> void encryptsShortText() <span style="color:#fff;font-weight:bold">throws</span> Exception {
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> encryptsShortText() <span style="color:#fff;font-weight:bold">throws</span> Exception {
     Map&lt;Character, Character&gt; key = <span style="color:#fff;font-weight:bold">new</span> HashMap&lt;Character, Character&gt;(26);
     key.<span style="color:#007f7f">put</span>(<span style="color:#0ff;font-weight:bold">&#39;a&#39;</span>, <span style="color:#0ff;font-weight:bold">&#39;z&#39;</span>); key.<span style="color:#007f7f">put</span>(<span style="color:#0ff;font-weight:bold">&#39;j&#39;</span>, <span style="color:#0ff;font-weight:bold">&#39;q&#39;</span>); key.<span style="color:#007f7f">put</span>(<span style="color:#0ff;font-weight:bold">&#39;s&#39;</span>, <span style="color:#0ff;font-weight:bold">&#39;h&#39;</span>);
     key.<span style="color:#007f7f">put</span>(<span style="color:#0ff;font-weight:bold">&#39;b&#39;</span>, <span style="color:#0ff;font-weight:bold">&#39;y&#39;</span>); key.<span style="color:#007f7f">put</span>(<span style="color:#0ff;font-weight:bold">&#39;k&#39;</span>, <span style="color:#0ff;font-weight:bold">&#39;p&#39;</span>); key.<span style="color:#007f7f">put</span>(<span style="color:#0ff;font-weight:bold">&#39;t&#39;</span>, <span style="color:#0ff;font-weight:bold">&#39;g&#39;</span>);
@@ -52,35 +41,20 @@
     <span style="color:#fff;font-weight:bold">final</span> String cipherText = cipher.<span style="color:#007f7f">encrypt</span>(<span style="color:#0ff;font-weight:bold">&#34;hello world&#34;</span>);
     assertEquals(<span style="color:#0ff;font-weight:bold">&#34;svool dliow&#34;</span>, cipherText);
 }</code></pre></div>
-
 <p>The specific key we used for this substitution cipher just &ldquo;reverses&rdquo; the alphabet, but we could use any of the <code>26!</code> possible keys for the substitution cipher to encrypt messages. The fact that there are <code>26!</code> possible ways of encrypting a message using this cipher may make it seem like substitution ciphers are pretty effective.</p>
-
 <p>However, that&rsquo;s not true at all. In fact, someone can decrypt a message without even searching through the <code>26!</code> possible keys to find the correct one to decrypt a message. Interestingly, the problem is <em>not</em> that we need more than <code>26!</code> possible keys.</p>
-
 <p>Rather, the problem is that an attacker could exploit the fact that the usage of letters or groups of letters in the english language have predictable frequency. &ldquo;E&rdquo;, for example, occurs roughly 12.7% of the time in english. When the attacker analyzes a text and notices that a particular character is used roughly 12.7% of the time, he&rsquo;ll know that that character is actually an &ldquo;E&rdquo;. The pair &ldquo;th&rdquo;, to take another example, has a well known frequency. She can repeat this process for all letters until she discovers the key.</p>
-
 <h3 id="towards-cryptography">Towards Cryptography</h3>
-
 <p>So, the intuitive way of thinking about codes is likely to lead to weeping and gnashing of teeth. What we need instead is a <em>precise</em> way of stating how secure our encryption mechanisms are and a way of <em>proving</em> that our mechanisms satisfy our desired level of security. Talking with precision and communicating proofs requires special language, so next time, we&rsquo;ll bring on the fancy vocabulary and symbols!</p>
-
 <p>&ldquo;Hold off on the symbols,&rdquo; some readers might think, &ldquo;You haven&rsquo;t shown that we need rigorous study of codes yet. Why assume the attacker knows anything at all about the message? In real life, an attacker would have a harder time decrypting a message, since they wouldn&rsquo;t know anything about it ahead of time.&rdquo;</p>
-
 <p>This is wrong-headed for two reasons.</p>
-
 <p>First, although an attacker may have a slightly more difficult time decrypting a text if they know absolutely nothing about it, they can actually work by trial and error until they arrive at a sensible decryption. With the above example, an attacker can say, &ldquo;I don&rsquo;t know what language this message is in, but I&rsquo;ll run my algorithm on German, French, and English and see what crops up.</p>
-
 <p>Second, in many situations, attackers will actually know a few things about the messages that are being sent back and forth. This is because computers must communicate according to well-known protocols.</p>
-
 <h3 id="conclusion">Conclusion</h3>
-
 <p>So we really do need a careful study of encryption. We need cryptography. What that means is that the means by which the messages are encrypted and decrypted must be known and studied by everyone to ensure that they are secure.</p>
-
 <p>I&rsquo;d like to conclude by noting that all of this means that cryptography actually allows us to something pretty remarkable: someone who intercepts an encrypted message and knows both how it was encrypted &ndash; because the guts of ciphers must be studied and known to be secure &ndash; and what parts of the decrypted message are &ndash; because computers must communicate using common protocols &ndash; still can&rsquo;t decrypt the rest of the message.</p>
-
 <p>That&rsquo;s really neat, and I hope it intrigues you in the same way that it does me: It&rsquo;s a fact that makes me excited to work on making crypto the kind of thing that I don&rsquo;t treat as a black box.</p>
-
 <h3 id="notes">Notes</h3>
-
 <ol>
 <li>This means that you shouldn&rsquo;t take what I&rsquo;m saying about security too seriously. I&rsquo;m merely a student. Don&rsquo;t try to build a secure system based on what I&rsquo;m saying and then get mad it me when you find out its not secure.</li>
 </ol>

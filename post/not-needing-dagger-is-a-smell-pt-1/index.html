@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Not Needing Dagger is a Code Smell (Pt. 1)&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Not Needing Dagger is a Code Smell (Pt. 1)&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Not Needing Dagger is a Code Smell (Pt. 1)" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,125 +10,85 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Not Needing Dagger is a Code Smell (Pt. 1)</h1><p class="article date">2017-05-12</p></section><article class="article markdown-body">
-
-<p><img src="/images/trash.jpg" alt="" /></p>
-
+    <h1 class="article title">Not Needing Dagger is a Code Smell (Pt. 1)</h1><p class="article date">2017-05-12</p></section><article class="article markdown-body"><p><img  src="/images/trash.jpg"
+        alt/></p>
 <blockquote>
 <p>A code smell is a surface indication that usually corresponds to a deeper problem in the system&hellip;smells don&rsquo;t always indicate a problem&hellip;You have to look deeper to see if there is an underlying problem there.</p>
-
+</blockquote>
+<blockquote>
 <p>&ndash;Martin Fowler</p>
 </blockquote>
-
 <p>Some people don&rsquo;t think Dagger is very useful. I&rsquo;m a bit suspicious of these people. An application that doesn&rsquo;t need Dagger smells. It suggests that there <em>might</em> be something wrong with the application&rsquo;s architecture. More specifically, it suggests there are problems its object graph.</p>
-
 <p>Before I talk about these problems, I want to provide an initial argument for thinking that there&rsquo;s a connection between object-graph-related boilerplate and good application architecture. That&rsquo;s what this first post is about.</p>
-
 <h3 id="a-quick-qualifier">A Quick Qualifier</h3>
-
 <p>Notice &ndash; in keeping with Fowler&rsquo;s definition of a code smell &ndash; I said that not needing dagger &ldquo;suggests there <em>might</em> be something wrong with the application&rsquo;s architecture.&rdquo; It&rsquo;s perfectly possible to have a well-structured application that doesn&rsquo;t need Dagger. Not needing Dagger is a smell that &ldquo;doesn&rsquo;t always indicate a problem.&rdquo;</p>
-
 <p>For example, you might have an application that&rsquo;s so small you don&rsquo;t really have any object-graph-related boilerplate. If you don&rsquo;t have any of that boilerplate, why add a library whose purpose is to reduce that boilerplate?</p>
-
 <p>Still, I think there&rsquo;s a fair amount of applications that don&rsquo;t need Dagger <em>because</em> there are problems with the application&rsquo;s object graph.</p>
-
-<h3 id="what-s-an-object-graph">What&rsquo;s an Object Graph?</h3>
-
+<h3 id="whats-an-object-graph">What&rsquo;s an Object Graph?</h3>
 <p>Its not very meaningful to say that an application has a problematic object graph if we don&rsquo;t know what an object graph is. Let&rsquo;s try to fix that now.</p>
-
-<p>An object graph is a directed acyclic graph whose nodes are objects and whose arrows are dependency relationships. (Fun fact: directed acyclic graphs are also known as DAGs, which is where the name &ldquo;Dagger&rdquo; comes from.<sup>1</sup>) Let&rsquo;s look at an example.</p>
-
-<p>Consider this piece of code Json parsing code from the <code>RemoteJsonHelper</code> class in the <a href="https://github.com/google/iosched/blob/e8c61e7e23f74aa6786696dad22e5136b423a334/server/src/main/java/com/google/samples/apps/iosched/server/schedule/input/fetcher/RemoteJsonHelper.java">Google I/O app</a>:</p>
-
+<p>An object graph is a directed acyclic graph whose nodes are objects and whose arrows are dependency relationships. (Fun fact: directed acyclic graphs are also known as DAGs, which is where the name &ldquo;Dagger&rdquo; comes from.<!-- raw HTML omitted -->1<!-- raw HTML omitted -->) Let&rsquo;s look at an example.</p>
+<p>Consider this piece of code Json parsing code from the <code>RemoteJsonHelper</code> class in the <a href="https://github.com/google/iosched/blob/e8c61e7e23f74aa6786696dad22e5136b423a334/server/src/main/java/com/google/samples/apps/iosched/server/schedule/input/fetcher/RemoteJsonHelper.java"target="_blank">Google I/O app</a>:</p>
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">JsonReader reader = <span style="color:#fff;font-weight:bold">new</span> JsonReader(
     <span style="color:#fff;font-weight:bold">new</span> InputStreamReader(stream, Charset.<span style="color:#007f7f">forName</span>(<span style="color:#0ff;font-weight:bold">&#34;UTF-8&#34;</span>))
 );</code></pre></div>
-
 <p>There&rsquo;s an object graph here. We have a set of Java objects: [<code>JsonReader</code>, <code>InputStreamReader</code>, <code>InputStream</code>, <code>Charset</code>]. We also have a set of directed dependency relationships between these objects. For example, to build an <code>InputStream</code>, you have to build a <code>Charset</code>.</p>
-
 <p>We represent this object graph by placing the class names of the instances of objects in the circles that represent our graph&rsquo;s objects and placing arrows indicating the order in which our Java objects need to be constructed:</p>
-
-<p><img src="/images/object-graph.svg" alt="object graph" /></p>
-
+<p><img  src="/images/object-graph.svg"
+        alt="object graph"/></p>
 <p>This object graph, translated to prose, says:</p>
-
 <ol>
 <li>To build a <code>JsonReader</code>, build an <code>InputStreamReader</code>.</li>
 <li>To build an <code>InputStreamReader</code>, build a <code>Charset</code> and an <code>InputStream</code></li>
 </ol>
-
-<p>So, that&rsquo;s a quick and dirty explanation of an object graph.<sup>2</sup></p>
-
-<h3 id="what-s-object-graph-related-boilerplate">What&rsquo;s Object-Graph-Related Boilerplate?</h3>
-
+<p>So, that&rsquo;s a quick and dirty explanation of an object graph.<!-- raw HTML omitted -->2<!-- raw HTML omitted --></p>
+<h3 id="whats-object-graph-related-boilerplate">What&rsquo;s Object-Graph-Related Boilerplate?</h3>
 <p>Let&rsquo;s look at our example code again:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">JsonReader reader = <span style="color:#fff;font-weight:bold">new</span> JsonReader(
     <span style="color:#fff;font-weight:bold">new</span> InputStreamReader(stream, Charset.<span style="color:#007f7f">forName</span>(<span style="color:#0ff;font-weight:bold">&#34;UTF-8&#34;</span>))
 );</code></pre></div>
-
 <p>If we have to create a <code>JsonReader</code> multiple times, we&rsquo;re stuck with some boilerplate. The only dependency that really needs to change from time to time is the <code>InputStream</code> dependency. We&rsquo;ll always need a utf-8 <code>Charset</code> and an <code>InputStreamReader</code>. Unfortunately, we&rsquo;re stuck writing some extra code to wire up our objects to give us a <code>JsonReader</code>.</p>
-
 <p>&ldquo;But can&rsquo;t we write a Factory?,&rdquo; you might protest? Sure we can. This reduces the duplication of the boilerplate, but we still have to write some pretty uninteresting code to make this happen, and as the Dagger docs say:</p>
-
 <blockquote>
 <p>the worst classes in any application are the ones that take up space without doing much at all: the BarcodeDecoderFactory, the CameraServiceLoader, and the MutableContextWrapper. These classes are the clumsy duct tape that wires the interesting stuff together.</p>
 </blockquote>
-
 <p>This is a pretty tame example of boilerplate. I&rsquo;ll leave it to you to think about more intense examples of object-graph-related boilerplate.</p>
-
 <h3 id="the-initial-argument">The Initial Argument</h3>
-
 <p>Alright. Now that we know what an object graph is, let&rsquo;s sketch out my argument. Remember: what we&rsquo;re trying to show here is that not needing Dagger is a smell.</p>
-
 <p>To start off the argument, let&rsquo;s think for a second about why Dagger exists. Smart engineers at Google said to themselves,</p>
-
 <blockquote>
 <p>If my application is well-structured, I wind up with a lot of boilerplate code that&rsquo;s concerned with constructing the object-graph. Let me build a library so that I don&rsquo;t have a bunch of boilerplate.</p>
 </blockquote>
-
-<p>Guice was the first crack at a solution to this problem. The problem that it addressed must have been well-recognized by many other engineers, as it won <a href="http://www.drdobbs.com/joltawards">a Jolt Award</a>.</p>
-
+<p>Guice was the first crack at a solution to this problem. The problem that it addressed must have been well-recognized by many other engineers, as it won <a href="http://www.drdobbs.com/joltawards"target="_blank">a Jolt Award</a>.</p>
 <p>Next, some smart engineers at Square &mdash; some of whom worked previously at Google &mdash; said basically the same thing to themselves:</p>
-
 <blockquote>
 <p>If my application is well-structured, I wind up with a lot of boilerplate code that&rsquo;s concerned with constructing the object-graph. Guice is neat, but its a bit heavy on the reflection. Let me build a library so that I don&rsquo;t have a bunch of boilerplate without having to rely heavily on reflection.</p>
 </blockquote>
-
 <p>So, these engineers build Dagger 1. Again, the library was met with lots of love.</p>
-
 <p>Finally, some other engineers &mdash; mostly from Google, but some from Square, and some from Square that used to be at Google &mdash; built Dagger 2 to further reduce the use of reflection in their object-graph related boilerplate destruction library.</p>
-
 <p>All of these efforts and all of the love for the various iterations of Java DI libraries reinforce this conditional:</p>
-
 <blockquote>
 <p>If my application is well-structured, I wind up with a lot of boilerplate code that&rsquo;s concerned with constructing the object-graph.</p>
 </blockquote>
-
 <p>This is remarkable because the contrapositive of the conditional that expresses the problem that Dagger solves is this:</p>
-
 <blockquote>
 <p>If I don&rsquo;t have a lot of boilerplate code that&rsquo;s concerned with constructing the object-graph, then my application is not well-structured.</p>
 </blockquote>
-
-<p>Obviously, there&rsquo;s going to be applications where the initial conditional is false. Like I said before, it&rsquo;s possible that small, well-structured applications won&rsquo;t lead to lots of boilerplate, so there will also be cases where the contrapositive is false.<sup>3</sup></p>
-
+<p>Obviously, there&rsquo;s going to be applications where the initial conditional is false. Like I said before, it&rsquo;s possible that small, well-structured applications won&rsquo;t lead to lots of boilerplate, so there will also be cases where the contrapositive is false.<!-- raw HTML omitted -->3<!-- raw HTML omitted --></p>
 <p>Still, I think that all of this suggests that for many non-trivial applications, written in Java, there&rsquo;s a connection here between object-graph-related boilerplate and the quality of an application&rsquo;s architecture: If your application is well-structured, you&rsquo;re going to have some object-graph-related boiler plate.</p>
-
 <h3 id="conclusion">Conclusion</h3>
-
 <p>Admittedly, this is a pretty hand-wavy argument. Its just a sketch. Thinking about it a little more, it basically an appeal to the authority of expert developers at Google, Square, and the Jolt Award committee, along with a simple logic trick.</p>
-
 <p>If you don&rsquo;t buy that the devs at Google and Square know what they&rsquo;re doing, you won&rsquo;t find this compelling. I think there&rsquo;s probably a better argument for the claim that well-structured code leads to object-graph-related boilerplate, but the appeal to authority is easier to make. Hopefully, that&rsquo;s enough to convince some people.</p>
-
 <h3 id="notes">Notes:</h3>
-
 <ol>
-<li><p>Don&rsquo;t believe me? Watch <a href="http://jakewharton.com/android-apps-with-dagger-devoxx/">Jake Wharton&rsquo;s talk on Dagger 1.</a></p></li>
-
-<li><p>If you want a more detailed and possibly incorrect explanation of what an object graph is, checkout <a href="https://www.philosophicalhacker.com/note/what-is-an-object-graph/">my note on the subject</a>.</p></li>
-
-<li><p>Its also completely possible that the object-graph related boilerplate has to do with the fact that Java is not a sufficiently powerful language for us to get our work done without boilerplate.</p></li>
+<li>
+<p>Don&rsquo;t believe me? Watch <a href="http://jakewharton.com/android-apps-with-dagger-devoxx/"target="_blank">Jake Wharton&rsquo;s talk on Dagger 1.</a></p>
+</li>
+<li>
+<p>If you want a more detailed and possibly incorrect explanation of what an object graph is, checkout <a href="https://www.philosophicalhacker.com/note/what-is-an-object-graph/">my note on the subject</a>.</p>
+</li>
+<li>
+<p>Its also completely possible that the object-graph related boilerplate has to do with the fact that Java is not a sufficiently powerful language for us to get our work done without boilerplate.</p>
+</li>
 </ol>
 </article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/architecture/>architecture</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/how-to-abuse-kotlin-extension-functions/"><span class="li iconfont icon-article"></span>How to Abuse Kotlin Extension Functions</a></p><p><a class="link" href="/post/setting-up-a-jenkins-pipeline-for-android-testing/"><span class="li iconfont icon-article"></span>Setting up a Jenkins Pipeline for Android Testing</a></p></section><section class="article discussion"><div id="disqus_thread"></div>

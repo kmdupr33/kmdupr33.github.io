@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>My Response to Hannes Dorfmann on &#34;the Circular Dependency Problem&#34;&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>My Response to Hannes Dorfmann on &#34;the Circular Dependency Problem&#34;&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="My Response to Hannes Dorfmann on &#34;the Circular Dependency Problem&#34;" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,85 +10,74 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">My Response to Hannes Dorfmann on "the Circular Dependency Problem"</h1><p class="article date">2015-07-08</p></section><article class="article markdown-body"><p>In <a href="http://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/">my last post</a>, I argued that there are two disadvantages to <code>Activities</code> and Presenters. The first disadvantage is that they are often bloated classes. The second disadvantage is that these classes often have a circular dependency between themselves and their Views. Yesterday, Hannes Dorfmann made a comment on my post that was so thoughtful and excellent that I think its worth dedicating an entire post to responding to it.</p>
-
+    <h1 class="article title">My Response to Hannes Dorfmann on "the Circular Dependency Problem"</h1><p class="article date">2015-07-08</p></section><article class="article markdown-body"><p>In <a href="http://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/"target="_blank">my last post</a>, I argued that there are two disadvantages to <code>Activities</code> and Presenters. The first disadvantage is that they are often bloated classes. The second disadvantage is that these classes often have a circular dependency between themselves and their Views. Yesterday, Hannes Dorfmann made a comment on my post that was so thoughtful and excellent that I think its worth dedicating an entire post to responding to it.</p>
 <p>Specifically, Hannes&rsquo; comments challenge my claim that the circular dependency between Activities/Fragments/Presenters and their Views are a problem.</p>
-
-<blockquote>...Regarding circular dependencies: Imho I don’t think that circular dependencies are a bad thing as long as you program against an interface and not the implementation:
-
-1. Presenter program against View interface. This makes your presenter easily testable since you can replace the view with a mock view while unit testing
-
-2. View program against Presenter interface. During testing you can replace the presenter with a mock presenter easily. Therefore view is testable. I guess the problem you face here is that the view (like Activity) is creating a presenter with new Presenter(). But with dependency injection you can inject a MockPresenter while unit testing.</blockquote>
-
-<p>These are interesting points. I think I agree that programming against interfaces makes code more unit testable in certain situations, but I&rsquo;m not sure that this addresses the disadvantage created by the circular dependencies between Activities/Presenters and their Views. Here&rsquo;s why: if an MVP-View is instantiating a concrete implementation of a Presenter, then the only way for us to swap out its dependency is by using setter injection. Setter injection, as I pointed out in the last post is generally less preferable to constructor injection. Steve Freeman and Nat Pryce say this in <a href="http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627">their book</a>. Martin Fowler, following Kent Beck, says something similar in <a href="http://martinfowler.com/articles/injection.html#ConstructorVersusSetterInjection">his article on dependency injection</a>.</p>
-
+<!-- raw HTML omitted -->
+<ol>
+<li>
+<p>Presenter program against View interface. This makes your presenter easily testable since you can replace the view with a mock view while unit testing</p>
+</li>
+<li>
+<p>View program against Presenter interface. During testing you can replace the presenter with a mock presenter easily. Therefore view is testable. I guess the problem you face here is that the view (like Activity) is creating a presenter with new Presenter(). But with dependency injection you can inject a MockPresenter while unit testing.<!-- raw HTML omitted --></p>
+</li>
+</ol>
+<p>These are interesting points. I think I agree that programming against interfaces makes code more unit testable in certain situations, but I&rsquo;m not sure that this addresses the disadvantage created by the circular dependencies between Activities/Presenters and their Views. Here&rsquo;s why: if an MVP-View is instantiating a concrete implementation of a Presenter, then the only way for us to swap out its dependency is by using setter injection. Setter injection, as I pointed out in the last post is generally less preferable to constructor injection. Steve Freeman and Nat Pryce say this in <a href="http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627"target="_blank">their book</a>. Martin Fowler, following Kent Beck, says something similar in <a href="http://martinfowler.com/articles/injection.html#ConstructorVersusSetterInjection"target="_blank">his article on dependency injection</a>.</p>
 <p>Hannes&rsquo; comment challenges my claim here too, however:</p>
-
-<blockquote>...Actually, also the Observer pattern has circular dependencies. I.e. Activity implements OnClickListener and displays a Button and registers himself as OnClickListener on the button. Activity has dependency to Button since Activity needs the reference to the Button to register himself. On the other side Button has a reference to the OnClickListener, which actually is the Activity.
-
-From my point of view its completely fine since Button programs against the OnClickInterface. Therefore, it’s not a „hard“ dependency to the Activity (which is the OnClickListener) and I wouldn’t call it circular dependency. This is the same as View and Presenter. Presenter is programming against the View interface and therefore completely fine.</blockquote>
-
+<!-- raw HTML omitted -->
+<p>From my point of view its completely fine since Button programs against the OnClickInterface. Therefore, it’s not a „hard“ dependency to the Activity (which is the OnClickListener) and I wouldn’t call it circular dependency. This is the same as View and Presenter. Presenter is programming against the View interface and therefore completely fine.<!-- raw HTML omitted --></p>
 <p>This is a great argument. Hannes builds on the argument later in his comment:</p>
-
-<blockquote>Regarding invalid state of an object:
-That’s open to dispute. [Is] a presenter...in an invalid state without a View? [Is] a Button...in an invalid state without having set an OnClickListener?</blockquote>
-
+<!-- raw HTML omitted -->
 <p>I see Hannes as making two parallel arguments from analogy here, both of which support the conclusion that there&rsquo;s no problem with the circular dependency between Activities/Presenters and Views. Here&rsquo;s the first argument:</p>
-
 <ol>
-<li><p>There really isn&rsquo;t a problematic circular dependency between an <code>Activity</code> and a <code>Button</code> because the <code>Button</code> only sees the <code>Activity</code> as an <code>OnClickListener</code> interface.</p></li>
-
-<li><p>A <code>Presenter</code> programs against a <code>View</code> interface in the same way that a <code>Button</code> programs against the <code>OnClickListener</code> interface.</p></li>
-
-<li><p>So, the circular dependency between an <code>Presenter</code> and a <code>View</code> is just as unproblematic as the circular dependency between the <code>Activity</code> and the <code>Button</code>.</p></li>
+<li>
+<p>There really isn&rsquo;t a problematic circular dependency between an <code>Activity</code> and a <code>Button</code> because the <code>Button</code> only sees the <code>Activity</code> as an <code>OnClickListener</code> interface.</p>
+</li>
+<li>
+<p>A <code>Presenter</code> programs against a <code>View</code> interface in the same way that a <code>Button</code> programs against the <code>OnClickListener</code> interface.</p>
+</li>
+<li>
+<p>So, the circular dependency between an <code>Presenter</code> and a <code>View</code> is just as unproblematic as the circular dependency between the <code>Activity</code> and the <code>Button</code>.</p>
+</li>
 </ol>
-
 <p>Here&rsquo;s the second argument:</p>
-
 <ol>
-<li><p>A <code>Button</code> isn&rsquo;t in an invalid state just because its created without a click listener.</p></li>
-
-<li><p>A <code>Presenter</code> programs against an <code>View</code> interface just as a <code>Button</code> programs against a <code>OnClickListener</code></p></li>
-
-<li><p>So, a <code>Presenter</code> isn&rsquo;t in an invalid state just because its created without its <code>View</code>.</p></li>
+<li>
+<p>A <code>Button</code> isn&rsquo;t in an invalid state just because its created without a click listener.</p>
+</li>
+<li>
+<p>A <code>Presenter</code> programs against an <code>View</code> interface just as a <code>Button</code> programs against a <code>OnClickListener</code></p>
+</li>
+<li>
+<p>So, a <code>Presenter</code> isn&rsquo;t in an invalid state just because its created without its <code>View</code>.</p>
+</li>
 </ol>
-
 <p>I have a response to these arguments, but I&rsquo;m not quite sure how well it stands up to Hannes&rsquo; arguments. I&rsquo;m sure further discussion will help us hash all of this out.</p>
-
-<p>I think that a good response to both arguments requires us to get clearer on how we&rsquo;re using the word &rdquo;dependency.&ldquo; My definition of a dependency is basically the one offered by Freeman and Pryce in their book:</p>
-
+<p>I think that a good response to both arguments requires us to get clearer on how we&rsquo;re using the word &ldquo;dependency.&rdquo; My definition of a dependency is basically the one offered by Freeman and Pryce in their book:</p>
 <blockquote>
 <p>Services that the object requires from its peers so it can perform its responsibilities. The object cannot function without these services. It should not be possible to create the object without them. For example, a graphics package will need something like a screen or canvas to draw on—it doesn’t make sense without one.</p>
-
+</blockquote>
+<blockquote>
 <p><em>Growing Object Oriented Software Guided by Tests,</em> pg. 94</p>
 </blockquote>
-
 <p>A dependency, however, is only one of three different types of &ldquo;peers&rdquo; that an object may have. There&rsquo;s also something called a &ldquo;notification,&rdquo; which they define in the following passage:</p>
-
 <blockquote>
 <p>Peers that need to be kept up to date with the object’s activity. The object will notify interested peers whenever it changes state or performs a significant action. Notifications are “fire and forget”; the object neither knows nor cares which peers are listening. Notifications are so useful because they decouple objects from each other. For example, in a user interface system, a button component promises to notify any registered listeners when it’s clicked, but does not know what those listeners will do.</p>
-
+</blockquote>
+<blockquote>
 <p><em>Ibid.,</em> pg. 94</p>
 </blockquote>
-
 <p>With this distinction in mind, we can now start to respond to Hannes&rsquo; arguments. The OnClickListener, from a <code>Button's</code> perspective, is really a notification, not a dependency, so I agree with the first premise in Hannes&rsquo; argument: there&rsquo;s nothing <em>necessarily</em> problematic with creating a <code>Button</code> without a click listener. I also agree with Hannes&rsquo; second premise: A <code>Presenter</code> can program against a <code>View</code> interface just as a <code>Button</code> can program against an <code>OnClickListener</code> interface.</p>
-
 <p>Here&rsquo;s where we may start to disagree: there&rsquo;s a key difference between an <code>OnClickListener</code> and an MVP-View. An MVP-View, from the perspective of a Presenter within a particular application, is <em>necessarily</em> a dependency, not a notification. A Presenter shouldn&rsquo;t exist at all if its not going to present a View because that&rsquo;s its <em>sole responsibility</em>. To create a Presenter without a View is to create an object that cannot fulfill its responsibility. On the other hand, a Button without a click listener can still perform its responsibilities without a click listener. Its responsibility is to draw itself to the screen and notify any <em>registered</em> listeners that the button has been clicked. If there aren&rsquo;t any registered listeners, then a Button can still exercise its responsibility of drawing itself to the screen and it can still notify any listeners that may register with it in the future.</p>
-
 <p>I should qualify what I&rsquo;ve just said. I used and emphasized the word &ldquo;necessarily&rdquo; above because whether something is a dependency or a notification is often context-dependent. I agree with Freeman and Pryce when they say:</p>
-
 <blockquote>
 <p>What matters most is the context in which the collaborating objects are used. For example, in one application an auditing log could be a dependency, because auditing is a legal requirement for the business and no object should be created without an audit trail. Elsewhere, it could be a notification, because auditing is a user choice and objects will function perfectly well without it.</p>
-
+</blockquote>
+<blockquote>
 <p><em>Ibid.</em>, pg. 94-95</p>
 </blockquote>
-
 <p>So, its possible that, depending on the context, an <code>OnClickListener</code> could be either a dependency or a notification. I think that in the context of the design of the Android framework, an <code>OnClickListener</code> is a notification. I think, however, that in the context of the development of an application, a button&rsquo;s <code>OnClickListener</code> can often actually be a dependency. When we create a <code>Button</code> in our application, we plug in the domain-specific responsibilities we have in mind for it. We might say, for example, &ldquo;this button registers the user for our service and takes them to a welcome screen.&rdquo;</p>
-
 <p>Once we&rsquo;ve added this domain-specific responsibility to a <code>Button</code>, it doesn&rsquo;t make sense for the <code>Button</code> to exist without its <code>OnClickListener</code>, the object it needs to fulfill its (now) domain-specific responsibility. Of course, we can&rsquo;t modify the <code>Button's</code> api to accommodate this fact that the <code>Button</code>, in the context of our application, now has a dependency on a particular <code>OnClickListener</code>, but we can wrap the Android button into a new domain-specific Button object that reflects the fact that, in the context of our application, it doesn&rsquo;t make sense for this Button to exist without its click listener. There&rsquo;s actually a strong relationship between this suggestion and the suggestion that I&rsquo;ll make in my next post when I present the MVPR architecture.</p>
-
 <p>By now, you can probably guess what I would say to Hannes&rsquo; first argument: I would deny its first premise. I would say, in other words, that there&rsquo;s something fishy about the circular dependency between an <code>Activity</code> and its <code>Button</code> in the first place and I think there&rsquo;s something fishy about it, regardless of whether the <code>Button</code> programs against an interface. Whether the <code>Button</code> programs against an interface has nothing to do with the fact that, in the context of our application, it has a dependency on a click listener and that setting an <code>Activity</code> as a Button&rsquo;s click listener makes it more difficult for the button to have a different click listener, a difficulty we might want to avoid if we want to take full advantage of polymorphism in implementing ui-related business logic.</p>
-
 <p>Regardless of whether I&rsquo;m right or wrong to criticize the circular dependency between Activities/Presenters and their Views, I&rsquo;ve learned a lot by thinking about this and by engaging with Hannes in this discussion. So thanks, Hannes, and thanks to everyone who takes the time to make thoughtful comments on what I&rsquo;ve written. I owe you.</p></article><section class="article labels"><a class="category" href=/categories/Android/>Android</a><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/"><span class="li iconfont icon-article"></span>6 Things I wish I Knew before I Wrote my first Android App</a></p><p><a class="link" href="/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/"><span class="li iconfont icon-article"></span>MVPR: A Flexible, Testable Architecture for Android (Pt. 1)</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
 <script type="application/javascript">

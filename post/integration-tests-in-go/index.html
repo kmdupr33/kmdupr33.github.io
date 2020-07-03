@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Integration Tests in Go&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Integration Tests in Go&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Integration Tests in Go" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,51 +10,34 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Integration Tests in Go</h1><p class="article date">2016-01-22</p></section><article class="article markdown-body">
-
-<p>Although Go has support for testing built in to its toolchain, certain kinds of testing can be a bit tricky. For example, it may not be immediately obvious how you would go about writing and running <em>integration tests</em> in go. This post contains info on how to write and run integration tests for your go code.</p>
-
+    <h1 class="article title">Integration Tests in Go</h1><p class="article date">2016-01-22</p></section><article class="article markdown-body"><p>Although Go has support for testing built in to its toolchain, certain kinds of testing can be a bit tricky. For example, it may not be immediately obvious how you would go about writing and running <em>integration tests</em> in go. This post contains info on how to write and run integration tests for your go code.</p>
 <h3 id="clarifying-terms">Clarifying Terms</h3>
-
-<p>As <a href="http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/">I&rsquo;ve said before</a>, many terms in software are vague or ambiguous. So, before I get into how to write and run integration tests, let&rsquo;s make sure we&rsquo;re referring to the same thing when we use the word &ldquo;integration&rdquo; test. Sometimes it seems like people use &ldquo;integration test&rdquo; and &ldquo;acceptance test&rdquo; interchangeably. I do think, however, that there&rsquo;s a useful distinction to be made between these types of tests, a distinction that&rsquo;s made nicely by Steve Freeman and Nat Pryce in the following quotations:</p>
-
+<p>As <a href="http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/"target="_blank">I&rsquo;ve said before</a>, many terms in software are vague or ambiguous. So, before I get into how to write and run integration tests, let&rsquo;s make sure we&rsquo;re referring to the same thing when we use the word &ldquo;integration&rdquo; test. Sometimes it seems like people use &ldquo;integration test&rdquo; and &ldquo;acceptance test&rdquo; interchangeably. I do think, however, that there&rsquo;s a useful distinction to be made between these types of tests, a distinction that&rsquo;s made nicely by Steve Freeman and Nat Pryce in the following quotations:</p>
 <blockquote>
 <p>Acceptance: Does the whole system work?</p>
-
-<p>Integration: Does our code work against code we can’t change?<sup>1</sup></p>
 </blockquote>
-
-<p>Later on, they elaborate on the definition of an integration test:</p>
-
 <blockquote>
-<p>We use the term integration tests to refer to the tests that check how some of our code works with code from outside the team that we can’t change. It might be a public framework, such as a persistence mapper, or a library from another team within our organization. The distinction is that integration tests make sure that any abstractions we build over third-party code work as we expect.<sup>2</sup></p>
+<p>Integration: Does our code work against code we can’t change?<!-- raw HTML omitted -->1<!-- raw HTML omitted --></p>
 </blockquote>
-
+<p>Later on, they elaborate on the definition of an integration test:</p>
+<blockquote>
+<p>We use the term integration tests to refer to the tests that check how some of our code works with code from outside the team that we can’t change. It might be a public framework, such as a persistence mapper, or a library from another team within our organization. The distinction is that integration tests make sure that any abstractions we build over third-party code work as we expect.<!-- raw HTML omitted -->2<!-- raw HTML omitted --></p>
+</blockquote>
 <h3 id="integration-testing-in-go">Integration Testing in Go</h3>
-
 <p>Now, that we&rsquo;re clear on what we mean by the terms &ldquo;acceptance&rdquo; and &ldquo;integration tests,&rdquo; let&rsquo;s briefly take a look at how we can write and run integration tests in go.</p>
-
 <p>Suppose you&rsquo;re working with a database in your go code. Many databases have a go client sdk that you can use in your application. Typically, you&rsquo;ll build some kind of abstraction on top of that sdk that your application will use to access and update the data in the database. This abstraction is a prime candidate for integration testing.</p>
-
 <p>Obviously, in order to perform this kind of integration testing, your go code needs to be able to communicate with the database. How can we ensure that there is a database available for our test code to talk to?</p>
-
 <h4 id="a-naive-solution">A naive solution</h4>
-
 <p>The <code>TestMain()</code> function is a great way to perform the extra setup and teardown of your test database. When there&rsquo;s a <code>TestMain()</code> function in any of your test files, that function is called directly by <code>go test</code>. The function can then perform any necessary setup, run the tests, and then teardown whatever was needed to support the tests:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> TestMain(m *testing.M) {
     setupDatabase()
     result := m.Run()
     teardownDatabase()
     os.Exit(result)
 }</code></pre></div>
-
 <p>The problem with using <code>TestMain</code> this way, however, is that integration tests are typically much slower than unit tests, so running our tests this way will make invocations of <code>go test</code> take much longer. If we&rsquo;re working on a part of the code that has nothing to do with integrating with 3rd party code, this can be pretty frustrating.</p>
-
 <h4 id="a-less-naive-solution">A less naive solution</h4>
-
 <p>Fortunately, the testing package itself suggests a solution to this problem. The testing package actually has a function called <code>testing.Short()</code>. This function returns true if the <code>-short</code> flag has been passed into the <code>go test</code> command. Tests can check the value of <code>Short()</code> to determine whether they should execute code and/or tests that will take a long time. This flag could be leveraged to determine whether the tests should spin up external services for integration tests:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> TestMain(m *testing.M) {
 <span style="display:block;width:100%;background-color:#191919">    flag.Parse()
 </span><span style="display:block;width:100%;background-color:#191919">    <span style="color:#fff;font-weight:bold">if</span> !testing.Short() {
@@ -66,36 +49,28 @@
 </span><span style="display:block;width:100%;background-color:#191919">    }    
 </span>    os.Exit(result)
 }</code></pre></div>
-
 <p>The actual integration tests can check the value of <code>testing.Short()</code> to see if they should execute:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> TestDatabaseGet(t *testing.T) {
     <span style="color:#fff;font-weight:bold">if</span> testing.Short() {
         t.Skip()
     }
     <span style="color:#007f7f">//...
 </span><span style="color:#007f7f"></span>}</code></pre></div>
-
 <h4 id="a-scalable-solution">A scalable solution</h4>
-
 <p>This solution is definitely better than just always setting up and tearing down a database in the <code>TestMain()</code> function, but it has a few disadvantages:</p>
-
 <ol>
-<li><p>It requires us to pass in the <code>-short</code> flag every time we want to avoid running integration tests.</p></li>
-
-<li><p>It doesn&rsquo;t scale well to multiple types of integration tests.</p></li>
+<li>
+<p>It requires us to pass in the <code>-short</code> flag every time we want to avoid running integration tests.</p>
+</li>
+<li>
+<p>It doesn&rsquo;t scale well to multiple types of integration tests.</p>
+</li>
 </ol>
-
 <p>Having to pass in the <code>-short</code> flag whenever we want to avoid slow integration tests is inconvenient. Most of the time writing an application is probably spend writing code that isn&rsquo;t covered by integration tests, so most of the time you&rsquo;ll have to add the flag <code>-short</code> to your <code>go test</code> invocations.</p>
-
 <p>This inconvenience can be mitigated if we just tell our text editors to add the flag whenever they usually run <code>go test</code> (e.g., on saving a file). However, since most of the time we aren&rsquo;t interested in running integration tests, it seems like it would be better if <code>go test</code> didn&rsquo;t run integration tests by default. Instead, it&rsquo;d be better if we had to explicitly tell <code>go test</code> to run the integration tests.</p>
-
 <p>The second problem with using the <code>-short</code> flag is that it doesn&rsquo;t scale well to multiple types of integration tests. Suppose, for example, that our code utilized a database and a message queue. We can ensure that both our database and message queues are setup if we&rsquo;re doing both types of integration tests, but if we just want to run the integration tests for our database and not for our message queue, we are again forced to wait longer for our tests to run.</p>
-
 <p>The solution to both of these problems is to use custom flags. You can pass custom flags into the <code>go test</code> command and handle them however you like within your tests. We can define a flag for database integration tests and a flag for message queue tests and only run the respective integration tests when those flags are passed in. For example, <code>go test -database</code> will only run the database-related integration tests and: <code>go test -queue</code> will only run the message-queue-related integration tests.</p>
-
 <p>Briefly, here&rsquo;s how you could support that behavior in <code>TestMain()</code>:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">var</span> (
     database = flag.Bool(<span style="color:#0ff;font-weight:bold">&#34;database&#34;</span>, <span style="color:#fff;font-weight:bold">false</span>, <span style="color:#0ff;font-weight:bold">&#34;run database integration tests&#34;</span>)    
     messageQueue = flag.Bool(<span style="color:#0ff;font-weight:bold">&#34;messageQueue&#34;</span>, <span style="color:#fff;font-weight:bold">false</span>, <span style="color:#0ff;font-weight:bold">&#34;run message queue integration tests&#34;</span>)
@@ -118,23 +93,15 @@
     }    
     os.Exit(result)
 }</code></pre></div>
-
 <p>Of course, your database and message queue integration tests should also check for these flags and skip if they are not set to true.</p>
-
 <h3 id="conclusion">Conclusion</h3>
-
 <p>We&rsquo;ve just seen three ways of writing and running integration tests in go.</p>
-
 <p>The first way was to simply use the <code>TestMain()</code> function to perform whatever setup and teardown you need for your tests. I called this solution &ldquo;naive&rdquo; because it dramatically increases the time it takes for <code>go test</code> to execute, even if you aren&rsquo;t interested in running integration tests.</p>
-
 <p>The second &ldquo;less naive&rdquo; solution was to take advantage of the <code>-short</code> flag built in to the testing package. This solution is better because it gives us a way of shortening our test runs when we don&rsquo;t want to run integration tests. However, this solution forces us to pass the <code>-short</code> flag whenever we want to shorten our test run, and since we aren&rsquo;t usually interested in running integration tests, this is inconvenient. Moreover, this solution doesn&rsquo;t give us fine-grained control over which kinds of integration tests we want to run, and this again forces us to wait longer for <code>go test</code> to complete.</p>
-
 <p>I believe that the last solution we explored is a very scalable way of handling integration testing in go. It gives us fine-grained control over which integration tests we want to run and doesn&rsquo;t run any slow integration tests by default. This allows us to run our tests as quickly as possible. I also suspect that there&rsquo;s another advantage to using custom flags for your integration testing: it makes acceptance testing easier, but this something that I&rsquo;ll have to explore another time.</p>
-
 <h4 id="notes">Notes:</h4>
-
 <ol>
-<li><a href="http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627">Growing Object Oriented Software Guided by Tests</a>, pg 40-41</li>
+<li><a href="http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627"target="_blank">Growing Object Oriented Software Guided by Tests</a>, pg 40-41</li>
 <li>Ibid., pg 41-42</li>
 </ol>
 </article><section class="article labels"><a class="tag" href=/tags/go/>go</a></section></div>

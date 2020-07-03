@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Sicp 1.1.1-1.1.7&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Sicp 1.1.1-1.1.7&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Sicp 1.1.1-1.1.7" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,49 +10,29 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Sicp 1.1.1-1.1.7</h1><p class="article date">2016-03-29</p></section><article class="article markdown-body">
-
-<p>Today was my first work day at <a href="recurse.com">the Recurse Center</a>. Yesterday, I found out that there&rsquo;s an <a href="https://mitpress.mit.edu/sicp/full-text/book/book.html">SICP</a> study group. I&rsquo;ve been wanting to study SICP for a while now, so naturally I joined. What follows are my thoughts and key take-aways from sections 1.1.1-1.1.7.</p>
-
+    <h1 class="article title">Sicp 1.1.1-1.1.7</h1><p class="article date">2016-03-29</p></section><article class="article markdown-body"><p>Today was my first work day at <a href="recurse.com">the Recurse Center</a>. Yesterday, I found out that there&rsquo;s an <a href="https://mitpress.mit.edu/sicp/full-text/book/book.html"target="_blank">SICP</a> study group. I&rsquo;ve been wanting to study SICP for a while now, so naturally I joined. What follows are my thoughts and key take-aways from sections 1.1.1-1.1.7.</p>
 <h1 id="declarative-vs-procedural-knowledge">Declarative vs. Procedural Knowledge</h1>
-
 <p>Abelson et al. open the book with a really interesting distinction between declarative and procedural knowledge. Moreover, they suggest that the most significant achievement of computer science is that it provides a way for us to study procedural knowledge.</p>
-
 <blockquote>
 <p>&hellip;‘‘computer science’’ is not a science and&hellip;its significance has little to do with computers. The computer revolution is a revolution in the way we think and in the way we express what we think. The essence of this change is the emergence of what might best be called procedural epistemology &ndash; the study of the structure of knowledge from an imperative point of view, as opposed to the more declarative point of view taken by classical mathematical subjects. Mathematics provides a framework for dealing precisely with notions of ‘‘what is.’’ Computation provides a framework for dealing precisely with notions of ‘‘how to.’’</p>
 </blockquote>
-
 <p>This distinction comes out more clearly in section 1.1.7 when they emphasize the difference between a procedure in scheme and a mathematical function. This difference is brought out with an example function definition for the square root:</p>
-
 <blockquote>
 <p>sqrt (x) = the y such that y &gt;= 0 and y^2=x</p>
 </blockquote>
-
 <p>Although this is a perfectly valid function definition for mathematics, it tells us nothing about how to define a procedure that will return the square root of x. After pointing this out, the authors connect the difference between procedures and functions with their distinction between procedural and declarative knowledge:</p>
-
 <blockquote>
 <p>The contrast between function and procedure is a reflection of the general distinction between describing properties of things and describing how to do things, or, as it is sometimes referred to, the distinction between declarative knowledge and imperative knowledge. In mathematics we are usually concerned with declarative (what is) descriptions, whereas in computer science we are usually concerned with imperative (how to) descriptions.</p>
 </blockquote>
-
 <p>There are two main thoughts I have about these passages.</p>
-
-<p>First, the distinction between declarative vs. procedural knowledge is philosophical interesting. It raises interesting questions about the relationship between these types of knowledge. The definitions of these two types of knowledge could probably use some further clarification, but once they are clarified, we can ask: Does procedural knowledge depend on declarative knowledge? Is it possible that procedural knowledge reduces to declarative knowledge? If we acknowledge something like procedural knowledge and it turns out that the knowledge doesn&rsquo;t reduce to declarative knowledge, then are we committed to <a href="http://plato.stanford.edu/entries/platonism/">Platonism</a> about algorithms? <a href="http://www.philosophicalhacker.com/2014/04/22/why-im-glad-my-dream-job-didnt-work-out/">My philosophy days are over</a>, but it was interesting to briefly think about these questions anyway.</p>
-
+<p>First, the distinction between declarative vs. procedural knowledge is philosophical interesting. It raises interesting questions about the relationship between these types of knowledge. The definitions of these two types of knowledge could probably use some further clarification, but once they are clarified, we can ask: Does procedural knowledge depend on declarative knowledge? Is it possible that procedural knowledge reduces to declarative knowledge? If we acknowledge something like procedural knowledge and it turns out that the knowledge doesn&rsquo;t reduce to declarative knowledge, then are we committed to <a href="http://plato.stanford.edu/entries/platonism/"target="_blank">Platonism</a> about algorithms? <a href="http://www.philosophicalhacker.com/2014/04/22/why-im-glad-my-dream-job-didnt-work-out/"target="_blank">My philosophy days are over</a>, but it was interesting to briefly think about these questions anyway.</p>
 <p>Second, I think that this distinction means that some of our programming languages are misleading. Go, for example, uses the <code>func</code> keyword to define a &ldquo;function&rdquo; in go. However, many of the functions we define in go are definitely not functions in the mathematical sense of the word, and as the above example points out, mathematical functions often fail to map neatly on to the stuff we put in our <code>func</code> bodies.</p>
-
 <h1 id="a-definition-of-syntax">A definition of syntax</h1>
-
 <p>The authors do a great job of explaining what it means for a language to have a syntax. Crucial to understanding &ldquo;syntax&rdquo; is the idea of an &ldquo;expression.&rdquo; An expression is something that can be evaluated. Each type of expression has an evaluation rule. For example, the expression <code>42</code> evaluates to <code>42</code> in Lisp. So, the evaluation rule for the type of expression exemplified by <code>42</code> must be something like &ldquo;simply return the expression as is.&rdquo;</p>
-
 <p>A language has different types of expressions, and these other expression types have more complicated evaluation rules. For example, Lisp has expressions called &ldquo;combinations.&rdquo; Here&rsquo;s an example of a combination:</p>
-
 <pre><code>(+ 1 2)
-</code></pre>
-
-<p>This combination evaluates to <code>3</code>.</p>
-
+</code></pre><p>This combination evaluates to <code>3</code>.</p>
 <p>Combinations have a <em>recursive</em> evaluation rule:</p>
-
 <blockquote>
 <ol>
 <li>Evaluate the subexpressions of the combination.</li>
@@ -60,33 +40,23 @@
 arguments that are the values of the other subexpressions (the operands).</li>
 </ol>
 </blockquote>
-
 <p>Now that we have a decent understanding of expressions, the author&rsquo;s definition of syntax will (hopefully) be clear:</p>
-
 <blockquote>
 <p>The various kinds of expressions (each with its associated evaluation rule)
 constitute the syntax of the programming language.</p>
 </blockquote>
-
 <p>From this definition, I suspect that we can infer that there are at least two kinds of syntax errors:</p>
-
 <ol>
 <li>Errors that result from using an expression type that is not recognized by the language. (E.g., try to use the keyword <code>func</code> to define a method in Java)</li>
 <li>Errors that result from violating assumptions made by the evaluation rule for an expression. (E.g., try to use a non-final variable within a lamdba in Java)</li>
 </ol>
-
 <p>These two kinds of errors seem to cover the syntax errors I&rsquo;ve run into. Maybe there are more.</p>
-
 <h1 id="code-is-data">Code is data</h1>
-
 <p>Early on, the authors make a distinction between procedures and data:</p>
-
 <blockquote>
 <p>In programming, we deal with two kinds of elements: procedures and data. (Later we will discover that they are really not so distinct.) Informally, data is ‘‘stuff’’ that we want to manipulate, and procedures are descriptions of the rules for manipulating the data.</p>
 </blockquote>
-
 <p>As you can see in this quote, however, the authors are quick to point out that the distinction between procedures and data is actually pretty tenuous. I don&rsquo;t think I&rsquo;ve made it to the point in the text where they explicitly say why the distinction doesn&rsquo;t hold up, but there are few points in these sections that already suggest some important similarities between the two:</p>
-
 <ol>
 <li>It can be helpful to think through the results of both procedures and data by using a substitution model.</li>
 <li>Defining variables names and procedure names both serve to make our code more abstract, thereby making it more manageable to write more complex programs.</li>

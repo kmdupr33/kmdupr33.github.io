@@ -39,7 +39,7 @@ Why? Like I just said, sometimes you need to test a package&amp;rsquo;s implemen
       
       <guid>https://www.philosophicalhacker.com/post/integration-tests-in-go/</guid>
       <description>Although Go has support for testing built in to its toolchain, certain kinds of testing can be a bit tricky. For example, it may not be immediately obvious how you would go about writing and running integration tests in go. This post contains info on how to write and run integration tests for your go code.
-Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague or ambiguous.</description>
+Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague or ambiguous. So, before I get into how to write and run integration tests, let&amp;rsquo;s make sure we&amp;rsquo;re referring to the same thing when we use the word &amp;ldquo;integration&amp;rdquo; test.</description>
       
     </item>
     
@@ -49,7 +49,7 @@ Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague
       <pubDate>Wed, 20 Jan 2016 10:43:26 -0500</pubDate>
       
       <guid>https://www.philosophicalhacker.com/post/getting-started-with-gomock/</guid>
-      <description>&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing&#34;&gt;my last post&lt;/a&gt;, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&amp;rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&amp;rsquo;s a brief tutorial on how to get started with gomock.&lt;/p&gt;</description>
+      <description>&lt;p&gt;In &lt;a href=&#34;http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing&#34;target=&#34;_blank&#34;&gt;my last post&lt;/a&gt;, I talked about why I started using gomock, a mocking library that facilitates testing in go. If you found what I said in that post at all compelling, you might have decided to give gomock a try and you might have noticed that the documentation isn&amp;rsquo;t as helpful as it could be. This post is meant to supplement the documentation. It&amp;rsquo;s a brief tutorial on how to get started with gomock.&lt;/p&gt;</description>
       
     </item>
     
@@ -59,22 +59,19 @@ Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague
       <pubDate>Thu, 14 Jan 2016 02:20:53 +0000</pubDate>
       
       <guid>https://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/</guid>
-      <description>&lt;p&gt;A few weeks ago, I started learning go. Since I&amp;rsquo;m a wannabe TDD-er, I took a look at some resources on testing go code. I stumbled upon &lt;a href=&#34;https://talks.golang.org/2014/testing.slide#1&#34;&gt;Andrew Gerrand&amp;rsquo;s excellent Testing Techniques talk&lt;/a&gt; in which he says this:&lt;/p&gt;
-
-&lt;blockquote&gt;Go eschews a lot of things, including mocks and fakes.&lt;/blockquote&gt;
-
-&lt;p&gt;&amp;ldquo;Alright cool,&amp;rdquo; I thought to myself. I&amp;rsquo;m down to &amp;ldquo;do as the gophers do&amp;rdquo; and eschew mocks. Later on during his talk, Andrew Gerrand mentions &lt;a href=&#34;https://github.com/golang/mock&#34;&gt;gomock&lt;/a&gt;, a mocking library, and reluctantly says&lt;/p&gt;
-
-&lt;blockquote&gt;[mocking libraries like gomock] are fine, but I find that on balance the hand-written fakes tend be easier to reason about and clearer to see what&#39;s going on, but I&#39;m not an enterprise go programmer so maybe people do need that so I don&#39;t know, but that&#39;s my advice.&lt;/blockquote&gt;
-
+      <description>&lt;p&gt;A few weeks ago, I started learning go. Since I&amp;rsquo;m a wannabe TDD-er, I took a look at some resources on testing go code. I stumbled upon &lt;a href=&#34;https://talks.golang.org/2014/testing.slide#1&#34;target=&#34;_blank&#34;&gt;Andrew Gerrand&amp;rsquo;s excellent Testing Techniques talk&lt;/a&gt; in which he says this:&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;&amp;ldquo;Alright cool,&amp;rdquo; I thought to myself. I&amp;rsquo;m down to &amp;ldquo;do as the gophers do&amp;rdquo; and eschew mocks. Later on during his talk, Andrew Gerrand mentions &lt;a href=&#34;https://github.com/golang/mock&#34;target=&#34;_blank&#34;&gt;gomock&lt;/a&gt;, a mocking library, and reluctantly says&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
 &lt;p&gt;Of course, after hearing that, I felt a little confused and unsure whether I should refrain from using mocking libraries in go. To make matters worse, I took a look at gomock and was surprised to find that its written by two engineers at Google.&lt;/p&gt;
-
 &lt;p&gt;At that point, it seemed that the question of whether we should use a mocking library while testing go code is a bit of a contentious question, even within Google. I found the seeming contentious nature of this question pretty unhelpful and confusing when I was trying to get a handle on how to write good go code. However, it led me to do some research on the pros and cons of mocking libraries vs hand-written mocks, and in this post, I present the conclusions I came to based on my research:&lt;/p&gt;
-
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;The apparent contentiousness about whether to use use a mocking library if probably partially due to vague terminology.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;If we are clear about our terms, the argument against using mocking libraries is not very compelling.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The apparent contentiousness about whether to use use a mocking library if probably partially due to vague terminology.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If we are clear about our terms, the argument against using mocking libraries is not very compelling.&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ol&gt;</description>
       
     </item>

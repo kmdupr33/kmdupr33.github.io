@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>How The Lean Principle Became Profound&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>How The Lean Principle Became Profound&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="How The Lean Principle Became Profound" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,89 +10,64 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">How The Lean Principle Became Profound</h1><p class="article date">2019-02-02</p></section><article class="article markdown-body">
-
-<p>There are certain books that are required reading for product managers. Eric Reis&rsquo; <em>The Lean Startup</em> and Marty Cagan&rsquo;s <em>Inspired</em> both come to mind. They&rsquo;re great books with lots of useful techniques and important ideas.</p>
-
+    <h1 class="article title">How The Lean Principle Became Profound</h1><p class="article date">2019-02-02</p></section><article class="article markdown-body"><p>There are certain books that are required reading for product managers. Eric Reis&rsquo; <em>The Lean Startup</em> and Marty Cagan&rsquo;s <em>Inspired</em> both come to mind. They&rsquo;re great books with lots of useful techniques and important ideas.</p>
 <p>Lately, however, the fact that these books are popular and useful has struck me as rather odd. If you take a step back from these books &mdash; and the many books, articles, talks, podcasts, etc. like them &mdash; they really rest on a pretty simple idea:</p>
-
 <blockquote>
 <p>Before you spend a ton of time building X, make sure that X will actually help your business thrive.</p>
 </blockquote>
-
 <p>How could <em>this</em> be the idea we&rsquo;re so excited about? How could <em>this</em> be the idea that so many people (myself included) have found incredibly useful in our everyday work? How is that possible? How could an idea that is so simple and obvious appear to be so uncommon and profound?</p>
-
 <p>Now, obviously, there&rsquo;s more to lean than this basic idea, but this is the fundamental idea. It&rsquo;s the idea that motivates the &ldquo;build, measure, learn&rdquo; feedback loop and all its attendant techniques in Reis&rsquo; book. It&rsquo;s the idea that sits behind the 4 types of product risk and the techniques for mitigating those risks that make up the bulk of Cagan&rsquo;s book. Because it&rsquo;s fundamental to all the lean and lean-like ideas in much of the content on startups and product management, let&rsquo;s call it &ldquo;the lean principle.&rdquo;</p>
-
 <p>Now that we&rsquo;ve named the principle, we can ask the question we&rsquo;re interested in more succinctly:</p>
-
 <blockquote>
 <p>How did the lean principle &mdash; a principle that if we step back for a second looks very simple and obvious &mdash; become profound?</p>
 </blockquote>
-
 <p>People &mdash; including Reis &mdash; have already offered answers to this question. Reis&rsquo; answer is that the lean principle is important because companies are now operating in a context of increasing uncertainty driven by accelerating technological change. This is a very common idea, but I&rsquo;ll try to show that this answer is not a very convincing explanation of why the lean principle has only recently become important.</p>
-
 <p>I&rsquo;m not going to try to answer the question myself here. My only goal is to show that it is an interesting question without a compelling answer, and that we should think more deeply about it.</p>
-
 <h3 id="accelerating-change-an-unconvincing-answer">Accelerating Change: An Unconvincing Answer</h3>
-
 <p>Eric Reis gives us a theory for why lean has become so important in <em>The Startup Way</em>, his recent follow up to <em>The Lean Startup</em>. He says,</p>
-
 <blockquote>
-<p>companies are operating in an environment quite different from their predecessors&hellip;I see their incredibly anxiety about the <strong>unpredictability</strong> of the world they live in&hellip;It&rsquo;s important to see this as the change it is. For most of the twentieth century, growth in most industries was constrained by capacity. It was considered completely obvious what a company would do if it had extra capacity: make more stuff and then sell it&hellip;Today, global communications means that new products can be conceived and built anywhere, and customers can discover them at <strong>an unprecedented pace</strong>.<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
+<p>companies are operating in an environment quite different from their predecessors&hellip;I see their incredibly anxiety about the <strong>unpredictability</strong> of the world they live in&hellip;It&rsquo;s important to see this as the change it is. For most of the twentieth century, growth in most industries was constrained by capacity. It was considered completely obvious what a company would do if it had extra capacity: make more stuff and then sell it&hellip;Today, global communications means that new products can be conceived and built anywhere, and customers can discover them at <strong>an unprecedented pace</strong>.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 </blockquote>
-
 <p>This paragraph appears next to one of those graphs that &ldquo;shows&rdquo; that technology adoption is accelerating. It shows that smart phones were adopted faster than the internet which was adopted faster than the cell phone which was adopted faster than the PC which&hellip;</p>
-
 <p>There&rsquo;s two problems with this idea.</p>
-
 <p>First, it&rsquo;s not obvious that the rate at which we adopt technology is consistently accelerating. Mary Meeker&rsquo;s last internet trends report contains a graph that tells a more ambiguous story about technology adoption:</p>
-
 <iframe src="//www.slideshare.net/slideshow/embed_code/key/fFLWra0S1mrGLB?startSlide=143" width="595" height="485" frameborder="0"
   marginwidth="0" marginheight="0" scrolling="no"> </iframe>
-
-<p>Notice that the title is &ldquo;Technology disruption = Not New,&rdquo; and notice, for example, that the microwave (1975) and the refrigerator (1925) had a steeper adoption curve than the personal computer.<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
-
+<p>Notice that the title is &ldquo;Technology disruption = Not New,&rdquo; and notice, for example, that the microwave (1975) and the refrigerator (1925) had a steeper adoption curve than the personal computer.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p>Second, even if we buy the idea that technology adoption rates are consistently accelerating, I don&rsquo;t think this provides a compelling explanation for why the lean principle has only recently started resonating as profound and important. Let&rsquo;s look at an example that puts pressure on this idea. Let&rsquo;s talk about more about microwaves.</p>
-
-<p>At one point in <em>The Startup Way</em>, Reis talks about how he helped microwave manufacturers embrace the lean principle. At one point, he realized that there were tons of people working on microwave buttons that <em>no one ever used</em>. The lean principle is very important here because this manufacturer has &ldquo;Thousands of people wire up thousands of upon thousands of buttons that are never pushed by anyone.&rdquo;<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup> To make matters worse, when Reis asked the executives of this company how many of these buttons get pressed, they had no idea.</p>
-
-<p>So the lean principle was important and profound for these executives, but <em>why</em>? &ldquo;Because people&rsquo;s behaviors around microwave usage are changing so quickly that it produced uncertainty about what features mattered&rdquo; is not a compelling explanation. Microwave buttons and designs don&rsquo;t change much, and even if they did, from day one, the executives should have been asking themselves whether the buttons they wanted to build on their microwaves actually provide value.<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup> <sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup></p>
-
+<p>At one point in <em>The Startup Way</em>, Reis talks about how he helped microwave manufacturers embrace the lean principle. At one point, he realized that there were tons of people working on microwave buttons that <em>no one ever used</em>. The lean principle is very important here because this manufacturer has &ldquo;Thousands of people wire up thousands of upon thousands of buttons that are never pushed by anyone.&quot;<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> To make matters worse, when Reis asked the executives of this company how many of these buttons get pressed, they had no idea.</p>
+<p>So the lean principle was important and profound for these executives, but <em>why</em>? &ldquo;Because people&rsquo;s behaviors around microwave usage are changing so quickly that it produced uncertainty about what features mattered&rdquo; is not a compelling explanation. Microwave buttons and designs don&rsquo;t change much, and even if they did, from day one, the executives should have been asking themselves whether the buttons they wanted to build on their microwaves actually provide value.<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> <sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
 <p>Let&rsquo;s address a quick objection.</p>
-
-<p>Defender&rsquo;s of Reis&rsquo; view might say that I&rsquo;m looking at micro changes &mdash; changes in microwave usage behavior &mdash; instead of macro ones &mdash; changes in what should be built in general, given all of the technological advances. They&rsquo;d say, &ldquo;at a macro level, we&rsquo;re in a context of uncertainty because of all the technological changes, so we just don&rsquo;t know what to build at all.&rdquo;<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">6</a></sup></p>
-
+<p>Defender&rsquo;s of Reis&rsquo; view might say that I&rsquo;m looking at micro changes &mdash; changes in microwave usage behavior &mdash; instead of macro ones &mdash; changes in what should be built in general, given all of the technological advances. They&rsquo;d say, &ldquo;at a macro level, we&rsquo;re in a context of uncertainty because of all the technological changes, so we just don&rsquo;t know what to build at all.&quot;<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></p>
 <p>This objection isn&rsquo;t plausible because it&rsquo;s not clear how technological advances in general would affect what buttons I&rsquo;d use on a microwave. The advent of the internet and the iPhone, for example, have no bearing on whether that popcorn button actually gets used by most people.</p>
-
 <h3 id="conclusion">Conclusion</h3>
-
 <p>So, the &ldquo;accelerating change&rdquo; explanation has a shaky empirical foundation, and even if we had rock solid reasons to believe that technology adoption rates are consistently accelerating, the explanation based on this &ldquo;fact&rdquo; is probably incomplete. It doesn&rsquo;t explain all cases of why lean matters. It&rsquo;s not even clear that it even explains most of these cases.</p>
-
 <p>This shouldn&rsquo;t surprise us. The question we&rsquo;re asking is a difficult one that Reis only had a few pages to dedicate towards. More generally, many authors seem content to try to tackle the question in a few pages when answering it well could easily fill an entire book on it&rsquo;s own, especially since there&rsquo;s probably not a single explanation for every instance in which the lean principle has been important to a company.</p>
-
-<hr />
-
+<hr>
 <h3 id="notes">Notes</h3>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1">Eric Reis, <em>The Startup Way</em>, 22-23 (emphasis mine).
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2">Strangely, the Reis&rsquo; graph is tracking time until 25% adoption. Why 25%? That seems arbitrary. Better to track adoption rates over time like Meeker&rsquo;s graph does.
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3">Ibid., 121.
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:4">Reis suggests that one reason the executives may not have known this was that it used to be challenging to collect usage data on appliances since they weren&rsquo;t connected to the internet and that they just haven&rsquo;t caught up with the times and realized that through the internet of things, they can get data on how appliances are used. I don&rsquo;t buy this explanation either. The executives could have conducted usability tests and at least had a ballpark idea of whether the buttons they built would be used in the wild. Ibid., 119.
- <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
-<li id="fn:5">Another good example that puts pressure on the idea that change is the reason the lean principle matters is Reis&rsquo; case study of Grockit and their use of lazy registration for their product as discussed in <em>The Lean Startup</em>.
- <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
-<li id="fn:6">This <em>may</em> actually be a more accurate interpretation of what Reis was saying. It&rsquo;s not really clear.
- <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p>Eric Reis, <em>The Startup Way</em>, 22-23 (emphasis mine). <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>Strangely, the Reis&rsquo; graph is tracking time until 25% adoption. Why 25%? That seems arbitrary. Better to track adoption rates over time like Meeker&rsquo;s graph does. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>Ibid., 121. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p>Reis suggests that one reason the executives may not have known this was that it used to be challenging to collect usage data on appliances since they weren&rsquo;t connected to the internet and that they just haven&rsquo;t caught up with the times and realized that through the internet of things, they can get data on how appliances are used. I don&rsquo;t buy this explanation either. The executives could have conducted usability tests and at least had a ballpark idea of whether the buttons they built would be used in the wild. Ibid., 119. <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p>Another good example that puts pressure on the idea that change is the reason the lean principle matters is Reis&rsquo; case study of Grockit and their use of lazy registration for their product as discussed in <em>The Lean Startup</em>. <a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p>This <em>may</em> actually be a more accurate interpretation of what Reis was saying. It&rsquo;s not really clear. <a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article><section class="article labels"><a class="tag" href=/tags/product-management/>product management</a><a class="tag" href=/tags/lean-startup/>lean startup</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/okr-problems/"><span class="li iconfont icon-article"></span>Some problems with the impossibility of achieving OKRs</a></p><p><a class="link" href="/post/better-cohort-analysis/"><span class="li iconfont icon-article"></span>How Startups Can Do Better Cohort Analyses</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
 <script type="application/javascript">

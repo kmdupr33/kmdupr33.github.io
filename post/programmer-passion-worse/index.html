@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>How Passion for Programming Can Make us Worse at our Jobs&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>How Passion for Programming Can Make us Worse at our Jobs&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="How Passion for Programming Can Make us Worse at our Jobs" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,14 +10,10 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">How Passion for Programming Can Make us Worse at our Jobs</h1><p class="article date">2018-11-09</p></section><article class="article markdown-body">
-
-<p><img src="/images/passion.jpg" alt="" /></p>
-
+    <h1 class="article title">How Passion for Programming Can Make us Worse at our Jobs</h1><p class="article date">2018-11-09</p></section><article class="article markdown-body"><p><img  src="/images/passion.jpg"
+        alt/></p>
 <p>&ldquo;Good programmers are passionate about what they do&rdquo; is basically a platitude in our industry. 🙄 <em>On the whole</em>, this may be true, but lately I&rsquo;ve been interested in how our passion for programming might get in the way of us doing well for the companies we work for and may even lead to us being worse at programming specifically. 🤔</p>
-
 <p>Here are some ways I think this passion can make us worse at what we do:</p>
-
 <ol>
 <li>Neglecting the importance of the domain in building elegant solutions.</li>
 <li>Poor judgments about the risks of technical debt (because of the affect heuristic)</li>
@@ -25,123 +21,86 @@
 <li>Builder vs. Market quality mismatch, which leads to wasted effort.</li>
 <li>Excessive specialization</li>
 </ol>
-
 <p>These are all mistakes I&rsquo;ve personally made, and while I don&rsquo;t think there&rsquo;s a <em>necessary</em> connection between passion for programming and these mistakes, I do think that my passion played a causal role in explaining these mistakes in my particular case. I thought this was counter-intuitive and worth sharing in case others find themselves in similar circumstances.</p>
-
 <p>Let&rsquo;s look at each of these mistakes in detail.</p>
-
 <h3 id="domain-neglect">Domain Neglect</h3>
-
 <p>Eric Evans opens <em>Domain Driven Design</em> with a great observation:</p>
-
 <blockquote>
 <p>The heart ❤️ of software is its ability to solve domain-related problems for its user&hellip;Developers have to steep themselves in the domain to build up knowledge of the business&hellip;Yet these are not the priorities on most software projects&hellip;</p>
-
+</blockquote>
+<blockquote>
 <p>..Most talented developers do not have much interest in learning about the specific domain in which they are working, much less making a commitment to expand their domain-modeling skills. Technical people enjoy quantifiable problems that exercise their technical skills.</p>
 </blockquote>
-
 <p>If he&rsquo;s right about the importance of domain modeling for good software, then our disposition to focus on technical problems can actually distract us from the design conversations we need to have to build good software.</p>
-
 <p>He&rsquo;s got a great analogy for this in the same passage. The domain-ignorant dev is like a film editor 🎥 who chooses a shot that is better overall because someone walked in to that shot. He says:</p>
-
 <blockquote>
 <p>The film editor was focused on the precise execution of his own speciality. He was concerned that other film editors who saw the movie would judge his work based on its technical perfection. In the process, the heart of the scene had been lost.</p>
 </blockquote>
-
 <h3 id="affect-heuristic-clouding-judgment-on-the-risks-of-technical-debt">Affect Heuristic Clouding Judgment on the Risks of Technical Debt</h3>
-
 <p>A big part of what we do as programmers is manage technical debt. 💰 Unfortunately, much of how we manage this technical debt is determined by our intuitive judgments about the risks and impact of technical debt in our codebase. These intuitive judgments are going to run through the affect heuristic, a mental shortcut we <em>subconsciously</em> use to judge the riskiness of X by considering our emotional reaction towards X.</p>
-
 <p>As programmers, we don&rsquo;t like crap code 🤬, so we&rsquo;re likely to over-estimate the risk that code poses to the business. Widely-respected programmers have suggested that there are often other more important factors at play that are a risk to the business. Here are two examples:</p>
-
 <blockquote>
 <p>Good engineering is maybe 20 percent of a project&rsquo;s success. Bad engineering will certainly sink projects, but modest engineering can enable project success as long as the other 80 percent lines up right&hellip;</p>
-
 <p>&ndash;KentBeck, TDD by Example</p>
-
+</blockquote>
+<blockquote>
 <p>For the overwhelming majority of the bankrupt projects we studied, there was not a single technological issue to explain the failure. The cause of failure most frequently cited by our survey participants was “politics.”</p>
-
 <p>&ndash;Tom Demarco and Timothy Lister, Peopleware</p>
 </blockquote>
-
 <p>The claim isn&rsquo;t that technical debt doesn&rsquo;t matter. It matters. The claim here is merely that a passion for good code can cloud our judgment &mdash; via the affect heuristic &mdash; about the importance of paying down technical debt relative to other goals.</p>
-
-<h3 id="programmer-isolationism">Programmer Isolationism 🙉</h3>
-
+<h3 id="programmer-isolationism-">Programmer Isolationism 🙉</h3>
 <p>Consider two views on how involved programmers should be in non-programming activities.</p>
-
 <p>On Joel Spolsky&rsquo;s view, developers ought to isolated from the business via a &ldquo;developer abstraction layer.&rdquo; In fact, he says, &ldquo;Management’s primary responsibility to create the illusion that a software company can be run by writing code, because that’s what programmers do.&rdquo;</p>
-
-<p>Marty Cagan has a <em>very</em> different view. He says, &ldquo;if your programmers are only programming, you&rsquo;re only getting half their value.&rdquo; Support-driven development &mdash; where software developers actually do customer support &mdash; has even become a thing at companies like Zapier<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> and Wufoo<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>.</p>
-
+<p>Marty Cagan has a <em>very</em> different view. He says, &ldquo;if your programmers are only programming, you&rsquo;re only getting half their value.&rdquo; Support-driven development &mdash; where software developers actually do customer support &mdash; has even become a thing at companies like Zapier<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> and Wufoo<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>.</p>
 <p>Simply asking which view is right is a bad question. 👎 Here are better ones:</p>
-
 <ol>
-<li><p>In which circumstances is each view more appropriate?</p></li>
-
-<li><p>Do we usually pick the right view for the right circumstance?</p></li>
+<li>
+<p>In which circumstances is each view more appropriate?</p>
+</li>
+<li>
+<p>Do we usually pick the right view for the right circumstance?</p>
+</li>
 </ol>
-
 <p>I think we often screw this up, and I think programmer passion, among other things is implicated in this mistake. I think we tend to favor the Spolskian view too often. We should prefer the Spolskian view when the &ldquo;how&rdquo; of a project is murkier than the &ldquo;what&rdquo; and prefer the Caganesque view when the &ldquo;what&rdquo; is murkier than the &ldquo;how.&rdquo;</p>
-
 <p>If you know exactly what you need to build but you&rsquo;re worried how you&rsquo;re going to build it, isolating developers from the business is a great play. Hard problems don&rsquo;t get solved with constant interruptions and a general lack of focus on the problem. Spolsky&rsquo;s view FTW here.</p>
-
 <p>If you don&rsquo;t know what you need to build and the how is fairly trivial, developers should be recruited to help the business understand what to build. Programmers understand the how, which means they can provide a great map of the space of possibilities of what to build.</p>
-
 <p>The problem is that is our love for technical problems can enable the business to pick the wrong view for the wrong circumstance. We&rsquo;re like,</p>
-
 <blockquote>
 <p>If the business wants to isolate us so that we can program, awesome. You&rsquo;ll get no argument from us. We&rsquo;ll be busy programming. 😉</p>
 </blockquote>
-
 <p>Since serious growth as a programmer often comes on the heels of actual usage of a product by a large group of people, allowing the business to make this mistake is bad for our growth as programmers and bad for the business.</p>
-
 <h3 id="builder-vs-market-quality-standards-mismatch">Builder vs. Market Quality Standards Mismatch</h3>
-
 <p>Let&rsquo;s start with a confession: I often give myself permission to &ldquo;fix&rdquo; a part of the codebase that I can&rsquo;t stand looking at anymore. Even when this doesn&rsquo;t lead to an unanticipated bug, it often takes time away from shipping. &ldquo;Just addressing tech debt,&rdquo; I say. But if I&rsquo;m honest, it may be more about my sanity. 😜</p>
-
 <p>Some are fine with this. I once met an engineer at Yahoo! who said that &ldquo;developer happiness&rdquo; could be invoked during sprint planning to justify working on something. The authors of <em>Peopleware</em> actually claim that software quality should be set by programmers, not the market. They say:</p>
-
 <blockquote>
-<p>&ldquo;We all tend to tie our self-esteem strongly to the quality of the product we produce…A market-derived quality standard seems to make good sense <strong>only as long as you ignore the effect on the builder’s attitude and effectiveness…&rdquo;</strong></p>
+<p>&ldquo;We all tend to tie our self-esteem strongly to the quality of the product we produce…A market-derived quality standard seems to make good sense <strong>only as long as you ignore the effect on the builder’s attitude and effectiveness…&quot;</strong></p>
 </blockquote>
-
 <p>This is a strong claim that I doubt is entirely true, but to the extent that it is true, it would mean the company wastes money satisfying our desire quality insofar as our quality standard outstrips the market demand for quality.</p>
-
 <p>This is especially problematic in a startup. An early stage startup is a war to survive, so when our passion for programming drives us to insist on higher quality than our customers demand, we wind up acting like soldiers who have gotten stuck in the trenches polishing our rifles because it makes us feel better. ✨ 🔫 ✨</p>
-
 <p>I’m not saying that there’s anything wrong with caring about quality or interesting problems. I just think that at a startup, its tough if programmers are focusing on these things over survival.</p>
-
 <h3 id="excessive-specialization">Excessive Specialization</h3>
-
 <p>For a while now, I’ve suspected that programmer specialization is often sub-optimal for businesses. Andy Grove’s diner analogy ☕️ and his concept of a “limiting step” in <em>High Output Management</em> gives me a nice way of explaining why this is probably true.</p>
-
 <p>Grove says that if we&rsquo;re trying to run a diner well (or recruit talent, or build a compiler), we&rsquo;d do well to identify the &ldquo;limiting step&rdquo; in the process required to create a breakfast. In a breakfast with an egg, toast, and coffee, preparing the egg is the limiting step.</p>
-
 <p>This is because preparing the egg takes the most time of all the steps. 🍳 Regardless of how fast we get at preparing coffee and toast, the number of breakfasts we serve will ultimately be limited by the egg preparation time, which, in turn, limits revenue the diner can generate. In many technology companies, there is a skill-set analogous to egg preparation in that it limits the overall rate at which features can be developed, which in turn limits the revenue the company can generate from those features.</p>
-
 <p>An employee at the above diner who believed that improving her coffee prepping skills would actually help the business would be mistaken. The same applies to programmers who think that specializing in their non-limiting-step discipline is good for the business. Programmer passion for her &ldquo;favorite stack&rdquo; can blind her to this.</p>
-
-<p>There are <em>plenty</em> of cases where continued specialization will in fact yield benefits to the business, even if programmers are specializing in a non-limiting-step discipline/stack.<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup> A specialist may be able to product higher quality code in less time that contains less bugs, which could lead to increased referrals for your software product. Moreover, deeper knowledge can lead to a richer view of what&rsquo;s possible with a given stack, which can better inform product and project management decisions.</p>
-
+<p>There are <em>plenty</em> of cases where continued specialization will in fact yield benefits to the business, even if programmers are specializing in a non-limiting-step discipline/stack.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> A specialist may be able to product higher quality code in less time that contains less bugs, which could lead to increased referrals for your software product. Moreover, deeper knowledge can lead to a richer view of what&rsquo;s possible with a given stack, which can better inform product and project management decisions.</p>
 <p><em>However</em>, at some point, further investments in quality and keeping up with all the newest approaches to solving problems with our stacks will yield diminishing returns 📉, and I suspect that this point occurs much sooner than a lot of us realize.</p>
-
-<hr />
-
+<hr>
 <h3 id="notes">Notes</h3>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1"><a href="https://zapier.com/blog/support-driven-development/">https://zapier.com/blog/support-driven-development/</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2"><a href="https://genius.com/Kevin-hale-lecture-7-how-to-build-products-users-love-part-i-annotated">https://genius.com/Kevin-hale-lecture-7-how-to-build-products-users-love-part-i-annotated</a>
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3">I owe <a href="https://twitter.com/andrewdushane?lang=en">Andrew Dushane</a> for this point.
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://zapier.com/blog/support-driven-development/">https://zapier.com/blog/support-driven-development/</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://genius.com/Kevin-hale-lecture-7-how-to-build-products-users-love-part-i-annotated">https://genius.com/Kevin-hale-lecture-7-how-to-build-products-users-love-part-i-annotated</a> <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>I owe <a href="https://twitter.com/andrewdushane?lang=en"target="_blank">Andrew Dushane</a> for this point. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article><section class="article labels"><a class="tag" href=/tags/programming/>programming</a><a class="tag" href=/tags/startups/>startups</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/one-year-meditating/"><span class="li iconfont icon-article"></span>Meditation One Year Later</a></p><p><a class="link" href="/post/business-and-cartesian-demon/"><span class="li iconfont icon-article"></span>Business and the Cartesian Demon: How not to Study Business</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
 <script type="application/javascript">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Why Im Skeptical about Kotlin Coroutines for Android Development&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Why Im Skeptical about Kotlin Coroutines for Android Development&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Why Im Skeptical about Kotlin Coroutines for Android Development" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,30 +10,21 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Why Im Skeptical about Kotlin Coroutines for Android Development</h1><p class="article date">2017-03-19</p></section><article class="article markdown-body">
-
-<p>A few weeks ago, the folks working on Kotlin announced the 1.1 release. Kotlin&rsquo;s 1.1 release has experiment support for coroutines. Here&rsquo;s the elevator pitch for coroutines from their blog post announcing the release:</p>
-
+    <h1 class="article title">Why Im Skeptical about Kotlin Coroutines for Android Development</h1><p class="article date">2017-03-19</p></section><article class="article markdown-body"><p>A few weeks ago, the folks working on Kotlin announced the 1.1 release. Kotlin&rsquo;s 1.1 release has experiment support for coroutines. Here&rsquo;s the elevator pitch for coroutines from their blog post announcing the release:</p>
 <blockquote>
 <p>Asynchronous programming is taking over the world, and the only thing that is holding us back is that non-blocking code adds considerable complexity to our systems. Kotlin now offers means to tame this complexity by making coroutines first-class citizens in the language through the single primitive: suspending functions. Such a function (or lambda) represents a computation that can be suspended (without blocking any threads) and resumed later.</p>
 </blockquote>
-
 <p>Coroutines are neat and they may actually be very useful in many cases, but I&rsquo;m not actually sure how useful they&rsquo;ll be in Android development. This post is about why I&rsquo;m skeptical that coroutines really matter for Android development. Here&rsquo;s the short answer: I suspect that RxJava actually gives us a better way of &ldquo;taming asynchronous complexity&rdquo; than coroutines do.</p>
-
 <h3 id="observables-give-us-an-apt-model-for-many-problems-in-android-development">Observables give us an apt model for many problems in Android development</h3>
-
 <p>In order to see why I&rsquo;m skeptical about coroutines, let&rsquo;s start by noting that streams give us an <em>explicit</em> way of modeling many problems in Android development. When you really start getting into rxjava, it changes <em>the way you think</em> about your problems. You start to think with <code>Observable</code>s and you realize that most of your problems are about how to compose your <code>Observable</code>s with various operators to get the data you&rsquo;re actually interested in.</p>
-
 <p>When you&rsquo;ve stumbled upon a good way to model your problems, your life gets easier and you get to be continually amazed at how many problems your model helps you solve. Something like this happened when we started using functional programming to work with collections:</p>
-
 <blockquote>
 <p>Richard Waters&hellip;developed a program that automatically analyzes traditional Fortran programs, viewing them in terms of maps, filters, and accumulations. He found that fully 90 percent of the code in the Fortran Scientific Subroutine Package fits neatly into this paradigm.</p>
-
+</blockquote>
+<blockquote>
 <p>-Abelson et. al, Structure and Interpretation of Computer Programs</p>
 </blockquote>
-
 <p>What&rsquo;s interesting is that when you find a good way to explicitly model your problems in code, you actually start to think with that model, <em>even if you aren&rsquo;t actively using it in code.</em> For example, suppose I&rsquo;m looking at the following code:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">int</span>[] ints = {0, 1, 2};
 <span style="color:#fff;font-weight:bold">int</span> sum = 0;
 <span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">int</span> i = 0; i &lt; ints.<span style="color:#007f7f">length</span>; i++) {
@@ -43,11 +34,8 @@
   sum += anInt;
 }
 System.<span style="color:#007f7f">out</span>.<span style="color:#007f7f">println</span>(sum);</code></pre></div>
-
 <p>I think about this code by thinking in terms of maps and reduces, even if I&rsquo;m not working with a Java <code>Stream</code> that has those methods. The same is true about <code>Observable</code>: its such a good way of modeling the problems that I face that I think in terms of it, even if I&rsquo;m not lucky enough to use RxJava.</p>
-
 <p>Coroutines, on the other hand, dont give us any model of what we&rsquo;re trying to accomplish with our asynchronous data at all. Rather, coroutines just give us a way to write code that feels <em>imperative,</em> even if it is asynchronous. Here&rsquo;s an example from the blog post announcing coroutines:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#007f7f">// launches new coroutine in UI context
 </span><span style="color:#007f7f"></span>launch(UI) {
     <span style="color:#007f7f">// wait for async overlay to complete
@@ -55,46 +43,30 @@ System.<span style="color:#007f7f">out</span>.<span style="color:#007f7f">printl
     <span style="color:#007f7f">// and then show it in UI
 </span><span style="color:#007f7f"></span>    showImage(image)
 }</code></pre></div>
-
 <p><code>asyncOverlay</code> does some async work, but we get to avoid writing callbacks. The code just &ldquo;stops&rdquo; while waiting for that async work to complete <em>without blocking the main thread</em>. Its neat, but, again, there&rsquo;s no modeling of problems that&rsquo;s happening here.</p>
-
 <h3 id="observable-is-a-better-abstraction-of-synchronicity">Observable is a better abstraction of synchronicity</h3>
-
-<p>RxJava does more than just allow us to model asynchronous events and data. It actually allows us to abstract over synchronicity when we&rsquo;re thinking about streams or collections of data. Ordered synchronous and asynchronous data have the same API. If we want to model sequential data in our code, when we&rsquo;re using RxJava, we don&rsquo;t <em>necessarily</em> have to care whether that data arrives synchronously or asynchronously. Here&rsquo;s <a href="http://reactivex.io/intro.html">the reactivex.io site&rsquo;s</a> pitch on this:</p>
-
+<p>RxJava does more than just allow us to model asynchronous events and data. It actually allows us to abstract over synchronicity when we&rsquo;re thinking about streams or collections of data. Ordered synchronous and asynchronous data have the same API. If we want to model sequential data in our code, when we&rsquo;re using RxJava, we don&rsquo;t <em>necessarily</em> have to care whether that data arrives synchronously or asynchronously. Here&rsquo;s <a href="http://reactivex.io/intro.html"target="_blank">the reactivex.io site&rsquo;s</a> pitch on this:</p>
 <blockquote>
 <p>The ReactiveX Observable model allows you to treat streams of asynchronous events with the same sort of simple, composable operations that you use for collections of data items like arrays. It frees you from tangled webs of callbacks, and thereby makes your code more readable and less prone to bugs.</p>
 </blockquote>
-
 <p>Here&rsquo;s something that I regularly do that demonstrates this delightful abstraction:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">clicksObservable
   .<span style="color:#007f7f">flatMapSingle</span>(click -&gt; githubApi.<span style="color:#007f7f">listRepos</span>())
   .<span style="color:#007f7f">flatMap</span>(repos -&gt; Observable.<span style="color:#007f7f">fromIterable</span>(repos))
   .<span style="color:#007f7f">filter</span>(repo -&gt; isMine(repo))
   .<span style="color:#007f7f">subscribe</span>(repo -&gt; { displayInList(repo)})</code></pre></div>
-
 <p>I start with a stream of clicks and wind up with a list view that displays only the repos that aren&rsquo;t mine. Along the way, I work with an <code>Iterable</code> of repos, but I can easily turn that <code>Iterable</code> into an <code>Observable</code> and then it doesn&rsquo;t even matter whether the repos are in memory or retrieved asynchronously. The <code>Observable</code> cascade doesn&rsquo;t get broken and the periods line up beautifully.</p>
-
 <p>Coroutines, on the other hand, don&rsquo;t let us abstract over synchronous and asynchronous data like this. For synchronous data/operations, we use normal functions. For asynchronous data, we need to use suspecting functions wrapped in blocks that start coroutines.</p>
-
 <h3 id="observables-lets-us-work-at-a-higher-level-of-abstraction">Observables lets us work at a higher level of abstraction</h3>
-
 <p><code>Observable</code>s do more than just model our problems and abstract over synchronicity. They do this in a way that lets us work at a higher level of abstraction than imperative code. I can write a map an array imperatively like this:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">int</span>[] ints = {0, 1, 2};    
 <span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">int</span> i = 0; i &lt; ints.<span style="color:#007f7f">length</span>; i++) {
   ints[i] *= ints[i];
 }</code></pre></div>
-
 <p>Or I can do it declaratively like this:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Observable.<span style="color:#007f7f">fromArray</span>(ints).<span style="color:#007f7f">map</span>(aInt -&gt; aInt * aInt)</code></pre></div>
-
 <p>Coroutines, in my opinion, when used to handle problems that are well modeled by <code>Observable</code>s are merely the for loops of the asynchronous world.</p>
-
 <h3 id="conclusion">Conclusion</h3>
-
 <p>None of this is meant to suggest that coroutines aren&rsquo;t useful full stop. That&rsquo;s nonsense. They have their uses. I just double that they are going to be nearly as essential to Android development as RxJava.</p>
 </article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/rxjava/>rxjava</a><a class="tag" href=/tags/kotlin/>kotlin</a><a class="tag" href=/tags/coroutines/>coroutines</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/why-cryptography-for-android-developers/"><span class="li iconfont icon-article"></span>Why Cryptography?</a></p><p><a class="link" href="/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/"><span class="li iconfont icon-article"></span>What Unit Tests are Trying to Tell us About Activities Pt 2</a></p></section><section class="article discussion"><div id="disqus_thread"></div>

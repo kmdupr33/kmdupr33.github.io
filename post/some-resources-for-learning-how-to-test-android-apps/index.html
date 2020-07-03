@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Some Resources for Learning how to Test Android Apps&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Some Resources for Learning how to Test Android Apps&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Some Resources for Learning how to Test Android Apps" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,69 +10,37 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Some Resources for Learning how to Test Android Apps</h1><p class="article date">2017-03-03</p></section><article class="article markdown-body">
-
-<p>Someone recently asked me how I &ldquo;know so much&rdquo; about testing android apps. After disabusing them of the notion that I know a lot about testing, I said that I&rsquo;d write up a blog post of some helpful resources I&rsquo;ve found and send it to them. This is that blog post.</p>
-
+    <h1 class="article title">Some Resources for Learning how to Test Android Apps</h1><p class="article date">2017-03-03</p></section><article class="article markdown-body"><p>Someone recently asked me how I &ldquo;know so much&rdquo; about testing android apps. After disabusing them of the notion that I know a lot about testing, I said that I&rsquo;d write up a blog post of some helpful resources I&rsquo;ve found and send it to them. This is that blog post.</p>
 <p>The resources are divided into books, articles, talks, and podcasts. I&rsquo;ve marked resources that I think are essential with a &ldquo;*&rdquo;.</p>
-
 <h2 id="books">Books:</h2>
-
-<h3 id="working-effectively-with-legacy-code">Working Effectively with Legacy Code *</h3>
-
-<p>If you&rsquo;re working on already existing Android app and you&rsquo;re trying to figure out how to get tests in place, I can&rsquo;t recommend this book enough. <a href="https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052">The book</a> has a lot of fantastic theory on <a href="/post/what-makes-android-apps-testable/">what makes code testable in general</a>. It also has a bunch of great tips for conservative refactorings you can do to safely get your codebase to a more testable state.</p>
-
+<h3 id="working-effectively-with-legacy-code-">Working Effectively with Legacy Code *</h3>
+<p>If you&rsquo;re working on already existing Android app and you&rsquo;re trying to figure out how to get tests in place, I can&rsquo;t recommend this book enough. <a href="https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052"target="_blank">The book</a> has a lot of fantastic theory on <a href="/post/what-makes-android-apps-testable/">what makes code testable in general</a>. It also has a bunch of great tips for conservative refactorings you can do to safely get your codebase to a more testable state.</p>
 <h3 id="growing-object-oriented-software-guided-by-tests">Growing Object Oriented Software Guided by Tests</h3>
-
-<p>If you&rsquo;re working on a greenfield project, <a href="https://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627">this book</a> is a great way to see how tests positively influence the architecture of your application and help you move towards more object oriented code. It also has some very practical tips on some trickier cases like testing persistence, etc.</p>
-
+<p>If you&rsquo;re working on a greenfield project, <a href="https://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627"target="_blank">this book</a> is a great way to see how tests positively influence the architecture of your application and help you move towards more object oriented code. It also has some very practical tips on some trickier cases like testing persistence, etc.</p>
 <p>There&rsquo;s also a nice appendix in the book that talks about the history of &ldquo;mocking&rdquo; and what Fowler would call the &ldquo;mockist&rdquo; style of TDD. The underlying philosophy behind Mockito makes a lot more sense once you&rsquo;ve read this.</p>
-
-<h3 id="tdd-by-example">TDD By Example *</h3>
-
-<p>This is <a href="https://www.amazon.com/Test-Driven-Development-Kent-Beck/dp/0321146530/ref=pd_sbs_14_t_1?_encoding=UTF8&amp;psc=1&amp;refRID=GBD9CHYJGZ7Y5YEB07CH">the book by the guy popularized TDD</a>. Since I had already read <em>Working Effectively with Legacy Code</em> and <em>Growing Object Oriented Software Guided by Tests</em> before picking this up, there wasn&rsquo;t a ton new for me to glean. However, since this is written by Kent Beck, I consider it essential reading. One thing I found interesting was how non-dogmatic Beck was in advocating for TDD. I also did learn <a href="/post/what-should-we-unit-test/">a neat heuristic for determining when I should be writing tests or doing TDD</a>.</p>
-
+<h3 id="tdd-by-example-">TDD By Example *</h3>
+<p>This is <a href="https://www.amazon.com/Test-Driven-Development-Kent-Beck/dp/0321146530/ref=pd_sbs_14_t_1?_encoding=UTF8&amp;psc=1&amp;refRID=GBD9CHYJGZ7Y5YEB07CH"target="_blank">the book by the guy popularized TDD</a>. Since I had already read <em>Working Effectively with Legacy Code</em> and <em>Growing Object Oriented Software Guided by Tests</em> before picking this up, there wasn&rsquo;t a ton new for me to glean. However, since this is written by Kent Beck, I consider it essential reading. One thing I found interesting was how non-dogmatic Beck was in advocating for TDD. I also did learn <a href="/post/what-should-we-unit-test/">a neat heuristic for determining when I should be writing tests or doing TDD</a>.</p>
 <h3 id="xunit-test-patterns">xUnit Test Patterns</h3>
-
-<p>I&rsquo;m nearly finished with <a href="https://www.amazon.com/xUnit-Test-Patterns-Refactoring-Code/dp/0131495054">this one</a>. Some of it feels a bit repetitive, but there are some great insights about writing readable tests. There&rsquo;s also a really nice discussion about the tradeoff between easy fixture management and test performance.</p>
-
+<p>I&rsquo;m nearly finished with <a href="https://www.amazon.com/xUnit-Test-Patterns-Refactoring-Code/dp/0131495054"target="_blank">this one</a>. Some of it feels a bit repetitive, but there are some great insights about writing readable tests. There&rsquo;s also a really nice discussion about the tradeoff between easy fixture management and test performance.</p>
 <h2 id="articles">Articles:</h2>
-
-<h3 id="mocks-aren-t-stubs">Mocks Aren&rsquo;t Stubs *</h3>
-
-<p><a href="https://martinfowler.com/articles/mocksArentStubs.html">Great Martin Fowler article</a> that gives a taxonomy of test doubles. Mockito has us all confused about this, but Fowler does a great job of teasing apart the various concepts that are mingled in Mockito&rsquo;s &ldquo;mocks.&rdquo; It also contains a wonderful discussion of two different styles of TDD, with special attention paid to the influence the styles have on the architecture that emerges from doing that particular style of TDD.</p>
-
+<h3 id="mocks-arent-stubs-">Mocks Aren&rsquo;t Stubs *</h3>
+<p><a href="https://martinfowler.com/articles/mocksArentStubs.html"target="_blank">Great Martin Fowler article</a> that gives a taxonomy of test doubles. Mockito has us all confused about this, but Fowler does a great job of teasing apart the various concepts that are mingled in Mockito&rsquo;s &ldquo;mocks.&rdquo; It also contains a wonderful discussion of two different styles of TDD, with special attention paid to the influence the styles have on the architecture that emerges from doing that particular style of TDD.</p>
 <h3 id="page-object-pattern">Page Object Pattern</h3>
-
-<p><a href="https://martinfowler.com/bliki/PageObject.html">Martin Fowler</a> named a neat pattern for ensuring that your UI tests aren&rsquo;t brittle. Its identical with Jake Wharton&rsquo;s &ldquo;robot pattern&rdquo; linked below.</p>
-
-<h3 id="misko-hevery-s-testability-guide">Misko Hevery&rsquo;s Testability Guide</h3>
-
-<p>Misko Hevery, in case you don&rsquo;t know, is a Google engineer and the father of Angular. He&rsquo;s also the author of an excellent <a href="http://misko.hevery.com/code-reviewers-guide/">Testability Guide</a>. In the guide, you learn why GOF Singletons and static access in general aren&rsquo;t great for tests or your architecture. This guide actually inspired my post <a href="https://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/">&ldquo;Why Static References to Application Contexts Aren&rsquo;t the Best Idea&rdquo;</a>. You&rsquo;ll also see some good rules about constructors and scope and how they relate to testability.</p>
-
+<p><a href="https://martinfowler.com/bliki/PageObject.html"target="_blank">Martin Fowler</a> named a neat pattern for ensuring that your UI tests aren&rsquo;t brittle. Its identical with Jake Wharton&rsquo;s &ldquo;robot pattern&rdquo; linked below.</p>
+<h3 id="misko-heverys-testability-guide">Misko Hevery&rsquo;s Testability Guide</h3>
+<p>Misko Hevery, in case you don&rsquo;t know, is a Google engineer and the father of Angular. He&rsquo;s also the author of an excellent <a href="http://misko.hevery.com/code-reviewers-guide/"target="_blank">Testability Guide</a>. In the guide, you learn why GOF Singletons and static access in general aren&rsquo;t great for tests or your architecture. This guide actually inspired my post <a href="https://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/"target="_blank">&ldquo;Why Static References to Application Contexts Aren&rsquo;t the Best Idea&rdquo;</a>. You&rsquo;ll also see some good rules about constructors and scope and how they relate to testability.</p>
 <h2 id="talks">Talks:</h2>
-
-<h4 id="dagger-and-testing">Dagger and Testing *</h4>
-
-<p><a href="http://jakewharton.com/android-apps-with-dagger-devoxx/">Great talk on Dagger</a>, which is arguably essential for UI-level testing. A great highlight here is Jake&rsquo;s discussion of &ldquo;mock mode&rdquo; in his u2020 app.</p>
-
+<h4 id="dagger-and-testing-">Dagger and Testing *</h4>
+<p><a href="http://jakewharton.com/android-apps-with-dagger-devoxx/"target="_blank">Great talk on Dagger</a>, which is arguably essential for UI-level testing. A great highlight here is Jake&rsquo;s discussion of &ldquo;mock mode&rdquo; in his u2020 app.</p>
 <h4 id="increasing-app-quality-with-testing-and-monitoring">Increasing App Quality with Testing and Monitoring</h4>
-
-<p><a href="https://www.youtube.com/watch?v=4fyhgHQYG1U&amp;list=PLOU2XLYxmsILe6_eGvDN3GyiodoV3qNSC&amp;index=48">This</a> is a nice panel-like talk with developers from companies like Shazam and American Express. It was mostly useful for getting an idea of how testing works in the real world and at scale.</p>
-
-<h4 id="jake-wharton-on-the-robot-pattern">Jake Wharton on The Robot Pattern *</h4>
-
-<p>Jake Wharton basically renamed Fowler&rsquo;s Page Object Pattern and <a href="https://realm.io/news/kau-jake-wharton-testing-robots/">he has a nice talk</a> explaining how to apply the pattern to espresso tests.</p>
-
+<p><a href="https://www.youtube.com/watch?v=4fyhgHQYG1U&amp;list=PLOU2XLYxmsILe6_eGvDN3GyiodoV3qNSC&amp;index=48"target="_blank">This</a> is a nice panel-like talk with developers from companies like Shazam and American Express. It was mostly useful for getting an idea of how testing works in the real world and at scale.</p>
+<h4 id="jake-wharton-on-the-robot-pattern-">Jake Wharton on The Robot Pattern *</h4>
+<p>Jake Wharton basically renamed Fowler&rsquo;s Page Object Pattern and <a href="https://realm.io/news/kau-jake-wharton-testing-robots/"target="_blank">he has a nice talk</a> explaining how to apply the pattern to espresso tests.</p>
 <h2 id="podcasts">Podcasts:</h2>
-
-<h3 id="is-tdd-dead">Is TDD Dead? *</h3>
-
-<p>This is <a href="https://martinfowler.com/articles/is-tdd-dead/">a fantastic five part discussion</a> between Martin Fowler, Kent Beck, and DHH. Highlights include a discussion of what we should test, the role of QA in a TDD world, the role of mocks in writing tests, and, of course, whether TDD leads to better code.</p>
-
+<h3 id="is-tdd-dead-">Is TDD Dead? *</h3>
+<p>This is <a href="https://martinfowler.com/articles/is-tdd-dead/"target="_blank">a fantastic five part discussion</a> between Martin Fowler, Kent Beck, and DHH. Highlights include a discussion of what we should test, the role of QA in a TDD world, the role of mocks in writing tests, and, of course, whether TDD leads to better code.</p>
 <h3 id="fragmented-episode-7">Fragmented episode 7</h3>
-
-<p><a href="http://fragmentedpodcast.com/episodes/7">Great episode of Fragmented</a> with Jake Wharton. The discussion around Roboelectric and what we should test is good. That discussion partially inspired <a href="/post/why-i-dont-use-roboletric/">&ldquo;Why I Don&rsquo;t Use Roboelectric.&rdquo;</a></p>
+<p><a href="http://fragmentedpodcast.com/episodes/7"target="_blank">Great episode of Fragmented</a> with Jake Wharton. The discussion around Roboelectric and what we should test is good. That discussion partially inspired <a href="/post/why-i-dont-use-roboletric/">&ldquo;Why I Don&rsquo;t Use Roboelectric.&quot;</a></p>
 </article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt-2/"><span class="li iconfont icon-article"></span>What Unit Tests are Trying to Tell us About Activities Pt 2</a></p><p><a class="link" href="/post/what-unit-tests-are-trying-to-tell-us-about-activities-pt1/"><span class="li iconfont icon-article"></span>What Unit Tests are Trying to Tell us about Activities: Pt. 1</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
 <script type="application/javascript">

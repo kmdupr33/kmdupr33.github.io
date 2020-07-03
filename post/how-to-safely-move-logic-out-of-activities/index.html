@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>How to Safely move Logic out of Activities&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>How to Safely move Logic out of Activities&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="How to Safely move Logic out of Activities" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,52 +10,40 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">How to Safely move Logic out of Activities</h1><p class="article date">2016-06-16</p></section><article class="article markdown-body">
-
-<p><img src="/images/life-ring.jpg" alt="" /></p>
-
-<p>In <a href="http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/">my last post</a>, I argued that we should stop putting our app logic in <code>Activity</code>s and <code>Fragment</code>s because it makes both unit testing <em>and</em> functional testing our apps more difficult. In this post, I&rsquo;ll try to suggest a method of safely removing app logic from our <code>Activity</code>s and <code>Fragment</code>s, drawing on a central idea discussed in Michael Feathers&rsquo; <em>Working Effectively with Legacy Code</em>: characterization tests.</p>
-
-<p>In the first section, I briefly introduce the idea of characterization tests. In the second section, I walk through some of the complications that arise when you&rsquo;re trying to write characterization tests for <code>Activity</code>/<code>Fragment</code>s. Source code examples are excerpts from <a href="https://github.com/kmdupr33/iosched/tree/refactor/characterization_tests">my fork of the Google IO app</a>.</p>
-
+    <h1 class="article title">How to Safely move Logic out of Activities</h1><p class="article date">2016-06-16</p></section><article class="article markdown-body"><p><img  src="/images/life-ring.jpg"
+        alt/></p>
+<p>In <a href="http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/"target="_blank">my last post</a>, I argued that we should stop putting our app logic in <code>Activity</code>s and <code>Fragment</code>s because it makes both unit testing <em>and</em> functional testing our apps more difficult. In this post, I&rsquo;ll try to suggest a method of safely removing app logic from our <code>Activity</code>s and <code>Fragment</code>s, drawing on a central idea discussed in Michael Feathers&rsquo; <em>Working Effectively with Legacy Code</em>: characterization tests.</p>
+<p>In the first section, I briefly introduce the idea of characterization tests. In the second section, I walk through some of the complications that arise when you&rsquo;re trying to write characterization tests for <code>Activity</code>/<code>Fragment</code>s. Source code examples are excerpts from <a href="https://github.com/kmdupr33/iosched/tree/refactor/characterization_tests"target="_blank">my fork of the Google IO app</a>.</p>
 <h3 id="brief-intro-characterization-tests">Brief Intro Characterization Tests</h3>
-
 <blockquote>
 <p>Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&hellip;Cover and Modify is a different way of making changes. The idea behind it is that it is possible to work with a safety net when we change software.</p>
-
+</blockquote>
+<blockquote>
 <p>Michael Feathers, <em>Working Effectively with Legacy Code</em>, pg. 32</p>
 </blockquote>
-
 <p>Characterization tests are tests that form the &ldquo;safety net&rdquo; that Feathers refers to in the above quotation. The purpose of characterization tests is, as the name implies, to <em>characterize</em> the <em>current behavior</em> of the system. These tests help us ensure that when we refactor our code, we are preserving the current behavior of the system. For every change we make, the result of running our characterization tests will tell us whether we&rsquo;ve accidentally changed the behavior of our app.</p>
-
 <p>Usually, writing a characterization tests is a pretty simple process. According to Feathers:</p>
-
 <blockquote>
 <ol>
 <li>Write tests for the area where you will make your changes. Write as many cases as you feel you need to understand the behavior of the code.</li>
 <li>After doing this, take a look at the specific things you are going to change, and attempt to write tests for those.</li>
 <li>If you are attempting to extract or move some functionality, write tests that verify the existence and connection of those behaviors on a case-by-case basis. Verify that you are exercising the code that you are going to move and that it is connected properly. Exercise conversions.</li>
 </ol>
-
+</blockquote>
+<blockquote>
 <p>Pg. 218</p>
 </blockquote>
-
-<p><img src="/images/net.jpg" alt="safety net" /></p>
-
+<p><img  src="/images/net.jpg"
+        alt="safety net"/></p>
 <blockquote>
-<p>Image Credit: Cea on <a href="https://www.flickr.com/photos/centralasian/3896333282/in/photolist-6WiJ93-i2ZU8-AL26v-NqLkJ-57Gmup-4QiXwQ-67j8Sw-fuf5d1-5DJrYY-9YjbZP-7UJ75S-piX5fr-jzCox-8s9BdN-uST4Hi-tw8VdM-5yxEvF-2QSfpF-onBRex-6Aj5cU-3Jyy7k-8YYKtq-8TRZ33-as2Fdq-rhXdJ8-oTXJh5-aNqeHH-hcEk7d-7ACDg-6EcoYB-mmgBPF-mz68zf-sFGHZq-6EhPsd-dor5Cp-6EcFhV-coe1tY-EDaP5-9Yn6dW-2zCxU-8YiQA1-7dQsZA-8Fq6BQ-n1F765-7dQssm-6wskCt-C44Dg-6EepXT-6EesLa-C4543">Flickr Creative Commons</a></p>
+<p>Image Credit: Cea on <a href="https://www.flickr.com/photos/centralasian/3896333282/in/photolist-6WiJ93-i2ZU8-AL26v-NqLkJ-57Gmup-4QiXwQ-67j8Sw-fuf5d1-5DJrYY-9YjbZP-7UJ75S-piX5fr-jzCox-8s9BdN-uST4Hi-tw8VdM-5yxEvF-2QSfpF-onBRex-6Aj5cU-3Jyy7k-8YYKtq-8TRZ33-as2Fdq-rhXdJ8-oTXJh5-aNqeHH-hcEk7d-7ACDg-6EcoYB-mmgBPF-mz68zf-sFGHZq-6EhPsd-dor5Cp-6EcFhV-coe1tY-EDaP5-9Yn6dW-2zCxU-8YiQA1-7dQsZA-8Fq6BQ-n1F765-7dQssm-6wskCt-C44Dg-6EepXT-6EesLa-C4543"target="_blank">Flickr Creative Commons</a></p>
 </blockquote>
-
 <h3 id="characterization-tests-for-activities-and-fragments">Characterization Tests for Activities and Fragments</h3>
-
 <p>Unfortunately, writing characterization tests for <code>Activity</code>/<code>Fragment</code>s is not as simple as writing characterization tests in the general case. In fact, writing characterization tests for any object instantiated by the Android OS is not easy (think <code>Activity</code>, <code>Fragment</code>, <code>Service</code>, <code>BroadcastReceiver</code>, etc.). In this section, I explore two things that make writing characterization tests for <code>Activity</code>s and <code>Fragment</code>s challenging. I also suggest ways to work around these challenges.</p>
-
 <h4 id="law-of-demeter-violations">Law of Demeter Violations</h4>
-
 <p><code>Activity</code>s and <code>Fragment</code>s have dependencies. Some of those dependencies are only accessible if we violate the law of demeter. For example, the <code>PresenterFragmentImpl</code> needs to get a hold of a <code>ContentResolver</code>:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Override
-<span style="color:#fff;font-weight:bold">public</span> void onAttach(Activity activity) {
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onAttach(Activity activity) {
     <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onAttach</span>(activity);
 
     <span style="color:#007f7f">// Register content observers with the content resolver.
@@ -69,10 +57,8 @@
         }
     }
 }</code></pre></div>
-
-<p>Characterizing the behavior of this method is challenging because law of demeter violations force us to make our mocks return mocks so that we can verify the interactions with the <code>Fragment</code>&rsquo;s dependencies:</p>
-
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> void characterizeOnAttach(Actor actor, Asserter asserter) {
+<p>Characterizing the behavior of this method is challenging because law of demeter violations force us to make our mocks return mocks so that we can verify the interactions with the <code>Fragment</code>'s dependencies:</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">void</span> characterizeOnAttach(Actor actor, Asserter asserter) {
     <span style="color:#007f7f">// Arrange
 </span><span style="color:#007f7f"></span>    mPresenterFragSpy.<span style="color:#007f7f">configure</span>(mFragmentManager, 0, mModel,
       <span style="color:#fff;font-weight:bold">new</span> QueryEnum[]{}, <span style="color:#fff;font-weight:bold">new</span> UserActionEnum[]{});
@@ -90,32 +76,28 @@
 }
 
 @Test
-<span style="color:#fff;font-weight:bold">public</span> void characterizeOnAttachIfRegisteredContentObservers() <span style="color:#fff;font-weight:bold">throws</span> Exception {
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> characterizeOnAttachIfRegisteredContentObservers() <span style="color:#fff;font-weight:bold">throws</span> Exception {
     <span style="color:#007f7f">//...
 </span><span style="color:#007f7f"></span>    characterizeOnAttach(<span style="color:#fff;font-weight:bold">new</span> Actor() {
         @Override
-        <span style="color:#fff;font-weight:bold">public</span> void act(Activity activity) {
+        <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> act(Activity activity) {
             mPresenterFragSpy.<span style="color:#007f7f">registerContentObserverOnUri</span>(Uri.<span style="color:#007f7f">EMPTY</span>, queriesToRun);
             mPresenterFragSpy.<span style="color:#007f7f">onAttach</span>(activity);
         }
     }, <span style="color:#fff;font-weight:bold">new</span> Asserter() {
         @Override
-        <span style="color:#fff;font-weight:bold">public</span> void doAssert(ContentResolver contentResolver) {
+        <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> doAssert(ContentResolver contentResolver) {
             <span style="color:#007f7f">// ...
 </span><span style="display:block;width:100%;background-color:#191919"><span style="color:#007f7f"></span>            verify(contentResolver).<span style="color:#007f7f">registerContentObserver</span>(eq(Uri.<span style="color:#007f7f">EMPTY</span>),
 </span><span style="display:block;width:100%;background-color:#191919">              eq(<span style="color:#fff;font-weight:bold">true</span>), notNull(ThrottledContentObserver.<span style="color:#007f7f">class</span>));
 </span>        }
     });
 }</code></pre></div>
-
 <p>Typically, we don&rsquo;t want to write tests with mocks returning mocks since this suggests that our design may smell. In this case, we are merely trying to characterize the already existing behavior of our <code>Activity</code> or <code>Fragment</code>. Once we refactor, we should have a design that doesn&rsquo;t require this, but in the mean-time, we need this characterization test to make sure that we are preserving app behavior during our refactor.</p>
-
 <h4 id="nearly-impossible-di">(Nearly) Impossible DI</h4>
-
 <p><code>Fragment</code>s and <code>Activity</code>s get their dependencies via an accessor method. <code>getLoaderManager</code>, <code>getContentResolver</code>, or <code>getFragmentManager</code> are a few examples of such accessor methods. Here&rsquo;s a method that uses one of these accessors:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 1</span>@Override
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 2</span><span style="color:#fff;font-weight:bold">public</span> void onActivityCreated(Bundle savedInstanceState) {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 2</span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onActivityCreated(Bundle savedInstanceState) {
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 3</span>    <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onActivityCreated</span>(savedInstanceState);
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 4</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 5</span>    mLoaderIdlingResource =
@@ -132,17 +114,12 @@
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">16</span><span style="color:#007f7f"></span>        mUpdatableView.<span style="color:#007f7f">displayData</span>(mModel, <span style="color:#fff;font-weight:bold">null</span>);
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">17</span>    }
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">18</span>}</code></pre></div>
-
 <p>If we&rsquo;re characterizing a method like this one, we need to verify that the <code>Fragment</code> calls the correct methods on the dependencies returned by these accessor methods. Verifying the interaction of an object with its dependencies means that we need to be able to swap out those dependencies with mocks.</p>
-
 <p>One way of doing this would be to have a special subclass of the <code>Activity</code> or <code>Fragment</code> you&rsquo;d like to test. This sub-class could override the accessors to return mocks. Our characterization tests could then instantiate these special subclasses and use the mocks returned by the accessors to verify the interactions.</p>
-
 <p>This isn&rsquo;t a great solution. For reasons that I hope are clear, using this solution would force us to repeatedly subclass every <code>Activity</code> or <code>Fragment</code> in our app to return mock accessors.</p>
-
 <p>A better solution is to use mockito spies. Like mocks returning mocks, we typically don&rsquo;t use spies in our tests because it suggests a smelly design. However, in this case, spies help us write characterization tests without having make a non-trivial changes to the code we are trying to characterize or without having to repeatedly subclass all of our <code>Activity</code>s and <code>Fragment</code>s to return mocks. Here&rsquo;s an example of how spies help us do this:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
-<span style="color:#fff;font-weight:bold">public</span> void characterizeOnActivityCreatedIfInitialQueriesToLoad() <span style="color:#fff;font-weight:bold">throws</span> Exception {
+<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> characterizeOnActivityCreatedIfInitialQueriesToLoad() <span style="color:#fff;font-weight:bold">throws</span> Exception {
 
     <span style="color:#fff;font-weight:bold">final</span> ExploreModel.<span style="color:#007f7f">ExploreQueryEnum</span> sessions = ExploreModel.<span style="color:#007f7f">ExploreQueryEnum</span>.<span style="color:#007f7f">SESSIONS</span>;
     mPresenterFragSpy.<span style="color:#007f7f">configure</span>(mFragmentManager, 0, mModel, <span style="color:#fff;font-weight:bold">new</span> QueryEnum[]{sessions}, <span style="color:#fff;font-weight:bold">new</span> UserActionEnum[]{});
@@ -155,15 +132,10 @@
     assertNotNull(mPresenterFragSpy.<span style="color:#007f7f">getLoaderIdlingResource</span>());
 <span style="display:block;width:100%;background-color:#191919">    verify(loaderManager).<span style="color:#007f7f">initLoader</span>(eq(sessions.<span style="color:#007f7f">getId</span>()), isNull(Bundle.<span style="color:#007f7f">class</span>), notNull(LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>.<span style="color:#007f7f">class</span>));
 </span>}</code></pre></div>
-
 <p>Using a spy, we&rsquo;re able to stub out the <code>getLoaderManager</code> method to return a mock <code>LoaderManager</code>. We can then verify that <code>onActivityCreated</code> calls the right methods on the <code>LoaderManager</code>.</p>
-
 <h3 id="conclusion">Conclusion</h3>
-
 <p>Safely moving logic out of large <code>Activity</code>s and <code>Fragment</code>s can be a lot of work, but its less work than manually verifying that we haven&rsquo;t broken anything every time we make a change to the <code>Activity</code> or <code>Fragment</code> we are refactoring.</p>
-
 <p>Even if we recognize that writing these characterization tests is better than manual verification, writing them can be pretty soul-sucking. Keep in mind that we don&rsquo;t need to move all of the logic out at once, so we don&rsquo;t need to write all characterization tests at once.</p>
-
 <p>Instead, we can identify various responsibilities that are carried out by our <code>Activity</code>s and <code>Fragment</code>s and plan to extract classes to handle those responsibilities. Once we have a clear picture of the class we want to extract from the <code>Activity</code> or <code>Fragment</code>, we can write characterization tests that will serve as a safety net for that single extraction, rather than attempting to write characterization tests for all the non-trivial methods in the <code>Activity</code>/<code>Fragment</code> we are refactoring.</p>
 </article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a><a class="tag" href=/tags/refactoring/>refactoring</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/vice-a-regression-test-generation-library/"><span class="li iconfont icon-article"></span>Vice: A Regression Test Generation Library</a></p><p><a class="link" href="/post/why-we-should-stop-putting-logic-in-activities/"><span class="li iconfont icon-article"></span>Why we Should Stop Putting Logic in Activities</a></p></section><section class="article discussion"><div id="disqus_thread"></div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Table-driven tests with Gomock&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Table-driven tests with Gomock&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Table-driven tests with Gomock" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,14 +10,9 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Table-driven tests with Gomock</h1><p class="article date">2016-01-23</p></section><article class="article markdown-body">
-
-<p>Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.</p>
-
+    <h1 class="article title">Table-driven tests with Gomock</h1><p class="article date">2016-01-23</p></section><article class="article markdown-body"><p>Table-driven tests are a common testing pattern for go tests. Since I recently started working with gomock, I wondered if there was a way to use table-driven tests with gomock mocks. It turns out that this is definitely possible, and that&rsquo;s what this post is about. Before I show how to combine table-driven tests with gomock mocks, I briefly review how gomock and table-driven tests work and I try to show why you might want to combine table-driven tests with mocks in the first place.</p>
 <h3 id="table-driven-tests">Table-Driven Tests</h3>
-
 <p>There are many examples of table-driven tests in the standard library. One example of a table-driven test can be found in the <code>fmt_test</code> package:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">var</span> fmtTests = []<span style="color:#fff;font-weight:bold">struct</span> {
 	fmt <span style="color:#fff;font-weight:bold">string</span>
 	val <span style="color:#fff;font-weight:bold">interface</span>{}
@@ -28,11 +23,8 @@
 	{<span style="color:#0ff;font-weight:bold">&#34;%t&#34;</span>, <span style="color:#fff;font-weight:bold">true</span>, <span style="color:#0ff;font-weight:bold">&#34;true&#34;</span>},
     <span style="color:#007f7f">//...
 </span><span style="color:#007f7f"></span>}</code></pre></div>
-
 <p>As the above code suggests, table-driven tests typically make use of slice literals of anonymous structs. The anonymous struct has fields that support various test cases. In this case, the fields are <code>fmt</code>, the actual format specifier used within a format string, <code>val</code>, the value formatted according to the format specifier, and <code>out</code>, the string that is expected as a result of calling <code>fmt.Sprintf()</code> on a formatted string with its specifiers and values.</p>
-
 <p>Within the <code>Test-</code> method, the tests are run by ranging over the elements of the slice literal.</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> TestSprintf(t *testing.T) {
 	<span style="color:#fff;font-weight:bold">for</span> _, tt := <span style="color:#fff;font-weight:bold">range</span> fmtTests {
 <span style="display:block;width:100%;background-color:#191919">		s := Sprintf(tt.fmt, tt.val)
@@ -48,21 +40,14 @@
 		}
 	}
 }</code></pre></div>
-
 <h3 id="gomock-mocks">Gomock Mocks</h3>
-
 <p>Gomock mocks are generated in two steps. The first step is to generate the mock code using the <code>mockgen</code> command. The second step is to create the mock for use in your test:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">mockCtrl := gomock.NewController(t)
 <span style="color:#fff;font-weight:bold">defer</span> mockCtrl.Finish()
 mgf := mock_gopher.NewMockGopherFinder(mockCtrl)</code></pre></div>
-
-<p>If this snippet doesn&rsquo;t make sense to you, it might be a good idea to read <a href="http://www.philosophicalhacker.com/post/getting-started-with-gomock/">my post on gomock</a> before proceeding.</p>
-
+<p>If this snippet doesn&rsquo;t make sense to you, it might be a good idea to read <a href="http://www.philosophicalhacker.com/post/getting-started-with-gomock/"target="_blank">my post on gomock</a> before proceeding.</p>
 <h3 id="why-bother">Why bother?</h3>
-
 <p>To see why we might want to use table-driven tests with gomock, suppose we want to write a test for a cache of <code>Gopher</code>s. When we ask the cache for a <code>Gopher</code>, the cache will first check its own map to see if the <code>Gopher</code> is available in memory. If the <code>Gopher</code> is unavailable it will call on a <code>GopherFinder</code> to fetch the <code>Gopher</code> from some remote location:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> (s *lruCache) GetGopher(name <span style="color:#fff;font-weight:bold">string</span>) (Gopher, <span style="color:#fff;font-weight:bold">error</span>) {
 	gopher, ok := s.CachedGophers[name]
 	<span style="color:#fff;font-weight:bold">if</span> !ok {
@@ -70,29 +55,18 @@ mgf := mock_gopher.NewMockGopherFinder(mockCtrl)</code></pre></div>
 	}
 	<span style="color:#fff;font-weight:bold">return</span> gopher, <span style="color:#fff;font-weight:bold">nil</span>
 }</code></pre></div>
-
 <p>Suppose we want to test this behavior. There are two cases we want test:</p>
-
 <p>Here&rsquo;s the first case:</p>
-
 <pre><code>Given a Cache that does not contain the Gopher named &quot;andrewgerrand&quot;
 When we ask the Cache for the Gopher named &quot;andrewgerrand&quot;
 Then the Cache calls `Find()` on its `GopherFinder` to satisfy the request
-</code></pre>
-
-<p>And the second case:</p>
-
+</code></pre><p>And the second case:</p>
 <pre><code>Given a Cache that does contain the Gopher named &quot;andrewgerrand&quot;
 When we ask the Cache for the Gopher named &quot;andrewgerrand&quot;
 Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns a cached &quot;andrewgerrand&quot; `Gopher`
-</code></pre>
-
-<p>Obviously, these test cases can share some code. Using a table-driven test can help us avoid duplicating the support code we need to execute these two test cases. Moreover, Cache&rsquo;s, as <a href="http://martinfowler.com/articles/mocksArentStubs.html">Martin Fowler points out</a>, are prime candidates for behavior/mock-based testing, so in this case, it doesn&rsquo;t seem crazy to combine mocks with a table-driven test.</p>
-
+</code></pre><p>Obviously, these test cases can share some code. Using a table-driven test can help us avoid duplicating the support code we need to execute these two test cases. Moreover, Cache&rsquo;s, as <a href="http://martinfowler.com/articles/mocksArentStubs.html"target="_blank">Martin Fowler points out</a>, are prime candidates for behavior/mock-based testing, so in this case, it doesn&rsquo;t seem crazy to combine mocks with a table-driven test.</p>
 <h3 id="putting-it-all-together">Putting it All Together</h3>
-
 <p>The struct that supports the table-driven tests should contain fields for the values that need to change in order to support different, but related test cases. The first difference between our two cache test cases is that the in one case, the cache already contains a cached <code>Gopher</code> for the name &ldquo;andrewgerrand&rdquo; and in the other case, it does not. So, our slice of anonymous structs should start off looking like this:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">var</span> cacheTests = []<span style="color:#fff;font-weight:bold">struct</span> {
 	cachedGophers <span style="color:#fff;font-weight:bold">map</span>[<span style="color:#fff;font-weight:bold">string</span>]Gopher
 	<span style="color:#007f7f">//...
@@ -104,9 +78,7 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 		<span style="color:#007f7f">//...
 </span><span style="color:#007f7f"></span>	},
 }</code></pre></div>
-
 <p>When we range over the values of <code>cacheTests</code>, we can use the value of the <code>cachedGophers</code> field to setup our <code>Cache</code> appropriately so we can test that it behaves correctly:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> TestCache(t *testing.T) {
     con := gomock.NewController(t)
 	<span style="color:#fff;font-weight:bold">for</span> _, tt := <span style="color:#fff;font-weight:bold">range</span> cacheTests {
@@ -118,9 +90,7 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 		cache.GetGopher(<span style="color:#0ff;font-weight:bold">&#34;andrewgerrand&#34;</span>)
 	}
 }</code></pre></div>
-
 <p>The second thing that&rsquo;s different about our two test cases is the actual calls we should expect on the <code>GohperFinder</code>. Again, when the cache can&rsquo;t find a <code>Gopher</code> in memory, it should call on its <code>GopherFinder</code>. Otherwise, it shouldn&rsquo;t call the <code>GopherFinder</code> at all, and it should simply return the <code>Gopher</code> it has in memory. So, we need a field in our struct that captures this difference between the two test cases:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">var</span> cacheTests = []<span style="color:#fff;font-weight:bold">struct</span> {
 	cachedGophers <span style="color:#fff;font-weight:bold">map</span>[<span style="color:#fff;font-weight:bold">string</span>]Gopher
 	Configurer    Configurer
@@ -138,11 +108,8 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 		},
 	},
 }</code></pre></div>
-
 <p>The <code>Configurer</code>, as you probably figured out, is just a function that takes a mock as a parameter, configures it, and returns the configured mock to be used by the test. When <code>cachedGophers</code> is nil, the <code>Cache</code> created for the test won&rsquo;t have any cached <code>Gophers</code> in memory, so we should expect the <code>Cache</code> to call <code>Find()</code> on its <code>GopherFinder</code>. On the other hand, the second struct has a <code>cachedGohpers</code> map that should cause the <code>Cache</code> to return a cached version of the <code>Gopher</code> rather than fetch one from a remote location.</p>
-
 <p>The <code>TestCache()</code> function can leverage the fields of this struct to run the two test cases:</p>
-
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> TestCache(t *testing.T) {
 
 	con := gomock.NewController(t)
@@ -158,10 +125,8 @@ Then the Cache doesn't call `Find()` on its `GohperFinder`. Instead, it returns 
 	}
 	con.Finish()
 }</code></pre></div>
-
 <h3 id="what-do-you-think">What do you think?</h3>
-
-<p>This strikes me as a fairly reasonable way of avoiding duplicating code while using gomock mocks in testing, but it might be silly and/or there might be a better solution. I&rsquo;m interested in hearing alternative solutions to this problem, so I&rsquo;d love to hear your thoughts on this. For the reasons I pointed out <a href="http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/">here</a>, I don&rsquo;t find the typical arguments offered against mocking libraries compelling, so I&rsquo;m less interested in hearing people repeat those reasons, but if you have a novel reason for why gomock is a bad idea in the first place, I&rsquo;d definitely like to hear it.</p>
+<p>This strikes me as a fairly reasonable way of avoiding duplicating code while using gomock mocks in testing, but it might be silly and/or there might be a better solution. I&rsquo;m interested in hearing alternative solutions to this problem, so I&rsquo;d love to hear your thoughts on this. For the reasons I pointed out <a href="http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/"target="_blank">here</a>, I don&rsquo;t find the typical arguments offered against mocking libraries compelling, so I&rsquo;m less interested in hearing people repeat those reasons, but if you have a novel reason for why gomock is a bad idea in the first place, I&rsquo;d definitely like to hear it.</p>
 </article><section class="article labels"><a class="tag" href=/tags/go/>go</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/testing-package-implmentation-details-from-the-outside/"><span class="li iconfont icon-article"></span>Testing Package Implementation from 'the Outside'</a></p><p><a class="link" href="/post/integration-tests-in-go/"><span class="li iconfont icon-article"></span>Integration Tests in Go</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
 <script type="application/javascript">

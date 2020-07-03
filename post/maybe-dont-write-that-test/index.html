@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Maybe Don&#39;t Write That Test&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Maybe Don&#39;t Write That Test&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Maybe Don&#39;t Write That Test" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -10,85 +10,61 @@
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Maybe Don't Write That Test</h1><p class="article date">2019-09-19</p></section><article class="article markdown-body">
-
-<blockquote>
+    <h1 class="article title">Maybe Don't Write That Test</h1><p class="article date">2019-09-19</p></section><article class="article markdown-body"><blockquote>
 <p>Testing seems to be like going to gym. Everyone feels like &ldquo;yeah. I should be testing. I should be going to the gym everyday.&rdquo;</p>
-
+</blockquote>
+<blockquote>
 <p>Koushik Goupal, <em>Fragmented</em>, &ldquo;Episode 13,&rdquo; 12:01</p>
 </blockquote>
-
-<hr />
-
+<hr>
 <p>Remember those gimmicky fitness products that made you think you could &ldquo;get fit&rdquo; without actually going to the gym/dieting/etc? Because I live in Orlando and have seen the Carousel of Progress at the Magic Kingdom a bunch of times, the first example of this kind of gimmicky product that comes to mind is a thing called an &ldquo;exercise belt.&rdquo; Its the thing on the right:</p>
-
-<p><img src="http://www.parkeology.com/wp-content/uploads/2012/01/carousel-of-progress-john-patty-exercise.jpg" alt="alt" /></p>
-
+<p><img  src="http://www.parkeology.com/wp-content/uploads/2012/01/carousel-of-progress-john-patty-exercise.jpg"
+        alt="alt"/></p>
 <p>I also remember this product that came out in the 90s that would stimulate your muscles with electricity so that you could just watch tv while you got buff. I guess these are still around:</p>
-
-<p><img src="https://images-na.ssl-images-amazon.com/images/I/71ug0jaGIdL._SX425_.jpg" alt="alt" /></p>
-
+<p><img  src="https://images-na.ssl-images-amazon.com/images/I/71ug0jaGIdL._SX425_.jpg"
+        alt="alt"/></p>
 <p>If testing is like going to the gym, then many of us are doing the testing equivalent of using gimmicky fitness products that don&rsquo;t actually work. Using gimmicky fitness products probably <em>feels</em> good. We think:</p>
-
 <blockquote>
 <p>&ldquo;Fitness is important and stimulating my muscles and getting my body moved will get me to fitness!&rdquo;</p>
 </blockquote>
-
 <p>Wrong. Not all muscle stimulation and body movement is actually helpful in achieving fitness. Some of movement and stimulation can actually be harmful. Similarly, writing tests often feels good. We think:</p>
-
 <blockquote>
 <p>&ldquo;Having confidence in my code is important and writing tests will get me there!&rdquo;</p>
 </blockquote>
-
 <p>Also wrong. Not all tests are equally helpful in achieving confidence in our code. Some can actually be harmful. It took me a while to figure this out. I&rsquo;ve been saying this for a while now, but whenever I say it, people always look at me like I&rsquo;m nuts. Maybe breaking down the argument in writing will help.</p>
-
-<p>The basic idea here is that tests have a cost and that sometimes their cost can outweigh their benefit <em>even if we do a good job writing our tests.</em> If that seems obvious to you, you&rsquo;ll want to skip out on the rest of this. It&rsquo;s only going to get less interesting from here. If that idea seems outrageous to you, stick around. I&rsquo;m going to try to convince you that not all tests are worth writing<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> and try to show you that a few of the programmers who popularized automated testing probably think this is true too.</p>
-
+<p>The basic idea here is that tests have a cost and that sometimes their cost can outweigh their benefit <em>even if we do a good job writing our tests.</em> If that seems obvious to you, you&rsquo;ll want to skip out on the rest of this. It&rsquo;s only going to get less interesting from here. If that idea seems outrageous to you, stick around. I&rsquo;m going to try to convince you that not all tests are worth writing<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> and try to show you that a few of the programmers who popularized automated testing probably think this is true too.</p>
 <h2 id="cracks-in-the-surface">Cracks in the Surface</h2>
-
 <p>If we look closely at the folks who have popularized automated testing, we already see hints of a challenge to the idea that all tests are helpful.</p>
-
 <p>Let&rsquo;s start with a story from Gerard Mezaros, author of <em>xUnit Test Patters</em>, a book that has been blessed by Kent Beck:</p>
-
 <blockquote>
-<p>White the time spent writing new tests and writing production code seemed to staying more or less constant, the amount of time spent modifying existing tests was increasing&hellip;When a developer asked me to pair on a task and we spent 90% of the time modifying existing tests to accommodate a relatively minor change, I knew we had to change something&hellip;<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
+<p>White the time spent writing new tests and writing production code seemed to staying more or less constant, the amount of time spent modifying existing tests was increasing&hellip;When a developer asked me to pair on a task and we spent 90% of the time modifying existing tests to accommodate a relatively minor change, I knew we had to change something&hellip;<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 </blockquote>
-
 <p>Eventually, Mezaros figured out why this was happening and wrote a book about how to avoid this sort of situation. The whole premise of the book and his consultancy is that its possible for the cost of tests to outweigh their value. He&rsquo;s sad when people don&rsquo;t call him in early enough because if he&rsquo;s too late, &ldquo;the client will likely muddle through less than satisfied with how TDD and automated unit testing worked&ndash;and the word goes out that automated testing is a waste of time.&rdquo;</p>
-
 <p>Mezaros is mostly concerned with lowering the costs of tests with patterns and reasonable abstractions and testing infrastructure, but even when we take the care of creating good testing infrastructure, writing certain tests can still be a bad move for actually improving confidence in the codebase.</p>
-
-<p>More on that later. For now, another quote from Dave Thomas, author of <em>Pragmatic Programming</em> and OG agile manifesto signatory in his <a href="https://youtu.be/a-BOSpxYJ9M?t=1094">&ldquo;Agile is Dead&rdquo; talk</a>:</p>
-
+<p>More on that later. For now, another quote from Dave Thomas, author of <em>Pragmatic Programming</em> and OG agile manifesto signatory in his <a href="https://youtu.be/a-BOSpxYJ9M?t=1094"target="_blank">&ldquo;Agile is Dead&rdquo; talk</a>:</p>
 <blockquote>
 <p>Testing sounds like something you should do but I am going to tell you right now that I mostly don&rsquo;t test&hellip;and I&rsquo;ve done measurements I don&rsquo;t actually have any more bugs. I will still test complex algorithms but I won&rsquo;t test the whole piece</p>
 </blockquote>
-
 <p>🎤⬇️. Nuff said there, I think.</p>
-
 <p>Let&rsquo;s do one more. This one is from Kent Beck, and its his thoughts on the subject of what we should test:</p>
-
 <blockquote>
 <p>The simple answer&hellip;“write tests until fear is transformed into boredom.” This is a feedback loop, though, and requires that you find the answer yourself. Since you came to this book for answers, not questions (in which case you’re already reading the wrong section, but enough of the self-referential literary recursion stuff…), try this list. You should test:</p>
-
+</blockquote>
+<blockquote>
 <ul>
 <li>Conditionals</li>
-<li>Loops</li>
-<li>Operations</li>
-<li>Polymorphism<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></li>
 </ul>
 </blockquote>
-
-<p>I want to highlight how playful and non-specific Beck is here on this subject. His answer is not &ldquo;test everything,&rdquo; and the answer that he does give is pretty chill and ad hoc.<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup></p>
-
+<ul>
+<li>Loops</li>
+<li>Operations</li>
+<li>Polymorphism<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></li>
+</ul>
+<p>I want to highlight how playful and non-specific Beck is here on this subject. His answer is not &ldquo;test everything,&rdquo; and the answer that he does give is pretty chill and ad hoc.<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
 <p>Here Beck doesn&rsquo;t say that writing tests when you&rsquo;re &ldquo;not afraid&rdquo; or &ldquo;bored&rdquo; can actually be harmful, but if we try our hand at a more precise answer to the question of what to test, we&rsquo;ll see how this can be true. To do that, we&rsquo;ll need to get clearer on the cost and the value of a test.</p>
-
 <h2 id="tests-as-investments">Tests as Investments</h2>
-
 <p>Tests have value and they have costs. We want their value to outweigh their costs over a certain time horizon, so tests are a kind of investment in the codebase. What&rsquo;s the value of a test? People like to talk about how tests are good for documentation, design insight, and defect detection. This is a good start, but its too simple.</p>
-
 <p>Let&rsquo;s start with tests as documentation. The value of the documentation aspect depends on how likely it is that the tested code will change. If it doesn&rsquo;t change, there won&rsquo;t be a need to understand how it works. With this in mind, we might represent the value of the documentation aspect of a test like so:</p>
-
 
 
 <div id="1"></div>
@@ -101,24 +77,20 @@
   });
 </script>
 
-
-<p>Design insight is the next benefit. Tests force us to write more flexible code, which is great. But, what if the code doesn&rsquo;t need to flexible?<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup> Again, we&rsquo;ve got to introduce the probability that the tested code will change to understand the value of the design insight:</p>
-
+<p>Design insight is the next benefit. Tests force us to write more flexible code, which is great. But, what if the code doesn&rsquo;t need to flexible?<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup> Again, we&rsquo;ve got to introduce the probability that the tested code will change to understand the value of the design insight:</p>
 
 
 <div id="2"></div>
 <script>
   addEventListener("DOMContentLoaded", () => {
-    katex.render("Test Value = P(C) \\times Doc \x2b P(C) \\times Design", document.getElementById("2"), {
+    katex.render("Test Value = P(C) \\times Doc \u002b P(C) \\times Design", document.getElementById("2"), {
       throwOnError: false,
       displayMode: true
     });
   });
 </script>
 
-
 <p>Defect detection is the last benefit of automated tests. As a first pass, we can say that the value of a test in this regard is the probability that a defect will be introduced times the cost to the business if the bug isn&rsquo;t caught by the automated test:</p>
-
 
 
 <div id="3"></div>
@@ -131,114 +103,97 @@
   });
 </script>
 
-
 <p>The probability that a defect will be introduced (<code>P(D)</code>) is probably related to how good the documentation is and how often the code will change. It&rsquo;s probably also related to the inherent complexity of the problem the code is trying to solve. (Its much more likely there will be bugs in a bubble sort implementation than a getter method.) The <code>Cost</code> of a bug being introduced depends on a lot of things like:</p>
-
 <ul>
 <li>If an automated test doesn&rsquo;t catch the issue, what will? Blocked developers? QA? Beta users? Actual users?</li>
 <li>How prominent is the (now) buggy feature? What&rsquo;s the relationship between the buggy feature and revenue?</li>
 <li>What&rsquo;s the relationship between the time to discovery and the time it&rsquo;ll take to fix the bug?</li>
 </ul>
-
 <p>So, here&rsquo;s a rough formula for the value of a test:</p>
-
 
 
 <div id="4"></div>
 <script>
   addEventListener("DOMContentLoaded", () => {
-    katex.render("TestValue = P(C) (Doc \x2b Design) \x2b P(D) \\times Cost", document.getElementById("4"), {
+    katex.render("TestValue = P(C) (Doc \u002b Design) \u002b P(D) \\times Cost", document.getElementById("4"), {
       throwOnError: false,
       displayMode: true
     });
   });
 </script>
 
-
 <p>The cost of a test is easer to track down. Its just the time it takes to write the test plus the time it takes to maintain it plus the opportunity cost of doing both of these things:</p>
-
 
 
 <div id="5"></div>
 <script>
   addEventListener("DOMContentLoaded", () => {
-    katex.render("TestCost = T_{w} \x2b T_{m} \x2b T_{oc}", document.getElementById("5"), {
+    katex.render("TestCost = T_{w} \u002b T_{m} \u002b T_{oc}", document.getElementById("5"), {
       throwOnError: false,
       displayMode: true
     });
   });
 </script>
 
-
 <h2 id="an-example-bad-investment">An Example Bad Investment</h2>
-
 <p>Let&rsquo;s apply the formulas to an example.</p>
-
 <p>Just the other day, I was doing some refactoring and I saw that I had broken a test I wrote about 2 years ago. I was testing <code>CacheFirstRepository.make</code>, a method that could take a <code>DataSource</code> and any number of <code>DataCache</code>s and return <code>Observable</code> that emits the data from the caches first and the data source (server) last. The motivation for this is that I didn&rsquo;t want users to have to wait around for data that we already had cached, but I also wanted to update the UI if there was a newer version of the data. Here&rsquo;s the test:</p>
-
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CacheFirstDataTests</span> {
-  <span style="color:#a6e22e">@Test</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">emitsCacheAndThenSourceData</span>() {
-    when(dataSource.<span style="color:#a6e22e">get</span>()).<span style="color:#a6e22e">thenReturn</span>(dataMaybe());
-    when(dataCache.<span style="color:#a6e22e">get</span>()).<span style="color:#a6e22e">thenReturn</span>(cachedDataSingle());
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CacheFirstDataTests</span> <span style="color:#f92672">{</span>
+  <span style="color:#a6e22e">@Test</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">emitsCacheAndThenSourceData</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    when<span style="color:#f92672">(</span>dataSource<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">thenReturn</span><span style="color:#f92672">(</span>dataMaybe<span style="color:#f92672">());</span>
+    when<span style="color:#f92672">(</span>dataCache<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">thenReturn</span><span style="color:#f92672">(</span>cachedDataSingle<span style="color:#f92672">());</span>
     
     cacheFirstRepository
-        .<span style="color:#a6e22e">make</span>(dataSource, dataStore)
-        .<span style="color:#a6e22e">test</span>()
-        .<span style="color:#a6e22e">assertValues</span>(
-          cachedData(),
-          data()
-        )            
-        .<span style="color:#a6e22e">assertComplete</span>();
-  }
-}</code></pre></div>
-
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">make</span><span style="color:#f92672">(</span>dataSource<span style="color:#f92672">,</span> dataStore<span style="color:#f92672">)</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">test</span><span style="color:#f92672">()</span>
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">assertValues</span><span style="color:#f92672">(</span>
+          cachedData<span style="color:#f92672">(),</span>
+          data<span style="color:#f92672">()</span>
+        <span style="color:#f92672">)</span>            
+        <span style="color:#f92672">.</span><span style="color:#a6e22e">assertComplete</span><span style="color:#f92672">();</span>
+  <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span></code></pre></div>
 <p>So here&rsquo;s the thing: the target code hasn&rsquo;t changed since I wrote this. No one cares about the documentation value of this test because no one has decided its a good idea to make users wait unnecessarily for their data. The flexibility gained from test-driving the development of this feature also hasn&rsquo;t mattered because it hasn&rsquo;t changed.</p>
-
 <p>Because this code hasn&rsquo;t changed, the probably of introducing a bug is extremely low, but let&rsquo;s imagine a bug is introduced that would have been caught by this test and that its worst case scenario: the bug makes it all the way to production and isn&rsquo;t discovered for a long time. What&rsquo;s the impact on revenue? The impact to revenue in our case would have been almost negligible because the most common path for this app is that it stays closed most of the time. In other words, <code>P(C)</code>, <code>P(D)</code>, and <code>Cost</code> in our <code>TestValue</code> formula are all low:</p>
-
 
 
 <div id="6"></div>
 <script>
   addEventListener("DOMContentLoaded", () => {
-    katex.render("TestValue = P(C) (Doc \x2b Design) \x2b P(D) \\times Cost", document.getElementById("6"), {
+    katex.render("TestValue = P(C) (Doc \u002b Design) \u002b P(D) \\times Cost", document.getElementById("6"), {
       throwOnError: false,
       displayMode: true
     });
   });
 </script>
 
-
 <p>The cost of the test, moreover, was not negligible. Although the meat of the target code hasn&rsquo;t changed since I&rsquo;ve written it, what has changed is the shape of the value objects I use for this test, so my team and I have had to revisit this test a couple of times to update the value object construction code. Sure refactoring tools help, but they aren&rsquo;t perfect.</p>
-
 <p>I&rsquo;d go as far as saying this test was downright harmful in this case: not everyone on the team is convinced automated testing is worth their time. This test helps to confirm their suspicions, which means we have less people on the team willing to write the kind of tests that are valuable.</p>
-
 <h2 id="conclusion">Conclusion</h2>
-
 <p>I don&rsquo;t think this kind of test is uncommon. I suspect many usages of the <code>@Ignore</code> annotation point to the existence of these kinds of tests: &ldquo;We wrote this test and it broke and we don&rsquo;t know why but we don&rsquo;t want to delete it or fix it so let&rsquo;s just ignore it.&rdquo;</p>
-
 <p>To be clear: I think automated tests are great. I&rsquo;ve studied how they should be written and I&rsquo;ve written <a href="/2015/04/10/against-android-unit-tests/">extensively</a> <a href="/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">on</a> <a href="/post/an-espresso-test-recorder-deep-dive/">the</a> <a href="/post/why-i-dont-use-roboletric/">topic</a> on this blog, but sometimes it may be better to not write a test. Sometimes its better to write a test to test-drive your code and then to delete the test after you&rsquo;ve developed it. Sometimes you might get more confidence from your codebase by skipping writing a test for the feature you happen to be working on and instead writing a test for a more frequently changing, higher-impact part of the codebase.</p>
-
-<hr />
-
+<hr>
 <h2 id="notes">Notes</h2>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1">Turns out I&rsquo;m not the first person to explicitly argue this (shocker). Brian Marick, an OG Agile Manifesto signatory and testing/agile consultant, <a href="https://twitter.com/marick/status/1175418565635268608">pointed out on twitter</a> that he argued for this 20+ years ago <a href="http://www.exampler.com/testing-com/writings/automate.pdf">here</a>.
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2">Gerard Meszaros, <em>xUnit Test Patterns</em>, 26.
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3">Kent Beck, <em>TDD By Example</em>, 201.
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:4">I was shocked when I first read this. I felt silly. I was <em>so serious</em> about testing, and Kent Beck is over here making jokes and just screwing around. It was good for me. Got me lighten up a little. Why so serious?
- <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
-<li id="fn:5">Or what if you&rsquo;re like Dave Thomas and you don&rsquo;t need test pressure to make good design decisions?
- <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p>Turns out I&rsquo;m not the first person to explicitly argue this (shocker). Brian Marick, an OG Agile Manifesto signatory and testing/agile consultant, <a href="https://twitter.com/marick/status/1175418565635268608"target="_blank">pointed out on twitter</a> that he argued for this 20+ years ago <a href="http://www.exampler.com/testing-com/writings/automate.pdf"target="_blank">here</a>. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>Gerard Meszaros, <em>xUnit Test Patterns</em>, 26. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>Kent Beck, <em>TDD By Example</em>, 201. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p>I was shocked when I first read this. I felt silly. I was <em>so serious</em> about testing, and Kent Beck is over here making jokes and just screwing around. It was good for me. Got me lighten up a little. Why so serious? <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p>Or what if you&rsquo;re like Dave Thomas and you don&rsquo;t need test pressure to make good design decisions? <a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article><section class="article labels"><a class="tag" href=/tags/testing/>testing</a><a class="tag" href=/tags/programming/>programming</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/maybe-dont-inject-that/"><span class="li iconfont icon-article"></span>Maybe Don't Inject That</a></p><p><a class="link" href="/post/gradient-descent-for-kotlin-programmers/"><span class="li iconfont icon-article"></span>An Intro to Gradient Descent for Kotlin Programmers</a></p></section></div></section><section id="footer"><div
   style="display:flex; flex-direction:row; flex-wrap:wrap; justify-content:space-between;"

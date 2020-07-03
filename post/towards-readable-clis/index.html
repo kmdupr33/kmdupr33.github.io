@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.57.2" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Maybe we Should Stop Creating Inscrutable CLIs&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.6f857c1682d50ee9f70a533f9c3029b923c8e5063873487a5418ffc0a33be9ba332b8a1f82a84300a511fc07f5f7db20.css" integrity="sha384-b4V8FoLVDun3ClM/nDApuSPI5QY4c0h6VBj/wKM76bozK4ofgqhDAKUR/Af199sg"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Maybe we Should Stop Creating Inscrutable CLIs&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Maybe we Should Stop Creating Inscrutable CLIs" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,73 +12,52 @@
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">Maybe we Should Stop Creating Inscrutable CLIs</h1><p class="article date">2019-08-17</p></section><article class="article markdown-body"><blockquote>
 <p>In the original Unix tradition, command-line options are single letters preceded by a single hyphen&hellip;The original Unix style evolved on slow ASR-33 teletypes that made terseness a virtue; thus the single-letter options.</p>
-
 <p>Eric Steven Raymond, The Art of Unix Programming</p>
 </blockquote>
-
-<hr />
-
+<hr>
 <blockquote>
 <p>Programs must be written for people to read, and only incidentally for machines to execute.</p>
-
 <p>Abelson et. al., Structure and Interpretation of Computer Programs</p>
 </blockquote>
-
-<hr />
-
+<hr>
 <p>I just wrote this little bash-ism <a href="/post/jira-cli-fu/">the other day</a> for removing all attachments from a jira ticket:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">jira attach list <span style="color:#f92672">{{</span>args.ticket<span style="color:#f92672">}}</span> <span style="color:#ae81ff">\
 </span><span style="color:#ae81ff"></span>  | cut -sf <span style="color:#ae81ff">2</span> -d <span style="color:#ae81ff">\|</span> <span style="color:#ae81ff">\
 </span><span style="color:#ae81ff"></span>  | sed <span style="color:#e6db74">&#39;s/ //g&#39;</span> <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>  | xargs -L <span style="color:#ae81ff">1</span> -I % jira attach rm %</code></pre></div>
-<p>It&rsquo;s a neat little piece of code. I was happy to have it written, but I was also annoyed at how much time I spent in man pages and stack overflow to get it done.</p>
-
+</span><span style="color:#ae81ff"></span>  | xargs -L <span style="color:#ae81ff">1</span> -I % jira attach rm %
+</code></pre></div><p>It&rsquo;s a neat little piece of code. I was happy to have it written, but I was also annoyed at how much time I spent in man pages and stack overflow to get it done.</p>
 <p>This code is pretty typical for bash, and unless you&rsquo;ve committed the commands and flags of each command to memory, it&rsquo;s pretty much impossible to guess what it does. Hold that thought.</p>
-
 <p>Consider another way we might express the same functionality in a language like javascript:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">jiraTicket</span>
   .<span style="color:#a6e22e">listAttachments</span>({ <span style="color:#a6e22e">ticket</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;AND-1&#34;</span> })
   .<span style="color:#a6e22e">split</span>(<span style="color:#e6db74">&#34;\n&#34;</span>)
   .<span style="color:#a6e22e">map</span>(<span style="color:#a6e22e">line</span> =&gt; <span style="color:#a6e22e">line</span>.<span style="color:#a6e22e">split</span>(<span style="color:#e6db74">&#34;|&#34;</span>)[<span style="color:#ae81ff">1</span>].<span style="color:#a6e22e">trim</span>())
   .<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">attachmentId</span> =&gt; <span style="color:#a6e22e">jiraTicket</span>.<span style="color:#a6e22e">removeAttachment</span>(<span style="color:#a6e22e">attachmentId</span>));
-</code></pre></div>
-<p>Imagine someone complains a bit in the a pr that the map line is a bid hard to read. They recommend that the arrow function is given a self-documenting name to address the issue, so you wind up with:</p>
+</code></pre></div><p>Imagine someone complains a bit in the a pr that the map line is a bid hard to read. They recommend that the arrow function is given a self-documenting name to address the issue, so you wind up with:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#a6e22e">jiraTicket</span>
   .<span style="color:#a6e22e">listAttachments</span>({ <span style="color:#a6e22e">ticket</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;AND-1&#34;</span> })
   .<span style="color:#a6e22e">split</span>(<span style="color:#e6db74">&#34;\n&#34;</span>)
   .<span style="color:#a6e22e">map</span>(<span style="color:#a6e22e">attachmentInfoLineToAttachmentId</span>)
   .<span style="color:#a6e22e">forEach</span>(<span style="color:#a6e22e">attachmentId</span> =&gt; <span style="color:#a6e22e">jiraTicket</span>.<span style="color:#a6e22e">removeAttachment</span>(<span style="color:#a6e22e">attachmentId</span>));
-</code></pre></div>
-<p>Now, there are still some &ldquo;commands&rdquo; you need to have memorized here. You need to know what <code>map</code> and <code>split</code> means, for example, but I&rsquo;d like to suggest that it&rsquo;s <em>much</em> easier to know what this code does as compared to the bash-equivalent above. More generally, we seem to have a higher standard for readibility for non-bash programs than for bash ones.</p>
-
+</code></pre></div><p>Now, there are still some &ldquo;commands&rdquo; you need to have memorized here. You need to know what <code>map</code> and <code>split</code> means, for example, but I&rsquo;d like to suggest that it&rsquo;s <em>much</em> easier to know what this code does as compared to the bash-equivalent above. More generally, we seem to have a higher standard for readibility for non-bash programs than for bash ones.</p>
 <p>I&rsquo;m not going to defend this claim here. If you think typical bash programs and terminal commands are just as readable as the code you write elsewhere on the job, here&rsquo;s your exit. I might try to argue for this claim with more detail some other time.</p>
-
 <p>The relative inscrutability of the CLIs we use in our terminals has always bothered me. Until recently, I thought the problem was bash itself, but while chatting with some friends, I realized the root of the problem is <em>how we write CLIs</em>.</p>
-
 <p>If you look at all the CLI libraries in various languages, they all make it easy to create commands with UNIX-style, single-character flags that aren&rsquo;t self-documenting. We discover these libraries and we say to ourselves, &ldquo;Great! My CLI will work just like all the others.&rdquo; (I&rsquo;ve actually thought this to myself before.)</p>
-
 <p>Here&rsquo;s the problem: all the other CLIs are the opposite of self-documenting: their inscrutable. Why do we want to make another CLI that&rsquo;s just like all the others? Why do we torture ourselves with inscrutable CLIs?</p>
-
-<p>I&rsquo;m not going to try to seriously answer that question here. Maybe understanding, using, and creating UNIX-style CLIs is an odd <a href="https://xkcd.com/378/">real programmers</a> one-upmanship type of thing. Maybe we just haven&rsquo;t rethought CLIs since their inception in an environment <em>with slow teletypes that would have make it extremely painful to invoke commands with self-documenting interfaces</em>. Regardless, maybe we should stop writing inscrutable CLIs and apply the same standards of readibility we have in other programming contexts to CLIs and bash programs?</p>
-
+<p>I&rsquo;m not going to try to seriously answer that question here. Maybe understanding, using, and creating UNIX-style CLIs is an odd <a href="https://xkcd.com/378/"target="_blank">real programmers</a> one-upmanship type of thing. Maybe we just haven&rsquo;t rethought CLIs since their inception in an environment <em>with slow teletypes that would have make it extremely painful to invoke commands with self-documenting interfaces</em>. Regardless, maybe we should stop writing inscrutable CLIs and apply the same standards of readibility we have in other programming contexts to CLIs and bash programs?</p>
 <p>If we did that, maybe the bash-ism for removing jira tickets might look something like this:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">jira attach list <span style="color:#f92672">{{</span>args.ticket<span style="color:#f92672">}}</span> <span style="color:#ae81ff">\
 </span><span style="color:#ae81ff"></span>  | extractSubstring --ignoreLinesMissingDelimiter --position <span style="color:#ae81ff">2</span> --delimiter <span style="color:#ae81ff">\|</span> <span style="color:#ae81ff">\
 </span><span style="color:#ae81ff"></span>  | streamEditor <span style="color:#e6db74">&#39;substitute/ //globally&#39;</span> <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>  | executeWithArgs --lines <span style="color:#ae81ff">1</span> -substitute % jira attach rm %</code></pre></div>
-<p>Of course, something like this is possible with bash, and many CLI libraries make it easy to use more expressive GNU-style <code>--</code>-prefixed flags. I think we just need to decide that we&rsquo;re not going to tolerate inscrutable code just because its bash code.</p>
-
+</span><span style="color:#ae81ff"></span>  | executeWithArgs --lines <span style="color:#ae81ff">1</span> -substitute % jira attach rm %
+</code></pre></div><p>Of course, something like this is possible with bash, and many CLI libraries make it easy to use more expressive GNU-style <code>--</code>-prefixed flags. I think we just need to decide that we&rsquo;re not going to tolerate inscrutable code just because its bash code.</p>
 <p>If you&rsquo;re worried about typing a lot, that&rsquo;s what autocomplete is for. It&rsquo;s basically a platitude in programming that most of the time we should optimize for readibility over writability. I&rsquo;ll end by repeating the Abelseon et. al. quote from SICP:</p>
-
 <blockquote>
 <p>Programs must be written for people to read, and only incidentally for machines to execute.</p>
-
 <p>Abelson et. al., Structure and Interpretation of Computer Programs</p>
 </blockquote>
-
-<hr />
-
-<p><a href="https://news.ycombinator.com/item?id=20724679">Discussion on HN</a></p>
+<hr>
+<p><a href="https://news.ycombinator.com/item?id=20724679"target="_blank">Discussion on HN</a></p>
 </article><section class="article labels"><a class="tag" href=/tags/programming/>programming</a><a class="tag" href=/tags/clis/>clis</a></section></div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/dagger-2-years-later/"><span class="li iconfont icon-article"></span>Dagger 2, 2 Years Later</a></p><p><a class="link" href="/post/roadmap-presentation-tips/"><span class="li iconfont icon-article"></span>Some Tips for Delivering an Effective Roadmap Presentation</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
 <script type="application/javascript">
