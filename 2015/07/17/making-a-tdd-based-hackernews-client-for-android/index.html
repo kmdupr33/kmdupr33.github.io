@@ -13,8 +13,8 @@
     <h1 class="article title">Making a TDD-based HackerNews client for Android</h1><p class="article date">2015-07-17</p></section><article class="article markdown-body"><p>I&rsquo;m using TDD to write a HackerNews client for Android. This post (and the ones that will likely follow it) share a little bit about some of the techniques I used to follow a TDD-based work-flow for developing this application. It also discusses the architecture that arises when Android apps are built with testability in mind from the ground up.</p>
 <h2 id="testing-a-walking-skeleton">Testing a Walking Skeleton</h2>
 <p>The first step in kick-starting a TDD workflow, according to Steve Freeman and Nat Pryce in <em>Growing Object Oriented Software Guided by Tests</em>, is to &ldquo;test a walking skeleton.&rdquo; A walking skeleton, as they define it, is this:</p>
-<!-- raw HTML omitted -->
-<p>pg. 69-70<!-- raw HTML omitted --></p>
+<blockquote>A “walking skeleton” is an implementation of the thinnest possible slice of real functionality that we can automatically build, deploy, and test end-to-end.
+<p>pg. 69-70</blockquote></p>
 <p>A walking skeleton for a HackerNews client, as I see it, should just display a list of HackerNews story ids. To implement this test, I use a simple espresso test that looks like this:</p>
 <script type="application/javascript" src="https://gist.github.com/kmdupr33/a25db0930e583db05535.js"></script>
 
@@ -33,8 +33,8 @@
 <p><code>TestLoaderModule</code> is the module that provides the overridden dependency. It provides a HackerNewsRestAdapter that simply loads HackerNews data from memory instead of the server:</p>
 <h3 id="the-current-state-of-apps-architecture">The Current State of App&rsquo;s Architecture</h3>
 <p>Let me point out a few things about the architecture needed to get this test to pass. First off, I want to say that this architecture is likely to change for the same reasons that Pryce and Freeman point out:</p>
-<!-- raw HTML omitted -->
-<p>Pg. 73<!-- raw HTML omitted --></p>
+<blockquote>[When testing a walking skeleton, w]e’re not trying to elaborate the whole design down to classes and algorithms before we start coding. Any ideas we have now are likely to be wrong, so we prefer to discover those details as we grow the system.
+<p>Pg. 73</blockquote></p>
 <p>Here&rsquo;s something interesting about the state of the architecture currently: it uses a combination of RxJava and Loaders to ensure that</p>
 <ul>
 <li>
@@ -45,8 +45,8 @@
 </li>
 </ul>
 <p>The inspiration for this decision comes from Freeman and Pryce&rsquo;s advice:</p>
-<!-- raw HTML omitted -->
-<p>Pg. 90<!-- raw HTML omitted --></p>
+<blockquote>We don’t want technical concepts to leak into the application model, so we write interfaces to describe its relationships with the outside world in its terminology (Cockburn’s ports ). Then we write bridges between the application core and each technical domain (Cockburn’s adapters ).
+<p>Pg. 90</blockquote></p>
 <p>The problem that Loaders attempt to solve, as I see it, is a technical one that doesn&rsquo;t belong in the Application Layer. To shield application layer objects from this technical detail, I&rsquo;ve created and pass around an Observable that, upon subscription, initializes a load from a Loader using a LoaderManager:</p>
 <script type="application/javascript" src="https://gist.github.com/kmdupr33/c6c1641ed1a24e07e062.js"></script>
 

@@ -31,7 +31,7 @@
 <blockquote>
 <p>goal of software delivery is to minimise the lead time to business impact. Everything else is detail.</p>
 </blockquote>
-<p>This view is a bit too strong in my opinion, but it does get one thing right: good code is changeable code. Suppose you ship an app that is performant and beautiful and that many of your users love it. Your boss says, &ldquo;this is great, but lets add a feature and change this other behavior.&rdquo; If you&rsquo;re response is, &ldquo;Well, the code is spaghetti. Its hard to understand and I&rsquo;m not confident that I won&rsquo;t break things when I make changes,&rdquo; you&rsquo;re boss is going to be disappointed.<!-- raw HTML omitted -->1<!-- raw HTML omitted --></p>
+<p>This view is a bit too strong in my opinion, but it does get one thing right: good code is changeable code. Suppose you ship an app that is performant and beautiful and that many of your users love it. Your boss says, &ldquo;this is great, but lets add a feature and change this other behavior.&rdquo; If you&rsquo;re response is, &ldquo;Well, the code is spaghetti. Its hard to understand and I&rsquo;m not confident that I won&rsquo;t break things when I make changes,&rdquo; you&rsquo;re boss is going to be disappointed.<sup>1</sup></p>
 <p>For most of us, I don&rsquo;t think that claim will seem controversial. If you&rsquo;re working on a pet project or a prototype that isn&rsquo;t going to need to survive multiple iterations, I&rsquo;m not really including you in the &ldquo;us&rdquo; here.</p>
 <h3 id="for-most-of-us-changeable-code-is-tested-code">For most of us, Changeable Code is Tested Code</h3>
 <p>Say you agree that good code is changeable code. What does that have to do with tests? Well, for most of us, tests are the only practical way of minimizing the time it takes to change our software.</p>
@@ -49,7 +49,7 @@
 <blockquote>
 <p>We invest in this huge testing framework…engineers here have the power to try out an idea and ship it to maybe 10,000 people or 100,000 people.</p>
 </blockquote>
-<p>Imagine that. Engineers can build a feature and ship it with confidence.<!-- raw HTML omitted -->2<!-- raw HTML omitted --> That&rsquo;s possible because of automated testing.</p>
+<p>Imagine that. Engineers can build a feature and ship it with confidence.<sup>2</sup> That&rsquo;s possible because of automated testing.</p>
 <h3 id="conclusion">Conclusion</h3>
 <p>If good code is changeable code and if changeable code is tested code, then we should probably write more automated tests for our Android apps. Automated tests aren&rsquo;t a nice to have. They&rsquo;re integral to writing good apps.</p>
 <p>One quick caveat: A lot of folks seem to think that there&rsquo;s less reason to write tests when you&rsquo;re working with a startup because you&rsquo;re trying to move quickly. I can imagine extreme circumstances where that might make sense, but once you get the hang of writing tests and writing testable software, writing tests don&rsquo;t take that long. Because of this, I think that refraining from writing tests as a startup can often be an exercise in short-term thinking. In fact, I <a href="http://www.philosophicalhacker.com/post/tdd-and-startups/"target="_blank">think the argument for automated testing in a startup</a> is even more compelling than it is for developers working on an established product.</p>

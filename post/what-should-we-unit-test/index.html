@@ -19,14 +19,14 @@
 <li>the application isn&rsquo;t architected in a way that makes it easy for me to adapt it to ever-changing business requirements</li>
 </ul>
 <p>Automated testing is supposed to help alleviate all three of these fears, but when we&rsquo;re first getting started with automated testing, it can be difficult to know where to start. We might look at a piece of code and wonder to ourselves, &ldquo;Should I write a test for this code?&rdquo;</p>
-<p>Cursory research on the question yields platitudes like &ldquo;unit test your business logic,&rdquo; but when I first got started, that didn&rsquo;t really mean much to me<!-- raw HTML omitted -->1<!-- raw HTML omitted --> and now that I have a bit more experience writing android unit tests, I find that answer to be too simplistic.</p>
+<p>Cursory research on the question yields platitudes like &ldquo;unit test your business logic,&rdquo; but when I first got started, that didn&rsquo;t really mean much to me<sup>1</sup> and now that I have a bit more experience writing android unit tests, I find that answer to be too simplistic.</p>
 <p>Over-zealous testing enthusiasts may shout a different answer at us: &ldquo;YOU SHOULD TEST (ALMOST) EVERYTHING!&rdquo; They may be right. They&rsquo;re not over-zealous because of how much they want us to test. Rather, they&rsquo;re over-zealous because that&rsquo;s a very unhelpful answer to the question &ldquo;Where should I <em>start</em> testing?&rdquo; Its simply not true that all tests are equally helpful, a fact that Kent Beck, the guy who popularized TDD, recently tweeted about:</p>
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Being proud of 100% test coverage is like being proud of reading every word in the newspaper. Some are more important than others.</p>&mdash; Kent Beck (@KentBeck) <a href="https://twitter.com/KentBeck/status/812703192437981184?ref_src=twsrc%5Etfw">December 24, 2016</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 <p>I think that if we keep in mind the fears that lead us to write tests in the first place, we&rsquo;ll have a much easier time figuring out what to test. This should come as no surprise. After all, Kent Beck&rsquo;s answer to the question of what to test is this:</p>
 <blockquote>
-<p>Write tests until fear is transformed into boredom.<!-- raw HTML omitted -->2<!-- raw HTML omitted --></p>
+<p>Write tests until fear is transformed into boredom.<sup>2</sup></p>
 </blockquote>
 <p>This post is about the tests that fear drives us to write, tests that we should be spending most of our time writing.</p>
 <h3 id="when-new-functionality-is-complicated">When new functionality is complicated</h3>
@@ -37,8 +37,8 @@
 <p>This isn&rsquo;t terribly complicated, but its enough to make me anxious that I&rsquo;ve covered all my bases as I&rsquo;m writing the code. This is the kind of thing I&rsquo;d write a unit test for.</p>
 <h3 id="when-youve-got-old-code-that-breaks-often">When you&rsquo;ve got old code that breaks often</h3>
 <p>Sometimes there are parts of a code base that are very brittle. I typically dread having to make changes in these parts of a codebase. Even worse: some brittle parts of the code base have to change often and this causes lots of bugs. Making changes in this kind of code is like leaving food and dirty dishes out a crappy apartment: it invites bugs.</p>
-<p>Working on code that changes often and is often the source of bugs is maybe the scariest part of being a software engineer. You watch your co-workers trudge through the scary code and then they eventually find out the code that they changed introduced a bug. When you get assigned a ticket in that area, you have to pretend that you didn&rsquo;t just see your co-worker get pwned by the code there. The fear is strong, so this is a great place to write tests.<!-- raw HTML omitted -->3<!-- raw HTML omitted --></p>
-<p>Unfortunately, brittle code isn&rsquo;t typically code that going to be easily unit testable, so you may have to settle for a functional-level test. Alternatively, you could employ some very conservative refactoring to get the brittle code into a unit-testable state.<!-- raw HTML omitted -->4<!-- raw HTML omitted --></p>
+<p>Working on code that changes often and is often the source of bugs is maybe the scariest part of being a software engineer. You watch your co-workers trudge through the scary code and then they eventually find out the code that they changed introduced a bug. When you get assigned a ticket in that area, you have to pretend that you didn&rsquo;t just see your co-worker get pwned by the code there. The fear is strong, so this is a great place to write tests.<sup>3</sup></p>
+<p>Unfortunately, brittle code isn&rsquo;t typically code that going to be easily unit testable, so you may have to settle for a functional-level test. Alternatively, you could employ some very conservative refactoring to get the brittle code into a unit-testable state.<sup>4</sup></p>
 <h3 id="when-you-think-your-code-will-change">When you think your code will change</h3>
 <p>If you think you&rsquo;re code will change, you&rsquo;ve got a few reasons to write tests for it:</p>
 <ol>

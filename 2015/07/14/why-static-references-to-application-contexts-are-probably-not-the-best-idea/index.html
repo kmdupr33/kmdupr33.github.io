@@ -17,7 +17,7 @@
 </ol>
 </blockquote>
 <p>The reason I warned against this is that static references to Contexts can cause memory leaks. An astute reader pointed out that a static reference to an application Context wouldn&rsquo;t cause a memory leak since the application Context is around for the lifetime the app is running anyway. I then qualified my warning by saying:</p>
-<!-- raw HTML omitted -->
+<blockquote>Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but I wouldn’t recommend that you do that either.</blockquote>
 <p>In this post, I want to say a little more about why think having and using a static reference to an application Context is <em>less-than-ideal</em>. I emphasize &ldquo;less-than-ideal&rdquo; in the previous sentence as a way of highlighting what I&rsquo;m not saying: I&rsquo;m not saying that a kitten dies every time you use a static reference to an application Context. Once again, @codestandards is hilarious and relevant here:</p>
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Please, for the sake of the kittens. <a href="http://t.co/xaj7pNDVfH">pic.twitter.com/xaj7pNDVfH</a></p>&mdash; Code Standards (@codestandards) <a href="https://twitter.com/codestandards/status/570224843536277504?ref_src=twsrc%5Etfw">February 24, 2015</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -25,7 +25,9 @@
 <p>Instead, all I&rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps.</p>
 <h2 id="1-classesmethods-that-use-static-references-to-an-application-context-are-liars">1. Classes/Methods that use static references to an application Context are &ldquo;Liars&rdquo;</h2>
 <p>This point is taken from <a href="http://misko.hevery.com/code-reviewers-guide/flaw-brittle-global-state-singletons/"target="_blank">Google&rsquo;s Guide to Writing testable code</a>. In that guide, they point out that</p>
-<!-- raw HTML omitted -->
+<blockquote>
+Accessing global state statically doesn’t clarify those shared dependencies to readers of the constructors and methods that use the Global State. Global State and Singletons make APIs lie about their true dependencies. To really understand the dependencies, developers must read every line of code.
+</blockquote>
 <p>Global static references to an application <code>Context</code> are no exception to this point: readers of that class cannot know that the class actually depends on a <code>Context</code> just by looking at its API. When a class has an expressive, &ldquo;truthful&rdquo; API that tells us about its dependencies, its easier to understand both that class&rsquo; (or method&rsquo;s) responsibility and how it goes about fulfilling that responsibility.</p>
 <p>Here&rsquo;s a quick example to illustrate this. Suppose you run across this method signature while you&rsquo;re looking at code:</p>
 <script type="application/javascript" src="https://gist.github.com/kmdupr33/b3ae8532aa3ef1f738b9.js"></script>
@@ -36,7 +38,9 @@
 <p>With this signature you have a hint that maybe this method uses a <code>Toast</code> to display the string. Because <code>Context</code> is a god-object, knowing that a particular class or method depends on it doesn&rsquo;t always shed much light on what that class/method does or how it does it, but a little help in understanding what a class/method does is better than no help. </p>
 <h2 id="2-classes-that-use-static-references-to-an-application-context-are-not-encapsulated">2. Classes that use static references to an application Context are not encapsulated.</h2>
 <p>Encapsulation is one of those words that gets thrown around a lot without a precise definition. I&rsquo;m not trying to add to that mess. When I say &ldquo;encapsulation,&rdquo; I mean what Steve Freeman and Nat Pryce mean in <em>Growing Object Oriented Software Guided by Tests</em>:</p>
-<!-- raw HTML omitted -->
+<blockquote>
+[It] Ensures that the behavior of an object can only be affected through its API. It lets us control how much a change to one object will impact other parts of the system by ensuring that there are no unexpected dependencies between unrelated components. -Pg. 92
+</blockquote>
 <p>Because classes that use static references to application Contexts are accessing a globally available dependency, the behavior of instances of that class can be affected by changes to the shared Application Context. Because the shared application Context isn&rsquo;t a part of that class&rsquo; API, this means that there can be changes to the object&rsquo;s behavior that aren&rsquo;t caused by an interaction with that object&rsquo;s API. It means, in other words, that using static references to application Contexts breaks encapsulation.</p>
 <p>For the vast majority of cases, breaking encapsulation in this way probably wouldn&rsquo;t be a problem. In fact, the only examples I can imagine in which this would be a problem seem rather contrived. Still, I think that, all other things being equal, we ought to prefer architectures that work in all cases over architectures that work 99% of the time. Again, you&rsquo;re not killing a kitten if you use static references to application Contexts and break encapsulation, but you aren&rsquo;t using the most robust architecture either.</p>
 <h2 id="3-classes-that-use-static-references-to-an-application-context-might-beharder-to-unit-test">3. Classes that use static references to an application Context might be Harder to Unit Test</h2>

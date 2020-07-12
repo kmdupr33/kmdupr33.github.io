@@ -42,7 +42,7 @@
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">22</span>}</code></pre></div>
 <p>There&rsquo;s a couple of lines worth highlighting here.</p>
 <h4 id="1-nodeandroid">1 <code>node('android')</code></h4>
-<p>A node is a computer that can execute a Jenkins job. A single Jenkins &ldquo;master&rdquo; server can queue up jobs for many nodes, so you can run as many jobs as you have machines simultaneously.<!-- raw HTML omitted -->1<!-- raw HTML omitted --></p>
+<p>A node is a computer that can execute a Jenkins job. A single Jenkins &ldquo;master&rdquo; server can queue up jobs for many nodes, so you can run as many jobs as you have machines simultaneously.<sup>1</sup></p>
 <p>What&rsquo;s interesting about this line is the parameter that <code>node()</code> takes. The value of this parameter is a &ldquo;label,&rdquo; which is a way of telling Jenkins which types of nodes can run this job. With this line, I&rsquo;m saying: &ldquo;Only run this job on nodes that have the label &lsquo;android&rsquo;.&rdquo; When managing your nodes through the Jenkins UI, you can specify which labels your node has, thereby limiting the execution of your jobs to particular nodes:</p>
 <p><img  src="/images/changing-node-labels.png"
         alt="Setting labels on a node"/></p>

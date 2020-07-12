@@ -12,21 +12,22 @@
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">My Response to Hannes Dorfmann on "the Circular Dependency Problem"</h1><p class="article date">2015-07-08</p></section><article class="article markdown-body"><p>In <a href="http://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/"target="_blank">my last post</a>, I argued that there are two disadvantages to <code>Activities</code> and Presenters. The first disadvantage is that they are often bloated classes. The second disadvantage is that these classes often have a circular dependency between themselves and their Views. Yesterday, Hannes Dorfmann made a comment on my post that was so thoughtful and excellent that I think its worth dedicating an entire post to responding to it.</p>
 <p>Specifically, Hannes&rsquo; comments challenge my claim that the circular dependency between Activities/Fragments/Presenters and their Views are a problem.</p>
-<!-- raw HTML omitted -->
+<blockquote>...Regarding circular dependencies: Imho I don’t think that circular dependencies are a bad thing as long as you program against an interface and not the implementation:
 <ol>
 <li>
 <p>Presenter program against View interface. This makes your presenter easily testable since you can replace the view with a mock view while unit testing</p>
 </li>
 <li>
-<p>View program against Presenter interface. During testing you can replace the presenter with a mock presenter easily. Therefore view is testable. I guess the problem you face here is that the view (like Activity) is creating a presenter with new Presenter(). But with dependency injection you can inject a MockPresenter while unit testing.<!-- raw HTML omitted --></p>
+<p>View program against Presenter interface. During testing you can replace the presenter with a mock presenter easily. Therefore view is testable. I guess the problem you face here is that the view (like Activity) is creating a presenter with new Presenter(). But with dependency injection you can inject a MockPresenter while unit testing.</blockquote></p>
 </li>
 </ol>
 <p>These are interesting points. I think I agree that programming against interfaces makes code more unit testable in certain situations, but I&rsquo;m not sure that this addresses the disadvantage created by the circular dependencies between Activities/Presenters and their Views. Here&rsquo;s why: if an MVP-View is instantiating a concrete implementation of a Presenter, then the only way for us to swap out its dependency is by using setter injection. Setter injection, as I pointed out in the last post is generally less preferable to constructor injection. Steve Freeman and Nat Pryce say this in <a href="http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627"target="_blank">their book</a>. Martin Fowler, following Kent Beck, says something similar in <a href="http://martinfowler.com/articles/injection.html#ConstructorVersusSetterInjection"target="_blank">his article on dependency injection</a>.</p>
 <p>Hannes&rsquo; comment challenges my claim here too, however:</p>
-<!-- raw HTML omitted -->
-<p>From my point of view its completely fine since Button programs against the OnClickInterface. Therefore, it’s not a „hard“ dependency to the Activity (which is the OnClickListener) and I wouldn’t call it circular dependency. This is the same as View and Presenter. Presenter is programming against the View interface and therefore completely fine.<!-- raw HTML omitted --></p>
+<blockquote>...Actually, also the Observer pattern has circular dependencies. I.e. Activity implements OnClickListener and displays a Button and registers himself as OnClickListener on the button. Activity has dependency to Button since Activity needs the reference to the Button to register himself. On the other side Button has a reference to the OnClickListener, which actually is the Activity.
+<p>From my point of view its completely fine since Button programs against the OnClickInterface. Therefore, it’s not a „hard“ dependency to the Activity (which is the OnClickListener) and I wouldn’t call it circular dependency. This is the same as View and Presenter. Presenter is programming against the View interface and therefore completely fine.</blockquote></p>
 <p>This is a great argument. Hannes builds on the argument later in his comment:</p>
-<!-- raw HTML omitted -->
+<blockquote>Regarding invalid state of an object:
+That’s open to dispute. [Is] a presenter...in an invalid state without a View? [Is] a Button...in an invalid state without having set an OnClickListener?</blockquote>
 <p>I see Hannes as making two parallel arguments from analogy here, both of which support the conclusion that there&rsquo;s no problem with the circular dependency between Activities/Presenters and Views. Here&rsquo;s the first argument:</p>
 <ol>
 <li>

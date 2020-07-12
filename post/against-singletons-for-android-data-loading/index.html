@@ -27,7 +27,7 @@
 <p>I think singletons are a <em>sub-optimal</em> solution for this specific problem. This is not a post about why singletons are bad, full stop. Let&rsquo;s move on to why I think this.</p>
 <h3 id="hard-to-test">Hard to Test</h3>
 <p>Fortunately, nukes are hard to test. You&rsquo;ve got to find a large area that you can pollute with radiation, and, depending on your place in the world order, you need to be prepared to handle varying degrees of fallout from the international community.</p>
-<p>Unfortunately, singletons are also hard to test, and this counts as one strike against them as a data loading solution in my mind. Others have already noted in detail why testing with singletons is hard,<!-- raw HTML omitted -->1<!-- raw HTML omitted --> but let&rsquo;s look at a brief example to see why testing with singletons is hard.</p>
+<p>Unfortunately, singletons are also hard to test, and this counts as one strike against them as a data loading solution in my mind. Others have already noted in detail why testing with singletons is hard,<sup>1</sup> but let&rsquo;s look at a brief example to see why testing with singletons is hard.</p>
 <p>Let&rsquo;s say you&rsquo;re tasked with implementing a screen that loads data from a database like the explore sessions screen from the google I/O app:</p>
 <p><img  src="/images/session-data-ss.png"
         alt="Session list"/></p>
@@ -69,8 +69,8 @@
     <span style="color:#007f7f">//...
 </span><span style="color:#007f7f"></span>  }
 }</code></pre></div>
-<p>When we need to change the API of the SUT <em>solely</em><!-- raw HTML omitted -->2<!-- raw HTML omitted --> for the purpose of testing, our tests are telling us there&rsquo;s a problem with our design.</p>
-<p>Even with these added methods, however, we lose the ability to speed up our tests by running them in parallel.<!-- raw HTML omitted -->3<!-- raw HTML omitted --> The likelihood that tests are run regularly is related to how long it takes to run them. Tests are often more likely to be useful the more often they are run, so placing an unneeded limit on how quickly our tests can run is not ideal.</p>
+<p>When we need to change the API of the SUT <em>solely</em><sup>2</sup> for the purpose of testing, our tests are telling us there&rsquo;s a problem with our design.</p>
+<p>Even with these added methods, however, we lose the ability to speed up our tests by running them in parallel.<sup>3</sup> The likelihood that tests are run regularly is related to how long it takes to run them. Tests are often more likely to be useful the more often they are run, so placing an unneeded limit on how quickly our tests can run is not ideal.</p>
 <p>At this point, some readers may point out that these problems are alleviated if we inject the singleton through the constructor and if we keep our <code>Activity</code> as a dumb view that isn&rsquo;t scary enough to test. The code for this suggestion might look something like this:</p>
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> SessionsActivity <span style="color:#fff;font-weight:bold">extends</span> Activity {
   @Override <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(Bundle bundle) {

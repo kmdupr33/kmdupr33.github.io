@@ -19,12 +19,12 @@
 <p>-Michael Feathers, Working Effectively with Legacy Code</p>
 </blockquote>
 <p>When we use this fact to modify the behavior of a particular piece of code without editing the code in that place, then we&rsquo;re using an object seam. The refactoring I showed in my last post was an example of exploiting an object seam, but we&rsquo;re going to look at another example.</p>
-<p>Before we do that, however, I want to point out that dependency injection is one of the key ways<!-- raw HTML omitted -->1<!-- raw HTML omitted --> that we create object seams. There still seems to be some confusion about dependency injection, so let me quickly try to clarify: Dependency injection is pattern; its not dagger or any other library.</p>
+<p>Before we do that, however, I want to point out that dependency injection is one of the key ways<sup>1</sup> that we create object seams. There still seems to be some confusion about dependency injection, so let me quickly try to clarify: Dependency injection is pattern; its not dagger or any other library.</p>
 <p>Here&rsquo;s a definition of dependency injection:</p>
 <blockquote>
 <p>The code that needs dependencies is not responsible for getting them</p>
 </blockquote>
-<p>If that&rsquo;s true of code that you&rsquo;re writing, you&rsquo;re using dependency injection.<!-- raw HTML omitted -->2<!-- raw HTML omitted --></p>
+<p>If that&rsquo;s true of code that you&rsquo;re writing, you&rsquo;re using dependency injection.<sup>2</sup></p>
 <p>With this in mind, we&rsquo;re now in a position to see something that I struggled to discover over a year ago when I wrote <a href="/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/">my series on posts on why android unit testing is hard</a>: the reason MVP makes our apps more testable is because MVP creates object seams via dependency injection.</p>
 <p>Let&rsquo;s see an example of this. Here&rsquo;s a video of some functionality in the 2015 Google I/O app. Notice that when I first open the app, I&rsquo;m presented with some cards that ask my preferences on a few things. Once I return to the app, however, those cards are no longer present.</p>
 

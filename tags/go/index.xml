@@ -60,9 +60,9 @@ Clarifying Terms As I&amp;rsquo;ve said before, many terms in software are vague
       
       <guid>https://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/</guid>
       <description>&lt;p&gt;A few weeks ago, I started learning go. Since I&amp;rsquo;m a wannabe TDD-er, I took a look at some resources on testing go code. I stumbled upon &lt;a href=&#34;https://talks.golang.org/2014/testing.slide#1&#34;target=&#34;_blank&#34;&gt;Andrew Gerrand&amp;rsquo;s excellent Testing Techniques talk&lt;/a&gt; in which he says this:&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
+&lt;blockquote&gt;Go eschews a lot of things, including mocks and fakes.&lt;/blockquote&gt;
 &lt;p&gt;&amp;ldquo;Alright cool,&amp;rdquo; I thought to myself. I&amp;rsquo;m down to &amp;ldquo;do as the gophers do&amp;rdquo; and eschew mocks. Later on during his talk, Andrew Gerrand mentions &lt;a href=&#34;https://github.com/golang/mock&#34;target=&#34;_blank&#34;&gt;gomock&lt;/a&gt;, a mocking library, and reluctantly says&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
+&lt;blockquote&gt;[mocking libraries like gomock] are fine, but I find that on balance the hand-written fakes tend be easier to reason about and clearer to see what&#39;s going on, but I&#39;m not an enterprise go programmer so maybe people do need that so I don&#39;t know, but that&#39;s my advice.&lt;/blockquote&gt;
 &lt;p&gt;Of course, after hearing that, I felt a little confused and unsure whether I should refrain from using mocking libraries in go. To make matters worse, I took a look at gomock and was surprised to find that its written by two engineers at Google.&lt;/p&gt;
 &lt;p&gt;At that point, it seemed that the question of whether we should use a mocking library while testing go code is a bit of a contentious question, even within Google. I found the seeming contentious nature of this question pretty unhelpful and confusing when I was trying to get a handle on how to write good go code. However, it led me to do some research on the pros and cons of mocking libraries vs hand-written mocks, and in this post, I present the conclusions I came to based on my research:&lt;/p&gt;
 &lt;ol&gt;

@@ -45,7 +45,7 @@
 </ul>
 <p>You could test all of this business logic manually, but its must faster to write unit tests that verify that the <code>SessionDetailActivity</code> does all of this correctly. Unit tests that verify this behavior will complete in seconds. Manual testing, on the other hand, takes over a minute to complete:</p>
 <p>Now, at this point, some of you make the following argument:</p>
-<!-- raw HTML omitted -->
+<blockquote>Because unit tests don't actually tell you anything about the overall behavior of the system, there will be bugs that will slip past a unit test. Thus, we should prefer manual testing (or perhaps automated functional UI tests) over unit testing.</blockquote>
 <p>This is a tricky argument, but fortunately, I have a lot of experience with those.</p>
 <p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-05.png"target="_blank"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-05.png"
         alt="IO Testing Talk-05"/></a>Here&rsquo;s my response to the above argument: Even if there are bugs that can slip past unit tests, we are better off, all other things being equal, if we have unit tests than if we didn&rsquo;t have unit tests. To see this, let&rsquo;s look at the three possible outcomes for unit testing the functionality I mentioned above.</p>

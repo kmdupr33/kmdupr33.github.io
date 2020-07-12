@@ -193,7 +193,7 @@ Frustrated and desperate, you decide to evacuate the party (and the state), get 
       
       <guid>https://www.philosophicalhacker.com/post/why-i-dont-use-roboletric/</guid>
       <description>The more that I learn about testing, the more suspicious of Robolectric I get. I&amp;rsquo;m honestly starting to think that many of the heros of unit testing (e.g., Kent Beck, Michael Feathers, Steve Freeman, and Nat Pryce) would be pretty suspicious of Robolectric. Here are my concerns:
-  Robolectric is largely1a set of mocks for a set of types we don&amp;rsquo;t own. Mocking types we don&amp;rsquo;t own is not recommended by the folks who invented mocks.</description>
+  Robolectric is largely1 a set of mocks for a set of types we don&amp;rsquo;t own. Mocking types we don&amp;rsquo;t own is not recommended by the folks who invented mocks.</description>
       
     </item>
     
@@ -214,7 +214,7 @@ Frustrated and desperate, you decide to evacuate the party (and the state), get 
       <pubDate>Tue, 27 Dec 2016 08:21:42 -0500</pubDate>
       
       <guid>https://www.philosophicalhacker.com/post/how-we-misuse-mocks-for-android-tests/</guid>
-      <description>Mocks are a pretty standard tool in our android developer tool belt. The extent to which we should use this tool for unit testing is a complicated and controversial issue.1Within the Android community specifically, I think that a part of the controversy is due to confusion over the intended use of mocks. More specifically, some android developers seem intent on mocking types they don&amp;rsquo;t own and on verifying all interactions of a target class with a collaborator.</description>
+      <description>Mocks are a pretty standard tool in our android developer tool belt. The extent to which we should use this tool for unit testing is a complicated and controversial issue.1 Within the Android community specifically, I think that a part of the controversy is due to confusion over the intended use of mocks. More specifically, some android developers seem intent on mocking types they don&amp;rsquo;t own and on verifying all interactions of a target class with a collaborator.</description>
       
     </item>
     
@@ -387,7 +387,7 @@ In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis t
 &lt;/ol&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;The reason I warned against this is that static references to Contexts can cause memory leaks. An astute reader pointed out that a static reference to an application Context wouldn&amp;rsquo;t cause a memory leak since the application Context is around for the lifetime the app is running anyway. I then qualified my warning by saying:&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
+&lt;blockquote&gt;Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but I wouldn’t recommend that you do that either.&lt;/blockquote&gt;
 &lt;p&gt;In this post, I want to say a little more about why think having and using a static reference to an application Context is &lt;em&gt;less-than-ideal&lt;/em&gt;. I emphasize &amp;ldquo;less-than-ideal&amp;rdquo; in the previous sentence as a way of highlighting what I&amp;rsquo;m not saying: I&amp;rsquo;m not saying that a kitten dies every time you use a static reference to an application Context. Once again, @codestandards is hilarious and relevant here:&lt;/p&gt;
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Please, for the sake of the kittens. &lt;a href=&#34;http://t.co/xaj7pNDVfH&#34;&gt;pic.twitter.com/xaj7pNDVfH&lt;/a&gt;&lt;/p&gt;&amp;mdash; Code Standards (@codestandards) &lt;a href=&#34;https://twitter.com/codestandards/status/570224843536277504?ref_src=twsrc%5Etfw&#34;&gt;February 24, 2015&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
@@ -428,8 +428,8 @@ In this post, I explore a benefit of a React/Redux-like architecture vis-a-vis t
       <pubDate>Tue, 07 Jul 2015 18:29:16 +0000</pubDate>
       
       <guid>https://www.philosophicalhacker.com/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/</guid>
-      <description>&lt;!-- raw HTML omitted --&gt;
-&lt;p&gt;Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+      <description>&lt;blockquote&gt;Thorough unit testing helps us improve the internal quality because, to be tested, a unit has to be structured to run outside the system in a test fixture. A unit test for an object needs to create the object, provide its dependencies, interact with it, and check that it behaved as expected. So, for a class to be easy to unit-test, the class must have explicit dependencies that can easily be substituted and clear responsibilities that can easily be invoked and verified. In software engineering terms, that means that the code must be loosely coupled and highly cohesive —in other words, well-designed.
+&lt;p&gt;Steve Freeman and Nat Pryce, _Growing Object Oriented Software Guided by Tests_&lt;/blockquote&gt;&lt;/p&gt;
 &lt;p&gt;Lately, I&amp;rsquo;ve been working towards making Google&amp;rsquo;s IO app unit testable. A part of the reason I&amp;rsquo;m doing this is to test the claims that Freeman and Pryce make in the above quotation about unit testing. Although I&amp;rsquo;m still not even done with refactoring one Activity in Google&amp;rsquo;s IOSched app, I&amp;rsquo;m already finding some truth to what they&amp;rsquo;re saying.&lt;/p&gt;
 &lt;p&gt;The &lt;code&gt;Activity&lt;/code&gt; that I&amp;rsquo;ve been working on is the &lt;code&gt;SessionDetailActivity&lt;/code&gt;. If you&amp;rsquo;ve been following me for a while, you know exactly what Activity I&amp;rsquo;m talking about, but if you&amp;rsquo;re tuning in the first time, here&amp;rsquo;s what the &lt;code&gt;SessionDetailActivity&lt;/code&gt; UI looks like:&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;target=&#34;_blank&#34;&gt;&lt;img  src=&#34;http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png&#34;

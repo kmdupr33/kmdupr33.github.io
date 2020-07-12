@@ -38,7 +38,7 @@
 <pre><code>mockgen -destination mock_gopher_finder.go \
 github.com/kmdupr33/philhackerblogcode \
 GopherFinder
-</code></pre><p>This command takes two arguments. The first argument is an import path leading to the <em>interfaces</em> that you want to mock. The second argument is a comma separate list of interfaces to mock.<!-- raw HTML omitted -->1<!-- raw HTML omitted --></p>
+</code></pre><p>This command takes two arguments. The first argument is an import path leading to the <em>interfaces</em> that you want to mock. The second argument is a comma separate list of interfaces to mock.<sup>1</sup></p>
 <p>The command also takes several flags, but the most import flag to pass in is the <code>-destination</code> flag. This flag specifies the the file you want the mock source code to live in. Without this flag, the generated mock code is simply printed to standard output.</p>
 <p>Now that we&rsquo;ve generated the code to support our mock <code>GopherFinder</code>, we can create a mock for a test of the <code>FindHandler</code>:</p>
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">package</span> philhackerblogcode_test
@@ -74,7 +74,7 @@ GopherFinder
 <p>The way to avoid this circular dependency is to place your tests in a package that&rsquo;s different from the package you are testing. Next, have your test code import both the package you&rsquo;d like to test and the mock package that the test depends upon. As Andrew Gerrand points out in his <a href="https://www.youtube.com/watch?v=ndmB0bj7eyw"target="_blank">testing techniques talk</a>, this is a standard way of avoiding circular circular dependencies while testing.</p>
 <h1 id="stubbing-with-gomock">Stubbing with gomock</h1>
 <p>The above test ensures that the <code>HandlerFunc</code> returned by <code>GetHandler</code> calls the <code>GopherFinder</code> with the appropriate arguments, but the <code>HandlerFunc</code> has more behavior that we can test. One of the things the <code>HandlerFunc</code> should do is respond with a 500 if the <code>GopherFinder</code> returns an error while finding a gopher. In order to test this additional behavior, we need to force the <code>GopherFinder</code> to return an error for the purposes of the test.</p>
-<p>Fortunately, Gomock also allows us to do exactly this. It allows the mocks it generates to behave like stubs.<!-- raw HTML omitted -->2<!-- raw HTML omitted --> You can specify the return value that should be returned by using the <code>Return()</code> method on the result of calling <code>EXPECT()</code> and the method you are expecting:</p>
+<p>Fortunately, Gomock also allows us to do exactly this. It allows the mocks it generates to behave like stubs.<sup>2</sup> You can specify the return value that should be returned by using the <code>Return()</code> method on the result of calling <code>EXPECT()</code> and the method you are expecting:</p>
 <div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> TestHandler(t *testing.T) {
 	<span style="color:#007f7f">//...
 </span><span style="color:#007f7f"></span>	mgf := mock_philhackerblogcode.NewMockGopherFinder(mockCtrl)
