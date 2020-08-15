@@ -16,7 +16,6 @@
 </style>
 <div class="article-container"><section class="article header">
     <h1 class="article title">Analyzing Traffic Fatalities by Vehicle Weight and Size with Tidyverse</h1><p class="article date">2020-07-03</p></section><article class="article markdown-body">
-<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p>I bought a car recently. I’m cheap and practical and I’m going to be a father soon, so the only things I really cared about were:</p>
@@ -41,14 +40,14 @@ fatalities_by_weight_and_size &lt;- read_csv(&#39;./vehicle-fatalities.csv&#39;,
 rand_rows &lt;- sample(nrow(fatalities_by_weight_and_size))
 head(fatalities_by_weight_and_size[rand_rows,])</code></pre>
 <pre><code>## # A tibble: 6 x 6
-##   `Make and Model`                         Class Size   Weight Volume Fatalities
-##   &lt;chr&gt;                                    &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
-## 1 Kia Forte                                car   small    2804 705600         89
-## 2 Lexus NX 200t 4WD Luxury                 SUV   Midsi…   4050 875420          0
-## 3 Chevrolet Trax 2WD                       suv   small    3124 764400         73
-## 4 Acura RDX 2WD Luxury                     SUV   Midsi…   3946 885040          4
-## 5 Chevrolet Sonic                          car   small    2733 641920         98
-## 6 Land Rover Range Rover Evoque 4WD Luxury SUV   Small    3615 825600          0</code></pre>
+##   `Make and Model`            Class         Size       Weight  Volume Fatalities
+##   &lt;chr&gt;                       &lt;chr&gt;         &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;
+## 1 Mitsubishi Mirage htachback car           mini         2018  580206         72
+## 2 Chevrolet Sonic             car           small        2733  641920         98
+## 3 Honda Odyssey               Minivan       Very large   4396 1090516          8
+## 4 Nissan Versa Note           Station wagon small        2460  670268         96
+## 5 Hyundai Accent              car           mini         2480  618678        116
+## 6 Lexus CT 200h Luxury        car           Midsize      3130  682290          6</code></pre>
 <p>We don’t ultimately care about the size and class columns, but let’s quickly normalize them to all be lower-case, just in case we’ll care later:</p>
 <pre class="r"><code>to_lower_factor &lt;- function(f) {
   factor(tolower(as.character(f)))
@@ -73,13 +72,13 @@ head(fatalities_by_weight_and_size)</code></pre>
   geom_point() +
   geom_smooth() +
   ggtitle(&quot;Weight&#39;s vs fatalities per 100 million miles driven&quot;)</code></pre>
-<p><img src="/post/2020-07-03-analyzing-traffic-fatalities-by-vehicle-weight-and-size/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="/rpost/2020-07-03-analyzing-traffic-fatalities-by-vehicle-weight-and-size/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>We can also graph fatality by car size:</p>
 <pre class="r"><code>ggplot(fatalities_by_weight_and_size, aes(x=Volume, y=Fatalities)) +
   geom_point() +
   geom_smooth() +
   ggtitle(&quot;Volume vs fatalities per 100 million miles driven&quot;)</code></pre>
-<p><img src="/post/2020-07-03-analyzing-traffic-fatalities-by-vehicle-weight-and-size/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="/rpost/2020-07-03-analyzing-traffic-fatalities-by-vehicle-weight-and-size/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="conclusions" class="section level2">
 <h2>Conclusions</h2>
