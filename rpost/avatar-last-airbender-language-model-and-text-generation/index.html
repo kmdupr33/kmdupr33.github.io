@@ -138,7 +138,7 @@ model %&gt;% fit(x, y, batch_size = 4096, epochs = 40)</code></pre>
 <p><br/></p>
 <p>Rstudio shows a nice graph depicting loss over successive epochs:</p>
 <p><img src="loss-and-accuracy.png" /></p>
-<p>From here, we write the code for sampling from the language model. Again, much of this is from <em>Deep Learning with R</em>, but I’ve re-factored it to make it more readable. At a high-level, what we’re doing here is grabbing 60 characters from a random place in the text, asking our model to generate a prediction of the next character, and then sampling from a distribution of the predicted characters modified by the <code>temperature</code> parameter. The higher the temperature, the more “creative” the predicted next character will be. Once, we select a character, we repeat this process with the newly added character placed into the input string.</p>
+<p>From here, we write the code for sampling from the language model. Again, much of this is from <em>Deep Learning with R</em>, but I’ve re-factored it to make it more readable. At a high-level, what we’re doing here is grabbing the first 60 characters from the first lines of the show, asking our model to generate a prediction of the next character, and then sampling from a distribution of the predicted characters modified by the <code>temperature</code> parameter. The higher the temperature, the more “creative” the predicted next character will be. Once, we select a character, we repeat this process with the newly added character placed into the input string.</p>
 <pre class="r"><code>sample_next_char &lt;- function(preds, temperature = 1.0) {
   preds &lt;- as.numeric(preds)
   preds &lt;- log(preds) / temperature

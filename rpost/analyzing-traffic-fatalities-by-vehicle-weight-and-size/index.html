@@ -40,14 +40,14 @@ fatalities_by_weight_and_size &lt;- read_csv(&#39;./vehicle-fatalities.csv&#39;,
 rand_rows &lt;- sample(nrow(fatalities_by_weight_and_size))
 head(fatalities_by_weight_and_size[rand_rows,])</code></pre>
 <pre><code>## # A tibble: 6 x 6
-##   `Make and Model`         Class         Size       Weight  Volume Fatalities
-##   &lt;chr&gt;                    &lt;chr&gt;         &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;
-## 1 Infiniti QX60 2WD Luxury SUV           Midsize      4383 1047200          0
-## 2 Volkswagen Golf 4-door   car           Small        2963  675849          0
-## 3 buick verano             car           midsize      3300  757712         68
-## 4 Mitsubishi Outlander 4WD SUV           Small        3472  793780          7
-## 5 GMC Yukon XL 1500 4WD    SUV           Very large   5800 1342656          0
-## 6 Nissan Versa Note        Station wagon small        2460  670268         96</code></pre>
+##   `Make and Model`               Class  Size    Weight  Volume Fatalities
+##   &lt;chr&gt;                          &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;
+## 1 Nissan Sentra                  car    small     2823  740922         81
+## 2 kia sorento                    suv    midsize   3704  913308         12
+## 3 Toyota Tundra Crew Max 4WD     Pickup Large     5760 1392320          7
+## 4 Nissan Leaf 4-door             car    Small     3323  747250          5
+## 5 Nissan Versa                   car    small     2363  703500         88
+## 6 Mitsubishi Outlander Sport 4WD suv    small     3285  793780         67</code></pre>
 <p>We don’t ultimately care about the size and class columns, but let’s quickly normalize them to all be lower-case, just in case we’ll care later:</p>
 <pre class="r"><code>to_lower_factor &lt;- function(f) {
   factor(tolower(as.character(f)))
