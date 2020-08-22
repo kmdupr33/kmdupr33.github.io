@@ -169,8 +169,7 @@ generate_character &lt;- function(generated_text, temperature) {
   chars[[next_index]]
 }
 
-start_index &lt;- sample(1:(nchar(text) - maxlen - 1), 1)  
-seed_text &lt;- str_sub(text, start_index, start_index + maxlen - 1)
+seed_text &lt;- str_sub(text, 1, 60)
 
 for (temperature in c(0.2, 0.5, 1.0, 1.2)) {
     
