@@ -25,7 +25,7 @@
 <li>how do I get 👆 those two things on the cheap</li>
 </ul>
 <p>I’ve also been getting into machine learning and data science recently, so I thought it’d be useful to answer them using some data science tools. This post sums up what I learned about vehicle safety based on the <a href="https://www.iihs.org/api/datastoredocument/status-report/pdf/55/2">Insurance Institute for Highway Safety’s data on traffic fatalities by make and model</a>.</p>
-<p>The tldr: drivers are less likely to die in a traffic accident if the vehicle they drive is heavier and larger. However, interestingly, there does <em>seem</em> to be a point of diminishing returns where additional weight and size doesn’t seem to make as much of a difference in whether drivers die in accidents. In fact, there <em>may</em> actually be a point of negative returns where additional weight and size is associated with more driver deaths. We’ll be able to see all of this with a few ggplot2 plots.</p>
+<p>The tldr: drivers are less likely to die in a traffic accident if the vehicle they drive is heavier and larger. We’ll be able to see all of this with a few ggplot2 plots.</p>
 <p>(“seem” and “may” are emphasized because the analysis I’ve done here merely suggests the above conclusions. A more complete sample of IIHS’s data would increase confidence in these conclusions.)</p>
 <div id="data-prep" class="section level2">
 <h2>Data prep</h2>
@@ -40,14 +40,14 @@ fatalities_by_weight_and_size &lt;- read_csv(&#39;./vehicle-fatalities.csv&#39;,
 rand_rows &lt;- sample(nrow(fatalities_by_weight_and_size))
 head(fatalities_by_weight_and_size[rand_rows,])</code></pre>
 <pre><code>## # A tibble: 6 x 6
-##   `Make and Model`               Class Size       Weight  Volume Fatalities
-##   &lt;chr&gt;                          &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;
-## 1 Chevrolet Suburban 1500 4WD    SUV   Very large   5822 1326080          8
-## 2 Porsche Cayenne 4WD Luxury     SUV   Large        4488 1010963          0
-## 3 Mitsubishi Outlander Sport 4WD suv   small        3285  793780         67
-## 4 toyota highliander             suv   midsize      4165  997424         13
-## 5 Kia Rio                        car   mini         2494  616284         87
-## 6 buick verano                   car   midsize      3300  757712         68</code></pre>
+##   `Make and Model`         Class Size    Weight  Volume Fatalities
+##   &lt;chr&gt;                    &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;
+## 1 buick verano             car   midsize   3300  757712         68
+## 2 Kia Rio                  car   mini      2494  616284         87
+## 3 BMW X5 4WD Luxury        SUV   Midsize   5260 1012092          4
+## 4 Lexus NX 200t 4WD Luxury SUV   Midsize   4050  875420          0
+## 5 toyota highliander       suv   midsize   4165  997424         13
+## 6 Kia Forte                car   small     2804  705600         89</code></pre>
 <p>We don’t ultimately care about the size and class columns, but let’s quickly normalize them to all be lower-case, just in case we’ll care later:</p>
 <pre class="r"><code>to_lower_factor &lt;- function(f) {
   factor(tolower(as.character(f)))
