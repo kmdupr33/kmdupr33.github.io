@@ -6,10 +6,22 @@
     <description>Recent content in Posts on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 19 Oct 2020 10:34:52 -0400</lastBuildDate>
+    <lastBuildDate>Sun, 08 Nov 2020 16:57:37 -0500</lastBuildDate>
     
         <atom:link href="https://www.philosophicalhacker.com/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>When should we create abstractions instead of duplication?</title>
+      <link>https://www.philosophicalhacker.com/post/when-to-dry/</link>
+      <pubDate>Sun, 08 Nov 2020 16:57:37 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/when-to-dry/</guid>
+      <description>Because abstractions aren&amp;rsquo;t free, sometimes we&amp;rsquo;re better off duplicating code instead of creating them.
+If that claim doesn&amp;rsquo;t make sense to you, read Martin Fowler&amp;rsquo;s &amp;ldquo;YAGNI&amp;rdquo; or Sandi Metz&amp;rsquo;s &amp;ldquo;The Wrong Abstraction&amp;rdquo; or watch Dan Abromov&amp;rsquo;s &amp;ldquo;WET Code&amp;rdquo; talk or Kent C. Dodd&amp;rsquo;s &amp;ldquo;AHA Programming&amp;rdquo; talk.
+Each of these programmers give advice on when to duplicate code vs. create an abstraction, advice that broadly falls into two camps: either we are advised to follow some rule of thumb or we&amp;rsquo;re told to ignore rules of thumb, trust our feelings and to only introduce abstractions when it &amp;ldquo;feels right.</description>
+      
+    </item>
     
     <item>
       <title>Programming and Forecasting</title>
@@ -1245,7 +1257,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
 &lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;&lt;a href=&#34;https://twitter.com/corey_latislaw?ref_src=twsrc%5Etfw&#34;&gt;@corey_latislaw&lt;/a&gt; Yay! Maybe I can finally figuring out how to test Android apps properly. Also, this. &lt;a href=&#34;http://t.co/8gIqfoFVnL&#34;&gt;http://t.co/8gIqfoFVnL&lt;/a&gt;&lt;/p&gt;&amp;mdash; Vinay Shenoy (@vinaysshenoy) &lt;a href=&#34;https://twitter.com/vinaysshenoy/status/587608070131290112?ref_src=twsrc%5Etfw&#34;&gt;April 13, 2015&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Fully agree: &amp;quot;Against Android Unit Tests&amp;quot;. Structure your code to have as little contact with the SDK as possible. &lt;a href=&#34;http://t.co/rLZlpGrCD5&#34;&gt;http://t.co/rLZlpGrCD5&lt;/a&gt;&lt;/p&gt;&amp;mdash; Pascal »Pacta sunt servanda« Hartig (@passy) &lt;a href=&#34;https://twitter.com/passy/status/587336731260751875?ref_src=twsrc%5Etfw&#34;&gt;April 12, 2015&lt;/a&gt;&lt;/blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Fully agree: &amp;quot;Against Android Unit Tests&amp;quot;. Structure your code to have as little contact with the SDK as possible. &lt;a href=&#34;http://t.co/rLZlpGrCD5&#34;&gt;http://t.co/rLZlpGrCD5&lt;/a&gt;&lt;/p&gt;&amp;mdash; unsafe { passy } (@passy) &lt;a href=&#34;https://twitter.com/passy/status/587336731260751875?ref_src=twsrc%5Etfw&#34;&gt;April 12, 2015&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
 &lt;p&gt;So, Android unit testing is hard. That much is clear. Why Android unit testing is so difficult, however, is less clear. Its true that a part of the difficulty with Android unit testing has to do with the nonsense that you have to overcome to get Roboletric started so that you can run your tests at a decent speed, but I think that there’s a deeper reason why we are having a hard time testing our applications: the way that Google has written the Android SDK and the way that Google encourages us to structure our applications makes testing difficult and, in some cases, impossible.&lt;/p&gt;
