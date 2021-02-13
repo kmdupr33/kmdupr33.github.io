@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Exposing Imposter User Stories&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.5cc905347df78a876835000e5fe52ff5a25efea519bc261bf09e8820be0bbb3d9c8b5e67a7fe33e4e63e5b79b3bbba95.css" integrity="sha384-XMkFNH33iodoNQAOX&#43;Uv9aJe/qUZvCYb8J6IIL4Luz2ci15np/4z5OY&#43;W3mzu7qV"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Exposing Imposter User Stories" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Exposing Imposter User Stories</h1><p class="article date">2021-02-12</p></section><article class="article markdown-body"><p><a href="https://wiki.c2.com/?LawOfRaspberryJam"target="_blank">The law of raspberry jam</a> &mdash; the more it spreads, the thinner it gets &mdash; definitely applies to &ldquo;agile software development.&rdquo; &ldquo;Agile&rdquo; is ubiquitous and nearly meaningless at the same time. You don&rsquo;t learn much about how a company actually operates from hearing that it&rsquo;s &ldquo;agile.&rdquo;</p>
+<p>This isn&rsquo;t a new claim, and it shouldn&rsquo;t be controversial. OG agile manifesto signatories and prominent programmers have pointed this out already:</p>
+<blockquote>
+<p>I was among the seventeen middle-aged white guys who gathered at Snowbird, Utah. We were there because we shared common beliefs about developing software…since that Snowbird meeting, I haven’t participated in any Agile events…Because I didn’t think that any of these things were in the spirit of the manifesto we produced.</p>
+<p>&ndash;Dave Thomas, &ldquo;Agile is Dead&rdquo;</p>
+</blockquote>
+<blockquote>
+<p>Agile is a very broad tent. You can find people who say, ‘I’m doing agile’. And then you talk to another guy who says, ‘I’m doing agile.’ And they’re doing the exact opposite things.</p>
+<p>&ndash; DHH, &ldquo;Is TDD Dead? Part 5&rdquo;</p>
+</blockquote>
+<blockquote>
+<p>Jim Rumbaugh took me aside and he said, &ldquo;Kent, in 10 years, you’re not going to recognize what people have done to [extreme programming]…It’s out of your control now and its all going to hell.&rdquo;</p>
+<p>&ndash; Kent Beck, &ldquo;Is TDD Dead? Part 5&rdquo;</p>
+</blockquote>
+<p>User stories also suffer from the law of raspberry jam. There are deep differences between the user stories Mike Cohn describes and the &ldquo;imposter&rdquo; user stories people typically describe. Here I want to catalogue some of those differences.</p>
+<p>My intent in pointing out these differences isn&rsquo;t to say &ldquo;we&rsquo;re doing it wrong.&rdquo; There are good reasons to diverge from agile practices. I simply want us to be more clear about what user stories actually are, according to the person who invented them.</p>
+<p>Clarity on user stories is important given that pointing out that something is &ldquo;the agile way&rdquo; is often sufficient to shut down conversation about other &mdash; possibly better &mdash; ways of running a software project. It can make sense to opt for battle-tested solutions to project management problems, even if those solutions aren&rsquo;t as optimal as ones we&rsquo;d work out from first principles, but it&rsquo;s downright silly for us to choose solutions that are merely posing as the battle tested ones articulated by Cohn and other agile leaders.</p>
+<p>Here are some important facts about user stories as Mike Cohn originally described them in <em>User Stories Applied</em>.</p>
+<h1 id="user-stories-shouldnt-take-less-than-half-a-day">User stories shouldn&rsquo;t take less than half a day</h1>
+<blockquote>
+<p>“…it’s good to have stories that can be coded and tested between half a day and perhaps two weeks by one or a pair of programmers.”<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+</blockquote>
+<p>I can&rsquo;t tell you how many times I&rsquo;ve felt silly creating a &ldquo;story&rdquo; in jira because it seemed like the effort to create it was more than the effort of fixing the issue. This silliness can&rsquo;t be justified in the name of &ldquo;user story&rdquo; best practice.</p>
+<h1 id="user-stories-are-not-meant-to-document-the-details-of-how-software-will-work">User stories are not meant to document the details of how software will work</h1>
+<blockquote>
+<p>[User stories] represent customer requirements rather than document them&hellip;the details are worked out in the Conversation.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+</blockquote>
+<p>There&rsquo;s wisdom in hashing out detail in conversation (and tests). Odd how often I&rsquo;ve heard, told others, or been told myself to add more detail to a story instead of just talking to people.</p>
+<h1 id="story-points-can-be-measured-in-whatever-units-you-want-including-time">Story points can be measured in whatever units you want, including time</h1>
+<blockquote>
+<p>A nice feature of story points is that each team defines them as they see fit. One team may decide to define a story point as an ideal day of work. Another team may define a story point as an ideal week of work. Yet another team may define a story point as a measure of the complexity of the story.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+</blockquote>
+<p>People love to talk about how story points should be measured in &ldquo;complexity.&rdquo; Cohn himself prefers to use an idealized unit of time. I think this is a better than using complexity, a concept that is slippery at best.</p>
+<h1 id="sprint-planning-w-stories-involves-a-design-phase">Sprint planning w/ stories involves a design phase</h1>
+<blockquote>
+<p>While there is no upfront design phase, agile processes are characterized by frequent short-bursts of design. Disaggregating stories into tasks — which can only be done with at least a minimal design in mind — is one of these short bursts of just-in-time design that replace a waterfall’s upfront design phase.<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+</blockquote>
+<p>Almost everywhere I&rsquo;ve worked that uses user stories has also done more upfront design than is suggested by Cohn here. We&rsquo;re missing an opportunity to defer design work until stories are broken into constituent tasks.</p>
+<h1 id="user-stories-should-be-independent">User stories should be independent</h1>
+<blockquote>
+<p>avoid introducing dependencies between stories. Dependencies between stories lead to prioritization and planning problems<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+</blockquote>
+<p>Jira has a feature that I always look for: it allows you to mark one story as depending on another. I&rsquo;ve even pushed for the companies I&rsquo;ve worked out to use the feature more often. Turns out the need for this feature is a smell.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>Mike Cohn, <em>User Stories Applied</em>, 6. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>Ibid., 4. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>Ibid., 87. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p>Ibid., 111. <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p>Ibid., 17. <a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><section class="article labels"><a class="tag" href=/tags/agile/>agile</a><a class="tag" href=/tags/project-management/>project management</a></section></div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/when-to-dry/"><span class="li iconfont icon-article"></span>When should we create abstractions instead of duplication?</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2021 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-63544399-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+
+</html>
