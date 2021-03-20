@@ -6,10 +6,22 @@
     <description>Recent content in programming on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 14 Nov 2020 13:57:37 -0500</lastBuildDate>
+    <lastBuildDate>Sat, 20 Mar 2021 19:02:02 -0400</lastBuildDate>
     
         <atom:link href="https://www.philosophicalhacker.com/tags/programming/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Building Better Code Review at Heap</title>
+      <link>https://www.philosophicalhacker.com/post/building-better-code-review-at-heap/</link>
+      <pubDate>Sat, 20 Mar 2021 19:02:02 -0400</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/building-better-code-review-at-heap/</guid>
+      <description>Note: This post was originally published on heap&amp;rsquo;s blog
+ Heap — like most companies — has a code review (CR) process. Until recently, that process often involved manually catching trivial issues in PRs (Pull Requests), which led to slow, inconsistent, and low-quality PR comments.
+To address this, we adopted Prettier, Danger, some custom StyleLint rules, and a Buildkite step that automatically adds specific checklists to PRs depending on which files are changed in our monorepo.</description>
+      
+    </item>
     
     <item>
       <title>When should we create abstractions instead of duplication?</title>
