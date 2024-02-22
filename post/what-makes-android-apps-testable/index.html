@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>What makes Android Apps Testable?&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>What makes Android Apps Testable?&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="What makes Android Apps Testable?" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,14 +11,12 @@
   (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
 </script>
 
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">What makes Android Apps Testable?</h1><p class="article date">2016-12-03</p></section><article class="article markdown-body"><p><img  src="/images/ascending-and-descending-escher.jpg"
         alt/>
-This post is a continuation of my attempt to reproduce <a href="https://devfestflorida.org/schedule/day1?sessionId=113"target="_blank">my recent DevFest talk</a> in written form.</p>
+This post is a continuation of my attempt to reproduce <a href="https://devfestflorida.org/schedule/day1?sessionId=113"target="_blank" rel="noopener noreferrer">my recent DevFest talk</a> in written form.</p>
 <h3 id="penrose-steps-dr-jekyllmr-hyde-and-android-testing">Penrose Steps, Dr. Jekyll/Mr. Hyde, and Android Testing</h3>
 <p>Let&rsquo;s say you&rsquo;re sold on the importance of testing. (If not, maybe check out <a href="/post/why-we-should-probably-write-more-tests-for-our-android-apps/">this article</a>.) Let&rsquo;s say you actually start using the junit dependency that&rsquo;s been sitting in your build.gradle file and try to write your first test. I suspect that you&rsquo;re going to find yourself in a kind of &ldquo;penrose steps situation.&rdquo;</p>
 <p>The penrose steps, shown above, is an impossible structure. Penrose steps cannot exist in 3d space. What&rsquo;s interesting about the 2d image of penrose steps, however, is that its not immediately obvious that what is being depicted is impossible.</p>
@@ -35,25 +32,25 @@ This post is a continuation of my attempt to reproduce <a href="https://devfestf
 <p><img  src="/images/dr-jekyll-poster.jpg"
         alt="Dr Jekyll Poster"/></p>
 <p>Dr. Jekyll was a good dude, but he was messing with something he didn&rsquo;t understand and that led him to transform into Mr. Hyde, the guy that does unspeakable things. Similarly, developers who want to test their code have good intentions, but if they don&rsquo;t understand what makes code testable, they can do unspeakably (terrible) things to a codebase.</p>
-<p>Case in point: <a href="https://github.com/google/iosched/blob/2015/android/src/main/java/com/google/samples/apps/iosched/framework/PresenterFragmentImpl.java#L185"target="_blank">The google 2015 I/O app</a> contains a particularly egregious violation of the principle of single responsibility:<sup>1</sup></p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> PresenterFragmentImpl <span style="color:#fff;font-weight:bold">extends</span> Fragment
-        <span style="color:#fff;font-weight:bold">implements</span> Presenter, UpdatableView.<span style="color:#007f7f">UserActionListener</span>,
-        LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; {
-
-    @Override
-    <span style="color:#fff;font-weight:bold">public</span> Loader&lt;Cursor&gt; onCreateLoader(<span style="color:#fff;font-weight:bold">int</span> id, Bundle args) {
-        Loader&lt;Cursor&gt; cursorLoader = createLoader(id, args);
-<span style="display:block;width:100%;background-color:#191919">        mLoaderIdlingResource.<span style="color:#007f7f">onLoaderStarted</span>(cursorLoader);
-</span>        <span style="color:#fff;font-weight:bold">return</span> cursorLoader;
-    }
-
-    @Override
-    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoadFinished(Loader&lt;Cursor&gt; loader,
-                               Cursor data) {
-        processData(loader, data);
-<span style="display:block;width:100%;background-color:#191919">        mLoaderIdlingResource.<span style="color:#007f7f">onLoaderFinished</span>(loader);
-</span>    }
-}</code></pre></div>
+<p>Case in point: <a href="https://github.com/google/iosched/blob/2015/android/src/main/java/com/google/samples/apps/iosched/framework/PresenterFragmentImpl.java#L185"target="_blank" rel="noopener noreferrer">The google 2015 I/O app</a> contains a particularly egregious violation of the principle of single responsibility:<sup>1</sup></p>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> PresenterFragmentImpl <span style="color:#fff;font-weight:bold">extends</span> Fragment
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">implements</span> Presenter, UpdatableView.<span style="color:#007f7f">UserActionListener</span>,
+</span></span><span style="display:flex;"><span>        LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    @Override
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">public</span> Loader&lt;Cursor&gt; onCreateLoader(<span style="color:#fff;font-weight:bold">int</span> id, Bundle args) {
+</span></span><span style="display:flex;"><span>        Loader&lt;Cursor&gt; cursorLoader = createLoader(id, args);
+</span></span><span style="display:flex; background-color:#191919"><span>        mLoaderIdlingResource.<span style="color:#007f7f">onLoaderStarted</span>(cursorLoader);
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">return</span> cursorLoader;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    @Override
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoadFinished(Loader&lt;Cursor&gt; loader,
+</span></span><span style="display:flex;"><span>                               Cursor data) {
+</span></span><span style="display:flex;"><span>        processData(loader, data);
+</span></span><span style="display:flex; background-color:#191919"><span>        mLoaderIdlingResource.<span style="color:#007f7f">onLoaderFinished</span>(loader);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>This code snippet mixes production code and test code. That&rsquo;s pretty unfortunate.</p>
 <h3 id="what-makes-software-testable">What Makes Software Testable?</h3>
 <p>To avoid Penrose steps and Dr. Jekyll scenarios while we&rsquo;re trying to write tests for our Android apps, its helpful to have an answer to the question, &ldquo;What makes Software Testable?&rdquo; This picture suggests a metaphor for thinking about the answer to that question, a metaphor that I stole from Michal Feathers:</p>
@@ -68,73 +65,73 @@ This post is a continuation of my attempt to reproduce <a href="https://devfestf
 <p><img  src="/images/settings.png"
         alt="settings screen"/></p>
 <p>This toggle determines whether the google I/O calendar should be synced to the user&rsquo;s personal calendar. Here&rsquo;s the code for it:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Override
-<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onSharedPreferenceChanged(SharedPreferences sharedPrefs,
-                            String key) {
-
-    <span style="color:#fff;font-weight:bold">if</span> (SettingsUtils.<span style="color:#007f7f">PREF_SYNC_CALENDAR</span>.<span style="color:#007f7f">equals</span>(key)) {
-        Intent intent;
-        <span style="color:#fff;font-weight:bold">if</span> (SettingsUtils.<span style="color:#007f7f">shouldSyncCalendar</span>(getActivity())) {
-            <span style="color:#007f7f">// Add all calendar entries
-</span><span style="color:#007f7f"></span>            intent = <span style="color:#fff;font-weight:bold">new</span> Intent(ACTION_UPDATE_ALL_SESSIONS_CALENDAR);
-        } <span style="color:#fff;font-weight:bold">else</span> {
-            <span style="color:#007f7f">// Remove all calendar entries
-</span><span style="color:#007f7f"></span>            intent = <span style="color:#fff;font-weight:bold">new</span> Intent(ACTION_CLEAR_ALL_SESSIONS_CALENDAR);
-        }
-
-        intent.<span style="color:#007f7f">setClass</span>(getActivity(), SessionCalendarService.<span style="color:#007f7f">class</span>);
-        getActivity().<span style="color:#007f7f">startService</span>(intent);
-    }
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@Override
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onSharedPreferenceChanged(SharedPreferences sharedPrefs,
+</span></span><span style="display:flex;"><span>                            String key) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> (SettingsUtils.<span style="color:#007f7f">PREF_SYNC_CALENDAR</span>.<span style="color:#007f7f">equals</span>(key)) {
+</span></span><span style="display:flex;"><span>        Intent intent;
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">if</span> (SettingsUtils.<span style="color:#007f7f">shouldSyncCalendar</span>(getActivity())) {
+</span></span><span style="display:flex;"><span>            <span style="color:#007f7f">// Add all calendar entries</span>
+</span></span><span style="display:flex;"><span>            intent = <span style="color:#fff;font-weight:bold">new</span> Intent(ACTION_UPDATE_ALL_SESSIONS_CALENDAR);
+</span></span><span style="display:flex;"><span>        } <span style="color:#fff;font-weight:bold">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#007f7f">// Remove all calendar entries</span>
+</span></span><span style="display:flex;"><span>            intent = <span style="color:#fff;font-weight:bold">new</span> Intent(ACTION_CLEAR_ALL_SESSIONS_CALENDAR);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        intent.<span style="color:#007f7f">setClass</span>(getActivity(), SessionCalendarService.<span style="color:#007f7f">class</span>);
+</span></span><span style="display:flex;"><span>        getActivity().<span style="color:#007f7f">startService</span>(intent);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>Let&rsquo;s start writing our test for it:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
-<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onSharedPreferenceChangedRemovesSessions() <span style="color:#fff;font-weight:bold">throws</span> Exception {
-    <span style="color:#007f7f">// Arrange
-</span><span style="color:#007f7f"></span>
-    <span style="color:#007f7f">//Act
-</span><span style="color:#007f7f"></span>    mSettingsFragment.<span style="color:#007f7f">onSharedPreferencesChanged</span>(mMockSharedPreferences,
-                                  PREF_SYNC_CALENDAR);
-
-    <span style="color:#007f7f">//Assert
-</span><span style="color:#007f7f"></span>
-}</code></pre></div>
-<p>As the test method name implies, we want to test that <code>onSharedPreferencesChnaged</code> removes the calendar sessions appropriately.<sup>2</sup> We need to make sure the the <code>else</code> branch of the above <code>if-else</code> statement gets executed. To do that, we need to make sure that <code>SettingsUtils.shouldSyncCalendar(getActivity())</code> returns false, but we can&rsquo;t just go to the declaration of <code>SettingsUtils.shouldSyncCalendar</code> and change the code so that it returns false. <em>We need to change behavior of our code without editing it &ldquo;in place.&quot;</em></p>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@Test
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onSharedPreferenceChangedRemovesSessions() <span style="color:#fff;font-weight:bold">throws</span> Exception {
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// Arrange</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//Act</span>
+</span></span><span style="display:flex;"><span>    mSettingsFragment.<span style="color:#007f7f">onSharedPreferencesChanged</span>(mMockSharedPreferences,
+</span></span><span style="display:flex;"><span>                                  PREF_SYNC_CALENDAR);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//Assert</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
+<p>As the test method name implies, we want to test that <code>onSharedPreferencesChnaged</code> removes the calendar sessions appropriately.<sup>2</sup> We need to make sure the the <code>else</code> branch of the above <code>if-else</code> statement gets executed. To do that, we need to make sure that <code>SettingsUtils.shouldSyncCalendar(getActivity())</code> returns false, but we can&rsquo;t just go to the declaration of <code>SettingsUtils.shouldSyncCalendar</code> and change the code so that it returns false. <em>We need to change behavior of our code without editing it &ldquo;in place.&rdquo;</em></p>
 <p>Here&rsquo;s the thing: because <code>SettingsUtils.shouldSyncCalendar</code> is a static method, we can&rsquo;t actually do this. There is no seam for us to exploit here. <em>If you code doesn&rsquo;t have seams, you&rsquo;re going to find it difficult to arrange in your tests.</em></p>
-<p>Notice, moreover, that we can&rsquo;t assert in this test either. How can we assert that an Android <code>Service</code> has been launched? There&rsquo;s no straightforward way to do this, which is why <a href="https://developer.android.com/reference/android/support/test/espresso/intent/Intents.html"target="_blank">the Intent class</a> exists within espresso. What we need here is to be able to change the behavior of <code>Context.startService</code> so that it records that a service has been started, but we can&rsquo;t. Obviously, we can&rsquo;t edit the <code>Context.startService</code> method and we have no control over the <code>Context</code> returned by <code>getActivity</code>. We&rsquo;ll see why that would create a seam later, but the important thing to note here is that <em>if you code doesn&rsquo;t have seams, you&rsquo;re going to find it difficult to assert in your tests.</em></p>
+<p>Notice, moreover, that we can&rsquo;t assert in this test either. How can we assert that an Android <code>Service</code> has been launched? There&rsquo;s no straightforward way to do this, which is why <a href="https://developer.android.com/reference/android/support/test/espresso/intent/Intents.html"target="_blank" rel="noopener noreferrer">the Intent class</a> exists within espresso. What we need here is to be able to change the behavior of <code>Context.startService</code> so that it records that a service has been started, but we can&rsquo;t. Obviously, we can&rsquo;t edit the <code>Context.startService</code> method and we have no control over the <code>Context</code> returned by <code>getActivity</code>. We&rsquo;ll see why that would create a seam later, but the important thing to note here is that <em>if you code doesn&rsquo;t have seams, you&rsquo;re going to find it difficult to assert in your tests.</em></p>
 <p>Suppose instead that the settings toggle code looked like this:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">class</span> CalendarUpdatingOnSharedPreferenceChangedListener {
-
-    <span style="color:#fff;font-weight:bold">void</span> onPreferenceChanged(CalendarPreferences calendarPreferences,
-                             String key) {
-
-        <span style="color:#fff;font-weight:bold">if</span> (SettingsUtils.<span style="color:#007f7f">PREF_SYNC_CALENDAR</span>.<span style="color:#007f7f">equals</span>(key)) {
-<span style="display:block;width:100%;background-color:#191919">            <span style="color:#fff;font-weight:bold">if</span> (calendarPreferences.<span style="color:#007f7f">shouldSyncCalendar</span>()) {
-</span>                mSessUpdaterLauncher.<span style="color:#007f7f">launchAddAllSessionsUpdater</span>();
-            } <span style="color:#fff;font-weight:bold">else</span> {
-<span style="display:block;width:100%;background-color:#191919">                mSessUpdaterLauncher.<span style="color:#007f7f">launchClearAllSessionsUpdate</span>();
-</span>            }
-        }
-    }
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">class</span> CalendarUpdatingOnSharedPreferenceChangedListener {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">void</span> onPreferenceChanged(CalendarPreferences calendarPreferences,
+</span></span><span style="display:flex;"><span>                             String key) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">if</span> (SettingsUtils.<span style="color:#007f7f">PREF_SYNC_CALENDAR</span>.<span style="color:#007f7f">equals</span>(key)) {
+</span></span><span style="display:flex; background-color:#191919"><span>            <span style="color:#fff;font-weight:bold">if</span> (calendarPreferences.<span style="color:#007f7f">shouldSyncCalendar</span>()) {
+</span></span><span style="display:flex;"><span>                mSessUpdaterLauncher.<span style="color:#007f7f">launchAddAllSessionsUpdater</span>();
+</span></span><span style="display:flex;"><span>            } <span style="color:#fff;font-weight:bold">else</span> {
+</span></span><span style="display:flex; background-color:#191919"><span>                mSessUpdaterLauncher.<span style="color:#007f7f">launchClearAllSessionsUpdate</span>();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>Notice that we&rsquo;ve replaced a static method call with an instance method call. Notice also that the details of how the <code>SessionCalendarService</code> is started is hidden behind a call to <code>mSessUpdateerLauncher.launchClearAllSessionsUpdate()</code>. These two changes let us arrange and assert in our unit test:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
-<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onPreferenceChangedClearedCalendar() <span style="color:#fff;font-weight:bold">throws</span> Exception {
-
-    <span style="color:#007f7f">// Arrange
-</span><span style="color:#007f7f"></span>    CUOSPCListener listener
-            = <span style="color:#fff;font-weight:bold">new</span> CUOSPCListener(mSessionUpdateLauncher);
-
-    <span style="color:#fff;font-weight:bold">final</span> CalendarPreferences calendarPreferences
-            = mock(CalendarPreferences.<span style="color:#007f7f">class</span>);
-<span style="display:block;width:100%;background-color:#191919">    when(calendarPreferences.<span style="color:#007f7f">shouldSyncCalendar</span>()).<span style="color:#007f7f">thenReturn</span>(<span style="color:#fff;font-weight:bold">false</span>);
-</span>
-    <span style="color:#007f7f">// Act
-</span><span style="color:#007f7f"></span>    listener.<span style="color:#007f7f">onPreferenceChanged</span>(calendarPreferences,
-                                 SettingsUtils.<span style="color:#007f7f">PREF_SYNC_CALENDAR</span>);
-
-    <span style="color:#007f7f">// Assert
-</span><span style="display:block;width:100%;background-color:#191919"><span style="color:#007f7f"></span>    verify(mSessionUpdateLauncher).<span style="color:#007f7f">launchClearAllSessionsUpdate</span>();
-</span>}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@Test
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onPreferenceChangedClearedCalendar() <span style="color:#fff;font-weight:bold">throws</span> Exception {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// Arrange</span>
+</span></span><span style="display:flex;"><span>    CUOSPCListener listener
+</span></span><span style="display:flex;"><span>            = <span style="color:#fff;font-weight:bold">new</span> CUOSPCListener(mSessionUpdateLauncher);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">final</span> CalendarPreferences calendarPreferences
+</span></span><span style="display:flex;"><span>            = mock(CalendarPreferences.<span style="color:#007f7f">class</span>);
+</span></span><span style="display:flex; background-color:#191919"><span>    when(calendarPreferences.<span style="color:#007f7f">shouldSyncCalendar</span>()).<span style="color:#007f7f">thenReturn</span>(<span style="color:#fff;font-weight:bold">false</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// Act</span>
+</span></span><span style="display:flex;"><span>    listener.<span style="color:#007f7f">onPreferenceChanged</span>(calendarPreferences,
+</span></span><span style="display:flex;"><span>                                 SettingsUtils.<span style="color:#007f7f">PREF_SYNC_CALENDAR</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// Assert</span>
+</span></span><span style="display:flex; background-color:#191919"><span>    verify(mSessionUpdateLauncher).<span style="color:#007f7f">launchClearAllSessionsUpdate</span>();
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>The changes we made to our code gave us seams that we exploited in our unit test. Using mockito<sup>3</sup>, we changed the behavior of <code>calendarPreferences.shouldSyncCalendar()</code> so that it returns false without going to the declaration of <code>CalendarPreferences.shouldSyncCalendar</code> and editing it. We also used mockito to swap out a standard <code>SessionUpdaterLauncher</code> with an implementation that records that a particular method has been called. This, of course, is what allows us to assert in our test with <code>verify</code>.</p>
 <p>The seams we&rsquo;ve just created here are called &ldquo;object seams,&rdquo; and they&rsquo;re something that I&rsquo;ll cover more explicitly in <a href="/post/object-seams-and-mvp-for-testability/">my next post</a>.</p>
 <h3 id="conclusion">Conclusion</h3>
@@ -142,7 +139,7 @@ This post is a continuation of my attempt to reproduce <a href="https://devfestf
 <h2 id="notes">Notes:</h2>
 <ol>
 <li>
-<p>Thankfully, it looks like they may have fixed this in <a href="https://github.com/google/iosched"target="_blank">the 2016 version of the Google I/O app</a>.</p>
+<p>Thankfully, it looks like they may have fixed this in <a href="https://github.com/google/iosched"target="_blank" rel="noopener noreferrer">the 2016 version of the Google I/O app</a>.</p>
 </li>
 <li>
 <p>This behavior may actually be too trivial to test in real life, but its makes for a simple example.</p>
@@ -150,10 +147,11 @@ This post is a continuation of my attempt to reproduce <a href="https://devfestf
 <li>
 <p>Of course, using mockito to accomplish this isn&rsquo;t absolutely necessary.</p>
 </li>
-</ol></article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/object-seams-and-mvp-for-testability/"><span class="li iconfont icon-article"></span>Object Seams and MVP for Testability</a></p><p><a class="link" href="/post/why-we-should-probably-write-more-tests-for-our-android-apps/"><span class="li iconfont icon-article"></span>Why we Should Probably Write More Tests for Our Android Apps</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+</ol></article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/object-seams-and-mvp-for-testability/"><span class="iconfont icon-article"></span>Object Seams and MVP for Testability</a></p><p><a class="link" href="/post/why-we-should-probably-write-more-tests-for-our-android-apps/"><span class="iconfont icon-article"></span>Why we Should Probably Write More Tests for Our Android Apps</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -172,12 +170,12 @@ This post is a continuation of my attempt to reproduce <a href="https://devfestf
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -187,6 +185,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

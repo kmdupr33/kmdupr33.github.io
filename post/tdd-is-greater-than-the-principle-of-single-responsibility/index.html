@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>TDD &gt; The Principle of Single Responsibility&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>TDD &gt; The Principle of Single Responsibility&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="TDD &gt; The Principle of Single Responsibility" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,11 +11,9 @@
   (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
 </script>
 
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">TDD > The Principle of Single Responsibility</h1><p class="article date">2017-01-14</p></section><article class="article markdown-body"><p><img  src="/images/castle.jpg"
         alt/></p>
 <blockquote>
@@ -37,7 +34,7 @@
 <p><strong>Me:</strong> Have you ever heard of the principle of single responsibility?</p>
 <p><strong>Bill:</strong> Yeah. Actually, that principle was guiding me as I wrote this class.</p>
 <p><strong>Me:</strong> Really? Well, what is this class&rsquo; responsibility?</p>
-<p><strong>Bill:</strong> Well, this class is responsible for running the app. This class didn&rsquo;t seem to violate the PSR because the class fits Bob Martin&rsquo;s definition of a class that follows the PSR. He says that &ldquo;a class should only have one reason to change.&ldquo;<sup>1</sup> That&rsquo;s true of this class. There&rsquo;s only one reason it&rsquo;ll change: if the app needs to behave differently, we&rsquo;ll have to change this class. Also, the class passed Steve Freeman and Nat Pryce&rsquo;s test for whether a class follows the PSR: I can state the class&rsquo;s responsibility without any and&rsquo;s, or&rsquo;s, or but&rsquo;s.<sup>2</sup></p>
+<p><strong>Bill:</strong> Well, this class is responsible for running the app. This class didn&rsquo;t seem to violate the PSR because the class fits Bob Martin&rsquo;s definition of a class that follows the PSR. He says that &ldquo;a class should only have one reason to change.&quot;<sup>1</sup> That&rsquo;s true of this class. There&rsquo;s only one reason it&rsquo;ll change: if the app needs to behave differently, we&rsquo;ll have to change this class. Also, the class passed Steve Freeman and Nat Pryce&rsquo;s test for whether a class follows the PSR: I can state the class&rsquo;s responsibility without any and&rsquo;s, or&rsquo;s, or but&rsquo;s.<sup>2</sup></p>
 <p>This is an absurd conversation, but its an extreme case to demonstrate an important point: whether a class seems to satisfy the principle of single responsibility depends largely on whether we can <em>identify</em> other responsibilities that our class is tackling. Bill&rsquo;s position feels absurd because we, as experienced developers, can identify other non-trivial responsibilities that are handled by his God class.</p>
 <p>However, here&rsquo;s the kicker: its not always obvious that a class is handling multiple responsibilities. Bob Martin even says this in his chapter on the principle of single responsibility:</p>
 <blockquote>
@@ -52,6 +49,7 @@ joining responsibilities is something that we do naturally. <strong>Finding</str
 <p>Here&rsquo;s one more piece of evidence that identifying responsibilities is not trivial. Again, I&rsquo;m trading here on the idea that identifying responsibilities is the beginning of creating abstractions. Creating abstractions, in turn, is a part of creating a higher-level vocabulary with which to write your programs. Apparently, Kent Beck has said something like this recently:</p>
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Reading through my notes &amp; saw this pretty quote: &quot;You’re creating a vocabulary, not writing a program. Be a poet for a moment.&quot; <a href="https://twitter.com/KentBeck?ref_src=twsrc%5Etfw">@KentBeck</a></p>&mdash; Jessica (@encompassky) <a href="https://twitter.com/encompassky/status/813931671116451841?ref_src=twsrc%5Etfw">December 28, 2016</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 
 <p>Think about how much careful thought, experience, and discovery goes into creating sensible vocabularies. David West has a great bit about this in his book <em>Object Thinking</em>:</p>
 <blockquote>
@@ -68,7 +66,7 @@ joining responsibilities is something that we do naturally. <strong>Finding</str
 <p>There&rsquo;s another quotation that supports my point here, albeit in a less direct way. Freeman and Pryce say, &ldquo;for a class to be easy to unit-test, the class must…be loosely coupled and <strong>highly cohesive</strong> —in other words, well-designed.&rdquo; Cohesion, in Bob Martin&rsquo;s mind, is closely linked with the idea of a class&rsquo; responsibility, so this quote is almost a way of saying that unit testable classes are likely to follow the PSR.<sup>9</sup></p>
 <p>The second reason TDD helps us identify responsibilities is that a part of the TDD process is to eliminate duplication. Kent Beck actually has a nice summary of how this creates cohesion:</p>
 <blockquote>
-<p>The first feature goes in&hellip;the second feature, a variation on the first, goes in. **The duplication between the two features is put in one place, whereas the differences tend to go in different places (different methods or even different classes).**<sup>10</sup></p>
+<p>The first feature goes in&hellip;the second feature, a variation on the first, goes in. <strong>The duplication between the two features is put in one place, whereas the differences tend to go in different places (different methods or even different classes).</strong><sup>10</sup></p>
 </blockquote>
 <p>Quotations from famous software engineers aside, if we think for a second about what would happen if Bill tried to unit test his God class, I think we&rsquo;ll find some intuitive support for the idea that TDD exerts pressure to identify responsibilities.</p>
 <p>For example, his app likely displays data in a format that&rsquo;s different from how its stored in the database. When writing a test to verify that his God object massages the data into a more presentable format correctly, he&rsquo;ll see that the database needs to have specific data pre-loaded in order for the test to pass. He could solve this problem by creating a sandbox database and pre-loading it with specific data, but it would be <em>easier</em> to unit test his class if he identifies &ldquo;getting data from the database&rdquo; as a separate responsibility, creates a class for it, and injects that dependency into his God class.</p>
@@ -79,19 +77,19 @@ joining responsibilities is something that we do naturally. <strong>Finding</str
 <h3 id="notes">Notes</h3>
 <ol>
 <li>
-<p>Robert Martin, <em>Agile Software Development: Principles, Patterns, and Practices</em>, 110. Excerpt <a href="https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view"target="_blank">here</a>.</p>
+<p>Robert Martin, <em>Agile Software Development: Principles, Patterns, and Practices</em>, 110. Excerpt <a href="https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view"target="_blank" rel="noopener noreferrer">here</a>.</p>
 </li>
 <li>
 <p>Steve Freeman and Nat Pryce, <em>Growing Object Oriented Software Guided by Tests</em>, 96-97.</p>
 </li>
 <li>
-<p>Robert Martin, <em>Agile Software Development: Principles, Patterns, and Practices</em>, 114. Excerpt <a href="https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view"target="_blank">here</a>. Emphasis mine.</p>
+<p>Robert Martin, <em>Agile Software Development: Principles, Patterns, and Practices</em>, 114. Excerpt <a href="https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view"target="_blank" rel="noopener noreferrer">here</a>. Emphasis mine.</p>
 </li>
 <li>
 <p>Michael Feathers, <em>Working Effectively with Legacy Code</em>, 350-352.</p>
 </li>
 <li>
-<p>Perhaps this is why &ldquo;naming things&rdquo; is one of the two things that are hard about computer science, <a href="https://martinfowler.com/bliki/TwoHardThings.html"target="_blank">according to Phil Karlton</a>.</p>
+<p>Perhaps this is why &ldquo;naming things&rdquo; is one of the two things that are hard about computer science, <a href="https://martinfowler.com/bliki/TwoHardThings.html"target="_blank" rel="noopener noreferrer">according to Phil Karlton</a>.</p>
 </li>
 <li>
 <p>I think that a part of the reason finding responsibilities can be difficult is because we have to think at a level of abstraction that is actually lower than the one we were using when we decided to create the class in the first place. When Bill created the <code>Application</code> class, he did so because he thought, &ldquo;I need a class that&rsquo;ll run my application.&rdquo; When he started writing database-related code in this class, he could continue to think &ldquo;this code is just helping this class fulfill its responsibility of running the app,&rdquo; and in a sense, he would be right, but he&rsquo;d be thinking at the wrong level of abstraction. Dropping down a level, he&rsquo;d see that his Application class displays UI <em>and</em> talks to a database <em>and</em>&hellip;</p>
@@ -106,7 +104,7 @@ joining responsibilities is something that we do naturally. <strong>Finding</str
 <p>Ibid., 103-104.</p>
 </li>
 <li>
-<p>Robert Martin, <em>Agile Software Development: Principles, Patterns, and Practices</em>, 109. Excerpt <a href="https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view"target="_blank">here</a>. Martin Actually sees the PSR as being first described using the language of cohesion. Personally, I prefer the vocabulary of cohesion to the PSR because a class can have cohesiveness in degrees. Somehow, the more gradient (vs. binary) way of thinking about class design along this dimension seems to fit better with the idea that identifying responsibilities is related to the level of abstraction we&rsquo;re on when we&rsquo;re thinking about a class, but my thoughts on this aren&rsquo;t well formed enough to say more.</p>
+<p>Robert Martin, <em>Agile Software Development: Principles, Patterns, and Practices</em>, 109. Excerpt <a href="https://drive.google.com/file/d/0ByOwmqah_nuGNHEtcU5OekdDMkk/view"target="_blank" rel="noopener noreferrer">here</a>. Martin Actually sees the PSR as being first described using the language of cohesion. Personally, I prefer the vocabulary of cohesion to the PSR because a class can have cohesiveness in degrees. Somehow, the more gradient (vs. binary) way of thinking about class design along this dimension seems to fit better with the idea that identifying responsibilities is related to the level of abstraction we&rsquo;re on when we&rsquo;re thinking about a class, but my thoughts on this aren&rsquo;t well formed enough to say more.</p>
 </li>
 <li>
 <p>Kent Beck, <em>TDD By Example</em>, 195.</p>
@@ -115,10 +113,11 @@ joining responsibilities is something that we do naturally. <strong>Finding</str
 <p>Technically, this doesn&rsquo;t fit the definition of TDD because the tests are written last, but there is a real sense in which the tests are driving the re-design of Bill&rsquo;s app. This is why I say TDD is actually helping him design better classes.</p>
 </li>
 </ol>
-</article><section class="article labels"><a class="tag" href=/tags/architecture/>architecture</a><a class="tag" href=/tags/testing/>testing</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/exploiting-android-specific-seams-for-testing-and-flexibility/"><span class="li iconfont icon-article"></span>Exploiting Android-Specific Seams for Testing and Flexibility</a></p><p><a class="link" href="/post/why-i-dont-use-roboletric/"><span class="li iconfont icon-article"></span>Why I Don't use Robolectric</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+</article><section class="article labels"><a class="tag" href=/tags/architecture/>architecture</a><a class="tag" href=/tags/testing/>testing</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/exploiting-android-specific-seams-for-testing-and-flexibility/"><span class="iconfont icon-article"></span>Exploiting Android-Specific Seams for Testing and Flexibility</a></p><p><a class="link" href="/post/why-i-dont-use-roboletric/"><span class="iconfont icon-article"></span>Why I Don't use Robolectric</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -137,12 +136,12 @@ joining responsibilities is something that we do naturally. <strong>Finding</str
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -152,6 +151,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

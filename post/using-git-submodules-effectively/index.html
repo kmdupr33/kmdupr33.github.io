@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Using Git Submodules Effectively&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Using Git Submodules Effectively&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Using Git Submodules Effectively" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,12 +11,10 @@
   (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
 </script>
 
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Using Git Submodules Effectively</h1><p class="article date">2016-10-23</p></section><article class="article markdown-body"><p>I used to think git submodules were categorically evil. This was naive, as most choices in software development are about tradeoffs. A part of the reason I had this simplistic view was because of <a href="https://codingkilledthecat.wordpress.com/2012/04/28/why-your-company-shouldnt-use-git-submodules/"target="_blank">an article</a> called &ldquo;Why your Company Shouldn&rsquo;t use Git Submodules.&rdquo; I took a second look at this article recently and I read the docs on git submodules. What follows are some more nuanced thoughts on how and when git submodules can be used effectively.</p>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Using Git Submodules Effectively</h1><p class="article date">2016-10-23</p></section><article class="article markdown-body"><p>I used to think git submodules were categorically evil. This was naive, as most choices in software development are about tradeoffs. A part of the reason I had this simplistic view was because of <a href="https://codingkilledthecat.wordpress.com/2012/04/28/why-your-company-shouldnt-use-git-submodules/"target="_blank" rel="noopener noreferrer">an article</a> called &ldquo;Why your Company Shouldn&rsquo;t use Git Submodules.&rdquo; I took a second look at this article recently and I read the docs on git submodules. What follows are some more nuanced thoughts on how and when git submodules can be used effectively.</p>
 <h3 id="what-are-submodules-even-for">What are Submodules even for?</h3>
 <p>The docs actually provide a very helpful example to answer this question:</p>
 <blockquote>
@@ -39,37 +36,38 @@
 <h4 id="working-around-init-and-update">Working around init and update</h4>
 <p>The first thing that&rsquo;s annoying about git submodules, in my opinion, is that when you check out a project, you can&rsquo;t get it to build without initializing and updating your submodules. This isn&rsquo;t a problem if you know that you&rsquo;ve got submodules, but its a little annoying and surprising to see a build error when you don&rsquo;t realize that the project has submodules.</p>
 <p>A remedy here is to use the <code>--recursive</code> flag on the <code>git clone</code> command. This is probably something that I should just always do from now on. I&rsquo;ll make a bash function to support this. I&rsquo;ve already <code>git status</code> and <code>git push</code> aliased to <code>gs</code> and <code>gp</code> respectively, so <code>gc</code> is a good name for this function:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#fff;font-weight:bold">function</span> gc {
-   git clone --recursive $1
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">function</span> gc {
+</span></span><span style="display:flex;"><span>   git clone --recursive $1
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <h4 id="pushing-changes">Pushing changes</h4>
 <p>Pushing changes with submodules can be a bit of a pain if you manually go into a subdirectory and push from there. Fortunately, there are commands for this and we can even create git aliases to make using these commands easy. Here&rsquo;s the command:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git push --recurse-submodules=on-demand</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git push --recurse-submodules=on-demand</span></span></code></pre></div>
 <p>As the option suggests, this command recursively pushes the submodules along with the changes in the parent project. I could create an alias for this command with the following command:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git config alias.spush <span style="color:#0ff;font-weight:bold">&#39;push --recurse-submodules=on-demand&#39;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git config alias.spush <span style="color:#0ff;font-weight:bold">&#39;push --recurse-submodules=on-demand&#39;</span></span></span></code></pre></div>
 <p>But like I said, I&rsquo;ve already got <code>gp</code> aliased as <code>git push</code>, so I can just update that alias:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#fff;font-weight:bold">alias</span> gp=<span style="color:#0ff;font-weight:bold">&#39;git push --recurse-submodules=on-demand&#39;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">alias</span> gp=<span style="color:#0ff;font-weight:bold">&#39;git push --recurse-submodules=on-demand&#39;</span></span></span></code></pre></div>
 <h4 id="getting-updates">Getting updates</h4>
 <p>The last thing that&rsquo;s a little annoying about git submodules is updating them when there are changes upstream. Turns out that there&rsquo;s a command that eases this process too:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git submodule update --remote --merge</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git submodule update --remote --merge</span></span></code></pre></div>
 <p>Gonna alias that one too:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#fff;font-weight:bold">alias</span> gu=<span style="color:#0ff;font-weight:bold">&#39;git submodule update --remote --merge&#39;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">alias</span> gu=<span style="color:#0ff;font-weight:bold">&#39;git submodule update --remote --merge&#39;</span></span></span></code></pre></div>
 <p>The <code>--merge</code> flag, of course, is actually supposed to <em>safely</em> merge in the upstream changes. This is a bit misleading because, as article against git modules points out, if you aren&rsquo;t careful, you can blow away your changes in a git submodule by running this command. To avoid this, you actually need to make sure the git submodule has a branch checked out.</p>
 <p>One way of doing this easily is to use the git submodule <code>foreach</code> subcommand:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git submodule foreach <span style="color:#0ff;font-weight:bold">&#39;git checkout -b featureA&#39;</span></code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git submodule foreach <span style="color:#0ff;font-weight:bold">&#39;git checkout -b featureA&#39;</span></span></span></code></pre></div>
 <p>If we create a bash function that we use for checking out new branches, we can, with a single command, checkout a new branch in the parent repo in in the submodules:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#fff;font-weight:bold">function</span> gcb {
-  git checkout -b $1
-  git submodule foreach <span style="color:#0ff;font-weight:bold">&#39;git checkout -b&#39;</span>$1
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">function</span> gcb {
+</span></span><span style="display:flex;"><span>  git checkout -b $1
+</span></span><span style="display:flex;"><span>  git submodule foreach <span style="color:#0ff;font-weight:bold">&#39;git checkout -b&#39;</span>$1
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>If we&rsquo;re using gitflow, we won&rsquo;t be making any changes outside of a feature branch anyway, so if we&rsquo;re using a function like the above one, we shouldn&rsquo;t ever run into a situation where we&rsquo;ve blown away changes we&rsquo;ve made in our submodule.</p>
 <h3 id="conclusion">Conclusion</h3>
 <p>Sometimes all of this feels a bit wonky to me. I think it feels this way because git modules are still fundamentally weird. In an ideal world, we&rsquo;d develop our shared code in separate repositories and we&rsquo;d test that shared code with automated tests instead of testing it by running the project that consumes that shared library.</p>
 <p>However, sometimes we need to take out a tech loan. Sometimes we need to live with a wonky submodule setup for a bit. Fortunately, git provides us the tools needed to handle the additional complexity that comes along with using git submodules, and if we want to be able to work on a project and its shared code simultaneously, git submodules are appropriate. If we&rsquo;re just trying to share code, we should use simpler dependency management solutions.</p>
-</article><section class="article labels"><a class="tag" href=/tags/git/>git</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/why-we-should-probably-write-more-tests-for-our-android-apps/"><span class="li iconfont icon-article"></span>Why we Should Probably Write More Tests for Our Android Apps</a></p><p><a class="link" href="/post/3-ways-of-getting-to-green/"><span class="li iconfont icon-article"></span>3 Ways of 'Getting to Green'</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+</article><section class="article labels"><a class="tag" href=/tags/git/>git</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/why-we-should-probably-write-more-tests-for-our-android-apps/"><span class="iconfont icon-article"></span>Why we Should Probably Write More Tests for Our Android Apps</a></p><p><a class="link" href="/post/3-ways-of-getting-to-green/"><span class="iconfont icon-article"></span>3 Ways of 'Getting to Green'</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -88,12 +86,12 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -103,6 +101,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>An Intro to Gradient Descent for Kotlin Programmers&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>An Intro to Gradient Descent for Kotlin Programmers&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="An Intro to Gradient Descent for Kotlin Programmers" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,15 +11,13 @@
   (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
 </script>
 
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">An Intro to Gradient Descent for Kotlin Programmers</h1><p class="article date">2019-09-01</p></section><article class="article markdown-body"><script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script>
 <h2 id="introduction">Introduction</h2>
-<p>Gradient descent is an algorithm that&rsquo;s used to solve supervised learning and deep learning problems. Here I&rsquo;m going to try to give you an idea of why the algorithm works and how you&rsquo;d implement it in Kotlin. I&rsquo;ll also show the algorithm working with <a href="https://www.kaggle.com/rush4ratio/video-game-sales-with-ratings"target="_blank">a simple kaggle dataset involving video game sales and ratings</a>.</p>
-<p>Everything I cover here is covered in <a href="https://www.coursera.org/learn/machine-learning"target="_blank">Andrew Ng&rsquo;s excellent Coursera machine learning course</a> with the exception of the Kotlin implementation of gradient descent. If you <em>really</em> want a clear and definitive introduction to gradient descent, I recommend that course over this article. Here I&rsquo;m mostly interested in solidifying what I&rsquo;ve learned by sharing it.</p>
+<p>Gradient descent is an algorithm that&rsquo;s used to solve supervised learning and deep learning problems. Here I&rsquo;m going to try to give you an idea of why the algorithm works and how you&rsquo;d implement it in Kotlin. I&rsquo;ll also show the algorithm working with <a href="https://www.kaggle.com/rush4ratio/video-game-sales-with-ratings"target="_blank" rel="noopener noreferrer">a simple kaggle dataset involving video game sales and ratings</a>.</p>
+<p>Everything I cover here is covered in <a href="https://www.coursera.org/learn/machine-learning"target="_blank" rel="noopener noreferrer">Andrew Ng&rsquo;s excellent Coursera machine learning course</a> with the exception of the Kotlin implementation of gradient descent. If you <em>really</em> want a clear and definitive introduction to gradient descent, I recommend that course over this article. Here I&rsquo;m mostly interested in solidifying what I&rsquo;ve learned by sharing it.</p>
 <h2 id="our-toy-problem">Our Toy Problem</h2>
 
 
@@ -57,19 +54,19 @@
 </script>
 
 <p>So, our problem here is really this: How do we figure out what <code>m</code> and <code>b</code> are given the above video game data? Or, how would we implement the following kotlin function:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">findLearningParameters</span>(videoGameData: Array&lt;Pair&lt;Int, Int&gt;&gt;): Pair&lt;Int, Int&gt; {
-  <span style="color:#75715e">//...
-</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span> Pair(m, b)
-}
-</code></pre></div><p>This is really the crux of the problem because once we this function implemented, it&rsquo;s trivial to write a program that can predict video game sales based on meta-critic score:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">predictVideoGameSales</span>(
-  metaCriticScore: Int,
-  learningParameters: Pair&lt;Int, Int&gt;
-) {
-  <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>m, b) = learningParameters
-  <span style="color:#66d9ef">return</span> metaCriticScore * m + b
-}
-</code></pre></div><p>What we want is for the learning parameters to be such that the difference between the predicted values (given by the line of best fit) and all the actual values is minimized. This difference <em>depends</em> on the values we choose for <code>x</code> and <code>b</code>; it&rsquo;s a function of those variables. This function is called the &ldquo;cost function,&rdquo; so another way of putting our problem is to say that we&rsquo;re trying to find values of <code>x</code> and <code>b</code> that minimize the cost function.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">findLearningParameters</span>(videoGameData: Array&lt;Pair&lt;Int, Int&gt;&gt;): Pair&lt;Int, Int&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">//...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span> Pair(m, b)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This is really the crux of the problem because once we this function implemented, it&rsquo;s trivial to write a program that can predict video game sales based on meta-critic score:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">predictVideoGameSales</span>(
+</span></span><span style="display:flex;"><span>  metaCriticScore: Int,
+</span></span><span style="display:flex;"><span>  learningParameters: Pair&lt;Int, Int&gt;
+</span></span><span style="display:flex;"><span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>m, b) = learningParameters
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> metaCriticScore * m + b
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>What we want is for the learning parameters to be such that the difference between the predicted values (given by the line of best fit) and all the actual values is minimized. This difference <em>depends</em> on the values we choose for <code>x</code> and <code>b</code>; it&rsquo;s a function of those variables. This function is called the &ldquo;cost function,&rdquo; so another way of putting our problem is to say that we&rsquo;re trying to find values of <code>x</code> and <code>b</code> that minimize the cost function.</p>
 <h2 id="solution">Solution</h2>
 <p>To start understanding how we&rsquo;d solve this problem, we need to take a closer look at the cost function. What exactly is it? Let&rsquo;s start with a thought experiment: suppose we choose 0 as the values for <code>x</code> and <code>b</code>. What would the difference be between the <em>actual values</em> from our data set and the predicted values? The following table with the first five data points tries to capture this:</p>
 <table>
@@ -168,16 +165,16 @@
 <p>The x-axis in this case is <code>m</code> and the y axis tells us how far off <code>m</code> is from where it needs to be. This graph tells us that <code>0</code> is our best choice for <code>m</code> since choosing <code>0</code> will actually minimize the cost function. This isn&rsquo;t true of our actual data set, but the basic idea of gradient descent applies regardless and this graph is (probably) cleaner to look at.</p>
 <p>At the highest level, the way gradient descent works is that we take a guess at the optimal value of <code>m</code>, then we modify our guess by a small amount called the &ldquo;learning rate&rdquo; and repeat until we aren&rsquo;t getting any better. This is how the algorithm got its name: we&rsquo;re slowing descending down the gradient until we get to the minimum.</p>
 <p>With that, we can start to fill in more of our <code>findLearningParameters</code> function:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">findLearningParameters</span>(videoGameData: Array&lt;Pair&lt;Double, Double&gt;&gt;): Pair&lt;Double, Double&gt; {
-<span style="color:#66d9ef">val</span> learningRate = .<span style="color:#ae81ff">0003</span>
-<span style="color:#66d9ef">var</span> guess = Pair(<span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">0.0</span>)
-<span style="color:#66d9ef">for</span> (i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">1.</span>.<span style="color:#ae81ff">10000000</span>) {
-<span style="display:block;width:100%;background-color:#3c3d38">guess = updateGuess(guess, learningRate, videoGameData)
-</span><span style="color:#66d9ef">if</span> (i % <span style="color:#ae81ff">1000</span> == <span style="color:#ae81ff">0</span>) println(<span style="color:#e6db74">&#34;Guess: $guess&#34;</span>)
-<span style="display:block;width:100%;background-color:#3c3d38">        <span style="color:#66d9ef">if</span> (i % <span style="color:#ae81ff">1000</span> == <span style="color:#ae81ff">0</span>) println(<span style="color:#e6db74">&#34;Cost: ${cost(videoGameData, guess)}&#34;</span>)
-</span>}
-<span style="color:#66d9ef">return</span> guess
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">findLearningParameters</span>(videoGameData: Array&lt;Pair&lt;Double, Double&gt;&gt;): Pair&lt;Double, Double&gt; {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">val</span> learningRate = .<span style="color:#ae81ff">0003</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> guess = Pair(<span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">0.0</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">1.</span>.<span style="color:#ae81ff">10000000</span>) {
+</span></span><span style="display:flex; background-color:#3c3d38"><span>guess = updateGuess(guess, learningRate, videoGameData)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (i % <span style="color:#ae81ff">1000</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) println(<span style="color:#e6db74">&#34;Guess: </span><span style="color:#e6db74">$guess</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex; background-color:#3c3d38"><span>        <span style="color:#66d9ef">if</span> (i % <span style="color:#ae81ff">1000</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) println(<span style="color:#e6db74">&#34;Cost: </span><span style="color:#e6db74">${cost(videoGameData, guess)}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">return</span> guess
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>The highlighted lines point to some functions that need explaining. You should be able to guess at what <code>cost</code> does: it computes how bad our guess at <code>m</code> and <code>b</code> are with the aforementioned formula:</p>
 
 
@@ -192,13 +189,13 @@
 </script>
 
 <p>So, the implementation is just this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">cost</span>(videoGameData: Array&lt;Pair&lt;Double, Double&gt;&gt;, learningParameters: Pair&lt;Double, Double&gt;): Double =
-        videoGameData.fold(<span style="color:#ae81ff">0.0</span>) { acc: Double, pair: Pair&lt;Double, Double&gt; -&gt;
-            <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>m, b) = learningParameters
-            <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>x, y) = pair
-            acc + ((((m * x) + b) - y).pow(<span style="color:#ae81ff">2</span>)/<span style="color:#ae81ff">2</span>)
-        } / videoGameData.size
-</code></pre></div><p>The reason we are using the cost function is to monitor progress on the gradient descent. As the for-loop executes, <code>cost</code> should be going down.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">cost</span>(videoGameData: Array&lt;Pair&lt;Double, Double&gt;&gt;, learningParameters: Pair&lt;Double, Double&gt;): Double =
+</span></span><span style="display:flex;"><span>        videoGameData.fold(<span style="color:#ae81ff">0.0</span>) { acc: Double, pair: Pair&lt;Double, Double&gt; <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>m, b) = learningParameters
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>x, y) = pair
+</span></span><span style="display:flex;"><span>            acc + ((((m * x) + b) - y).pow(<span style="color:#ae81ff">2</span>)/<span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>        } / videoGameData.size
+</span></span></code></pre></div><p>The reason we are using the cost function is to monitor progress on the gradient descent. As the for-loop executes, <code>cost</code> should be going down.</p>
 <p>Understanding the implementation of <code>updateGuess</code> requires a little detour into basic calculus.</p>
 <p>If we look at our graph of <code>m</code> and <code>J(m)</code> and remember that the derivative of a function gives us the slope of the tangent line, we have what we need to see the central insight that makes gradient descent possible. So, let&rsquo;s ask: What happens if we compute the derivative of this function and draw the tangent lines for <code>m = 1</code> and <code>m=-1</code> in this graph?</p>
 
@@ -262,46 +259,47 @@
 </script>
 </p>
 <p>We&rsquo;ve got some partial derivatives here because we&rsquo;re working with multiple variables, and in general, there may be many more learning parameters than <code>m</code> and <code>b</code> if we have more features/variables in our learning problem (e.g., we may think that game studio is a predictor/variable that could tell us something about game sales). This detail doesn&rsquo;t really matter for getting the gist of gradient descent. Here&rsquo;s the kotlin:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">updateGuess</span>(
-        guess: Pair&lt;Double, Double&gt;,
-        learningRate: Double,
-        videoGameData: Array&lt;Pair&lt;Double, Double&gt;&gt;
-    ): Pair&lt;Double, Double&gt; {
-        <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>m, b)  = guess
-        <span style="color:#66d9ef">val</span> mGradient = videoGameData.fold(<span style="color:#ae81ff">0.0</span>) { acc: Double, pair: Pair&lt;Double, Double&gt; -&gt;
-            <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>x, y) = pair
-            acc + ((((m * x) + b) - y) * x)
-        } / videoGameData.size
-        <span style="color:#66d9ef">val</span> bGradient = videoGameData.fold(<span style="color:#ae81ff">0.0</span>) { acc: Double, pair: Pair&lt;Double, Double&gt; -&gt;
-            <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>x, y) = pair
-            acc + ((((m * x) + b) - y))
-        } / videoGameData.size
-        <span style="color:#66d9ef">val</span> newM = m - (learningRate * mGradient)
-        <span style="color:#66d9ef">val</span> newB = b - (learningRate * bGradient)
-        <span style="color:#66d9ef">return</span> Pair(newM, newB)
-    }
-</code></pre></div><p>Running this code gives us <code>.0281</code> for <code>m</code> and <code>-.804</code> for <code>b</code>, which is pretty darn close to that line of best fit we saw earlier.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">updateGuess</span>(
+</span></span><span style="display:flex;"><span>        guess: Pair&lt;Double, Double&gt;,
+</span></span><span style="display:flex;"><span>        learningRate: Double,
+</span></span><span style="display:flex;"><span>        videoGameData: Array&lt;Pair&lt;Double, Double&gt;&gt;
+</span></span><span style="display:flex;"><span>    ): Pair&lt;Double, Double&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>m, b)  = guess
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">val</span> mGradient = videoGameData.fold(<span style="color:#ae81ff">0.0</span>) { acc: Double, pair: Pair&lt;Double, Double&gt; <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>x, y) = pair
+</span></span><span style="display:flex;"><span>            acc + ((((m * x) + b) - y) * x)
+</span></span><span style="display:flex;"><span>        } / videoGameData.size
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">val</span> bGradient = videoGameData.fold(<span style="color:#ae81ff">0.0</span>) { acc: Double, pair: Pair&lt;Double, Double&gt; <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">val</span> <span style="color:#960050;background-color:#1e0010">(</span>x, y) = pair
+</span></span><span style="display:flex;"><span>            acc + ((((m * x) + b) - y))
+</span></span><span style="display:flex;"><span>        } / videoGameData.size
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">val</span> newM = m - (learningRate * mGradient)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">val</span> newB = b - (learningRate * bGradient)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> Pair(newM, newB)
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>Running this code gives us <code>.0281</code> for <code>m</code> and <code>-.804</code> for <code>b</code>, which is pretty darn close to that line of best fit we saw earlier.</p>
 <h2 id="notes">Notes</h2>
-<section class="footnotes" role="doc-endnotes">
+<div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn:1" role="doc-endnote">
-<p>The relationship isn&rsquo;t as strong as I suspected. They say being a game dev is rough. Maybe this is evidence of that. Maybe the data just isn&rsquo;t very good. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<li id="fn:1">
+<p>The relationship isn&rsquo;t as strong as I suspected. They say being a game dev is rough. Maybe this is evidence of that. Maybe the data just isn&rsquo;t very good.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:2" role="doc-endnote">
-<p>I&rsquo;m betting excel and google sheets use the &ldquo;normal equation&rdquo; method of linear regression rather than gradient descent, which is <a href="https://www.coursera.org/learn/machine-learning/supplement/bjjZW/normal-equation"target="_blank">apparently ok if you&rsquo;re dealing with a linear regression problem with less than 10k features</a>. I also doubt it can handle more than one variable without any sort of extension. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<li id="fn:2">
+<p>I&rsquo;m betting excel and google sheets use the &ldquo;normal equation&rdquo; method of linear regression rather than gradient descent, which is <a href="https://www.coursera.org/learn/machine-learning/supplement/bjjZW/normal-equation"target="_blank" rel="noopener noreferrer">apparently ok if you&rsquo;re dealing with a linear regression problem with less than 10k features</a>. I also doubt it can handle more than one variable without any sort of extension.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
-</section>
-</article><section class="article labels"><a class="tag" href=/tags/machine-learning/>machine learning</a><a class="tag" href=/tags/kotlin/>kotlin</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/maybe-dont-write-that-test/"><span class="li iconfont icon-article"></span>Maybe Don't Write That Test</a></p><p><a class="link" href="/post/dagger-2-years-later/"><span class="li iconfont icon-article"></span>Dagger 2, 2 Years Later</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+</div>
+</article><section class="article labels"><a class="tag" href=/tags/machine-learning/>machine learning</a><a class="tag" href=/tags/kotlin/>kotlin</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/maybe-dont-write-that-test/"><span class="iconfont icon-article"></span>Maybe Don't Write That Test</a></p><p><a class="link" href="/post/dagger-2-years-later/"><span class="iconfont icon-article"></span>Dagger 2, 2 Years Later</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -311,6 +309,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

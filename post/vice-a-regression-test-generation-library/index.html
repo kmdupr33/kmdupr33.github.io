@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Vice: A Regression Test Generation Library&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Vice: A Regression Test Generation Library&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Vice: A Regression Test Generation Library" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,11 +11,9 @@
   (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
 </script>
 
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">Vice: A Regression Test Generation Library</h1><p class="article date">2016-06-22</p></section><article class="article markdown-body"><blockquote>
 <p>Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&hellip;Cover and Modify is a different way of making changes. The idea behind it is that it is possible to work with a safety net when we change software&hellip;<strong>When you have tests around the areas in which you are going to make changes, they act as a software vise. You can keep most of the behavior fixed and know that you are changing only what you intend to.</strong></p>
 </blockquote>
@@ -24,49 +21,49 @@
 <p>Michael Feathers, <em>Working Effectively with Legacy Code</em>, pg. 32-33</p>
 </blockquote>
 <p>The &ldquo;regression tests&rdquo; that Feathers refers to in the above quotation are a huge asset to refactoring code. Unfortunately, they can often be time-consuming and soul-sucking to write. Vice is a library that I just started working on that helps to reduce the burden of writing these regression tests.</p>
-<p>With Vice, we can simply exercise the code we want regression tests for, and Vice will generate our unit-level regression tests for us. This post sketches how my current proof of concept of this library and suggests some ways I plan to expand the library, with special attention to how this library might aid in generating regression tests for Android applications. You can find the source code <a href="https://github.com/kmdupr33/Vice"target="_blank">here</a>.</p>
+<p>With Vice, we can simply exercise the code we want regression tests for, and Vice will generate our unit-level regression tests for us. This post sketches how my current proof of concept of this library and suggests some ways I plan to expand the library, with special attention to how this library might aid in generating regression tests for Android applications. You can find the source code <a href="https://github.com/kmdupr33/Vice"target="_blank" rel="noopener noreferrer">here</a>.</p>
 <h3 id="a-trivial-proof-of-concept">A Trivial Proof of Concept</h3>
 <p>Suppose we have a simple class that reverses a string:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> Reverser {
-    <span style="color:#fff;font-weight:bold">public</span> String reverse(String string) {
-        <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">new</span> StringBuilder(string).<span style="color:#007f7f">reverse</span>().<span style="color:#007f7f">toString</span>();
-    }
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> Reverser {
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">public</span> String reverse(String string) {
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">return</span> <span style="color:#fff;font-weight:bold">new</span> StringBuilder(string).<span style="color:#007f7f">reverse</span>().<span style="color:#007f7f">toString</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>Suppose further that we don&rsquo;t like the way <code>Reverser.reverse</code> is implemented. If we want to be sure that our modifications don&rsquo;t break anything, we would normally write a unit test for this method that looks like this:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> ReverserCharacterization {
-  @Test
-  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> characterizeReverse() {
-    Reverser reverser = <span style="color:#fff;font-weight:bold">new</span> Reverser();
-    <span style="color:#fff;font-weight:bold">final</span> String result = reverser.<span style="color:#007f7f">reverse</span>(<span style="color:#0ff;font-weight:bold">&#34;hello&#34;</span>);
-    assertEquals(<span style="color:#0ff;font-weight:bold">&#34;olleh&#34;</span>, result);
-  }
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> ReverserCharacterization {
+</span></span><span style="display:flex;"><span>  @Test
+</span></span><span style="display:flex;"><span>  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> characterizeReverse() {
+</span></span><span style="display:flex;"><span>    Reverser reverser = <span style="color:#fff;font-weight:bold">new</span> Reverser();
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">final</span> String result = reverser.<span style="color:#007f7f">reverse</span>(<span style="color:#0ff;font-weight:bold">&#34;hello&#34;</span>);
+</span></span><span style="display:flex;"><span>    assertEquals(<span style="color:#0ff;font-weight:bold">&#34;olleh&#34;</span>, result);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>Vice allows us to generate tests by simply writing code that exercises the classes for which we want tests. Let&rsquo;s look at the Vice code that generates the above test.</p>
 <p>First, we create a <code>ViceMaker</code> object:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@ViceFor(Reverser.<span style="color:#007f7f">class</span>)
-<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> ViceMaker {
-    @Clamp
-    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> clampReverse(Reverser reverser) {
-        reverser.<span style="color:#007f7f">reverse</span>(<span style="color:#0ff;font-weight:bold">&#34;hello&#34;</span>);
-    }
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@ViceFor(Reverser.<span style="color:#007f7f">class</span>)
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> ViceMaker {
+</span></span><span style="display:flex;"><span>    @Clamp
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> clampReverse(Reverser reverser) {
+</span></span><span style="display:flex;"><span>        reverser.<span style="color:#007f7f">reverse</span>(<span style="color:#0ff;font-weight:bold">&#34;hello&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>Next, we run <code>Vice.make</code>, passing in the class of our <code>ViceMaker</code> and the path where we want our generated tests to live:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">final</span> Vice vice = <span style="color:#fff;font-weight:bold">new</span> Vice();
-<span style="color:#fff;font-weight:bold">final</span> String pathToGeneratedCharacterizationTest
-        = <span style="color:#0ff;font-weight:bold">&#34;/Users/mattdupree/Developer/Vice/src/test/java/&#34;</span>;
-<span style="color:#fff;font-weight:bold">final</span> Path testFilesPath = Paths.<span style="color:#007f7f">get</span>(pathToGeneratedCharacterizationTest);
-vice.<span style="color:#007f7f">make</span>(testFilesPath, ViceMaker.<span style="color:#007f7f">class</span>);  </code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">final</span> Vice vice = <span style="color:#fff;font-weight:bold">new</span> Vice();
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">final</span> String pathToGeneratedCharacterizationTest
+</span></span><span style="display:flex;"><span>        = <span style="color:#0ff;font-weight:bold">&#34;/Users/mattdupree/Developer/Vice/src/test/java/&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">final</span> Path testFilesPath = Paths.<span style="color:#007f7f">get</span>(pathToGeneratedCharacterizationTest);
+</span></span><span style="display:flex;"><span>vice.<span style="color:#007f7f">make</span>(testFilesPath, ViceMaker.<span style="color:#007f7f">class</span>);  </span></span></code></pre></div>
 <p>Once the above code is run, you&rsquo;ll have regression test generated with code that is identical the code we would have written:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> ReverserCharacterization {
-  @Test
-  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> characterizeReverse() {
-    Reverser reverser = <span style="color:#fff;font-weight:bold">new</span> Reverser();
-    <span style="color:#fff;font-weight:bold">final</span> String result = reverser.<span style="color:#007f7f">reverse</span>(<span style="color:#0ff;font-weight:bold">&#34;hello&#34;</span>);
-    assertEquals(<span style="color:#0ff;font-weight:bold">&#34;olleh&#34;</span>, result);
-  }
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> ReverserCharacterization {
+</span></span><span style="display:flex;"><span>  @Test
+</span></span><span style="display:flex;"><span>  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> characterizeReverse() {
+</span></span><span style="display:flex;"><span>    Reverser reverser = <span style="color:#fff;font-weight:bold">new</span> Reverser();
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">final</span> String result = reverser.<span style="color:#007f7f">reverse</span>(<span style="color:#0ff;font-weight:bold">&#34;hello&#34;</span>);
+</span></span><span style="display:flex;"><span>    assertEquals(<span style="color:#0ff;font-weight:bold">&#34;olleh&#34;</span>, result);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>Once this code is generated, you can ensure that your refactoring doesn&rsquo;t break <code>Reverser</code> simply by running your tests.</p>
-<p>In order to accomplish this, I&rsquo;m using reflection and <a href="http://bytebuddy.net/#/"target="_blank">bytebuddy</a>, a library that lets us rewrite java classes at runtime. With these two tools I&rsquo;m rewriting the classes we want to generate regressions tests for so that every method on that class records its method invocations. This &ldquo;recording&rdquo; captures what method was called, the arguments that were passed in, and the return value of the method. Once I have this information, I use <a href="https://github.com/square/javapoet"target="_blank">javapoet</a> to write out java test files.</p>
+<p>In order to accomplish this, I&rsquo;m using reflection and <a href="http://bytebuddy.net/#/"target="_blank" rel="noopener noreferrer">bytebuddy</a>, a library that lets us rewrite java classes at runtime. With these two tools I&rsquo;m rewriting the classes we want to generate regressions tests for so that every method on that class records its method invocations. This &ldquo;recording&rdquo; captures what method was called, the arguments that were passed in, and the return value of the method. Once I have this information, I use <a href="https://github.com/square/javapoet"target="_blank" rel="noopener noreferrer">javapoet</a> to write out java test files.</p>
 <h3 id="limitations-and-future-directions">Limitations and Future Directions</h3>
 <h4 id="supporting-void-methods">Supporting Void Methods</h4>
 <p>Currently, my proof of concept only supports adding tests for methods with return values. However, I&rsquo;d like to expand it to test methods that don&rsquo;t return anything. Void methods are typically tested by examining the way in which those methods interact with their dependencies. Using bytebuddy, I can rewrite the dependencies of the methods we want to test so that they record their interactions. Once I have this information, I can generate mockito-powered tests that verify that the method interacts with its dependencies correctly.</p>
@@ -75,10 +72,11 @@ vice.<span style="color:#007f7f">make</span>(testFilesPath, ViceMaker.<span styl
 <h4 id="supporting-android-test-recording">Supporting Android Test Recording</h4>
 <p>In the next release of Android Studio, we&rsquo;ll be able to record espresso tests. These tests are great, but they can be slow and flaky, so they need to be augmented with unit tests.</p>
 <p>Ideally, I&rsquo;d like to build upon the functionality of Vice to support Android <em>unit test</em> recording. This functionality is less fleshed out in my mind, but it seems doable. The hope here is that you&rsquo;d be able to launch your Android app, interact with it and your interactions would generate unit tests for your activities and fragments. These unit tests will allow us to move application logic out of our Activities and Fragments without having to spend an inordinate amount of time writing and running regression tests.</p>
-</article><section class="article labels"><a class="tag" href=/tags/regression-testing/>regression testing</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/why-dont-we-have-a-unit-test-recorder/"><span class="li iconfont icon-article"></span>Why don't we have a unit test recorder?</a></p><p><a class="link" href="/post/how-to-safely-move-logic-out-of-activities/"><span class="li iconfont icon-article"></span>How to Safely move Logic out of Activities</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+</article><section class="article labels"><a class="tag" href=/tags/regression-testing/>regression testing</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/why-dont-we-have-a-unit-test-recorder/"><span class="iconfont icon-article"></span>Why don't we have a unit test recorder?</a></p><p><a class="link" href="/post/how-to-safely-move-logic-out-of-activities/"><span class="iconfont icon-article"></span>How to Safely move Logic out of Activities</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -97,12 +95,12 @@ vice.<span style="color:#007f7f">make</span>(testFilesPath, ViceMaker.<span styl
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -112,6 +110,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

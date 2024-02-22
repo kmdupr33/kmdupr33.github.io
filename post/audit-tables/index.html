@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>How Postgres Audit Tables Saved Us From Taking Down Production&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>How Postgres Audit Tables Saved Us From Taking Down Production&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="How Postgres Audit Tables Saved Us From Taking Down Production" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -14,13 +13,11 @@
 
 
 <link rel="canonical" href="https://heap.io/blog/how-postgres-audit-tables-saved-us-from-taking-down-production"/>
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">How Postgres Audit Tables Saved Us From Taking Down Production</h1><p class="article date">2021-11-08</p></section><article class="article markdown-body"><hr>
-<p><strong><em>Note: This post was originally published on <a href="https://heap.io/blog/how-postgres-audit-tables-saved-us-from-taking-down-production"target="_blank">heap&rsquo;s blog</a></em></strong></p>
+<p><strong><em>Note: This post was originally published on <a href="https://heap.io/blog/how-postgres-audit-tables-saved-us-from-taking-down-production"target="_blank" rel="noopener noreferrer">heap&rsquo;s blog</a></em></strong></p>
 <hr>
 <p>Audit tables record changes that occur to rows in another table. They’re like commit logs for database tables, and they&rsquo;re typically used to figure out who made what changes when. But surprisingly, we&rsquo;ve found them useful for keeping our distributed Postgres cluster stable.</p>
 <p>To convince you of the stability-related value of audit tables, we&rsquo;ll cover how audit tables helped us avoid a serious incident. Then, we&rsquo;ll briefly cover how you can create audit tables in your own Postgres databases.</p>
@@ -99,26 +96,26 @@
 <li>Drop the old shard from the coordinator metadata table and the worker</li>
 </ol>
 <p>Unfortunately, the Node code we wrote to do this had a bug: it treated a string as if it was a number. After migrating a shard to a new schema, we created a new shard id by adding a fixed number to the old shard id and then dropping the entry for the old shard from the coordinator. However, because the <code>shardid</code> was a string, adding the offset resulted in concatenation, which in turn resulted in a new <code>shardid</code> that was rejected by the coordinator because it was too large to fit into an bigint:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shardIdString</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">952025954</span>;
-<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shardIdNumber</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">952025954</span>;
-<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">offset</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2000000000</span>;
-
-<span style="color:#75715e">// what we expected
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">shardIdNumber</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">offset</span>);
-<span style="color:#ae81ff">2952025954</span>
-
-<span style="color:#75715e">// what we got (oh no!)
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">shardIdString</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">offset</span>);
-<span style="color:#ae81ff">9223372036854775807</span>
-</code></pre></div><p>Although we use Typescript to mitigate these types of bugs, when we&rsquo;re working with external systems, it&rsquo;s easy to find yourself in a situation where the types are lying to you. Fortunately, our code didn’t delete any shard data unless metadata for the migrated shard was added to the coordinator. Unfortunately, because of this bug, the coordinator metadata still wound up in a state where it was missing event shard metadata for a particular worker.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shardIdString</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">952025954</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shardIdNumber</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">952025954</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">offset</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2000000000</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// what we expected
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">shardIdNumber</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">offset</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2952025954</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// what we got (oh no!)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">shardIdString</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">offset</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">9223372036854775807</span>
+</span></span></code></pre></div><p>Although we use Typescript to mitigate these types of bugs, when we&rsquo;re working with external systems, it&rsquo;s easy to find yourself in a situation where the types are lying to you. Fortunately, our code didn’t delete any shard data unless metadata for the migrated shard was added to the coordinator. Unfortunately, because of this bug, the coordinator metadata still wound up in a state where it was missing event shard metadata for a particular worker.</p>
 <p>A few minutes later, the on-call engineer was paged with a link to our ingestion latency metrics:</p>
 <p><img  src="./ingestion-latency.png"
         alt="graph showing ingestion latency spiking"/></p>
 <p>Ingestion latency was spiking, but after we discovered the bug in our code, we were able to quickly reverse the removal of these shard metadata entries using our audit tables. The SQL to restore the deleted metadata looked a little like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> pg_dist_shard
-<span style="color:#66d9ef">SELECT</span> logicalrelid, shardid, nodename <span style="color:#66d9ef">FROM</span> dist_shard_audit
-<span style="color:#66d9ef">WHERE</span> action <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;DELETE&#39;</span> <span style="color:#66d9ef">AND</span> log_time <span style="color:#f92672">&gt;</span> now() <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;1 minutes&#39;</span>::interval;
-</code></pre></div><p>Without the audit table, this minor incident would have been much more severe because it would have been much more difficult to track down which shards were deleted and to quickly re-add those shards back to the table. Logs would have been our only way to fix this, and we can all imagine how difficult it would have been to reconstruct the correct table using logs.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> pg_dist_shard
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> logicalrelid, shardid, nodename <span style="color:#66d9ef">FROM</span> dist_shard_audit
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> action <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;DELETE&#39;</span> <span style="color:#66d9ef">AND</span> log_time <span style="color:#f92672">&gt;</span> now() <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;1 minutes&#39;</span>::interval;
+</span></span></code></pre></div><p>Without the audit table, this minor incident would have been much more severe because it would have been much more difficult to track down which shards were deleted and to quickly re-add those shards back to the table. Logs would have been our only way to fix this, and we can all imagine how difficult it would have been to reconstruct the correct table using logs.</p>
 <h1 id="how-to-create-audit-tables">How to create audit tables</h1>
 <p>To make an audit table, start by creating an ordinary table with:</p>
 <ol>
@@ -126,44 +123,44 @@
 <li>Some additional columns that describe the changes made to the audited table.</li>
 </ol>
 <p>For example, an audit table for the above <code>pg_dist_shard</code> table would look like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">type</span> audit_action <span style="color:#66d9ef">as</span> enum (<span style="color:#e6db74">&#39;SNAPSHOT&#39;</span>,
-    <span style="color:#e6db74">&#39;INSERT&#39;</span>,
-    <span style="color:#e6db74">&#39;UPDATE_OLD&#39;</span>,
-    <span style="color:#e6db74">&#39;UPDATE_NEW&#39;</span>,
-    <span style="color:#e6db74">&#39;DELETE&#39;</span>
-);
-
-<span style="color:#66d9ef">create</span> <span style="color:#66d9ef">table</span> pg_dist_shard (
-    <span style="color:#66d9ef">table</span> regclass <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
-    shardid bigint <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
-    nodename text <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
-    action audit_action <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
-    log_time <span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">with</span> time <span style="color:#66d9ef">zone</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>
-);
-</code></pre></div><p>The trigger procedure would look like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">function</span> tg_audit_dist_shard() <span style="color:#66d9ef">returns</span> <span style="color:#66d9ef">trigger</span>
-    <span style="color:#66d9ef">language</span> plpgsql
-<span style="color:#66d9ef">as</span>
-<span style="color:#960050;background-color:#1e0010">$$</span>
-<span style="color:#66d9ef">DECLARE</span>
-    audit_entry int :<span style="color:#f92672">=</span> nextval(<span style="color:#e6db74">&#39;audit_entry_seq&#39;</span>::regclass);
-<span style="color:#66d9ef">BEGIN</span>
-    <span style="color:#66d9ef">IF</span> (TG_OP <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;INSERT&#39;</span>) <span style="color:#66d9ef">THEN</span>
-        <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> dist_shard_audit
-        <span style="color:#66d9ef">VALUES</span> (now(), audit_entry, TG_OP::audit_action, TG_RELID::regclass, <span style="color:#66d9ef">NEW</span>.<span style="color:#f92672">*</span>);
-        <span style="color:#66d9ef">RETURN</span> <span style="color:#66d9ef">NEW</span>;
-    <span style="color:#66d9ef">ELSIF</span> (TG_OP <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;UPDATE&#39;</span>) <span style="color:#66d9ef">THEN</span>
-        <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> dist_shard_audit
-        <span style="color:#66d9ef">VALUES</span> (now(), audit_entry, <span style="color:#e6db74">&#39;UPDATE_OLD&#39;</span>::audit_action, TG_RELID::regclass, <span style="color:#66d9ef">OLD</span>.<span style="color:#f92672">*</span>),
-               (now(), audit_entry, <span style="color:#e6db74">&#39;UPDATE_NEW&#39;</span>::audit_action, TG_RELID::regclass, <span style="color:#66d9ef">NEW</span>.<span style="color:#f92672">*</span>);
-    <span style="color:#66d9ef">ELSIF</span> (TG_OP <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;DELETE&#39;</span>) <span style="color:#66d9ef">THEN</span>
-        <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> dist_shard_audit
-        <span style="color:#66d9ef">VALUES</span> (now(), audit_entry, TG_OP::audit_action, TG_RELID::regclass, <span style="color:#66d9ef">OLD</span>.<span style="color:#f92672">*</span>);
-        <span style="color:#66d9ef">RETURN</span> <span style="color:#66d9ef">OLD</span>;
-    <span style="color:#66d9ef">END</span> <span style="color:#66d9ef">IF</span>;
-    <span style="color:#66d9ef">RETURN</span> <span style="color:#66d9ef">NULL</span>;
-<span style="color:#66d9ef">END</span>;
-</code></pre></div><p>This code uses a few special variables that are automatically defined for triggers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">type</span> audit_action <span style="color:#66d9ef">as</span> enum (<span style="color:#e6db74">&#39;SNAPSHOT&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;INSERT&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;UPDATE_OLD&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;UPDATE_NEW&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;DELETE&#39;</span>
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">table</span> pg_dist_shard (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">table</span> regclass <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    shardid bigint <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    nodename text <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    action audit_action <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>    log_time <span style="color:#66d9ef">timestamp</span> <span style="color:#66d9ef">with</span> time <span style="color:#66d9ef">zone</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span>
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p>The trigger procedure would look like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">function</span> tg_audit_dist_shard() <span style="color:#66d9ef">returns</span> <span style="color:#66d9ef">trigger</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">language</span> plpgsql
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">as</span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">$$</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">DECLARE</span>
+</span></span><span style="display:flex;"><span>    audit_entry int :<span style="color:#f92672">=</span> nextval(<span style="color:#e6db74">&#39;audit_entry_seq&#39;</span>::regclass);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">BEGIN</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">IF</span> (TG_OP <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;INSERT&#39;</span>) <span style="color:#66d9ef">THEN</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> dist_shard_audit
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">VALUES</span> (now(), audit_entry, TG_OP::audit_action, TG_RELID::regclass, <span style="color:#66d9ef">NEW</span>.<span style="color:#f92672">*</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">RETURN</span> <span style="color:#66d9ef">NEW</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">ELSIF</span> (TG_OP <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;UPDATE&#39;</span>) <span style="color:#66d9ef">THEN</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> dist_shard_audit
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">VALUES</span> (now(), audit_entry, <span style="color:#e6db74">&#39;UPDATE_OLD&#39;</span>::audit_action, TG_RELID::regclass, <span style="color:#66d9ef">OLD</span>.<span style="color:#f92672">*</span>),
+</span></span><span style="display:flex;"><span>               (now(), audit_entry, <span style="color:#e6db74">&#39;UPDATE_NEW&#39;</span>::audit_action, TG_RELID::regclass, <span style="color:#66d9ef">NEW</span>.<span style="color:#f92672">*</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">ELSIF</span> (TG_OP <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;DELETE&#39;</span>) <span style="color:#66d9ef">THEN</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> dist_shard_audit
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">VALUES</span> (now(), audit_entry, TG_OP::audit_action, TG_RELID::regclass, <span style="color:#66d9ef">OLD</span>.<span style="color:#f92672">*</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">RETURN</span> <span style="color:#66d9ef">OLD</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">END</span> <span style="color:#66d9ef">IF</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">RETURN</span> <span style="color:#66d9ef">NULL</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">END</span>;
+</span></span></code></pre></div><p>This code uses a few special variables that are automatically defined for triggers:</p>
 <table>
 <thead>
 <tr>
@@ -191,24 +188,25 @@
 </tbody>
 </table>
 <p>After defining a trigger like the one above, we can wire it up with the following SQL:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TRIGGER</span> pg_dist_shard_audit
-<span style="color:#66d9ef">AFTER</span> <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">OR</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">OR</span> <span style="color:#66d9ef">DELETE</span> <span style="color:#66d9ef">ON</span> pg_dist_shard
-<span style="color:#66d9ef">FOR</span> <span style="color:#66d9ef">EACH</span> <span style="color:#66d9ef">ROW</span> <span style="color:#66d9ef">EXECUTE</span> <span style="color:#66d9ef">PROCEDURE</span> tg_audit_dist_shard();
-</code></pre></div><h1 id="conclusion">Conclusion</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TRIGGER</span> pg_dist_shard_audit
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">AFTER</span> <span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">OR</span> <span style="color:#66d9ef">UPDATE</span> <span style="color:#66d9ef">OR</span> <span style="color:#66d9ef">DELETE</span> <span style="color:#66d9ef">ON</span> pg_dist_shard
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FOR</span> <span style="color:#66d9ef">EACH</span> <span style="color:#66d9ef">ROW</span> <span style="color:#66d9ef">EXECUTE</span> <span style="color:#66d9ef">PROCEDURE</span> tg_audit_dist_shard();
+</span></span></code></pre></div><h1 id="conclusion">Conclusion</h1>
 <p>So, audit tables aren’t just useful for seeing who changed what in your database. They also make it easy to undo and/or redo changes that may cause issues downstream in your system. If that sounds appealing and you’re okay with the overhead of introducing a few triggers to the table you’re auditing, consider creating audit tables in your own system. They’re a great fit for metadata tables like these, which are small and contain key information.</p>
 <p>If you like nerding out about underrated Postgres features, @-me on Twitter @philosohacker, and if you like working on large data systems, we’re hiring! Check out our team and open roles.</p>
 <p>I’d like to thank John Krauss and Daniel Robinson for their essential feedback on earlier drafts of this post.</p>
 <hr>
-<p><a href="https://news.ycombinator.com/item?id=29003356"target="_blank">HN Discussion</a></p>
-</article><section class="article labels"><a class="tag" href=/tags/postgres/>postgres</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/optimizing-postgres-queries-at-scale/"><span class="li iconfont icon-article"></span>Optimizing Postgres Queries at Scale</a></p><p><a class="link" href="/post/million-indexes/"><span class="li iconfont icon-article"></span>Lessons from Deploying 1 million Postgres Indexes</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+<p><a href="https://news.ycombinator.com/item?id=29003356"target="_blank" rel="noopener noreferrer">HN Discussion</a></p>
+</article><section class="article labels"><a class="tag" href=/tags/postgres/>postgres</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/optimizing-postgres-queries-at-scale/"><span class="iconfont icon-article"></span>Optimizing Postgres Queries at Scale</a></p><p><a class="link" href="/post/million-indexes/"><span class="iconfont icon-article"></span>Lessons from Deploying 1 million Postgres Indexes</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -218,6 +216,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

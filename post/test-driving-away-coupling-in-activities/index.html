@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Test Driving away Coupling in Activities&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Test Driving away Coupling in Activities&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Test Driving away Coupling in Activities" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,11 +11,9 @@
   (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
 </script>
 
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">Test Driving away Coupling in Activities</h1><p class="article date">2017-04-09</p></section><article class="article markdown-body"><p><img  src="/images/broken-brick.jpg"
         alt/></p>
 <p><code>Activity</code>s and <code>Fragment</code>s, perhaps by <a href="/post/why-android-testing-is-so-hard-historical-edition/">some strange historical accidents</a>, have been seen as <em>the optimal</em> building blocks upon which we can build our Android applications for much of the time that Android has been around. Let&rsquo;s call this idea &ndash; the idea that <code>Activity</code>s and <code>Fragment</code>s are the best building blocks for our apps &ndash; &ldquo;android-centric&rdquo; architecture.</p>
@@ -28,44 +25,44 @@
 <p><img  src="/images/permission-denied-toast.png"
         alt="permission denied toast"/></p>
 <p>Here&rsquo;s the code that accomplishes this:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Override
-<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onRequestPermissionsResult(<span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span> requestCode,
-        @NonNull <span style="color:#fff;font-weight:bold">final</span> String[] permissions,
-        @NonNull <span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span>[] grantResults) {
-
-    <span style="color:#fff;font-weight:bold">if</span> (requestCode != REQUEST_LOCATION_PERMISSION) {
-        <span style="color:#fff;font-weight:bold">return</span>;
-    }
-
-    <span style="color:#fff;font-weight:bold">if</span> (permissions.<span style="color:#007f7f">length</span> == 1 &amp;&amp;
-            LOCATION_PERMISSION.<span style="color:#007f7f">equals</span>(permissions[0]) &amp;&amp;
-            grantResults[0] == PackageManager.<span style="color:#007f7f">PERMISSION_GRANTED</span>) {
-        <span style="color:#007f7f">// Permission has been granted.
-</span><span style="color:#007f7f"></span>        <span style="color:#fff;font-weight:bold">if</span> (mMapFragment != <span style="color:#fff;font-weight:bold">null</span>) {
-            mMapFragment.<span style="color:#007f7f">setMyLocationEnabled</span>(<span style="color:#fff;font-weight:bold">true</span>);
-        }
-    } <span style="color:#fff;font-weight:bold">else</span> {
-<span style="display:block;width:100%;background-color:#191919">        <span style="color:#007f7f">// Permission was denied. Display error message.
-</span></span><span style="display:block;width:100%;background-color:#191919"><span style="color:#007f7f"></span>        Toast.<span style="color:#007f7f">makeText</span>(<span style="color:#fff;font-weight:bold">this</span>, R.<span style="color:#007f7f">string</span>.<span style="color:#007f7f">map_permission_denied</span>,
-</span><span style="display:block;width:100%;background-color:#191919">                Toast.<span style="color:#007f7f">LENGTH_SHORT</span>).<span style="color:#007f7f">show</span>();
-</span>    }
-    <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onRequestPermissionsResult</span>(requestCode, permissions,
-            grantResults);
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@Override
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onRequestPermissionsResult(<span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span> requestCode,
+</span></span><span style="display:flex;"><span>        @NonNull <span style="color:#fff;font-weight:bold">final</span> String[] permissions,
+</span></span><span style="display:flex;"><span>        @NonNull <span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span>[] grantResults) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> (requestCode != REQUEST_LOCATION_PERMISSION) {
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> (permissions.<span style="color:#007f7f">length</span> == 1 &amp;&amp;
+</span></span><span style="display:flex;"><span>            LOCATION_PERMISSION.<span style="color:#007f7f">equals</span>(permissions[0]) &amp;&amp;
+</span></span><span style="display:flex;"><span>            grantResults[0] == PackageManager.<span style="color:#007f7f">PERMISSION_GRANTED</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#007f7f">// Permission has been granted.</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">if</span> (mMapFragment != <span style="color:#fff;font-weight:bold">null</span>) {
+</span></span><span style="display:flex;"><span>            mMapFragment.<span style="color:#007f7f">setMyLocationEnabled</span>(<span style="color:#fff;font-weight:bold">true</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    } <span style="color:#fff;font-weight:bold">else</span> {
+</span></span><span style="display:flex; background-color:#191919"><span>        <span style="color:#007f7f">// Permission was denied. Display error message.</span>
+</span></span><span style="display:flex; background-color:#191919"><span>        Toast.<span style="color:#007f7f">makeText</span>(<span style="color:#fff;font-weight:bold">this</span>, R.<span style="color:#007f7f">string</span>.<span style="color:#007f7f">map_permission_denied</span>,
+</span></span><span style="display:flex; background-color:#191919"><span>                Toast.<span style="color:#007f7f">LENGTH_SHORT</span>).<span style="color:#007f7f">show</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onRequestPermissionsResult</span>(requestCode, permissions,
+</span></span><span style="display:flex;"><span>            grantResults);
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <h3 id="the-test-code">The Test Code</h3>
 <p>Let&rsquo;s take a stab at testing this. Here&rsquo;s what that would look like:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
-<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> showsToastIfPermissionIsRejected()
-        <span style="color:#fff;font-weight:bold">throws</span> Exception {
-    MapActivity mapActivity = <span style="color:#fff;font-weight:bold">new</span> MapActivity();
-
-    mapActivity.<span style="color:#007f7f">onRequestPermissionsResult</span>(
-            MapActivity.<span style="color:#007f7f">REQUEST_LOCATION_PERMISSION</span>,
-            <span style="color:#fff;font-weight:bold">new</span> String[]{MapActivity.<span style="color:#007f7f">LOCATION_PERMISSION</span>}, <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">int</span>[]{
-                    PackageManager.<span style="color:#007f7f">PERMISSION_DENIED</span>});
-
-    assertToastDisplayed();
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@Test
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> showsToastIfPermissionIsRejected()
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">throws</span> Exception {
+</span></span><span style="display:flex;"><span>    MapActivity mapActivity = <span style="color:#fff;font-weight:bold">new</span> MapActivity();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    mapActivity.<span style="color:#007f7f">onRequestPermissionsResult</span>(
+</span></span><span style="display:flex;"><span>            MapActivity.<span style="color:#007f7f">REQUEST_LOCATION_PERMISSION</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#fff;font-weight:bold">new</span> String[]{MapActivity.<span style="color:#007f7f">LOCATION_PERMISSION</span>}, <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">int</span>[]{
+</span></span><span style="display:flex;"><span>                    PackageManager.<span style="color:#007f7f">PERMISSION_DENIED</span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    assertToastDisplayed();
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>Hopefully, you&rsquo;re wondering what the implementation of <code>assertToastDisplayed()</code> looks like. Here&rsquo;s the thing: there isn&rsquo;t a straight forward implementation of that method. In order to implement without refactoring our code, we&rsquo;d need to use a combination of roboelectric and powermock.</p>
 <p>However, since we are trying to listen to our tests and <a href="/post/why-i-dont-use-roboletric/">change the way we write code, rather than change the way we write tests</a>, we are going to stop for a moment and think about what this test is trying to tell us:</p>
 <blockquote>
@@ -73,70 +70,70 @@
 </blockquote>
 <p>This coupling is what drives us to use roboelectric to give us mocked android behavior and  powermock to mock the static <code>Toast.makeText</code> method. Instead, let&rsquo;s listen to our test and remove the coupling.</p>
 <p>To guide our refactoring, let&rsquo;s write our test first. This will ensure that our <em>new</em> classes are loosely coupled. We have to create a new class in this particular case in order to avoid Roboelectric, but ordinarily, we could just refactor already existing classes to reduce coupling.</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Test
-<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displaysErrorWhenPermissionRejected() <span style="color:#fff;font-weight:bold">throws</span> Exception {
-
-    OnPermissionResultListener onPermissionResultListener =
-            <span style="color:#fff;font-weight:bold">new</span> OnPermissionResultListener(mPermittedView);
-
-    onPermissionResultListener.<span style="color:#007f7f">onPermissionResult</span>(
-            MapActivity.<span style="color:#007f7f">REQUEST_LOCATION_PERMISSION</span>,
-            <span style="color:#fff;font-weight:bold">new</span> String[]{MapActivity.<span style="color:#007f7f">LOCATION_PERMISSION</span>},
-            <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">int</span>[]{PackageManager.<span style="color:#007f7f">PERMISSION_DENIED</span>});
-
-    verify(mPermittedView).<span style="color:#007f7f">displayPermissionDenied</span>();
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@Test
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displaysErrorWhenPermissionRejected() <span style="color:#fff;font-weight:bold">throws</span> Exception {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    OnPermissionResultListener onPermissionResultListener =
+</span></span><span style="display:flex;"><span>            <span style="color:#fff;font-weight:bold">new</span> OnPermissionResultListener(mPermittedView);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    onPermissionResultListener.<span style="color:#007f7f">onPermissionResult</span>(
+</span></span><span style="display:flex;"><span>            MapActivity.<span style="color:#007f7f">REQUEST_LOCATION_PERMISSION</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#fff;font-weight:bold">new</span> String[]{MapActivity.<span style="color:#007f7f">LOCATION_PERMISSION</span>},
+</span></span><span style="display:flex;"><span>            <span style="color:#fff;font-weight:bold">new</span> <span style="color:#fff;font-weight:bold">int</span>[]{PackageManager.<span style="color:#007f7f">PERMISSION_DENIED</span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    verify(mPermittedView).<span style="color:#007f7f">displayPermissionDenied</span>();
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>We&rsquo;ve introduced a <code>OnPermissionResultListener</code> whose job is just to handle the result of request permission from a user. Here&rsquo;s the code for that:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">void</span> onPermissionResult(<span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span> requestCode,
-            <span style="color:#fff;font-weight:bold">final</span> String[] permissions, <span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span>[] grantResults) {
-    <span style="color:#fff;font-weight:bold">if</span> (requestCode != MapActivity.<span style="color:#007f7f">REQUEST_LOCATION_PERMISSION</span>) {
-        <span style="color:#fff;font-weight:bold">return</span>;
-    }
-
-    <span style="color:#fff;font-weight:bold">if</span> (permissions.<span style="color:#007f7f">length</span> == 1 &amp;&amp;
-            MapActivity.<span style="color:#007f7f">LOCATION_PERMISSION</span>.<span style="color:#007f7f">equals</span>(permissions[0]) &amp;&amp;
-            grantResults[0] == PackageManager.<span style="color:#007f7f">PERMISSION_GRANTED</span>) {
-        <span style="color:#007f7f">// Permission has been granted.
-</span><span style="display:block;width:100%;background-color:#191919"><span style="color:#007f7f"></span>        mPermittedView.<span style="color:#007f7f">displayPermittedView</span>();
-</span>
-    } <span style="color:#fff;font-weight:bold">else</span> {
-        <span style="color:#007f7f">// Permission was denied. Display error message.
-</span><span style="display:block;width:100%;background-color:#191919"><span style="color:#007f7f"></span>        mPermittedView.<span style="color:#007f7f">displayPermissionDenied</span>();
-</span>    }
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">void</span> onPermissionResult(<span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span> requestCode,
+</span></span><span style="display:flex;"><span>            <span style="color:#fff;font-weight:bold">final</span> String[] permissions, <span style="color:#fff;font-weight:bold">final</span> <span style="color:#fff;font-weight:bold">int</span>[] grantResults) {
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> (requestCode != MapActivity.<span style="color:#007f7f">REQUEST_LOCATION_PERMISSION</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> (permissions.<span style="color:#007f7f">length</span> == 1 &amp;&amp;
+</span></span><span style="display:flex;"><span>            MapActivity.<span style="color:#007f7f">LOCATION_PERMISSION</span>.<span style="color:#007f7f">equals</span>(permissions[0]) &amp;&amp;
+</span></span><span style="display:flex;"><span>            grantResults[0] == PackageManager.<span style="color:#007f7f">PERMISSION_GRANTED</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#007f7f">// Permission has been granted.</span>
+</span></span><span style="display:flex; background-color:#191919"><span>        mPermittedView.<span style="color:#007f7f">displayPermittedView</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    } <span style="color:#fff;font-weight:bold">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#007f7f">// Permission was denied. Display error message.</span>
+</span></span><span style="display:flex; background-color:#191919"><span>        mPermittedView.<span style="color:#007f7f">displayPermissionDenied</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>The calls to <code>MapFragment</code> and <code>Toast</code> have been replaced with method calls on the <code>PermittedView</code>, an object that gets passed in through the constructor. <code>PermittedView</code> is an interface:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">interface</span> PermittedView {
-    <span style="color:#fff;font-weight:bold">void</span> displayPermissionDenied();
-
-    <span style="color:#fff;font-weight:bold">void</span> displayPermittedView();
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">interface</span> PermittedView {
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">void</span> displayPermissionDenied();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">void</span> displayPermittedView();
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>And it gets implemented by the <code>MapActivity</code>:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> MapActivity <span style="color:#fff;font-weight:bold">extends</span> BaseActivity
-<span style="display:block;width:100%;background-color:#191919">        <span style="color:#fff;font-weight:bold">implements</span> SlideableInfoFragment.<span style="color:#007f7f">Callback</span>, MapFragment.<span style="color:#007f7f">Callbacks</span>,
-</span>        ActivityCompat.<span style="color:#007f7f">OnRequestPermissionsResultCallback</span>,
-<span style="display:block;width:100%;background-color:#191919">        OnPermissionResultListener.<span style="color:#007f7f">PermittedView</span> {
-</span>    @Override
-    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displayPermissionDenied() {
-        Toast.<span style="color:#007f7f">makeText</span>(MapActivity.<span style="color:#007f7f">this</span>, R.<span style="color:#007f7f">string</span>.<span style="color:#007f7f">map_permission_denied</span>,
-                Toast.<span style="color:#007f7f">LENGTH_SHORT</span>).<span style="color:#007f7f">show</span>();
-    }
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> MapActivity <span style="color:#fff;font-weight:bold">extends</span> BaseActivity
+</span></span><span style="display:flex; background-color:#191919"><span>        <span style="color:#fff;font-weight:bold">implements</span> SlideableInfoFragment.<span style="color:#007f7f">Callback</span>, MapFragment.<span style="color:#007f7f">Callbacks</span>,
+</span></span><span style="display:flex;"><span>        ActivityCompat.<span style="color:#007f7f">OnRequestPermissionsResultCallback</span>,
+</span></span><span style="display:flex; background-color:#191919"><span>        OnPermissionResultListener.<span style="color:#007f7f">PermittedView</span> {
+</span></span><span style="display:flex;"><span>    @Override
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displayPermissionDenied() {
+</span></span><span style="display:flex;"><span>        Toast.<span style="color:#007f7f">makeText</span>(MapActivity.<span style="color:#007f7f">this</span>, R.<span style="color:#007f7f">string</span>.<span style="color:#007f7f">map_permission_denied</span>,
+</span></span><span style="display:flex;"><span>                Toast.<span style="color:#007f7f">LENGTH_SHORT</span>).<span style="color:#007f7f">show</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>This may not the <em>best</em> solution, but it gets us to a point where we can test things. This <em>required</em> that <code>OnPermissionResultListener</code> be loosely coupled with its <code>PermittedView</code>. Loose coupling == definitely an improvement.</p>
 <h3 id="who-cares">Who cares?</h3>
 <p>At this point, some readers might be skeptical. &ldquo;Is this definitely an improvement?,&rdquo; they may wonder to themselves. Here are two reasons why this <em>design</em> is better.</p>
 <p>(Neither reason I give, you&rsquo;ll notice is &ldquo;the design is better because its testable.&rdquo; That would be circular reasoning.)</p>
 <h4 id="easier-changes">Easier Changes</h4>
-<p>First, its going to be easier to change this code now that it consists of loosely coupled components, and here&rsquo;s the kicker: the code that we&rsquo;ve just tested from the Google I/O app <em>actually did change</em>, and with the tests that we have in place, making those changes will be easier. The code I tested was from <a href="https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/map/MapActivity.java"target="_blank">an older commit</a>. Later on, the folks working on the I/O app decided to replace the <code>Toast</code> with a <code>Snackbar</code>:</p>
+<p>First, its going to be easier to change this code now that it consists of loosely coupled components, and here&rsquo;s the kicker: the code that we&rsquo;ve just tested from the Google I/O app <em>actually did change</em>, and with the tests that we have in place, making those changes will be easier. The code I tested was from <a href="https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/map/MapActivity.java"target="_blank" rel="noopener noreferrer">an older commit</a>. Later on, the folks working on the I/O app decided to replace the <code>Toast</code> with a <code>Snackbar</code>:</p>
 <p><img  src="/images/permission-denied-snackbar.png"
         alt="snackbar permission rejected"/></p>
 <p>Its a small change, but because we&rsquo;ve separated <code>OnPermissionResultListener</code> from <code>PermittedView</code>, we can make the change on the <code>MapActivity</code>s implementation of <code>PermittedView</code> without having to think at all about the <code>OnPermissionResultListener</code>.</p>
 <p>Here&rsquo;s what that change would have looked like, using their little <code>PermissionUtils</code> class they wrote for displaying <code>SnackBar</code>s.</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">@Override
-<span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displayPermissionDenied() {
-    PermissionsUtils.<span style="color:#007f7f">displayConditionalPermissionDenialSnackbar</span>(<span style="color:#fff;font-weight:bold">this</span>,
-            R.<span style="color:#007f7f">string</span>.<span style="color:#007f7f">map_permission_denied</span>, <span style="color:#fff;font-weight:bold">new</span> String[]{LOCATION_PERMISSION},
-            REQUEST_LOCATION_PERMISSION);
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@Override
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> displayPermissionDenied() {
+</span></span><span style="display:flex;"><span>    PermissionsUtils.<span style="color:#007f7f">displayConditionalPermissionDenialSnackbar</span>(<span style="color:#fff;font-weight:bold">this</span>,
+</span></span><span style="display:flex;"><span>            R.<span style="color:#007f7f">string</span>.<span style="color:#007f7f">map_permission_denied</span>, <span style="color:#fff;font-weight:bold">new</span> String[]{LOCATION_PERMISSION},
+</span></span><span style="display:flex;"><span>            REQUEST_LOCATION_PERMISSION);
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>Again, notice that we can make this change without thinking about the <code>OnPermissionResultListener</code> at all. This is actually exactly what Larry Constantine was talking about when he first defined the concept of coupling back in the 70s:</p>
 <blockquote>
 <p>what we are striving for is loosely coupled systems…in which one can study (or debug, or maintain) any one module without having to know very much about any other modules in the system</p>
@@ -152,7 +149,7 @@
 <blockquote>
 <p>-Kent Beck, TDD By Example, pg 7.</p>
 </blockquote>
-<p>If this is true, when we remove coupling, we will often see opportunities to reduce duplication. Indeed, this is precisely what we find in this case. It turns out that there is  another classes whose <code>onRequestPermissionsResult</code> is nearly identical to the one in <code>MapActivity</code>: <a href="https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/welcome/AccountFragment.java#L139"target="_blank"><code>AccountFragment</code></a>. Our tests drove us to create two classes <code>OnPermissionResultListener</code> and <code>PermittedView</code> that &ndash; without much modification &ndash; can be reused in these other classes.</p>
+<p>If this is true, when we remove coupling, we will often see opportunities to reduce duplication. Indeed, this is precisely what we find in this case. It turns out that there is  another classes whose <code>onRequestPermissionsResult</code> is nearly identical to the one in <code>MapActivity</code>: <a href="https://github.com/google/iosched/blob/bd31a838ce4ddc123c71025c859959517c7ae178/android/src/main/java/com/google/samples/apps/iosched/welcome/AccountFragment.java#L139"target="_blank" rel="noopener noreferrer"><code>AccountFragment</code></a>. Our tests drove us to create two classes <code>OnPermissionResultListener</code> and <code>PermittedView</code> that &ndash; without much modification &ndash; can be reused in these other classes.</p>
 <h3 id="conclusion">Conclusion</h3>
 <p>So, when we have a hard time testing our <code>Activity</code>s and <code>Fragment</code>s, its often because our tests are trying to tell us that our code is tightly coupled. The test&rsquo;s warning about coupling often come in the form of an inability to make an assertion against the code we&rsquo;re trying to test.<sup>1</sup></p>
 <p>When we listen to our tests, instead of changing them by using Roboelectric our powermock, we&rsquo;re lead to change in our code in a way that makes it less coupled, which makes it easier to make changes and opens up opportunities to reduce duplication.</p>
@@ -160,10 +157,11 @@
 <ol>
 <li>It could also show up as an inability to get your target code into the right state for testing. That&rsquo;s what we saw <a href="">in this post</a>, for example.</li>
 </ol>
-</article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a><a class="tag" href=/tags/architecture/>architecture</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/android-testing-calisthenics-domain-objects/"><span class="li iconfont icon-article"></span>Android Testing Calisthenics: Domain Objects</a></p><p><a class="link" href="/post/why-cryptography-for-android-developers/"><span class="li iconfont icon-article"></span>Why Cryptography?</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+</article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a><a class="tag" href=/tags/architecture/>architecture</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/android-testing-calisthenics-domain-objects/"><span class="iconfont icon-article"></span>Android Testing Calisthenics: Domain Objects</a></p><p><a class="link" href="/post/why-cryptography-for-android-developers/"><span class="iconfont icon-article"></span>Why Cryptography?</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -182,12 +180,12 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -197,6 +195,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

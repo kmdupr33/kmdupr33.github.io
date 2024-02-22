@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>The Cassandra Project: Towards Better Product Management via Better Forecasting&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>The Cassandra Project: Towards Better Product Management via Better Forecasting&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="The Cassandra Project: Towards Better Product Management via Better Forecasting" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,14 +11,12 @@
   (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
 </script>
 
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">The Cassandra Project: Towards Better Product Management via Better Forecasting</h1><p class="article date">2019-03-30</p></section><article class="article markdown-body"><p><img  src="/images/cassandra.jpeg"
         alt/></p>
-<p>Product managers have to make bets on the future. If you think for a few seconds about the types of risk that product managers are charged with managing, this becomes obvious. Product managers &mdash; <a href="https://svpg.com/four-big-risks/"target="_blank">as Marty Cagan points out</a> &mdash; must manage risk around:</p>
+<p>Product managers have to make bets on the future. If you think for a few seconds about the types of risk that product managers are charged with managing, this becomes obvious. Product managers &mdash; <a href="https://svpg.com/four-big-risks/"target="_blank" rel="noopener noreferrer">as Marty Cagan points out</a> &mdash; must manage risk around:</p>
 <blockquote>
 <ol>
 <li>value risk (whether customers will buy it or users will choose to use it)</li>
@@ -35,10 +32,10 @@
 <p>Cassandra (depicted above) was a seer from Greek mythology who saw the burning of Troy before it happened. Good PMs should work towards Cassandrian-like insight into the future. Cassandrian insight helps companies avoid &ldquo;burning Troy&rsquo;s,&rdquo; the avoidance of the disaster of wasted resources on a product doomed to failure from the start.</p>
 <p>We can&rsquo;t become better forecasters without practice and feedback on our forecasts. So, the Cassandra project is an attempt to measure the quality of product management related forecasts over time. Even if the only reasonable conclusion after measuring forecasts over time is that PM&rsquo;s don&rsquo;t have much insight into the future, that conclusion would bring some appropriate humility to <a href="/post/big-disruption-review/#heresy-2-product-managers-often-suck">a role that is plagued by arrogance</a>.</p>
 <h3 id="an-example">An Example</h3>
-<p>So how will this work? In his research on forecasting, Tetlock uses Brier scores to assess the quality of forecasts. We can do the same thing. Calculating a brier score is fairly trivial, so I&rsquo;m not going to get into the details here. (<a href="https://en.wikipedia.org/wiki/Brier_score"target="_blank">The wikipedia article on Brier scores</a> is helpful.)</p>
+<p>So how will this work? In his research on forecasting, Tetlock uses Brier scores to assess the quality of forecasts. We can do the same thing. Calculating a brier score is fairly trivial, so I&rsquo;m not going to get into the details here. (<a href="https://en.wikipedia.org/wiki/Brier_score"target="_blank" rel="noopener noreferrer">The wikipedia article on Brier scores</a> is helpful.)</p>
 <p>Metric for measuring forecasts? Check. The next thing we need are forecasts we can make fairly regularly.</p>
-<p>Revenue forecasts tied to specific products at public companies are a good candidate. Apple, for example, releases revenue tied to the iPhone <em>every quarter</em> in their <a href="https://s22.q4cdn.com/396847794/files/doc_financials/quarterly/2019/_10-Q-Q1-2019-%28As-Filed%29.pdf"target="_blank">10-Q</a>. New features from apple products are very public, so we can try to guess at how the new features and iterations of the iPhone will impact Apple&rsquo;s revenue for a particular product.</p>
-<p>We already do this sort of thing. We watch WWDC events. We <a href="https://9to5mac.com/2018/10/19/touch-bar-a-gimmick/"target="_blank">comment on how great/dumb the touch bar is on the new macbook</a>. We guess at how that&rsquo;ll affect macbook sales.</p>
+<p>Revenue forecasts tied to specific products at public companies are a good candidate. Apple, for example, releases revenue tied to the iPhone <em>every quarter</em> in their <a href="https://s22.q4cdn.com/396847794/files/doc_financials/quarterly/2019/_10-Q-Q1-2019-%28As-Filed%29.pdf"target="_blank" rel="noopener noreferrer">10-Q</a>. New features from apple products are very public, so we can try to guess at how the new features and iterations of the iPhone will impact Apple&rsquo;s revenue for a particular product.</p>
+<p>We already do this sort of thing. We watch WWDC events. We <a href="https://9to5mac.com/2018/10/19/touch-bar-a-gimmick/"target="_blank" rel="noopener noreferrer">comment on how great/dumb the touch bar is on the new macbook</a>. We guess at how that&rsquo;ll affect macbook sales.</p>
 <p>But with Brier scores and a public record of forecasts, we can be more objective about how good our forecasts are. We can ask, for example:</p>
 <blockquote>
 <p>How likely is it that Apple&rsquo;s iphone-related revenue will grow faster than last quarter?</p>
@@ -50,14 +47,14 @@
 <p>And the following quarter we can see how good our forecast was. Let&rsquo;s say iphone-related revenue did grow faster. In that case, we&rsquo;d have a Brier score of: .25. Brier scores are like golf scores: lower is better. God-like forecasting skill means you&rsquo;d get a brier score of 0.</p>
 <h3 id="how-to-participate">How to participate</h3>
 <p>If you just want to see how I&rsquo;m doing, use <a href="#forecasts">this link</a>.</p>
-<p>However, this&rsquo;ll be more interesting and useful if I don&rsquo;t have to think of all the questions and if I&rsquo;m not the only one playing. So, I&rsquo;d love it others participated. For now, the only way to do this will be via github. You can make your own forecasts and propose questions by <a href="https://github.com/kmdupr33/PhilHackerBlogSource/edit/master/content/post/cassandra-project.md"target="_blank">submitting a PR on github</a>. You&rsquo;re forecasts will show once the pr has been approved and merged.</p>
+<p>However, this&rsquo;ll be more interesting and useful if I don&rsquo;t have to think of all the questions and if I&rsquo;m not the only one playing. So, I&rsquo;d love it others participated. For now, the only way to do this will be via github. You can make your own forecasts and propose questions by <a href="https://github.com/kmdupr33/PhilHackerBlogSource/edit/master/content/post/cassandra-project.md"target="_blank" rel="noopener noreferrer">submitting a PR on github</a>. You&rsquo;re forecasts will show once the pr has been approved and merged.</p>
 <p>I&rsquo;ll consider building a more accessible and robust way of participating if there&rsquo;s enough interest.</p>
 <hr>
 <h3 id="forecasts">Forecasts</h3>
 <hr>
 <h4 id="will-the-percent-change-in-iphone-revenue-growth-from-q1-2018-to-q1-2019-be-greater-than-the-percent-change-in-revenue-growth-from-q4-2017-to-q4-2018">Will the percent change in iPhone revenue growth from Q1 2018 to Q1 2019 be greater than the percent change in revenue growth from Q4 2017 to Q4 2018?</h4>
 <p>Looking at Apple&rsquo;s 10-Qs, it seems that they are fond of comparing iPhone sales during the quarter to sales during that same quarter in the previous year. (Guessing this is because sales vary according to seasons). That&rsquo;s why the above question is about changes in change percentage between the reported quarter and that same quarter the previous year.</p>
-<p>According to <a href="https://d18rn0p25nwr6d.cloudfront.net/CIK-0000320193/8f91c57f-9dbf-48c4-889c-792e2acc05d4.pdf"target="_blank">the most recent 10-Q</a>, the percent change in revenue growth from Q4 2017 to Q4 2018 was -15%.</p>
+<p>According to <a href="https://d18rn0p25nwr6d.cloudfront.net/CIK-0000320193/8f91c57f-9dbf-48c4-889c-792e2acc05d4.pdf"target="_blank" rel="noopener noreferrer">the most recent 10-Q</a>, the percent change in revenue growth from Q4 2017 to Q4 2018 was -15%.</p>
 <table>
 <thead>
 <tr>
@@ -79,11 +76,12 @@
 </tr>
 </tbody>
 </table>
-<p>10-Qs are <a href="https://investor.apple.com/investor-relations/sec-filings/default.aspx"target="_blank">here</a>.</p>
-</article><section class="article labels"><a class="tag" href=/tags/product-managment/>product managment</a><a class="tag" href=/tags/startups/>startups</a><a class="tag" href=/tags/business/>business</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/apple-q1-revenue-forecast/"><span class="li iconfont icon-article"></span>iPhone Q1 Revenue Forecast</a></p><p><a class="link" href="/post/big-disruption-review/"><span class="li iconfont icon-article"></span>Hilarious Heresy: A Review of Jessica Powell’s "The Big Disruption"</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<p>10-Qs are <a href="https://investor.apple.com/investor-relations/sec-filings/default.aspx"target="_blank" rel="noopener noreferrer">here</a>.</p>
+</article><section class="article labels"><a class="tag" href=/tags/product-managment/>product managment</a><a class="tag" href=/tags/startups/>startups</a><a class="tag" href=/tags/business/>business</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/apple-q1-revenue-forecast/"><span class="iconfont icon-article"></span>iPhone Q1 Revenue Forecast</a></p><p><a class="link" href="/post/big-disruption-review/"><span class="iconfont icon-article"></span>Hilarious Heresy: A Review of Jessica Powell’s "The Big Disruption"</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -102,12 +100,12 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -117,6 +115,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

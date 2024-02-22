@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Integration Tests in Go&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Integration Tests in Go&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Integration Tests in Go" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,14 +11,12 @@
   (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
 </script>
 
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">Integration Tests in Go</h1><p class="article date">2016-01-22</p></section><article class="article markdown-body"><p>Although Go has support for testing built in to its toolchain, certain kinds of testing can be a bit tricky. For example, it may not be immediately obvious how you would go about writing and running <em>integration tests</em> in go. This post contains info on how to write and run integration tests for your go code.</p>
 <h3 id="clarifying-terms">Clarifying Terms</h3>
-<p>As <a href="http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/"target="_blank">I&rsquo;ve said before</a>, many terms in software are vague or ambiguous. So, before I get into how to write and run integration tests, let&rsquo;s make sure we&rsquo;re referring to the same thing when we use the word &ldquo;integration&rdquo; test. Sometimes it seems like people use &ldquo;integration test&rdquo; and &ldquo;acceptance test&rdquo; interchangeably. I do think, however, that there&rsquo;s a useful distinction to be made between these types of tests, a distinction that&rsquo;s made nicely by Steve Freeman and Nat Pryce in the following quotations:</p>
+<p>As <a href="http://www.philosophicalhacker.com/2016/01/13/should-we-use-mocking-libraries-for-go-testing/"target="_blank" rel="noopener noreferrer">I&rsquo;ve said before</a>, many terms in software are vague or ambiguous. So, before I get into how to write and run integration tests, let&rsquo;s make sure we&rsquo;re referring to the same thing when we use the word &ldquo;integration&rdquo; test. Sometimes it seems like people use &ldquo;integration test&rdquo; and &ldquo;acceptance test&rdquo; interchangeably. I do think, however, that there&rsquo;s a useful distinction to be made between these types of tests, a distinction that&rsquo;s made nicely by Steve Freeman and Nat Pryce in the following quotations:</p>
 <blockquote>
 <p>Acceptance: Does the whole system work?</p>
 </blockquote>
@@ -36,33 +33,33 @@
 <p>Obviously, in order to perform this kind of integration testing, your go code needs to be able to communicate with the database. How can we ensure that there is a database available for our test code to talk to?</p>
 <h4 id="a-naive-solution">A naive solution</h4>
 <p>The <code>TestMain()</code> function is a great way to perform the extra setup and teardown of your test database. When there&rsquo;s a <code>TestMain()</code> function in any of your test files, that function is called directly by <code>go test</code>. The function can then perform any necessary setup, run the tests, and then teardown whatever was needed to support the tests:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> TestMain(m *testing.M) {
-    setupDatabase()
-    result := m.Run()
-    teardownDatabase()
-    os.Exit(result)
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">func</span> TestMain(m *testing.M) {
+</span></span><span style="display:flex;"><span>    setupDatabase()
+</span></span><span style="display:flex;"><span>    result := m.Run()
+</span></span><span style="display:flex;"><span>    teardownDatabase()
+</span></span><span style="display:flex;"><span>    os.Exit(result)
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>The problem with using <code>TestMain</code> this way, however, is that integration tests are typically much slower than unit tests, so running our tests this way will make invocations of <code>go test</code> take much longer. If we&rsquo;re working on a part of the code that has nothing to do with integrating with 3rd party code, this can be pretty frustrating.</p>
 <h4 id="a-less-naive-solution">A less naive solution</h4>
 <p>Fortunately, the testing package itself suggests a solution to this problem. The testing package actually has a function called <code>testing.Short()</code>. This function returns true if the <code>-short</code> flag has been passed into the <code>go test</code> command. Tests can check the value of <code>Short()</code> to determine whether they should execute code and/or tests that will take a long time. This flag could be leveraged to determine whether the tests should spin up external services for integration tests:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> TestMain(m *testing.M) {
-<span style="display:block;width:100%;background-color:#191919">    flag.Parse()
-</span><span style="display:block;width:100%;background-color:#191919">    <span style="color:#fff;font-weight:bold">if</span> !testing.Short() {
-</span><span style="display:block;width:100%;background-color:#191919">        setupDatabase()    
-</span><span style="display:block;width:100%;background-color:#191919">    }
-</span>    result := m.Run()
-<span style="display:block;width:100%;background-color:#191919">    <span style="color:#fff;font-weight:bold">if</span> !testing.Short() {
-</span><span style="display:block;width:100%;background-color:#191919">        teardownDatabase()        
-</span><span style="display:block;width:100%;background-color:#191919">    }    
-</span>    os.Exit(result)
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">func</span> TestMain(m *testing.M) {
+</span></span><span style="display:flex; background-color:#191919"><span>    flag.Parse()
+</span></span><span style="display:flex; background-color:#191919"><span>    <span style="color:#fff;font-weight:bold">if</span> !testing.Short() {
+</span></span><span style="display:flex; background-color:#191919"><span>        setupDatabase()    
+</span></span><span style="display:flex; background-color:#191919"><span>    }
+</span></span><span style="display:flex;"><span>    result := m.Run()
+</span></span><span style="display:flex; background-color:#191919"><span>    <span style="color:#fff;font-weight:bold">if</span> !testing.Short() {
+</span></span><span style="display:flex; background-color:#191919"><span>        teardownDatabase()        
+</span></span><span style="display:flex; background-color:#191919"><span>    }    
+</span></span><span style="display:flex;"><span>    os.Exit(result)
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>The actual integration tests can check the value of <code>testing.Short()</code> to see if they should execute:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">func</span> TestDatabaseGet(t *testing.T) {
-    <span style="color:#fff;font-weight:bold">if</span> testing.Short() {
-        t.Skip()
-    }
-    <span style="color:#007f7f">//...
-</span><span style="color:#007f7f"></span>}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">func</span> TestDatabaseGet(t *testing.T) {
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> testing.Short() {
+</span></span><span style="display:flex;"><span>        t.Skip()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>}</span></span></code></pre></div>
 <h4 id="a-scalable-solution">A scalable solution</h4>
 <p>This solution is definitely better than just always setting up and tearing down a database in the <code>TestMain()</code> function, but it has a few disadvantages:</p>
 <ol>
@@ -78,28 +75,28 @@
 <p>The second problem with using the <code>-short</code> flag is that it doesn&rsquo;t scale well to multiple types of integration tests. Suppose, for example, that our code utilized a database and a message queue. We can ensure that both our database and message queues are setup if we&rsquo;re doing both types of integration tests, but if we just want to run the integration tests for our database and not for our message queue, we are again forced to wait longer for our tests to run.</p>
 <p>The solution to both of these problems is to use custom flags. You can pass custom flags into the <code>go test</code> command and handle them however you like within your tests. We can define a flag for database integration tests and a flag for message queue tests and only run the respective integration tests when those flags are passed in. For example, <code>go test -database</code> will only run the database-related integration tests and: <code>go test -queue</code> will only run the message-queue-related integration tests.</p>
 <p>Briefly, here&rsquo;s how you could support that behavior in <code>TestMain()</code>:</p>
-<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#fff;font-weight:bold">var</span> (
-    database = flag.Bool(<span style="color:#0ff;font-weight:bold">&#34;database&#34;</span>, <span style="color:#fff;font-weight:bold">false</span>, <span style="color:#0ff;font-weight:bold">&#34;run database integration tests&#34;</span>)    
-    messageQueue = flag.Bool(<span style="color:#0ff;font-weight:bold">&#34;messageQueue&#34;</span>, <span style="color:#fff;font-weight:bold">false</span>, <span style="color:#0ff;font-weight:bold">&#34;run message queue integration tests&#34;</span>)
-)
-
-<span style="color:#fff;font-weight:bold">func</span> TestMain(m *testing.M) {
-    flag.Parse()
-    <span style="color:#fff;font-weight:bold">if</span> *database {
-        setupDatabase()    
-    }
-    <span style="color:#fff;font-weight:bold">if</span> *messageQueue {
-        setupMessageQueue()
-    }
-    result := m.Run()
-    <span style="color:#fff;font-weight:bold">if</span> *database {
-        teardownDatabase()        
-    }
-    <span style="color:#fff;font-weight:bold">if</span> *messageQueue {
-        teardownMessageQueue()
-    }    
-    os.Exit(result)
-}</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">var</span> (
+</span></span><span style="display:flex;"><span>    database = flag.Bool(<span style="color:#0ff;font-weight:bold">&#34;database&#34;</span>, <span style="color:#fff;font-weight:bold">false</span>, <span style="color:#0ff;font-weight:bold">&#34;run database integration tests&#34;</span>)    
+</span></span><span style="display:flex;"><span>    messageQueue = flag.Bool(<span style="color:#0ff;font-weight:bold">&#34;messageQueue&#34;</span>, <span style="color:#fff;font-weight:bold">false</span>, <span style="color:#0ff;font-weight:bold">&#34;run message queue integration tests&#34;</span>)
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">func</span> TestMain(m *testing.M) {
+</span></span><span style="display:flex;"><span>    flag.Parse()
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> *database {
+</span></span><span style="display:flex;"><span>        setupDatabase()    
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> *messageQueue {
+</span></span><span style="display:flex;"><span>        setupMessageQueue()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    result := m.Run()
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> *database {
+</span></span><span style="display:flex;"><span>        teardownDatabase()        
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> *messageQueue {
+</span></span><span style="display:flex;"><span>        teardownMessageQueue()
+</span></span><span style="display:flex;"><span>    }    
+</span></span><span style="display:flex;"><span>    os.Exit(result)
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>Of course, your database and message queue integration tests should also check for these flags and skip if they are not set to true.</p>
 <h3 id="conclusion">Conclusion</h3>
 <p>We&rsquo;ve just seen three ways of writing and running integration tests in go.</p>
@@ -108,13 +105,14 @@
 <p>I believe that the last solution we explored is a very scalable way of handling integration testing in go. It gives us fine-grained control over which integration tests we want to run and doesn&rsquo;t run any slow integration tests by default. This allows us to run our tests as quickly as possible. I also suspect that there&rsquo;s another advantage to using custom flags for your integration testing: it makes acceptance testing easier, but this something that I&rsquo;ll have to explore another time.</p>
 <h4 id="notes">Notes:</h4>
 <ol>
-<li><a href="http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627"target="_blank">Growing Object Oriented Software Guided by Tests</a>, pg 40-41</li>
+<li><a href="http://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627"target="_blank" rel="noopener noreferrer">Growing Object Oriented Software Guided by Tests</a>, pg 40-41</li>
 <li>Ibid., pg 41-42</li>
 </ol>
-</article><section class="article labels"><a class="tag" href=/tags/go/>go</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/table-driven-tests-with-gomock/"><span class="li iconfont icon-article"></span>Table-driven tests with Gomock</a></p><p><a class="link" href="/post/getting-started-with-gomock/"><span class="li iconfont icon-article"></span>Getting started with Gomock</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+</article><section class="article labels"><a class="tag" href=/tags/go/>go</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/table-driven-tests-with-gomock/"><span class="iconfont icon-article"></span>Table-driven tests with Gomock</a></p><p><a class="link" href="/post/getting-started-with-gomock/"><span class="iconfont icon-article"></span>Getting started with Gomock</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -133,12 +131,12 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -148,6 +146,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

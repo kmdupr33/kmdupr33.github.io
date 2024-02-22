@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Postgres SQL Lessons From Advent of Code Challenges&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Postgres SQL Lessons From Advent of Code Challenges&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Postgres SQL Lessons From Advent of Code Challenges" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -14,44 +13,42 @@
 
 
 <link rel="canonical" href="https://heap.io/blog/lessons-from-completing-a-few-advent-of-code-problems-in-postgres-sql"/>
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">Postgres SQL Lessons From Advent of Code Challenges</h1><p class="article date">2022-02-17</p></section><article class="article markdown-body"><hr>
-<p><strong><em>Note: This post was originally published on <a href="https://heap.io/blog/engineering/building-better-code-review-at-heap"target="_blank">heap&rsquo;s blog</a> and was co-written with <a href="https://www.linkedin.com/in/amanda-murphy-17940835/details/experience/"target="_blank">Amanda Murphy</a></em></strong></p>
+<p><strong><em>Note: This post was originally published on <a href="https://heap.io/blog/engineering/building-better-code-review-at-heap"target="_blank" rel="noopener noreferrer">heap&rsquo;s blog</a> and was co-written with <a href="https://www.linkedin.com/in/amanda-murphy-17940835/details/experience/"target="_blank" rel="noopener noreferrer">Amanda Murphy</a></em></strong></p>
 <hr>
 <p>We did something odd for Advent of Code this year: We solved a few challenges in javascript and then in PostgreSQL. We learned a few interesting things about SQL that we&rsquo;d like to share here.</p>
-<p>Disclaimer: We did not complete all 25 days in SQL (judging by the links from <a href="https://news.ycombinator.com/item?id=29472244"target="_blank">this HN thread</a>, it looks like pretty much no one did), but we still think the things we learned about SQL are useful and worth sharing, especially for non-experts. If you’re an expert, you may not learn anything here.</p>
+<p>Disclaimer: We did not complete all 25 days in SQL (judging by the links from <a href="https://news.ycombinator.com/item?id=29472244"target="_blank" rel="noopener noreferrer">this HN thread</a>, it looks like pretty much no one did), but we still think the things we learned about SQL are useful and worth sharing, especially for non-experts. If you’re an expert, you may not learn anything here.</p>
 <h1 id="window-function-ranges-are-awesome">Window function ranges are awesome</h1>
-<p>First, a quick refresher on window functions: you probably know that window functions perform calculations across a set of table rows that are somehow related to the current row. The example from <a href="https://www.postgresql.org/docs/current/tutorial-window.html"target="_blank">the Postgres docs</a> is calculating the department-specific average salary for a particular employee. The SQL looks like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> depname, empno, salary, <span style="color:#66d9ef">avg</span>(salary) OVER (PARTITION <span style="color:#66d9ef">BY</span> depname) <span style="color:#66d9ef">FROM</span> empsalary;
-</code></pre></div><p>In the above example, the “window” of rows considered are all rows whose department matches the department of the current row, but while working on the challenges, we learned that it’s also possible to define windows using ranges.</p>
-<p>For example, on <a href="https://adventofcode.com/2021/day/1"target="_blank">day 1</a>, we’re asked to count the number of times the sum of values in a sliding window of three elements increases. You can express a sum of a sliding window of three elements using window function ranges. The SQL looks like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> row_number, <span style="color:#66d9ef">sum</span>(value) OVER (<span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> row_number RANGE <span style="color:#66d9ef">BETWEEN</span> <span style="color:#66d9ef">CURRENT</span> <span style="color:#66d9ef">ROW</span> <span style="color:#66d9ef">AND</span> <span style="color:#ae81ff">2</span> FOLLOWING) <span style="color:#66d9ef">AS</span> value
-         <span style="color:#66d9ef">FROM</span> input_with_rows
-</code></pre></div><p>And the overall solution looks like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">WITH</span> input_with_rows <span style="color:#66d9ef">AS</span> (
-    <span style="color:#66d9ef">SELECT</span> row_number() over () <span style="color:#66d9ef">AS</span> row_number, value
-    <span style="color:#66d9ef">FROM</span> day1_input
-),
-     windows <span style="color:#66d9ef">AS</span> (
-         <span style="color:#66d9ef">SELECT</span> row_number, <span style="color:#66d9ef">sum</span>(value) OVER (<span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> row_number RANGE <span style="color:#66d9ef">BETWEEN</span> <span style="color:#66d9ef">CURRENT</span> <span style="color:#66d9ef">ROW</span> <span style="color:#66d9ef">AND</span> <span style="color:#ae81ff">2</span> FOLLOWING) <span style="color:#66d9ef">AS</span> value
-         <span style="color:#66d9ef">FROM</span> input_with_rows
-     ),
-     lagged <span style="color:#66d9ef">AS</span> (
-         <span style="color:#66d9ef">SELECT</span> row_number, lag(value) OVER () <span style="color:#66d9ef">AS</span> value
-         <span style="color:#66d9ef">FROM</span> windows
-     )
-<span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">count</span>(<span style="color:#f92672">*</span>)
-<span style="color:#66d9ef">FROM</span> windows
-         <span style="color:#66d9ef">JOIN</span> lagged <span style="color:#66d9ef">ON</span> (windows.row_number <span style="color:#f92672">=</span> lagged.row_number <span style="color:#66d9ef">AND</span> lagged.value <span style="color:#f92672">&lt;</span> windows.value);
-</code></pre></div><p>Ranges are just the tip of the iceberg. There are many other methods of defining windows. Check out <a href="https://www.postgresql.org/docs/current/sql-expressions.html#SYNTAX-WINDOW-FUNCTIONS"target="_blank">this page</a> of the Postgres docs for more.</p>
+<p>First, a quick refresher on window functions: you probably know that window functions perform calculations across a set of table rows that are somehow related to the current row. The example from <a href="https://www.postgresql.org/docs/current/tutorial-window.html"target="_blank" rel="noopener noreferrer">the Postgres docs</a> is calculating the department-specific average salary for a particular employee. The SQL looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> depname, empno, salary, <span style="color:#66d9ef">avg</span>(salary) OVER (PARTITION <span style="color:#66d9ef">BY</span> depname) <span style="color:#66d9ef">FROM</span> empsalary;
+</span></span></code></pre></div><p>In the above example, the “window” of rows considered are all rows whose department matches the department of the current row, but while working on the challenges, we learned that it’s also possible to define windows using ranges.</p>
+<p>For example, on <a href="https://adventofcode.com/2021/day/1"target="_blank" rel="noopener noreferrer">day 1</a>, we’re asked to count the number of times the sum of values in a sliding window of three elements increases. You can express a sum of a sliding window of three elements using window function ranges. The SQL looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> row_number, <span style="color:#66d9ef">sum</span>(value) OVER (<span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> row_number RANGE <span style="color:#66d9ef">BETWEEN</span> <span style="color:#66d9ef">CURRENT</span> <span style="color:#66d9ef">ROW</span> <span style="color:#66d9ef">AND</span> <span style="color:#ae81ff">2</span> FOLLOWING) <span style="color:#66d9ef">AS</span> value
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">FROM</span> input_with_rows
+</span></span></code></pre></div><p>And the overall solution looks like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">WITH</span> input_with_rows <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> row_number() over () <span style="color:#66d9ef">AS</span> row_number, value
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">FROM</span> day1_input
+</span></span><span style="display:flex;"><span>),
+</span></span><span style="display:flex;"><span>     windows <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">SELECT</span> row_number, <span style="color:#66d9ef">sum</span>(value) OVER (<span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> row_number RANGE <span style="color:#66d9ef">BETWEEN</span> <span style="color:#66d9ef">CURRENT</span> <span style="color:#66d9ef">ROW</span> <span style="color:#66d9ef">AND</span> <span style="color:#ae81ff">2</span> FOLLOWING) <span style="color:#66d9ef">AS</span> value
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">FROM</span> input_with_rows
+</span></span><span style="display:flex;"><span>     ),
+</span></span><span style="display:flex;"><span>     lagged <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">SELECT</span> row_number, lag(value) OVER () <span style="color:#66d9ef">AS</span> value
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">FROM</span> windows
+</span></span><span style="display:flex;"><span>     )
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">count</span>(<span style="color:#f92672">*</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> windows
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">JOIN</span> lagged <span style="color:#66d9ef">ON</span> (windows.row_number <span style="color:#f92672">=</span> lagged.row_number <span style="color:#66d9ef">AND</span> lagged.value <span style="color:#f92672">&lt;</span> windows.value);
+</span></span></code></pre></div><p>Ranges are just the tip of the iceberg. There are many other methods of defining windows. Check out <a href="https://www.postgresql.org/docs/current/sql-expressions.html#SYNTAX-WINDOW-FUNCTIONS"target="_blank" rel="noopener noreferrer">this page</a> of the Postgres docs for more.</p>
 <h1 id="common-table-expressions-for-readability-and-iteration">Common Table Expressions for readability and iteration</h1>
 <p>Common Table Expressions or CTE&rsquo;s are temporary, scoped, and aliased tables created via a simple query expression. Subqueries can achieve the same result in most cases, and although subqueries are more common in textbooks and database documentation than CTEs, we found that using CTE&rsquo;s instead of subqueries eliminated a great deal of nesting.</p>
 <p>There are plenty of resources that explain why deeply nested code is a code smell. Nesting can quickly become difficult to reason about. Following the flow of execution adds additional cognitive load when the reader has to jump around to get context. CTEs are sequential, and it&rsquo;s easier for us humans to follow sequential steps.</p>
-<p>Another advantage of using CTEs is that they can refer to their own output if you use the <code>RECURSIVE</code> keyword. <a href="https://www.postgresql.org/docs/current/queries-with.html#QUERIES-WITH-RECURSIVE"target="_blank">The docs</a> recommend using recursive CTEs to work with arbitrarily nested hierarchical data, but they can also be used for iteration.</p>
+<p>Another advantage of using CTEs is that they can refer to their own output if you use the <code>RECURSIVE</code> keyword. <a href="https://www.postgresql.org/docs/current/queries-with.html#QUERIES-WITH-RECURSIVE"target="_blank" rel="noopener noreferrer">The docs</a> recommend using recursive CTEs to work with arbitrarily nested hierarchical data, but they can also be used for iteration.</p>
 <p>We learned how to use CTEs for iteration while working on day 3. In the second part, we’re asked to:</p>
 <ol>
 <li>Start with a list of binary numbers and consider just the first bit of those numbers.</li>
@@ -60,136 +57,137 @@
 <li>Otherwise, repeat the process, considering the next bit to the right.</li>
 </ol>
 <p>The SQL for this is below. The interesting part where we use a recursive CTE is lines 14 - 40:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">copy</span> day3_input <span style="color:#66d9ef">FROM</span> <span style="color:#e6db74">&#39;day3.txt&#39;</span>;
-
-
-<span style="color:#66d9ef">WITH</span> bits_with_row_number <span style="color:#66d9ef">AS</span> (
-    <span style="color:#66d9ef">SELECT</span> row_number() over ()            <span style="color:#66d9ef">AS</span> row_number,
-           regexp_split_to_array(bits, <span style="color:#e6db74">&#39;&#39;</span>) <span style="color:#66d9ef">AS</span> bits
-    <span style="color:#66d9ef">FROM</span> day3_input
-),
-     bits_with_column_number <span style="color:#66d9ef">AS</span> (
-         <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>, row_number() over (partition <span style="color:#66d9ef">by</span> row_number) <span style="color:#66d9ef">AS</span> col_number
-         <span style="color:#66d9ef">FROM</span> bits_with_row_number
-     ),
-     recurse <span style="color:#66d9ef">AS</span> (
-         <span style="color:#66d9ef">WITH</span> <span style="color:#66d9ef">RECURSIVE</span> filter <span style="color:#66d9ef">AS</span> (
-             (<span style="color:#66d9ef">WITH</span> target_bit <span style="color:#66d9ef">AS</span> (<span style="color:#66d9ef">SELECT</span> bits,
-                                         <span style="color:#66d9ef">CASE</span>
-                                             <span style="color:#66d9ef">WHEN</span> (<span style="color:#66d9ef">sum</span>(bits[<span style="color:#ae81ff">1</span>]::integer) OVER ()) <span style="color:#f92672">&lt;</span> ((<span style="color:#66d9ef">count</span>(<span style="color:#f92672">*</span>) OVER ())::float <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#66d9ef">THEN</span> <span style="color:#ae81ff">0</span>
-                                             <span style="color:#66d9ef">ELSE</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">END</span> <span style="color:#66d9ef">AS</span> o2,
-                                         <span style="color:#66d9ef">CASE</span>
-                                             <span style="color:#66d9ef">WHEN</span> (<span style="color:#66d9ef">sum</span>(bits[<span style="color:#ae81ff">1</span>]::integer) OVER ()) <span style="color:#f92672">&lt;</span> ((<span style="color:#66d9ef">count</span>(<span style="color:#f92672">*</span>) OVER ())::float <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#66d9ef">THEN</span> <span style="color:#ae81ff">1</span>
-                                             <span style="color:#66d9ef">ELSE</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">END</span> <span style="color:#66d9ef">AS</span> co2
-                                  <span style="color:#66d9ef">FROM</span> bits_with_column_number)
-              <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>, <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">AS</span> i
-              <span style="color:#66d9ef">FROM</span> target_bit
-              <span style="color:#66d9ef">WHERE</span> bits[<span style="color:#ae81ff">1</span>]::integer <span style="color:#f92672">=</span> co2
-             )
-             <span style="color:#66d9ef">UNION</span> <span style="color:#66d9ef">ALL</span>
-             (<span style="color:#66d9ef">WITH</span> target_bit <span style="color:#66d9ef">AS</span> (<span style="color:#66d9ef">SELECT</span> bits,
-                                         i,
-                                         <span style="color:#66d9ef">CASE</span>
-                                             <span style="color:#66d9ef">WHEN</span> <span style="color:#66d9ef">sum</span>(bits[i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]::integer) OVER () <span style="color:#f92672">&lt;</span> ((<span style="color:#66d9ef">count</span>(<span style="color:#f92672">*</span>) OVER ())::float <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#66d9ef">THEN</span> <span style="color:#ae81ff">0</span>
-                                             <span style="color:#66d9ef">ELSE</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">END</span> <span style="color:#66d9ef">AS</span> o2,
-                                         <span style="color:#66d9ef">CASE</span>
-                                             <span style="color:#66d9ef">WHEN</span> <span style="color:#66d9ef">sum</span>(bits[i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]::integer) OVER () <span style="color:#f92672">&lt;</span> ((<span style="color:#66d9ef">count</span>(<span style="color:#f92672">*</span>) OVER ())::float <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#66d9ef">THEN</span> <span style="color:#ae81ff">1</span>
-                                             <span style="color:#66d9ef">ELSE</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">END</span> <span style="color:#66d9ef">AS</span> co2
-                                  <span style="color:#66d9ef">FROM</span> filter)
-              <span style="color:#66d9ef">SELECT</span> bits, o2, co2, i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">AS</span> i
-              <span style="color:#66d9ef">FROM</span> target_bit
-              <span style="color:#66d9ef">WHERE</span> bits[i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]::integer <span style="color:#f92672">=</span> target_bit.co2)
-         )
-         <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>
-         <span style="color:#66d9ef">FROM</span> filter
-     )
-<span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>
-<span style="color:#66d9ef">FROM</span> recurse
-<span style="color:#66d9ef">WHERE</span> i <span style="color:#f92672">=</span> (<span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">max</span>(i) <span style="color:#66d9ef">FROM</span> recurse);
-</code></pre></div><p>There are <a href="https://malisper.me/understanding-postgres-recursive-ctes/"target="_blank">plenty</a> <a href="https://www.citusdata.com/blog/2018/05/15/fun-with-sql-recursive-ctes/"target="_blank">of</a> <a href="https://www.postgresql.org/docs/13/queries-with.html"target="_blank">good</a> explanations of how recursive CTEs work out there, so we won’t repeat those explanations here.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">\</span><span style="color:#66d9ef">copy</span> day3_input <span style="color:#66d9ef">FROM</span> <span style="color:#e6db74">&#39;day3.txt&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WITH</span> bits_with_row_number <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> row_number() over ()            <span style="color:#66d9ef">AS</span> row_number,
+</span></span><span style="display:flex;"><span>           regexp_split_to_array(bits, <span style="color:#e6db74">&#39;&#39;</span>) <span style="color:#66d9ef">AS</span> bits
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">FROM</span> day3_input
+</span></span><span style="display:flex;"><span>),
+</span></span><span style="display:flex;"><span>     bits_with_column_number <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>, row_number() over (partition <span style="color:#66d9ef">by</span> row_number) <span style="color:#66d9ef">AS</span> col_number
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">FROM</span> bits_with_row_number
+</span></span><span style="display:flex;"><span>     ),
+</span></span><span style="display:flex;"><span>     recurse <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">WITH</span> <span style="color:#66d9ef">RECURSIVE</span> filter <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>             (<span style="color:#66d9ef">WITH</span> target_bit <span style="color:#66d9ef">AS</span> (<span style="color:#66d9ef">SELECT</span> bits,
+</span></span><span style="display:flex;"><span>                                         <span style="color:#66d9ef">CASE</span>
+</span></span><span style="display:flex;"><span>                                             <span style="color:#66d9ef">WHEN</span> (<span style="color:#66d9ef">sum</span>(bits[<span style="color:#ae81ff">1</span>]::integer) OVER ()) <span style="color:#f92672">&lt;</span> ((<span style="color:#66d9ef">count</span>(<span style="color:#f92672">*</span>) OVER ())::float <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#66d9ef">THEN</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>                                             <span style="color:#66d9ef">ELSE</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">END</span> <span style="color:#66d9ef">AS</span> o2,
+</span></span><span style="display:flex;"><span>                                         <span style="color:#66d9ef">CASE</span>
+</span></span><span style="display:flex;"><span>                                             <span style="color:#66d9ef">WHEN</span> (<span style="color:#66d9ef">sum</span>(bits[<span style="color:#ae81ff">1</span>]::integer) OVER ()) <span style="color:#f92672">&lt;</span> ((<span style="color:#66d9ef">count</span>(<span style="color:#f92672">*</span>) OVER ())::float <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#66d9ef">THEN</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>                                             <span style="color:#66d9ef">ELSE</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">END</span> <span style="color:#66d9ef">AS</span> co2
+</span></span><span style="display:flex;"><span>                                  <span style="color:#66d9ef">FROM</span> bits_with_column_number)
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>, <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">AS</span> i
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">FROM</span> target_bit
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">WHERE</span> bits[<span style="color:#ae81ff">1</span>]::integer <span style="color:#f92672">=</span> co2
+</span></span><span style="display:flex;"><span>             )
+</span></span><span style="display:flex;"><span>             <span style="color:#66d9ef">UNION</span> <span style="color:#66d9ef">ALL</span>
+</span></span><span style="display:flex;"><span>             (<span style="color:#66d9ef">WITH</span> target_bit <span style="color:#66d9ef">AS</span> (<span style="color:#66d9ef">SELECT</span> bits,
+</span></span><span style="display:flex;"><span>                                         i,
+</span></span><span style="display:flex;"><span>                                         <span style="color:#66d9ef">CASE</span>
+</span></span><span style="display:flex;"><span>                                             <span style="color:#66d9ef">WHEN</span> <span style="color:#66d9ef">sum</span>(bits[i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]::integer) OVER () <span style="color:#f92672">&lt;</span> ((<span style="color:#66d9ef">count</span>(<span style="color:#f92672">*</span>) OVER ())::float <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#66d9ef">THEN</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>                                             <span style="color:#66d9ef">ELSE</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">END</span> <span style="color:#66d9ef">AS</span> o2,
+</span></span><span style="display:flex;"><span>                                         <span style="color:#66d9ef">CASE</span>
+</span></span><span style="display:flex;"><span>                                             <span style="color:#66d9ef">WHEN</span> <span style="color:#66d9ef">sum</span>(bits[i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]::integer) OVER () <span style="color:#f92672">&lt;</span> ((<span style="color:#66d9ef">count</span>(<span style="color:#f92672">*</span>) OVER ())::float <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#66d9ef">THEN</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>                                             <span style="color:#66d9ef">ELSE</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">END</span> <span style="color:#66d9ef">AS</span> co2
+</span></span><span style="display:flex;"><span>                                  <span style="color:#66d9ef">FROM</span> filter)
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">SELECT</span> bits, o2, co2, i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">AS</span> i
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">FROM</span> target_bit
+</span></span><span style="display:flex;"><span>              <span style="color:#66d9ef">WHERE</span> bits[i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]::integer <span style="color:#f92672">=</span> target_bit.co2)
+</span></span><span style="display:flex;"><span>         )
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">FROM</span> filter
+</span></span><span style="display:flex;"><span>     )
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> recurse
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> i <span style="color:#f92672">=</span> (<span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">max</span>(i) <span style="color:#66d9ef">FROM</span> recurse);
+</span></span></code></pre></div><p>There are <a href="https://malisper.me/understanding-postgres-recursive-ctes/"target="_blank" rel="noopener noreferrer">plenty</a> <a href="https://www.citusdata.com/blog/2018/05/15/fun-with-sql-recursive-ctes/"target="_blank" rel="noopener noreferrer">of</a> <a href="https://www.postgresql.org/docs/13/queries-with.html"target="_blank" rel="noopener noreferrer">good</a> explanations of how recursive CTEs work out there, so we won’t repeat those explanations here.</p>
 <h1 id="how-to-think-relationally-instead-of-iteratively">How to think relationally instead of iteratively</h1>
 <p>On day 4, we’re given a list of numbers and a list of bingo boards and we’re asked to find which bingo board wins first. When we started writing the SQL portion, we assumed that we would need to use a recursive CTE so that we could iterate over the boards, but the exercise of solving the problem in SQL helped us see the problem through a new lens. We learned that just because there&rsquo;s an iterative aspect in the problem statement doesn&rsquo;t mean we can&rsquo;t abstract it away.</p>
 <p>Breaking down the problem into smaller pieces allowed us to see another way. We needed to find the first winning board, but what does that mean? Well, first, we need to think about how a board wins. A board wins when all the numbers in a column or row have been called. So, we need to find out when each column and row won.</p>
 <p>Breaking it down in this way allowed us to see that it was a sorting problem. We already knew the order the numbers were called in. You can use the number order to assign a “time” to each column and row that represents when that column or row won. Then we just find the min of that time for each board. Once you have that, you know when the board won. Then you sort the boards by when they won and you have your answer!</p>
 <p>Translating this to SQL looks like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">WITH</span> boards_ordered_with_call_order <span style="color:#66d9ef">AS</span> (
-         <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>
-         <span style="color:#66d9ef">FROM</span> boards_ordered
-                  <span style="color:#66d9ef">JOIN</span> called_numbers_with_row
-                       <span style="color:#66d9ef">ON</span> called_numbers_with_row.called_number <span style="color:#f92672">=</span> boards_ordered.value
-     ),
-     col_win_orders <span style="color:#66d9ef">AS</span> (
-         <span style="color:#66d9ef">SELECT</span> board_no, col_number, <span style="color:#66d9ef">max</span>(call_order) <span style="color:#66d9ef">AS</span> max_col_call_order
-         <span style="color:#66d9ef">FROM</span> boards_ordered_with_call_order
-         <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> board_no, col_number
-     ),
-     row_win_orders <span style="color:#66d9ef">AS</span> (
-         <span style="color:#66d9ef">SELECT</span> board_no, row_number, <span style="color:#66d9ef">max</span>(call_order) <span style="color:#66d9ef">AS</span> max_row_call_order
-         <span style="color:#66d9ef">FROM</span> boards_ordered_with_call_order
-         <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> board_no, row_number
-     ),
-     row_and_col_win_orders <span style="color:#66d9ef">AS</span> (
-         <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>
-         <span style="color:#66d9ef">FROM</span> col_win_orders
-                  <span style="color:#66d9ef">JOIN</span> row_win_orders
-                       <span style="color:#66d9ef">USING</span> (board_no)
-         <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> board_no, row_number, col_number
-     ),
-     winning_boards <span style="color:#66d9ef">AS</span> (
-         <span style="color:#66d9ef">SELECT</span> board_no,
-                <span style="color:#66d9ef">min</span>(LEAST(max_col_call_order, max_row_call_order)) <span style="color:#66d9ef">AS</span> winning_call_number
-         <span style="color:#66d9ef">FROM</span> row_and_col_win_orders
-         <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> board_no
-         <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#ae81ff">2</span>
-         <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">1</span>
-     ),
-     last_called_number <span style="color:#66d9ef">AS</span> (
-         <span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">min</span>(called_numbers_with_row.called_number) <span style="color:#66d9ef">AS</span> number
-         <span style="color:#66d9ef">FROM</span> winning_boards
-                  <span style="color:#66d9ef">JOIN</span> called_numbers_with_row <span style="color:#66d9ef">ON</span> (called_numbers_with_row.call_order <span style="color:#f92672">=</span> winning_call_number)
-     )
-<span style="color:#66d9ef">SELECT</span> board_no, <span style="color:#66d9ef">sum</span>(value::integer <span style="color:#f92672">*</span> called_numbers_with_row.called_number::integer)
-<span style="color:#66d9ef">FROM</span> boards_ordered_with_call_order
-         <span style="color:#66d9ef">JOIN</span> winning_boards <span style="color:#66d9ef">USING</span> (board_no)
-         <span style="color:#66d9ef">JOIN</span> called_numbers_with_row <span style="color:#66d9ef">ON</span> called_numbers_with_row.call_order <span style="color:#f92672">=</span> winning_call_number
-<span style="color:#66d9ef">WHERE</span> boards_ordered_with_call_order.call_order <span style="color:#f92672">&gt;</span> winning_call_number
-<span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> <span style="color:#ae81ff">1</span>
-</code></pre></div><p>This exercise was a great way to add additional tools to our algorithmic toolboxes.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">WITH</span> boards_ordered_with_call_order <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">FROM</span> boards_ordered
+</span></span><span style="display:flex;"><span>                  <span style="color:#66d9ef">JOIN</span> called_numbers_with_row
+</span></span><span style="display:flex;"><span>                       <span style="color:#66d9ef">ON</span> called_numbers_with_row.called_number <span style="color:#f92672">=</span> boards_ordered.value
+</span></span><span style="display:flex;"><span>     ),
+</span></span><span style="display:flex;"><span>     col_win_orders <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">SELECT</span> board_no, col_number, <span style="color:#66d9ef">max</span>(call_order) <span style="color:#66d9ef">AS</span> max_col_call_order
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">FROM</span> boards_ordered_with_call_order
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> board_no, col_number
+</span></span><span style="display:flex;"><span>     ),
+</span></span><span style="display:flex;"><span>     row_win_orders <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">SELECT</span> board_no, row_number, <span style="color:#66d9ef">max</span>(call_order) <span style="color:#66d9ef">AS</span> max_row_call_order
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">FROM</span> boards_ordered_with_call_order
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> board_no, row_number
+</span></span><span style="display:flex;"><span>     ),
+</span></span><span style="display:flex;"><span>     row_and_col_win_orders <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">FROM</span> col_win_orders
+</span></span><span style="display:flex;"><span>                  <span style="color:#66d9ef">JOIN</span> row_win_orders
+</span></span><span style="display:flex;"><span>                       <span style="color:#66d9ef">USING</span> (board_no)
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> board_no, row_number, col_number
+</span></span><span style="display:flex;"><span>     ),
+</span></span><span style="display:flex;"><span>     winning_boards <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">SELECT</span> board_no,
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">min</span>(LEAST(max_col_call_order, max_row_call_order)) <span style="color:#66d9ef">AS</span> winning_call_number
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">FROM</span> row_and_col_win_orders
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> board_no
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">LIMIT</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>     ),
+</span></span><span style="display:flex;"><span>     last_called_number <span style="color:#66d9ef">AS</span> (
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">min</span>(called_numbers_with_row.called_number) <span style="color:#66d9ef">AS</span> number
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">FROM</span> winning_boards
+</span></span><span style="display:flex;"><span>                  <span style="color:#66d9ef">JOIN</span> called_numbers_with_row <span style="color:#66d9ef">ON</span> (called_numbers_with_row.call_order <span style="color:#f92672">=</span> winning_call_number)
+</span></span><span style="display:flex;"><span>     )
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> board_no, <span style="color:#66d9ef">sum</span>(value::integer <span style="color:#f92672">*</span> called_numbers_with_row.called_number::integer)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> boards_ordered_with_call_order
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">JOIN</span> winning_boards <span style="color:#66d9ef">USING</span> (board_no)
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">JOIN</span> called_numbers_with_row <span style="color:#66d9ef">ON</span> called_numbers_with_row.call_order <span style="color:#f92672">=</span> winning_call_number
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> boards_ordered_with_call_order.call_order <span style="color:#f92672">&gt;</span> winning_call_number
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> <span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>This exercise was a great way to add additional tools to our algorithmic toolboxes.</p>
 <h1 id="sql-is-surprisingly-compact">SQL is surprisingly compact</h1>
-<p>While rewriting our javascript solutions in SQL, we were struck by how compactly and safely we could express solutions in SQL. For example, one challenge requires that you calculate the position of a submarine after it executes a series of up-down-forward commands (it’s <a href="https://adventofcode.com/2021/day/2"target="_blank">day 2, part 1</a> if you really want to know the details of the problem). Here’s a solution in javascript:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">depth</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">horizontal</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-<span style="color:#a6e22e">instructions</span>.<span style="color:#a6e22e">forEach</span>(({ <span style="color:#a6e22e">direction</span>, <span style="color:#a6e22e">distance</span> }) =&gt; {
-  <span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">direction</span>) {
-    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;up&#34;</span><span style="color:#f92672">:</span>
-      <span style="color:#a6e22e">depth</span> <span style="color:#f92672">-=</span> <span style="color:#a6e22e">distance</span>;
-      <span style="color:#66d9ef">break</span>;
-    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;down&#34;</span><span style="color:#f92672">:</span>
-      <span style="color:#a6e22e">depth</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">distance</span>;
-      <span style="color:#66d9ef">break</span>;
-    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;forward&#34;</span><span style="color:#f92672">:</span>
-      <span style="color:#a6e22e">horizontal</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">distance</span>;
-      <span style="color:#66d9ef">break</span>;
-  }
-});
-
-<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">depth</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">horizontal</span>);
-</code></pre></div><p>And here’s the same solution in SQL:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">sum</span>(distance) FILTER ( <span style="color:#66d9ef">WHERE</span> direction <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;forward&#39;</span> ) <span style="color:#f92672">*</span>
-       (<span style="color:#f92672">-</span> <span style="color:#66d9ef">sum</span>(distance) FILTER ( <span style="color:#66d9ef">WHERE</span> direction <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;up&#39;</span> ) <span style="color:#f92672">+</span>
-        <span style="color:#66d9ef">sum</span>(distance) FILTER ( <span style="color:#66d9ef">WHERE</span> direction <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;down&#39;</span> )) <span style="color:#66d9ef">AS</span> <span style="color:#66d9ef">position</span>
-<span style="color:#66d9ef">FROM</span> day2_input
-</code></pre></div><p>SQL actually looks more declarative and compact here than the javascript solution. We expected nearly all of my SQL solutions to be awkward but was pleasantly surprised to find it very elegant in this problem and in other cases.</p>
+<p>While rewriting our javascript solutions in SQL, we were struck by how compactly and safely we could express solutions in SQL. For example, one challenge requires that you calculate the position of a submarine after it executes a series of up-down-forward commands (it’s <a href="https://adventofcode.com/2021/day/2"target="_blank" rel="noopener noreferrer">day 2, part 1</a> if you really want to know the details of the problem). Here’s a solution in javascript:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">depth</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">horizontal</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">instructions</span>.<span style="color:#a6e22e">forEach</span>(({ <span style="color:#a6e22e">direction</span>, <span style="color:#a6e22e">distance</span> }) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">direction</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;up&#34;</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">depth</span> <span style="color:#f92672">-=</span> <span style="color:#a6e22e">distance</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;down&#34;</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">depth</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">distance</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;forward&#34;</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">horizontal</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">distance</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">depth</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">horizontal</span>);
+</span></span></code></pre></div><p>And here’s the same solution in SQL:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#66d9ef">sum</span>(distance) FILTER ( <span style="color:#66d9ef">WHERE</span> direction <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;forward&#39;</span> ) <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>       (<span style="color:#f92672">-</span> <span style="color:#66d9ef">sum</span>(distance) FILTER ( <span style="color:#66d9ef">WHERE</span> direction <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;up&#39;</span> ) <span style="color:#f92672">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">sum</span>(distance) FILTER ( <span style="color:#66d9ef">WHERE</span> direction <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;down&#39;</span> )) <span style="color:#66d9ef">AS</span> <span style="color:#66d9ef">position</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> day2_input
+</span></span></code></pre></div><p>SQL actually looks more declarative and compact here than the javascript solution. We expected nearly all of my SQL solutions to be awkward but was pleasantly surprised to find it very elegant in this problem and in other cases.</p>
 <p>We had another goal in writing this post. We’re hiring and these learnings provide a nice glimpse into the engineering culture at Heap. We use a lot of Postgres. We participate in Advent of Code challenges together. We have a growth mindset and love learning new things; if that sounds like a neat place to work, check us out.</p>
-</article><section class="article labels"><a class="tag" href=/tags/postgres/>postgres</a><a class="tag" href=/tags/javascript/>javascript</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/the-code-that-chat-ai-cant-write/"><span class="li iconfont icon-article"></span>The code that ChatGPT can't write</a></p><p><a class="link" href="/post/optimizing-postgres-queries-at-scale/"><span class="li iconfont icon-article"></span>Optimizing Postgres Queries at Scale</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+</article><section class="article labels"><a class="tag" href=/tags/postgres/>postgres</a><a class="tag" href=/tags/javascript/>javascript</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/the-code-that-chat-ai-cant-write/"><span class="iconfont icon-article"></span>The code that ChatGPT can't write</a></p><p><a class="link" href="/post/optimizing-postgres-queries-at-scale/"><span class="iconfont icon-article"></span>Optimizing Postgres Queries at Scale</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -199,6 +197,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Why Android Testing is so Hard: Historical Edition&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Why Android Testing is so Hard: Historical Edition&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Why Android Testing is so Hard: Historical Edition" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,11 +11,9 @@
   (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
 </script>
 
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">Why Android Testing is so Hard: Historical Edition</h1><p class="article date">2017-02-09</p></section><article class="article markdown-body"><p><img  src="/images/time.jpg"
         alt/></p>
 <blockquote>
@@ -38,13 +35,13 @@
 <p>If there is some section of code that is executed rarely&hellip;,but which would benefit from a clearer style, then a more traditional layer of abstraction could be the right decision. But if analysis shows that you are re-executing some code path often and causing lots of memory churn in the process, consider these strategies for avoiding excess allocations&hellip;<sup>2</sup></p>
 </blockquote>
 <p>Although &ldquo;#perfmatters&rdquo; in 2017, performance was a much larger concern when Android was first getting off the ground, which means that the design of the Android APIs and the early practices/architectures for building Android apps was extremely performance sensitive. Its possible that building the layers of abstraction to support testing just wasn&rsquo;t practical in those days.</p>
-<p>The first Android phone, <a href="https://www.google.com/shopping/product/1556749025834621307/specs?sourceid=chrome-psyapi2&amp;ion=1&amp;espv=2&amp;ie=UTF-8&amp;q=tmobile&#43;g1&#43;android&amp;oq=tmobile&#43;g1&#43;android&amp;aqs=chrome..69i57j0l5.2528j0j4&amp;sa=X&amp;ved=0ahUKEwjilvOU0YXSAhVG8CYKHTp2BrAQuC8IjgE"target="_blank">the G1</a>, had <em>192 MB of RAM</em> and a <em>528MHZ</em> processor. Obviously, we&rsquo;ve come a long way since then, and in many cases, we can now afford the additional layers of abstraction that testability requires.</p>
+<p>The first Android phone, <a href="https://www.google.com/shopping/product/1556749025834621307/specs?sourceid=chrome-psyapi2&amp;ion=1&amp;espv=2&amp;ie=UTF-8&amp;q=tmobile&#43;g1&#43;android&amp;oq=tmobile&#43;g1&#43;android&amp;aqs=chrome..69i57j0l5.2528j0j4&amp;sa=X&amp;ved=0ahUKEwjilvOU0YXSAhVG8CYKHTp2BrAQuC8IjgE"target="_blank" rel="noopener noreferrer">the G1</a>, had <em>192 MB of RAM</em> and a <em>528MHZ</em> processor. Obviously, we&rsquo;ve come a long way since then, and in many cases, we can now afford the additional layers of abstraction that testability requires.</p>
 <p>One of the more interesting things I&rsquo;ve heard lately that indicates how heavily performance concerns weighed on the design of Android and on the early days of Android development in the trenches comes from Ficus Kirkpatrick, one of the founding members of the Android team, in a recent episode of Android Developers backstage:</p>
 <blockquote>
 <p>&hellip;A lot these things like enums and this philosophy of extreme frugality when it comes to CPU cycles or memory&hellip;that&rsquo;s an interesting lens to look at a lot the early Android decisions. I look at a lot of these engineers almost like they were raised during the depression and they learned to scrape the bottom of the pot.<sup>3</sup></p>
 </blockquote>
 <p>There&rsquo;s a great discussion after this point in the podcast about the tradeoff between performance and development speed. Chet Haase and Tor Norbye push pretty hard on performance concerns while Ficus Fitzpatrick, who is now at Facebook, seems more sympathetic towards trading performance for development speed.</p>
-<p>Who is right &ndash; or whether there was ultimately an unresolved disagreement in the end &ndash; doesn&rsquo;t matter for our purposes. What matters is that their conversation, along with the <a href="https://plus.google.com/105051985738280261832/posts/YDykw2hstUu"target="_blank">hoopla</a> <a href="https://twitter.com/jakewharton/status/551876948469620737?lang=en"target="_blank">about</a> <a href="https://www.youtube.com/watch?v=5MzayZXtSiQ"target="_blank">enums</a>, shows clearly that the folks at Android are still very concerned about performance and this might make them less interested in promoting patterns whose abstractions have some performance overhead, even if that overhead facilitates testing.</p>
+<p>Who is right &ndash; or whether there was ultimately an unresolved disagreement in the end &ndash; doesn&rsquo;t matter for our purposes. What matters is that their conversation, along with the <a href="https://plus.google.com/105051985738280261832/posts/YDykw2hstUu"target="_blank" rel="noopener noreferrer">hoopla</a> <a href="https://twitter.com/jakewharton/status/551876948469620737?lang=en"target="_blank" rel="noopener noreferrer">about</a> <a href="https://www.youtube.com/watch?v=5MzayZXtSiQ"target="_blank" rel="noopener noreferrer">enums</a>, shows clearly that the folks at Android are still very concerned about performance and this might make them less interested in promoting patterns whose abstractions have some performance overhead, even if that overhead facilitates testing.</p>
 <h3 id="misunderstanding-android-components">Misunderstanding Android Components</h3>
 <p>Another reason that the testing situation on Android is so bad may be that we&rsquo;ve fundamentally misunderstood the purpose of Android&rsquo;s app component classes (viz., <code>Activity</code>, <code>Service</code>, <code>BroadcastReceiver</code>, and <code>ContentProvider</code>). For a long time, I thought that these classes were supposed to facilitate <em>application development</em>. Not so, says Diane Hackborne:</p>
 <blockquote>
@@ -68,19 +65,20 @@
 <p>Michael Feathers, <em>Working Effectively with Legacy Code</em>, 350-351.</p>
 </li>
 <li>
-<p>Chet Haase, <em><a href="https://medium.com/google-developers/developing-for-android-ii-bb9a51f8c8b9#.p49q9k3uj"target="_blank">Developing for Android II The Rules: Memory</a></em></p>
+<p>Chet Haase, <em><a href="https://medium.com/google-developers/developing-for-android-ii-bb9a51f8c8b9#.p49q9k3uj"target="_blank" rel="noopener noreferrer">Developing for Android II The Rules: Memory</a></em></p>
 </li>
 <li>
-<p>&ldquo;In the Beginning,&rdquo; <a href="http://androidbackstage.blogspot.com/2016/10/episode-56-in-beginning.html"target="_blank"><em>Android Developers Backstage</em></a>, ~25:00.</p>
+<p>&ldquo;In the Beginning,&rdquo; <a href="http://androidbackstage.blogspot.com/2016/10/episode-56-in-beginning.html"target="_blank" rel="noopener noreferrer"><em>Android Developers Backstage</em></a>, ~25:00.</p>
 </li>
 <li>
-<p>Haase, <em><a href="https://medium.com/google-developers/developing-for-android-vii-the-rules-framework-concerns-d0210e52eee3#.yegpenynu"target="_blank">Developing for Android VII The Rules: Framework</a></em></p>
+<p>Haase, <em><a href="https://medium.com/google-developers/developing-for-android-vii-the-rules-framework-concerns-d0210e52eee3#.yegpenynu"target="_blank" rel="noopener noreferrer">Developing for Android VII The Rules: Framework</a></em></p>
 </li>
 </ol>
-</article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/towards-godless-android-development-how-and-why-i-kill-god-objects/"><span class="li iconfont icon-article"></span>Towards Godless Android Development: How and Why I Kill God Objects</a></p><p><a class="link" href="/post/against-singletons-for-android-data-loading/"><span class="li iconfont icon-article"></span>Why I Avoid Singletons for Android Data Loading</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+</article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/towards-godless-android-development-how-and-why-i-kill-god-objects/"><span class="iconfont icon-article"></span>Towards Godless Android Development: How and Why I Kill God Objects</a></p><p><a class="link" href="/post/against-singletons-for-android-data-loading/"><span class="iconfont icon-article"></span>Why I Avoid Singletons for Android Data Loading</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -99,12 +97,12 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -114,6 +112,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

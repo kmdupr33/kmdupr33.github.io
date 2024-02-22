@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>An Introduction to Unit Testing on Android&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>An Introduction to Unit Testing on Android&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="An Introduction to Unit Testing on Android" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,13 +11,11 @@
   (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
 </script>
 
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">An Introduction to Unit Testing on Android</h1><p class="article date">2015-05-29</p></section><article class="article markdown-body"><p>Yesterday at IO Extended Orlando, I gave a talk on testing. What follows is a written version of the presentation I gave.</p>
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png"target="_blank"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png"
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png"target="_blank" rel="noopener noreferrer"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-01.png"
         alt="IO Testing Talk-01"/></a></p>
 <p>Android 1.2 introduced unit testing support. Now, we can run junit tests on the jvm while we&rsquo;re developing our apps. During my talk, we&rsquo;ll discuss the following questions:</p>
 <ul>
@@ -30,13 +27,13 @@
 </li>
 </ul>
 <p>Briefly, I&rsquo;ll also mention some of the challenges of writing unit tests for Android.</p>
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-02.png"target="_blank"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-02.png"
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-02.png"target="_blank" rel="noopener noreferrer"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-02.png"
         alt="IO Testing Talk-02"/></a></p>
-<p>Before we get into those questions, let me introduce myself. I&rsquo;m Matt Dupree. I&rsquo;m a wannabe philosophy professor turned wannabe tech entrepreneur, which is just a fancy way of saying that I studied philosophy as an undergrad and graduate student, decided I didn&rsquo;t want to be poor, and become a software developer about 2 years ago. That&rsquo;s a bit of an oversimplification, but you&rsquo;re not here to hear about my career choices. In case you care to know more, you can check out <a href="http://philosophicalhacker.com/2014/04/21/why-im-glad-my-dream-job-didnt-work-out/"target="_blank">this post</a>.</p>
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-03.png"target="_blank"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-03.png"
+<p>Before we get into those questions, let me introduce myself. I&rsquo;m Matt Dupree. I&rsquo;m a wannabe philosophy professor turned wannabe tech entrepreneur, which is just a fancy way of saying that I studied philosophy as an undergrad and graduate student, decided I didn&rsquo;t want to be poor, and become a software developer about 2 years ago. That&rsquo;s a bit of an oversimplification, but you&rsquo;re not here to hear about my career choices. In case you care to know more, you can check out <a href="http://philosophicalhacker.com/2014/04/21/why-im-glad-my-dream-job-didnt-work-out/"target="_blank" rel="noopener noreferrer">this post</a>.</p>
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-03.png"target="_blank" rel="noopener noreferrer"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-03.png"
         alt="IO Testing Talk-03"/></a></p>
 <p>Many of us don&rsquo;t really do a lot of testing for Android. This is unfortunate because there are plenty of cases where writing tests can be very useful. Writing unit tests, moreover, can be particularly useful for getting targeted info on whether a certain class is working correctly. Here&rsquo;s a little experiment designed to show the value of writing unit tests on Android.</p>
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png"target="_blank"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png"
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png"target="_blank" rel="noopener noreferrer"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-04.png"
         alt="IO Testing Talk-04"/></a></p>
 <p>Let&rsquo;s say we were working on Google&rsquo;s IO Sched app from last year. The above screenshot is a shot of the <code>SessionDetailActivity</code>. This is where the user can view the details about a session and add that session to their IO schedule. The business logic for what happens when the user presses the plus button on the screen is as follows:</p>
 <ul>
@@ -54,49 +51,50 @@
 <p>Now, at this point, some of you make the following argument:</p>
 <blockquote>Because unit tests don't actually tell you anything about the overall behavior of the system, there will be bugs that will slip past a unit test. Thus, we should prefer manual testing (or perhaps automated functional UI tests) over unit testing.</blockquote>
 <p>This is a tricky argument, but fortunately, I have a lot of experience with those.</p>
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-05.png"target="_blank"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-05.png"
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-05.png"target="_blank" rel="noopener noreferrer"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-05.png"
         alt="IO Testing Talk-05"/></a>Here&rsquo;s my response to the above argument: Even if there are bugs that can slip past unit tests, we are better off, all other things being equal, if we have unit tests than if we didn&rsquo;t have unit tests. To see this, let&rsquo;s look at the three possible outcomes for unit testing the functionality I mentioned above.</p>
-<p>In the first outcome (on the far left), our unit tests pass and our functional tests pass. Everything works great, so we can celebrate with <a href="http://slime.clay.io/game/slime"target="_blank">a game of slimeball</a> or something.</p>
+<p>In the first outcome (on the far left), our unit tests pass and our functional tests pass. Everything works great, so we can celebrate with <a href="http://slime.clay.io/game/slime"target="_blank" rel="noopener noreferrer">a game of slimeball</a> or something.</p>
 <p>In the second outcome, our unit tests fail. In that situation, we know exactly where the problem is, which makes debugging much easier.</p>
 <p>In the final outcome (on the far right), our unit tests pass, but our functional tests fail. The above argument against unit testing focuses on this scenario, but even if we find ourselves in this scenario, we&rsquo;re better off having unit tests because we have a good head start on where the problem lies: because our unit test passed, we know that the problem is not within the <code>SessionDetailActivity</code>.</p>
 <p>So, in any possible scenario where we&rsquo;ve run our unit and functional tests, we&rsquo;re better off, all other things being equal, having our unit tests rather than not having them. Astute readers will point out that the &ldquo;all other things being equal&rdquo; clause of my claim is almost never satisfied when working on a project because of the time investment we make into writing unit tests. That&rsquo;s true. Technically, I need to make a stronger claim about the general value of unit tests in order to completely convince you that they are worth the time investment (especially on Android), but I think I&rsquo;ve said enough to show that its worth exploring whether unit tests would be useful for the project that you&rsquo;re working on.</p>
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-06.png"target="_blank"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-06.png"
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-06.png"target="_blank" rel="noopener noreferrer"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-06.png"
         alt="IO Testing Talk-06"/></a></p>
-<p>We just talked a lot about unit tests, but we never did ask a simple question: what exactly is a unit test? Some of us might have a clear definition of a unit test in our mind, but until recently, I was not one of those people. I actually think that there&rsquo;s a good amount of confusion over what unit tests are, especially among android developers. The confusion on the definition of a unit test is, I think, a result of us being pretty vague when we use the term. We can see this if we look at two unit test cases mentioned on developer.android.com that are both called &ldquo;unit tests,&rdquo; but in fact have very different properties. The first snippet is found on <a href="http://developer.android.com/training/activity-testing/activity-unit-testing.html"target="_blank">the android page about unit testing activities</a>:</p>
-<script type="application/javascript" src="https://gist.github.com/kmdupr33/fda1634fab637941d338.js"></script>
+<p>We just talked a lot about unit tests, but we never did ask a simple question: what exactly is a unit test? Some of us might have a clear definition of a unit test in our mind, but until recently, I was not one of those people. I actually think that there&rsquo;s a good amount of confusion over what unit tests are, especially among android developers. The confusion on the definition of a unit test is, I think, a result of us being pretty vague when we use the term. We can see this if we look at two unit test cases mentioned on developer.android.com that are both called &ldquo;unit tests,&rdquo; but in fact have very different properties. The first snippet is found on <a href="http://developer.android.com/training/activity-testing/activity-unit-testing.html"target="_blank" rel="noopener noreferrer">the android page about unit testing activities</a>:</p>
+<script src="https://gist.github.com/kmdupr33/fda1634fab637941d338.js"></script>
 
-<p>This second snippet is found on the android page entitled &ldquo;<a href="http://developer.android.com/training/testing/unit-testing/local-unit-tests.html"target="_blank">Building Effective Unit Tests</a>&quot;:</p>
-<script type="application/javascript" src="https://gist.github.com/kmdupr33/f3462dc4bb1cc76ddac5.js"></script>
+<p>This second snippet is found on the android page entitled &ldquo;<a href="http://developer.android.com/training/testing/unit-testing/local-unit-tests.html"target="_blank" rel="noopener noreferrer">Building Effective Unit Tests</a>&rdquo;:</p>
+<script src="https://gist.github.com/kmdupr33/f3462dc4bb1cc76ddac5.js"></script>
 
 <p>In spite of their differences, these two snippets are both called &ldquo;unit tests.&rdquo; I don&rsquo;t mean to quibble over definitions, but our sloppiness with the word &ldquo;unit test&rdquo; is, I think, unhelpful. Here&rsquo;s a more precise definition:</p>
 <blockquote>
 <p>A unit test is a test that can verify that <strong>all of the code</strong> in exactly one <strong>non-trivial</strong> class is working correctly. If this test fails, we know that the problem is located in that class being tested.</p>
 </blockquote>
-<p>On this definition, tests like <code>MyActivityUnitTestCase</code> in the first snippet would not count as a unit tests because, as <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/"target="_blank">I&rsquo;ve pointed out elsewhere</a>, when testing activities, we often lack enough control over the pre-act state required to exercise different branches of the methods we want to test. Moreover, <a href="http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/"target="_blank">activities often contain dependencies that aren&rsquo;t injected</a>, so if a test fails, it may fail because of an error in the code of one of the non-mocked dependencies within the activity being tested.</p>
+<p>On this definition, tests like <code>MyActivityUnitTestCase</code> in the first snippet would not count as a unit tests because, as <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/"target="_blank" rel="noopener noreferrer">I&rsquo;ve pointed out elsewhere</a>, when testing activities, we often lack enough control over the pre-act state required to exercise different branches of the methods we want to test. Moreover, <a href="http://philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/"target="_blank" rel="noopener noreferrer">activities often contain dependencies that aren&rsquo;t injected</a>, so if a test fails, it may fail because of an error in the code of one of the non-mocked dependencies within the activity being tested.</p>
 <p>I just talked about dependencies that have been &ldquo;injected.&rdquo; &ldquo;Dependency injection&rdquo; and its related phrases happens to be another term that has some sloppy usage. Here&rsquo;s my understanding of dependency injection:</p>
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-07.png"target="_blank"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-07.png"
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-07.png"target="_blank" rel="noopener noreferrer"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-07.png"
         alt="IO Testing Talk-07"/></a></p>
-<p>This definition is a shortened version of the definition that Martin Fowler, the guy who coined the term &ldquo;dependency injection,&rdquo; offers in his <a href="http://martinfowler.com/articles/injection.html"target="_blank">article on dependency injection</a>.</p>
+<p>This definition is a shortened version of the definition that Martin Fowler, the guy who coined the term &ldquo;dependency injection,&rdquo; offers in his <a href="http://martinfowler.com/articles/injection.html"target="_blank" rel="noopener noreferrer">article on dependency injection</a>.</p>
 <p>If we accept my definition of &ldquo;unit testing&rdquo; and my interpretation of Martin Fowler&rsquo;s definition of &ldquo;dependency injection&rdquo;, then we can say that &ldquo;unit testing&rdquo; Android component classes (e.g., Activities, Services, Fragments, etc.) turns out to be extremely difficult largely because there&rsquo;s no way to have true dependency injection for our app component class, classes that typically hold much of the business logic that we want to test.</p>
-<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-08.png"target="_blank"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-08.png"
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-08.png"target="_blank" rel="noopener noreferrer"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/05/io-testing-talk-08.png"
         alt="IO Testing Talk-08"/></a></p>
-<p>I&rsquo;ve written extensively about this topic in my series entitled &ldquo;<a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/"target="_blank">Against Android Unit Tests.</a>&rdquo; I&rsquo;ve also made some suggestions on how we might write unit tests for android <a href="http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/"target="_blank">here</a>.</p>
+<p>I&rsquo;ve written extensively about this topic in my series entitled &ldquo;<a href="http://philosophicalhacker.com/2015/04/10/against-android-unit-tests/"target="_blank" rel="noopener noreferrer">Against Android Unit Tests.</a>&rdquo; I&rsquo;ve also made some suggestions on how we might write unit tests for android <a href="http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/"target="_blank" rel="noopener noreferrer">here</a>.</p>
 <hr>
 <p>Against Android Unit Tests:</p>
 <ul>
-<li><a href="http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/"target="_blank">Introduction</a></li>
-<li>Why Android Unit Testing is so Hard: <a href="http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/"target="_blank">part 1</a>, <a href="http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/"target="_blank">part 2</a></li>
-<li>How to Make Our Android Apps Unit Testable: <a href="http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/"target="_blank">part 1</a>, <a href="http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/"target="_blank">part 2</a></li>
-<li><a href="http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/"target="_blank">Quick Summary</a></li>
-<li><a href="http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/"target="_blank">Conclusion</a></li>
-<li><a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/"target="_blank">Followup: Summary</a></li>
-<li><a href="http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/"target="_blank">Followup: Unit Testing Dynamically Constructed Views</a></li>
-<li><a href="http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/"target="_blank">Followup: Testing in Android Studio 1.2</a></li>
+<li><a href="http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/"target="_blank" rel="noopener noreferrer">Introduction</a></li>
+<li>Why Android Unit Testing is so Hard: <a href="http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/"target="_blank" rel="noopener noreferrer">part 1</a>, <a href="http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/"target="_blank" rel="noopener noreferrer">part 2</a></li>
+<li>How to Make Our Android Apps Unit Testable: <a href="http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/"target="_blank" rel="noopener noreferrer">part 1</a>, <a href="http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/"target="_blank" rel="noopener noreferrer">part 2</a></li>
+<li><a href="http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/"target="_blank" rel="noopener noreferrer">Quick Summary</a></li>
+<li><a href="http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/"target="_blank" rel="noopener noreferrer">Conclusion</a></li>
+<li><a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/"target="_blank" rel="noopener noreferrer">Followup: Summary</a></li>
+<li><a href="http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/"target="_blank" rel="noopener noreferrer">Followup: Unit Testing Dynamically Constructed Views</a></li>
+<li><a href="http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/"target="_blank" rel="noopener noreferrer">Followup: Testing in Android Studio 1.2</a></li>
 </ul>
-<hr></article><section class="article labels"><a class="category" href=/categories/Android/>Android</a><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/"><span class="li iconfont icon-article"></span>Towards A Unit Testable Fork of Google's IOSched App</a></p><p><a class="link" href="/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/"><span class="li iconfont icon-article"></span>What I've Learned From Trying to Make An Android App Unit Testable</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<hr></article><section class="article labels"><a class="category" href=/categories/Android/>Android</a><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/"><span class="iconfont icon-article"></span>Towards A Unit Testable Fork of Google's IOSched App</a></p><p><a class="link" href="/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/"><span class="iconfont icon-article"></span>What I've Learned From Trying to Make An Android App Unit Testable</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -115,12 +113,12 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -130,6 +128,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>

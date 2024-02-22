@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="generator" content="Hugo 0.73.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.122.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>For Data Notebooks, Functions Arent Enough (and what to do about it)&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.77d0f824e1a92cc02ada741cc35eff5cc5d09aa7c4611cbf184a3cdd93e2765640409b967708af3b6ef2c9a118e4a838.css" integrity="sha384-d9D4JOGpLMAq2nQcw17/XMXQmqfEYRy/GEo83ZPidlZAQJuWdwivO27yyaEY5Kg4"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>For Data Notebooks, Functions Arent Enough (and what to do about it)&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="For Data Notebooks, Functions Arent Enough (and what to do about it)" />
 <script type="text/javascript">
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
@@ -12,11 +11,9 @@
   (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
 </script>
 
-</head>
-
 <body><section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/about/me">About</a><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">For Data Notebooks, Functions Arent Enough (and what to do about it)</h1><p class="article date">2023-01-12</p></section><article class="article markdown-body"><p><img  src="./datawork-me.png"
         alt="the joker laughing after batman hits him. an arrow labelled &amp;ldquo;me&amp;rdquo; is pointing at batman and another labelled &amp;ldquo;data work&amp;rdquo; is pointed at the joker "/></p>
 <p><em>The Dark Knight</em> has this great scene where Batman punches The Joker to intimate him into giving up information and he just starts laughing and says:</p>
@@ -29,13 +26,13 @@
 <li>typing the same code repetitively</li>
 <li>worrying about making mistakes while writing data wrangling and model training code</li>
 </ul>
-<p>If you&rsquo;re building an application or library, the solution to both of these problems is simple: write a function that does the repetitive thing and write more tests. That doesn&rsquo;t work for programmatic data work. Below I explain why and highlight how a solution using <a href="https://docs.python.org/3/library/ast.html"target="_blank">python&rsquo;s ast module</a> and ipython&rsquo;s <a href="https://ipython.readthedocs.io/en/stable/config/callbacks.html"target="_blank">event callbacks</a> and <a href="https://ipython.readthedocs.io/en/stable/config/intro.html#profiles"target="_blank">profiles</a> does the job better than ordinary functions and tests.</p>
+<p>If you&rsquo;re building an application or library, the solution to both of these problems is simple: write a function that does the repetitive thing and write more tests. That doesn&rsquo;t work for programmatic data work. Below I explain why and highlight how a solution using <a href="https://docs.python.org/3/library/ast.html"target="_blank" rel="noopener noreferrer">python&rsquo;s ast module</a> and ipython&rsquo;s <a href="https://ipython.readthedocs.io/en/stable/config/callbacks.html"target="_blank" rel="noopener noreferrer">event callbacks</a> and <a href="https://ipython.readthedocs.io/en/stable/config/intro.html#profiles"target="_blank" rel="noopener noreferrer">profiles</a> does the job better than ordinary functions and tests.</p>
 <h2 id="repetitive-code">Repetitive code</h2>
 <p>If you&rsquo;ve been working with data and python, you could probably write code like this in your sleep:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py" data-lang="py"><span style="color:#f92672">import</span> pandas <span style="color:#f92672">as</span> pd
-df <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>read_csv(<span style="color:#e6db74">&#34;https://.../palmer_penguins.csv&#34;</span>)
-df<span style="color:#f92672">.</span>plot<span style="color:#f92672">.</span>scatter(x<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;bill_length_mm&#39;</span>, y<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;bill_depth_mm&#39;</span>)
-</code></pre></div><p>Hopefully at some point we realize we&rsquo;re wasting time typing the same code<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> and we reach for a library like <a href="https://pandas-profiling.ydata.ai/docs/master/index.html"target="_blank">pandas-profiling</a> or <a href="https://github.com/fbdesignpro/sweetviz"target="_blank">sweetviz</a>. These are great libraries that are doing the best they can with ordinary python functions, but they aren&rsquo;t enough for two reasons.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#f92672">import</span> pandas <span style="color:#66d9ef">as</span> pd
+</span></span><span style="display:flex;"><span>df <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>read_csv(<span style="color:#e6db74">&#34;https://.../palmer_penguins.csv&#34;</span>)
+</span></span><span style="display:flex;"><span>df<span style="color:#f92672">.</span>plot<span style="color:#f92672">.</span>scatter(x<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;bill_length_mm&#39;</span>, y<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;bill_depth_mm&#39;</span>)
+</span></span></code></pre></div><p>Hopefully at some point we realize we&rsquo;re wasting time typing the same code<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> and we reach for a library like <a href="https://pandas-profiling.ydata.ai/docs/master/index.html"target="_blank" rel="noopener noreferrer">pandas-profiling</a> or <a href="https://github.com/fbdesignpro/sweetviz"target="_blank" rel="noopener noreferrer">sweetviz</a>. These are great libraries that are doing the best they can with ordinary python functions, but they aren&rsquo;t enough for two reasons.</p>
 <p>First, we need to iterate on a data visualization or table to see the story within the data. An initial scatter plot is great, but what if I want to put the x-axis on a log scale or color the data points by some column? Some of these &ldquo;next steps&rdquo; are supported in these libraries, but they can&rsquo;t anticipate or support every iteration I may need to make and when they fail to anticipate my next step, I&rsquo;m back to writing repetitive code again.</p>
 <p>Insofar as we see functions as black boxes whose implementation should be hidden/encapsulated from users, we can&rsquo;t use them to solve this problem. We need the source of the code that generated the results we see so we can iterate.</p>
 <p>Second, the reports they generate aren&rsquo;t tailored to my particular data set, which means we&rsquo;re often flooded with information we don&rsquo;t need, making it more likely we&rsquo;ll miss the stuff we do need. Yes, you can remove certain aspects of these reports to cut down on noise, but even this is limited and you can&rsquo;t easily add to the results they generate.</p>
@@ -61,89 +58,90 @@ df<span style="color:#f92672">.</span>plot<span style="color:#f92672">.</span>sc
 <li>We&rsquo;re able to access the source code that generated those results so we can iterate on them</li>
 </ol>
 <p>To do this, we can start by registering an ipython event callback that grabs the cell source code and shows the relevant visualizations based on that source:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">show_supplementary_results</span>(result):
-  cell_source <span style="color:#f92672">=</span> result<span style="color:#f92672">.</span>info<span style="color:#f92672">.</span>raw_cell
-  df_name <span style="color:#f92672">=</span> get_df_name(cell_source)
-  <span style="color:#66d9ef">if</span> df_name <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> None:
-    <span style="color:#75715e"># This executes visualization and table functions</span>
-    <span style="color:#75715e"># based on cell_source and make those functions&#39; source</span>
-    <span style="color:#75715e"># available</span>
-    execute_funcs(df_name, get_user_funcs())
-
-get_ipython()<span style="color:#f92672">.</span>events<span style="color:#f92672">.</span>register(
-  <span style="color:#e6db74">&#39;post_run_cell&#39;</span>,
-  show_supplementary_results
-)
-</code></pre></div><p>Place this in <code>~/.ipython/profile_default/startup/auto.py</code>, and it&rsquo;ll automatically run whenever ipython starts.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">show_supplementary_results</span>(result):
+</span></span><span style="display:flex;"><span>  cell_source <span style="color:#f92672">=</span> result<span style="color:#f92672">.</span>info<span style="color:#f92672">.</span>raw_cell
+</span></span><span style="display:flex;"><span>  df_name <span style="color:#f92672">=</span> get_df_name(cell_source)
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> df_name <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># This executes visualization and table functions</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># based on cell_source and make those functions&#39; source</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># available</span>
+</span></span><span style="display:flex;"><span>    execute_funcs(df_name, get_user_funcs())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>get_ipython()<span style="color:#f92672">.</span>events<span style="color:#f92672">.</span>register(
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#39;post_run_cell&#39;</span>,
+</span></span><span style="display:flex;"><span>  show_supplementary_results
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>Place this in <code>~/.ipython/profile_default/startup/auto.py</code>, and it&rsquo;ll automatically run whenever ipython starts.</p>
 <p><code>execute_funcs</code> is the key function that&rsquo;ll be called automatially whenever a cell contains a data frame. Let&rsquo;s delve into how it works. If we had a data frame called <code>penguins_df</code> and wanted to automatically run <code>penguins_df.describe()</code> and <code>penguins_df.isna().sum()</code> , we&rsquo;d call <code>execute_funcs</code> like this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">execute_funcs(<span style="color:#e6db74">&#39;penguins_df&#39;</span>, [<span style="color:#e6db74">&#34;df.describe()&#34;</span>, <span style="color:#e6db74">&#34;df.isna().sum()&#34;</span>])
-</code></pre></div><p>After executing this in a cell, we&rsquo;d see the output of <code>penguins_df.describe()</code> and <code>penguins_df.isna().sum()</code> and the following assertion would be true:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">execute_funcs(<span style="color:#e6db74">&#39;penguins_df&#39;</span>, [<span style="color:#e6db74">&#34;df.describe()&#34;</span>, <span style="color:#e6db74">&#34;df.isna().sum()&#34;</span>])
-<span style="color:#66d9ef">assert</span> (
-  [_os0, _os1]
-    <span style="color:#f92672">==</span>
-  [<span style="color:#e6db74">&#34;penguins_df.describe()&#34;</span>, <span style="color:#e6db74">&#34;penguins_df.isna().sum()&#34;</span>]
-)
-</code></pre></div><p>Notice that the source code stored in <code>_os*</code><sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> has substituted &ldquo;df&rdquo; within &ldquo;df.describe()&rdquo; for &ldquo;penguins_df,&rdquo; the data frame name passed into <code>execute_funcs</code>. This lets us quickly execute the source in <code>_os*</code> without worrying about changing variable names, and it&rsquo;s powered by the following <code>ast.NodeTransformer</code> subclass:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">VarSwapper</span>(ast<span style="color:#f92672">.</span>NodeTransformer):
-  <span style="color:#66d9ef">def</span> __init__(self, new_name) <span style="color:#f92672">-&gt;</span> None:
-    super()<span style="color:#f92672">.</span>__init__()
-    self<span style="color:#f92672">.</span>new_name <span style="color:#f92672">=</span> new_name
-
-  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">visit_Name</span>(self, node: ast<span style="color:#f92672">.</span>Name):
-    <span style="color:#66d9ef">if</span> node<span style="color:#f92672">.</span>id <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;df&#34;</span>:
-      node<span style="color:#f92672">.</span>id <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>new_name
-    <span style="color:#66d9ef">return</span> node
-
-  <span style="color:#66d9ef">def</span> __call__(self, <span style="color:#f92672">*</span>args, <span style="color:#f92672">**</span>kwds):
-    <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>visit(args[<span style="color:#ae81ff">0</span>])
-</code></pre></div><p>This subclass is invoked via <code>execute_funcs</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">execute_funcs</span>(df_name: str, funcs: list[str]):
-  df <span style="color:#f92672">=</span> eval(df_name)
-  <span style="color:#66d9ef">for</span> func <span style="color:#f92672">in</span> funcs:
-    <span style="color:#75715e"># Evaluate the functions, ensuring that the</span>
-    <span style="color:#75715e"># df name points to the data frame named</span>
-    <span style="color:#75715e"># by the df_name function argument</span>
-    display(eval(func, {<span style="color:#e6db74">&#39;df&#39;</span>: df}))
-  <span style="color:#75715e"># Transform the source code</span>
-  nodes <span style="color:#f92672">=</span> map(ast<span style="color:#f92672">.</span>parse, funcs)
-  transformed_nodes <span style="color:#f92672">=</span> map(VarSwapper(df_name), nodes)
-  sources <span style="color:#f92672">=</span> map(ast<span style="color:#f92672">.</span>unparse, transformed_nodes)
-  <span style="color:#75715e"># Assign output variables so we can access source</span>
-  <span style="color:#66d9ef">for</span> idx, source <span style="color:#f92672">in</span> enumerate(sources):
-    globals()[f<span style="color:#e6db74">&#34;_os{idx}&#34;</span>] <span style="color:#f92672">=</span> source
-</code></pre></div><p>If you put all this code in the aforementioned ipython profile file, you can execute and retrieve the source of arbitrary code automatically as you work in your notebook.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>execute_funcs(<span style="color:#e6db74">&#39;penguins_df&#39;</span>, [<span style="color:#e6db74">&#34;df.describe()&#34;</span>, <span style="color:#e6db74">&#34;df.isna().sum()&#34;</span>])
+</span></span></code></pre></div><p>After executing this in a cell, we&rsquo;d see the output of <code>penguins_df.describe()</code> and <code>penguins_df.isna().sum()</code> and the following assertion would be true:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>execute_funcs(<span style="color:#e6db74">&#39;penguins_df&#39;</span>, [<span style="color:#e6db74">&#34;df.describe()&#34;</span>, <span style="color:#e6db74">&#34;df.isna().sum()&#34;</span>])
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">assert</span> (
+</span></span><span style="display:flex;"><span>  [_os0, _os1]
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">==</span>
+</span></span><span style="display:flex;"><span>  [<span style="color:#e6db74">&#34;penguins_df.describe()&#34;</span>, <span style="color:#e6db74">&#34;penguins_df.isna().sum()&#34;</span>]
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>Notice that the source code stored in <code>_os*</code><sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> has substituted &ldquo;df&rdquo; within &ldquo;df.describe()&rdquo; for &ldquo;penguins_df,&rdquo; the data frame name passed into <code>execute_funcs</code>. This lets us quickly execute the source in <code>_os*</code> without worrying about changing variable names, and it&rsquo;s powered by the following <code>ast.NodeTransformer</code> subclass:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">VarSwapper</span>(ast<span style="color:#f92672">.</span>NodeTransformer):
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> __init__(self, new_name) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>    super()<span style="color:#f92672">.</span>__init__()
+</span></span><span style="display:flex;"><span>    self<span style="color:#f92672">.</span>new_name <span style="color:#f92672">=</span> new_name
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">visit_Name</span>(self, node: ast<span style="color:#f92672">.</span>Name):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> node<span style="color:#f92672">.</span>id <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;df&#34;</span>:
+</span></span><span style="display:flex;"><span>      node<span style="color:#f92672">.</span>id <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>new_name
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> node
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> __call__(self, <span style="color:#f92672">*</span>args, <span style="color:#f92672">**</span>kwds):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>visit(args[<span style="color:#ae81ff">0</span>])
+</span></span></code></pre></div><p>This subclass is invoked via <code>execute_funcs</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">execute_funcs</span>(df_name: str, funcs: list[str]):
+</span></span><span style="display:flex;"><span>  df <span style="color:#f92672">=</span> eval(df_name)
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> func <span style="color:#f92672">in</span> funcs:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Evaluate the functions, ensuring that the</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># df name points to the data frame named</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># by the df_name function argument</span>
+</span></span><span style="display:flex;"><span>    display(eval(func, {<span style="color:#e6db74">&#39;df&#39;</span>: df}))
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Transform the source code</span>
+</span></span><span style="display:flex;"><span>  nodes <span style="color:#f92672">=</span> map(ast<span style="color:#f92672">.</span>parse, funcs)
+</span></span><span style="display:flex;"><span>  transformed_nodes <span style="color:#f92672">=</span> map(VarSwapper(df_name), nodes)
+</span></span><span style="display:flex;"><span>  sources <span style="color:#f92672">=</span> map(ast<span style="color:#f92672">.</span>unparse, transformed_nodes)
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Assign output variables so we can access source</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> idx, source <span style="color:#f92672">in</span> enumerate(sources):
+</span></span><span style="display:flex;"><span>    globals()[<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;_os</span><span style="color:#e6db74">{</span>idx<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>] <span style="color:#f92672">=</span> source
+</span></span></code></pre></div><p>If you put all this code in the aforementioned ipython profile file, you can execute and retrieve the source of arbitrary code automatically as you work in your notebook.</p>
 <h2 id="conclusion">conclusion</h2>
 <p>Python&rsquo;s ast module and ipythons extension points take us beyond what ordinary functions can offer, and I think they unlock workflows that lead to better analysis and better performing ML models. With these tools, we can tackle our data work more effectively and stop feeling like Batman standing there like an idiot.</p>
-<p>If you&rsquo;d like to experience a workflow like above one I&rsquo;ve described, I&rsquo;ve built <a href="https://marketplace.visualstudio.com/items?itemName=data-chimp.data-chimp"target="_blank">a vscode plugin</a> (currently in open beta) that automatically shows contextual data visualizations, tables, messages, and docs as you work in your notebook. Customize it to help you spot unexpected features in your data, get oriented in a new data set quickly, or enforce best practices on your team:</p>
+<p>If you&rsquo;d like to experience a workflow like above one I&rsquo;ve described, I&rsquo;ve built <a href="https://marketplace.visualstudio.com/items?itemName=data-chimp.data-chimp"target="_blank" rel="noopener noreferrer">a vscode plugin</a> (currently in open beta) that automatically shows contextual data visualizations, tables, messages, and docs as you work in your notebook. Customize it to help you spot unexpected features in your data, get oriented in a new data set quickly, or enforce best practices on your team:</p>
 <p><img  src="./screenshot.png"
         alt="screenshot of data chimp"/></p>
-<section class="footnotes" role="doc-endnotes">
+<div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn:1" role="doc-endnote">
-<p>Quickly banging out code like this to see a visualization is addictive. It&rsquo;s easy, and there&rsquo;s the possiblity of a big reward once you hit enter. Maybe you find a bombshell insight. Maybe you come up with an idea for a new feature to feed into your ML model. This <a href="https://en.wikipedia.org/wiki/Reinforcement#:~:text=Ratio%20schedules%20produce%20higher%20rates,Reinforcement%20Extinction%20Effect%20%28PREE%29."target="_blank">variable ratio reward schedule</a> turns the data nobook into a slot machine, and it can keep us content with writing repetitive code indefinitely. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<li id="fn:1">
+<p>Quickly banging out code like this to see a visualization is addictive. It&rsquo;s easy, and there&rsquo;s the possiblity of a big reward once you hit enter. Maybe you find a bombshell insight. Maybe you come up with an idea for a new feature to feed into your ML model. This <a href="https://en.wikipedia.org/wiki/Reinforcement#:~:text=Ratio%20schedules%20produce%20higher%20rates,Reinforcement%20Extinction%20Effect%20%28PREE%29."target="_blank" rel="noopener noreferrer">variable ratio reward schedule</a> turns the data nobook into a slot machine, and it can keep us content with writing repetitive code indefinitely.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:2" role="doc-endnote">
-<p>Thanks to Marysia Winkels for the example. She dicusses it more in <a href="https://www.youtube.com/watch?v=pPgic2V7oWg&amp;t=9046s"target="_blank">this PyData Global talk</a>. <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<li id="fn:2">
+<p>Thanks to Marysia Winkels for the example. She dicusses it more in <a href="https://www.youtube.com/watch?v=pPgic2V7oWg&amp;t=9046s"target="_blank" rel="noopener noreferrer">this PyData Global talk</a>.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:3" role="doc-endnote">
-<p>I generated this table using <a href="https://github.com/koaning/doubtlab"target="_blank">Vincent Warmerdam&rsquo;s doubtlab package</a>. <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<li id="fn:3">
+<p>I generated this table using <a href="https://github.com/koaning/doubtlab"target="_blank" rel="noopener noreferrer">Vincent Warmerdam&rsquo;s doubtlab package</a>.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:4" role="doc-endnote">
-<p>The &ldquo;os&rdquo; in <code>_os</code> and <code>_os1</code> stands for &ldquo;output source,&rdquo; and these variables are meant to feel like the standard <code>_</code> <code>__</code> variables that store the most recent outputs as a part of <a href="https://ipython.readthedocs.io/en/stable/interactive/reference.html#output-caching-system"target="_blank">ipython&rsquo;s caching system</a>. <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<li id="fn:4">
+<p>The &ldquo;os&rdquo; in <code>_os</code> and <code>_os1</code> stands for &ldquo;output source,&rdquo; and these variables are meant to feel like the standard <code>_</code> <code>__</code> variables that store the most recent outputs as a part of <a href="https://ipython.readthedocs.io/en/stable/interactive/reference.html#output-caching-system"target="_blank" rel="noopener noreferrer">ipython&rsquo;s caching system</a>.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
-</section>
-</article></div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/the-code-that-chat-ai-cant-write/"><span class="li iconfont icon-article"></span>The code that ChatGPT can't write</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+</div>
+</article>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/what-people-want/"><span class="iconfont icon-article"></span>Moving to substack</a></p><p><a class="link" href="/post/the-code-that-chat-ai-cant-write/"><span class="iconfont icon-article"></span>The code that ChatGPT can't write</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2023 Matt Dupree
+    &copy; 2024 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
             onload="renderMathInElement(document.body);"></script>
-<script type="application/javascript">
+<script>
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -153,6 +151,6 @@ if (!doNotTrack) {
 }
 </script>
 <script async src='https://www.google-analytics.com/analytics.js'></script>
-<script src="/js/core.min.e824fe5a8e6cd5e2ac09542506ccf3c3ad34d1f7503ad17867ea48f453c8e1ea9f6dfda7691546f13c99136fd4a9bd13.js" integrity="sha384-6CT&#43;Wo5s1eKsCVQlBszzw6000fdQOtF4Z&#43;pI9FPI4eqfbf2naRVG8TyZE2/Uqb0T"></script></body>
+<script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
 
 </html>
