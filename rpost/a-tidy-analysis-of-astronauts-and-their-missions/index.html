@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>A Tidy Analysis of Astronauts and Their Missions&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="A Tidy Analysis of Astronauts and Their Missions" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><style>
+  pre {
+    background: none;
+  }
+</style>
+<div class="article-container"><section class="article header">
+    <h1 class="article title">A Tidy Analysis of Astronauts and Their Missions</h1><p class="article date">2020-07-21</p></section><article class="article markdown-body">
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>I live in Orlando Florida, which is less than an hour away from Cape Canaveral. As you might imagine, visiting the space center and watching launches is a “thing” we Orlando folks do fairly often.</p>
+<p><img src="me-at-kennedy.png" /></p>
+<p>I’ve also been getting into R and data science recently via Garrett Grolemund and Hadley Wickham’s excellent <em>R for Data Science</em>. To apply the things I’m learning, I thought it’d be fun to analyze <a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-07-14/readme.md">this week’s Tidy Tuesday astronauts dataset</a>.</p>
+<p>I’ll follow the analysis process suggested by <em>R for Data Science</em>:</p>
+<ol style="list-style-type: decimal">
+<li>Import/Tidy</li>
+<li>Explore (via Transforming, Visualizing, and Modeling the data)</li>
+<li>Repeat exploration loop.</li>
+<li>Communicate results.</li>
+</ol>
+<p>If you’re not interested in the journey, you can skip to <a href="#results">the results</a>. The graphs are cleaner and there’s no code to clutter things.</p>
+</div>
+<div id="load-and-tidy" class="section level1">
+<h1>Load and Tidy</h1>
+<pre class="r"><code>tuesdata &lt;- tidytuesdayR::tt_load(&#39;2020-07-14&#39;)</code></pre>
+<pre><code>## 
+##  Downloading file 1 of 1: `astronauts.csv`</code></pre>
+<p>Let’s <code>glimpse</code> our data:</p>
+<pre class="r"><code>astronauts &lt;- tuesdata$astronauts 
+glimpse(astronauts)</code></pre>
+<pre><code>## Rows: 1,277
+## Columns: 24
+## $ id                       &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1…
+## $ number                   &lt;dbl&gt; 1, 2, 3, 3, 4, 5, 5, 6, 6, 7, 7, 7, 8, 8, 9,…
+## $ nationwide_number        &lt;dbl&gt; 1, 2, 1, 1, 2, 2, 2, 4, 4, 3, 3, 3, 4, 4, 5,…
+## $ name                     &lt;chr&gt; &quot;Gagarin, Yuri&quot;, &quot;Titov, Gherman&quot;, &quot;Glenn, J…
+## $ original_name            &lt;chr&gt; &quot;ГАГАРИН Юрий Алексеевич&quot;, &quot;ТИТОВ Герман Сте…
+## $ sex                      &lt;chr&gt; &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;mal…
+## $ year_of_birth            &lt;dbl&gt; 1934, 1935, 1921, 1921, 1925, 1929, 1929, 19…
+## $ nationality              &lt;chr&gt; &quot;U.S.S.R/Russia&quot;, &quot;U.S.S.R/Russia&quot;, &quot;U.S.&quot;, …
+## $ military_civilian        &lt;chr&gt; &quot;military&quot;, &quot;military&quot;, &quot;military&quot;, &quot;militar…
+## $ selection                &lt;chr&gt; &quot;TsPK-1&quot;, &quot;TsPK-1&quot;, &quot;NASA Astronaut Group 1&quot;…
+## $ year_of_selection        &lt;dbl&gt; 1960, 1960, 1959, 1959, 1959, 1960, 1960, 19…
+## $ mission_number           &lt;dbl&gt; 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 2, 3, 1, 2, 1,…
+## $ total_number_of_missions &lt;dbl&gt; 1, 1, 2, 2, 1, 2, 2, 2, 2, 3, 3, 3, 2, 2, 3,…
+## $ occupation               &lt;chr&gt; &quot;pilot&quot;, &quot;pilot&quot;, &quot;pilot&quot;, &quot;PSP&quot;, &quot;Pilot&quot;, &quot;…
+## $ year_of_mission          &lt;dbl&gt; 1961, 1961, 1962, 1998, 1962, 1962, 1970, 19…
+## $ mission_title            &lt;chr&gt; &quot;Vostok 1&quot;, &quot;Vostok 2&quot;, &quot;MA-6&quot;, &quot;STS-95&quot;, &quot;M…
+## $ ascend_shuttle           &lt;chr&gt; &quot;Vostok 1&quot;, &quot;Vostok 2&quot;, &quot;MA-6&quot;, &quot;STS-95&quot;, &quot;M…
+## $ in_orbit                 &lt;chr&gt; &quot;Vostok 2&quot;, &quot;Vostok 2&quot;, &quot;MA-6&quot;, &quot;STS-95&quot;, &quot;M…
+## $ descend_shuttle          &lt;chr&gt; &quot;Vostok 3&quot;, &quot;Vostok 2&quot;, &quot;MA-6&quot;, &quot;STS-95&quot;, &quot;M…
+## $ hours_mission            &lt;dbl&gt; 1.77, 25.00, 5.00, 213.00, 5.00, 94.00, 424.…
+## $ total_hrs_sum            &lt;dbl&gt; 1.77, 25.30, 218.00, 218.00, 5.00, 519.33, 5…
+## $ field21                  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ eva_hrs_mission          &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.…
+## $ total_eva_hrs            &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.…</code></pre>
+<p>Each row is an astronaut and the mission they accomplished. Columns are variables whose meaning is fairly clear from the name, with the exception of <code>field21</code>.</p>
+<p>Let’s rename it. The docs say that it represents “Instances of EVA by mission.”:</p>
+<pre class="r"><code>astronauts &lt;- astronauts %&gt;% 
+  rename(evas_by_mission = field21)</code></pre>
+</div>
+<div id="exploration-loop-1" class="section level1">
+<h1>Exploration Loop 1</h1>
+<p>I’m curious what the spread of astronauts is by sex.</p>
+<pre class="r"><code>astronauts %&gt;% 
+  ggplot(aes(sex)) +
+  geom_bar()</code></pre>
+<p><img src="/rpost/a-tidy-analysis-of-astronauts-and-their-missions/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Unfortunately, this isn’t surprising. I wonder if the ratio of male to female astronauts has become more equal over time.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Let’s see:</p>
+<pre class="r"><code>astronauts %&gt;%
+  ggplot(aes(year_of_mission, fill = sex)) +
+  geom_bar()</code></pre>
+<p><img src="/rpost/a-tidy-analysis-of-astronauts-and-their-missions/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>It’s not crystal clear from here whether the ratio has improved over time. Let’s confirm explicitly by creating, plotting, and fitting a line to a ratio variable.</p>
+<pre class="r"><code>astronauts %&gt;%
+  group_by(year_of_mission) %&gt;% 
+  summarise(ratio = sum(sex == &quot;female&quot;) / sum(sex == &quot;male&quot;)) %&gt;% 
+  ggplot(aes(year_of_mission, ratio)) +
+  geom_point() + 
+  geom_smooth(se = F)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/rpost/a-tidy-analysis-of-astronauts-and-their-missions/index_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+Looks like there was more equality since the 60s, but there may be some tapering off starting in the 2000s.</p>
+<p>What the heck happened in ~1960? That’s an unusually high ratio.</p>
+<pre class="r"><code>astronauts %&gt;% 
+  filter(between(year_of_mission, 1960, 1970)) %&gt;% 
+  group_by(year_of_mission) %&gt;% 
+  count(sex)</code></pre>
+<pre><code>## # A tibble: 11 x 3
+## # Groups:   year_of_mission [10]
+##    year_of_mission sex        n
+##              &lt;dbl&gt; &lt;chr&gt;  &lt;int&gt;
+##  1            1961 male       2
+##  2            1962 male       5
+##  3            1963 female     1
+##  4            1963 male       2
+##  5            1964 male       3
+##  6            1965 male      12
+##  7            1966 male      10
+##  8            1967 male       1
+##  9            1968 male       7
+## 10            1969 male      23
+## 11            1970 male       5</code></pre>
+<p>Ah. Only three astronauts went on missions in 1963 and one of them was female. Makes sense now.</p>
+</div>
+<div id="exploration-loop-2" class="section level1">
+<h1>Exploration Loop 2</h1>
+<p>I’m curious what the spread of astronauts is by nationality.</p>
+<pre class="r"><code>astronauts %&gt;% 
+  ggplot(aes(nationality)) +
+  geom_bar()</code></pre>
+<p><img src="/rpost/a-tidy-analysis-of-astronauts-and-their-missions/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>That’s not useful. Let’s drop nationalities that appear less than 10 times in the dataset, flip the axis, and sort.</p>
+<pre class="r"><code>astronauts %&gt;% 
+  add_count(nationality) %&gt;% 
+  filter(n &gt; 10) %&gt;% 
+  ggplot(aes(x = fct_reorder(nationality, n))) +
+  geom_bar() +
+  coord_flip()</code></pre>
+<p><img src="/rpost/a-tidy-analysis-of-astronauts-and-their-missions/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Better. Looks like the US dominates missions overall.</p>
+<p>Let’s try looking at the the ratio of US astronauts on missions over time:</p>
+<pre class="r"><code>astronauts %&gt;%
+  group_by(year_of_mission) %&gt;% 
+  summarise(ratio = sum(nationality == &quot;U.S.&quot;) / n()) %&gt;% 
+  ggplot(aes(year_of_mission, ratio)) +
+  geom_point() + 
+  geom_smooth(se = F)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/rpost/a-tidy-analysis-of-astronauts-and-their-missions/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>Interesting. I didn’t realize the U.S. peaked in terms of share of astronauts sent to space in the mid-90s. This makes me wonder how the number of U.S. missions have changed over time.</p>
+<pre class="r"><code>astronauts %&gt;% 
+  count(year_of_mission, wt = sum(nationality == &quot;U.S.&quot;)) %&gt;% 
+  ggplot(aes(year_of_mission, n)) +
+  geom_point() + 
+  geom_smooth(se = F)</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/rpost/a-tidy-analysis-of-astronauts-and-their-missions/index_files/figure-html/unnamed-chunk-12-1.png" width="672" />
+Super interesting! I remember thinking that Obama’s shutting of the shuttle program would be an inflection point of NASA’s activity, but this suggests that the inflection point was before Obama was even elected: ~1994.</p>
+</div>
+<div id="results" class="section level1">
+<h1>Results</h1>
+<p>This data set suggests three interesting conclusions:</p>
+<div id="female-astronauts-have-made-up-a-minor-but-increasing-share-of-astronauts-since-the-60s-but-that-trend-has-reversed-since-the-90s" class="section level2">
+<h2>1. Female astronauts have made up a minor, but increasing share of astronauts since the 60s, but that trend has reversed since the 90s</h2>
+<p>You can kind of see this in this graph:</p>
+<p><img src="/rpost/a-tidy-analysis-of-astronauts-and-their-missions/index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>But it becomes very clear in this graph:</p>
+<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
+## parametric, : Chernobyl! trL&gt;n 6
+
+## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
+## parametric, : Chernobyl! trL&gt;n 6</code></pre>
+<pre><code>## Warning in sqrt(sum.squares/one.delta): NaNs produced</code></pre>
+<p><img src="/rpost/a-tidy-analysis-of-astronauts-and-their-missions/index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="the-u.s.s-dominance-in-share-of-astronauts-ended-in-the-90s" class="section level2">
+<h2>2. The U.S.’s dominance in share of astronauts ended in the 90s</h2>
+<pre><code>## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
+## parametric, : Chernobyl! trL&gt;n 6
+
+## Warning in simpleLoess(y, x, w, span, degree = degree, parametric =
+## parametric, : Chernobyl! trL&gt;n 6</code></pre>
+<pre><code>## Warning in sqrt(sum.squares/one.delta): NaNs produced</code></pre>
+<p><img src="/rpost/a-tidy-analysis-of-astronauts-and-their-missions/index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+<div id="the-raw-number-of-u.s.-astronauts-on-missions-has-been-in-decline-since-the-late-90s-long-before-obama-cancelled-the-constellation-program" class="section level2">
+<h2>3. The raw number of U.S. astronauts on missions has been in decline since the late 90s, long before Obama <a href="https://en.wikipedia.org/wiki/Constellation_program">cancelled the Constellation Program</a></h2>
+<p><img src="/rpost/a-tidy-analysis-of-astronauts-and-their-missions/index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>I’m going to have a daughter soon, and if she wants to be an astronaut, I sure hope she doesn’t have to deal with any bias.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+    </article><section class="article labels"><a class="tag" href=/tags/data-science/>data science</a><a class="tag" href=/tags/r/>r</a></section></div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/rpost/avatar-last-airbender-language-model-and-text-generation/"><span class="iconfont icon-article"></span>Avatar The Last Airbender Language Model and Text Generation</a></p><p><a class="link" href="/rpost/analyzing-traffic-fatalities-by-vehicle-weight-and-size/"><span class="iconfont icon-article"></span>Analyzing Traffic Fatalities by Vehicle Weight and Size with Tidyverse</a></p></section></div>
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2024 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>

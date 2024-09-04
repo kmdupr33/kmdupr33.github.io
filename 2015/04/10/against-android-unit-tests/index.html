@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Against Android Unit Tests&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Against Android Unit Tests" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Against Android Unit Tests</h1><p class="article date">2015-04-11</p></section><article class="article markdown-body"><p><strong>Edit:</strong> Since I&rsquo;ve written this, I&rsquo;ve come to realize that making unit testable Android apps does not require us to remove compile-time dependencies on the Android SDK. I talk about this realization in <a href="http://philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/"target="_blank" rel="noopener noreferrer">the post that concludes this series</a>.</p>
+<hr>
+<p>Even the best among us admit that they struggle with testing their Android apps. Jake Wharton has said explicitly that the Android platform has traditionally been very difficult to test.¹ <a href="http://fragmentedpodcast.com/episodes/1/"target="_blank" rel="noopener noreferrer">In the inaugural episode of their (excellent) podcast</a>, Don Felker and Kaushik Gopal have echoed similar sentiments. They also pointed out that <a href="https://github.com/google/iosched"target="_blank" rel="noopener noreferrer">Google’s IOSched app</a>, an app that supposedly demonstrates some of the best practices in Android development², doesn’t even have tests. IOSched’s lack of tests either a) calls into question Google’s belief that testing is an integral to effective Android development or b) suggests that Google&rsquo;s own Android devs recognize that testing Android applications is too difficult to be worth their time. Either way, if the best Android devs at Google and elsewhere are struggling to test their applications, then the rest of us are in deep trouble.</p>
+<p>Over the years, developers have tried to develop methods for coping with the inherent difficulty in testing the Android platform. <a href="http://robolectric.org/"target="_blank" rel="noopener noreferrer">Roboletric</a>, a tool that allows you to run Android tests on a JVM, is one of those methods. More recently, in their <a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html"target="_blank" rel="noopener noreferrer">blog post/tirade against Fragments</a>, the folks at Square have proposed another method: they are moving the business logic of their applications into Presenters, pure java objects that have no Android dependencies. These Presenters, of course, are easily tested using standard Java tools.</p>
+<p>I believe that the folks at Square are on to something. I think that their attempt to enhance the testability of their application by pulling UI-related business logic into pure java Presenters can be generalized. In other words, I think we can stop trying to do Android unit tests; we can stop writing tests that depend on the Android SDK. I think we can restructure our applications so that we can write pure Java unit tests for all of our application code, and I think its worth exploring whether this restructuring would both enhance testability and the overall robustness of Android applications.</p>
+<p>I realize that this is a radical suggestion. I’m basically asking us to take a stack that looks like this:</p>
+<p><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/04/androidstack-01.png"
+        alt="AndroidStack-01"/></p>
+<p>And make it look like this:</p>
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/04/androidstack-02.png"target="_blank" rel="noopener noreferrer"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/04/androidstack-02.png"
+        alt="AndroidStack-02"/></a></p>
+<p>Although this suggestion is radical and although it might seem like a long shot, I think its worth exploring since it will free developers from the unfortunate features of writing Android unit tests without forcing them to rely on third-party libraries that will invariably lag behind the newest updates to the Android ecosystem. Moreover, if Kent Beck is right in claiming that testable code is well structured code, we might also discover better ways of designing our applications.</p>
+<p>In the next few posts, I’ll be exploring the viability of restructuring Android applications so that they are easily testable using standard java tools.</p>
+<p>In the first two posts, I’ll say more about <a href="http://philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/"target="_blank" rel="noopener noreferrer">why testing on Android is a pain</a>. I think that slow Android instrumentation tests is only one shallow reason that Android testing is difficult. I think that the lack of proper dependency injection for Activities and Fragments is a key cause of the difficulty of testing our applications, and I think that understanding this is necessary to designing a new application structure that will enhance testability.</p>
+<p>In the third and fourth posts, I’ll discuss in detail <a href="http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/"target="_blank" rel="noopener noreferrer">a general strategy for decoupling application code from the Android SDK</a>. Briefly, that general strategy is this: delegate all application specific behavior to POJO objects whose dependencies are Android-specific implementations of Android-agnostic interfaces.</p>
+<p>In the fourth post, I’ll discuss some challenges with the general strategy I propose in the second post, and try to discuss possible solutions to those challenges. The main challenges that I see at this point are memory leaks and boiler plate code.</p>
+<p>In the final post, I try to provide further incentive for enhancing the testability of our application by showing how the architecture I propose has some nice benefits aside from testability.<a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/04/androidstack-01.png"target="_blank" rel="noopener noreferrer">
+</a></p>
+<hr>
+<p>Against Android Unit Tests:</p>
+<ul>
+<li><a href="http://www.philosophicalhacker.com/2015/04/10/against-android-unit-tests/"target="_blank" rel="noopener noreferrer">Introduction</a></li>
+<li>Why Android Unit Testing is so Hard: <a href="http://www.philosophicalhacker.com/2015/04/17/why-android-unit-testing-is-so-hard-pt-1/"target="_blank" rel="noopener noreferrer">part 1</a>, <a href="http://www.philosophicalhacker.com/2015/04/24/why-android-unit-testing-is-so-hard-pt-2/"target="_blank" rel="noopener noreferrer">part 2</a></li>
+<li>How to Make Our Android Apps Unit Testable: <a href="http://www.philosophicalhacker.com/2015/05/01/how-to-make-our-android-apps-unit-testable-pt-1/"target="_blank" rel="noopener noreferrer">part 1</a>, <a href="http://www.philosophicalhacker.com/2015/05/08/how-to-make-our-android-apps-unit-testable-pt-2/"target="_blank" rel="noopener noreferrer">part 2</a></li>
+<li><a href="http://www.philosophicalhacker.com/2015/05/09/android-unit-testing-guides/"target="_blank" rel="noopener noreferrer">Quick Summary</a></li>
+<li><a href="http://www.philosophicalhacker.com/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/"target="_blank" rel="noopener noreferrer">Conclusion</a></li>
+<li><a href="http://www.philosophicalhacker.com/2015/05/31/towards-a-unit-testable-fork-of-googles-iosched-app/"target="_blank" rel="noopener noreferrer">Followup: Summary</a></li>
+<li><a href="http://www.philosophicalhacker.com/2015/06/06/unit-testing-dynamically-constructed-views/"target="_blank" rel="noopener noreferrer">Followup: Unit Testing Dynamically Constructed Views</a></li>
+<li><a href="http://www.philosophicalhacker.com/2015/05/29/making-the-most-of-android-studios-unit-testing-support/"target="_blank" rel="noopener noreferrer">Followup: Testing in Android Studio 1.2</a></li>
+</ul>
+<hr>
+<p>Notes:</p>
+<ol>
+<li>
+<p>He said this during <a href="https://www.parleys.com/tutorial/529bde2ce4b0e619540cc3ae"target="_blank" rel="noopener noreferrer">his 2013 talk on Dagger at DevOxx</a></p>
+</li>
+<li>
+<p>In <a href="http://android-developers.blogspot.com/2014/07/google-io-2014-app-source-code-now.html"target="_blank" rel="noopener noreferrer">an android developers blog post</a>, Bruno Oliveira presents the app as a model for us to follow.</p>
+</li>
+</ol>
+</article><section class="article labels"><a class="category" href=/categories/Android/>Android</a><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/2015/04/16/is-mark-zuckerberg-a-douche-bag/"><span class="iconfont icon-article"></span>Is Mark Zuckerberg a Douche-bag?</a></p><p><a class="link" href="/2015/04/06/dont-call-it-mvp/"><span class="iconfont icon-article"></span>Don't call it "MVP"</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "philosophicalhacker" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2024 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>
