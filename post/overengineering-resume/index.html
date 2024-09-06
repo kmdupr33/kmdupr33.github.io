@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Overengineering a Resume with Python, TOML, and Tailwind CSS&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Overengineering a Resume with Python, TOML, and Tailwind CSS" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Overengineering a Resume with Python, TOML, and Tailwind CSS</h1><p class="article date">2024-09-05<span class="reading-time"> • 2 minutes to read</span></p></section><article class="article markdown-body"><p>A &ldquo;onesize fits all&rdquo; resume doesn&rsquo;t work for me. I&rsquo;ve been programming for over a decade, and my experience is quite varied. Shipping one resume to everyone means there will often be useless details presented in a suboptimal ordering. Wasting an ordinary hiring manager&rsquo;s time is bad enough, but I want to work at a startup, and since I&rsquo;ve been a founder before, I know how much founders will appreciate a resume stripped down to only show relevant experience that is presented in a reasonable order.</p>
+<p>For example, my last real job was at Heap, a product analytics company that became a unicorn at the end of 2021. A resume entry for this position could look like this:</p>
+<blockquote>
+<p>Heap</p>
+<ul>
+<li>Optimized SQL query performance to run across Heap’s distributed Postgres cluster with a p90 of &lt; 10 seconds</li>
+<li>Full stack web development of digital product analytics application (React, Typescript, Express)</li>
+<li>Started technical writing group that produced 6+ articles that made it to the front page of HN and generated over 70k views for the company website</li>
+</ul>
+</blockquote>
+<p>But what if the company doens&rsquo;t care about distributed systems experience? In that case, the first bullet is irrelevant. Wasted time! What if they highly value leadership experience? Probably should have led with the third bullet point then.</p>
+<p>Last time I was on the hunt, I magaged this sort of thing manually with a google doc. Not this time. Now, I&rsquo;ve got a python cli that reads a toml file with tagged experiences that are filtered, sorted, and styled specifically for each position I apply to. The resume is rendered with an HTML Jinja template and Tailwind css.</p>
+<p>This is over-engineered. There&rsquo;s probably a clever way to do this in LaTeX, but at least I didn&rsquo;t use React ;). Here I want to take you through some of the more fun parts of the code.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[<span style="color:#a6e22e">scripts</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">google</span> = <span style="color:#e6db74">&#34;python build.py &#39;fullstack,python,product-minded&#39;&#34;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TailwindRenderer</span>(mistune<span style="color:#f92672">.</span>HTMLRenderer):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">link</span>(self, text: str, url: str, title<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
+</span></span><span style="display:flex;"><span>        result <span style="color:#f92672">=</span> super()<span style="color:#f92672">.</span>link(text, url, title)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> re<span style="color:#f92672">.</span>sub(<span style="color:#e6db74">&#34;^&lt;a&#34;</span>, <span style="color:#e6db74">&#34;&lt;a class=&#39;underline&#39;&#34;</span>, result)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>[
+</span></span><span style="display:flex;"><span>    t
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> t <span style="color:#f92672">in</span> collection
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> t<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;tags&#34;</span>) <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">or</span> len(set(t[<span style="color:#e6db74">&#34;tags&#34;</span>]) <span style="color:#f92672">&amp;</span> set(tags)) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>]
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">priority</span>(taggable):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> taggable<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;tags&#34;</span>) <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> reduce(
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># THIS IS INCORRECT. Suppose the input is impressive,fullstack,android and the tags are [&#34;impressive&#34;, &#34;android]. This item would appear after an item with tags [&#34;android&#34;], which is not what we want.</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># TODO I should write some test cases for this code and get the right semantics</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">lambda</span> acc, curr: acc <span style="color:#f92672">+</span> tags<span style="color:#f92672">.</span>index(curr) <span style="color:#66d9ef">if</span> curr <span style="color:#f92672">in</span> tags <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">100</span>,
+</span></span><span style="display:flex;"><span>        taggable[<span style="color:#e6db74">&#34;tags&#34;</span>],
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>    )
+</span></span></code></pre></div></article>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/which-devs-security/"><span class="iconfont icon-article"></span>Which developers care most about security?</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2024 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>

@@ -10,6 +10,49 @@
     
     
     <item>
+      <title>Overengineering a Resume with Python, TOML, and Tailwind CSS</title>
+      <link>https://www.philosophicalhacker.com/post/overengineering-resume/</link>
+      <pubDate>Thu, 05 Sep 2024 14:41:37 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/overengineering-resume/</guid>
+      <description>&lt;p&gt;A &amp;ldquo;onesize fits all&amp;rdquo; resume doesn&amp;rsquo;t work for me. I&amp;rsquo;ve been programming for over a decade, and my experience is quite varied. Shipping one resume to everyone means there will often be useless details presented in a suboptimal ordering. Wasting an ordinary hiring manager&amp;rsquo;s time is bad enough, but I want to work at a startup, and since I&amp;rsquo;ve been a founder before, I know how much founders will appreciate a resume stripped down to only show relevant experience that is presented in a reasonable order.&lt;/p&gt;
+&lt;p&gt;For example, my last real job was at Heap, a product analytics company that became a unicorn at the end of 2021. A resume entry for this position could look like this:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Heap&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Optimized SQL query performance to run across Heap’s distributed Postgres cluster with a p90 of &amp;lt; 10 seconds&lt;/li&gt;
+&lt;li&gt;Full stack web development of digital product analytics application (React, Typescript, Express)&lt;/li&gt;
+&lt;li&gt;Started technical writing group that produced 6+ articles that made it to the front page of HN and generated over 70k views for the company website&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;But what if the company doens&amp;rsquo;t care about distributed systems experience? In that case, the first bullet is irrelevant. Wasted time! What if they highly value leadership experience? Probably should have led with the third bullet point then.&lt;/p&gt;
+&lt;p&gt;Last time I was on the hunt, I magaged this sort of thing manually with a google doc. Not this time. Now, I&amp;rsquo;ve got a python cli that reads a toml file with tagged experiences that are filtered, sorted, and styled specifically for each position I apply to. The resume is rendered with an HTML Jinja template and Tailwind css.&lt;/p&gt;
+&lt;p&gt;This is over-engineered. There&amp;rsquo;s probably a clever way to do this in LaTeX, but at least I didn&amp;rsquo;t use React ;). Here I want to take you through some of the more fun parts of the code.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;scripts&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;google&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;python build.py &amp;#39;fullstack,python,product-minded&amp;#39;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;TailwindRenderer&lt;/span&gt;(mistune&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;HTMLRenderer):
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;link&lt;/span&gt;(self, text: str, url: str, title&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;):
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; super()&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;link(text, url, title)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; re&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sub(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;^&amp;lt;a&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;lt;a class=&amp;#39;underline&amp;#39;&amp;#34;&lt;/span&gt;, result)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;[
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    t
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; t &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; collection
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; t&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tags&amp;#34;&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; len(set(t[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tags&amp;#34;&lt;/span&gt;]) &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt; set(tags)) &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;priority&lt;/span&gt;(taggable):
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; taggable&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tags&amp;#34;&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; reduce(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;# THIS IS INCORRECT. Suppose the input is impressive,fullstack,android and the tags are [&amp;#34;impressive&amp;#34;, &amp;#34;android]. This item would appear after an item with tags [&amp;#34;android&amp;#34;], which is not what we want.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;# TODO I should write some test cases for this code and get the right semantics&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;lambda&lt;/span&gt; acc, curr: acc &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; tags&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;index(curr) &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; curr &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; tags &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        taggable[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tags&amp;#34;&lt;/span&gt;],
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    )
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+    <item>
       <title>Which developers care most about security?</title>
       <link>https://www.philosophicalhacker.com/post/which-devs-security/</link>
       <pubDate>Tue, 06 Aug 2024 09:35:59 -0500</pubDate>
@@ -231,16 +274,6 @@
       
       <guid>https://www.philosophicalhacker.com/talk/ml-first-jupyter-notebooks/</guid>
       <description>&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/kvJ0h2eQS6U&#34; title=&#34;YouTube video player&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;&lt;/iframe&gt;</description>
-    </item>
-    
-    <item>
-      <title>The Future of Machine Learning and AI: A visionary panel discussion</title>
-      <link>https://www.philosophicalhacker.com/talk/future-of-ml-and-ai-a-visionary-panel/</link>
-      <pubDate>Tue, 14 Feb 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/talk/future-of-ml-and-ai-a-visionary-panel/</guid>
-      <description>&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/MLIFbNyPaTU&#34; title=&#34;YouTube video player&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&#34; allowfullscreen&gt;&lt;/iframe&gt;
-</description>
     </item>
     
   </channel>
