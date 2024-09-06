@@ -166,14 +166,14 @@
 <p>At the highest level, the way gradient descent works is that we take a guess at the optimal value of <code>m</code>, then we modify our guess by a small amount called the &ldquo;learning rate&rdquo; and repeat until we aren&rsquo;t getting any better. This is how the algorithm got its name: we&rsquo;re slowing descending down the gradient until we get to the minimum.</p>
 <p>With that, we can start to fill in more of our <code>findLearningParameters</code> function:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-kotlin" data-lang="kotlin"><span style="display:flex;"><span><span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">findLearningParameters</span>(videoGameData: Array&lt;Pair&lt;Double, Double&gt;&gt;): Pair&lt;Double, Double&gt; {
-</span></span><span style="display:flex;"><span> . <span style="color:#66d9ef">val</span> learningRate = .<span style="color:#ae81ff">0003</span>
-</span></span><span style="display:flex;"><span> . <span style="color:#66d9ef">var</span> guess = Pair(<span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">0.0</span>)
-</span></span><span style="display:flex;"><span> . <span style="color:#66d9ef">for</span> (i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">1.</span>.<span style="color:#ae81ff">10000000</span>) {
-</span></span><span style="display:flex; background-color:#3c3d38"><span> . .  guess = updateGuess(guess, learningRate, videoGameData)
-</span></span><span style="display:flex;"><span> . <span style="color:#66d9ef">if</span> (i % <span style="color:#ae81ff">1000</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) println(<span style="color:#e6db74">&#34;Guess: </span><span style="color:#e6db74">$guess</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">val</span> learningRate = .<span style="color:#ae81ff">0003</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">var</span> guess = Pair(<span style="color:#ae81ff">0.0</span>, <span style="color:#ae81ff">0.0</span>)
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">for</span> (i <span style="color:#66d9ef">in</span> <span style="color:#ae81ff">1.</span>.<span style="color:#ae81ff">10000000</span>) {
+</span></span><span style="display:flex; background-color:#3c3d38"><span>     guess = updateGuess(guess, learningRate, videoGameData)
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">if</span> (i % <span style="color:#ae81ff">1000</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) println(<span style="color:#e6db74">&#34;Guess: </span><span style="color:#e6db74">$guess</span><span style="color:#e6db74">&#34;</span>)
 </span></span><span style="display:flex; background-color:#3c3d38"><span>        <span style="color:#66d9ef">if</span> (i % <span style="color:#ae81ff">1000</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) println(<span style="color:#e6db74">&#34;Cost: </span><span style="color:#e6db74">${cost(videoGameData, guess)}</span><span style="color:#e6db74">&#34;</span>)
-</span></span><span style="display:flex;"><span> . }
-</span></span><span style="display:flex;"><span> . <span style="color:#66d9ef">return</span> guess
+</span></span><span style="display:flex;"><span>     }
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">return</span> guess
 </span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>The highlighted lines point to some functions that need explaining. You should be able to guess at what <code>cost</code> does: it computes how bad our guess at <code>m</code> and <code>b</code> are with the aforementioned formula:</p>
 
