@@ -15,6 +15,22 @@
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><ul class="note list"><li class="item">
         
+        <a class="note" href="/post/espresso-test-addiction/">
+        
+            <p class="note title">Espresso Test Addiction: An Anti-pattern</p><p class="note date">2017-01-28</p><p class="note content">More than 1000 apps&hellip;they have espresso tests for the first time using the test recorder&hellip;espresso adoption has also grown since the introduction of [the espresso test recorder].
+Android Developers Backstage, Episode 37 Espresso Test Recorder, 31:10
+Record-playback tools are almost always a bad idea for any kind of automation, since they resist changeability and obstruct useful abstractions. They are only worth having as a tool to generate fragments of scripts which you can then edit as a proper programming language&hellip;<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li><li class="item">
+        
+        <a class="note" href="/post/exploiting-android-specific-seams-for-testing-and-flexibility/">
+        
+            <p class="note title">Exploiting Android-Specific Seams for Testing and Flexibility</p><p class="note date">2017-01-21</p><p class="note content">As I pointed out throughout my series of posts on writing testable Android applications, the key to writing testable Android apps, is creating and exploiting seams. During these posts, I pointed out two types of seams that are available in any OO programming language and any programming environment. In this post, I want to highlight some Android-specific seams that we can leverage to make our applications more testable and flexible.<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li><li class="item">
+        
+        <a class="note" href="/post/tdd-is-greater-than-the-principle-of-single-responsibility/">
+        
+            <p class="note title">TDD > The Principle of Single Responsibility</p><p class="note date">2017-01-14</p><p class="note content">The programmer, like the poet, works only slightly removed from pure thought-stuff. He builds his castles in the air, from air, creating by exertion of the imagination. Few media of creation are so flexible, so easy to polish and rework, so readily capable of realizing grand conceptual structures&hellip;
+Fred Brooks, The Mythical Man-Month
+Grand structures &ndash; whether they are conceptual, programmatic, or physical &ndash; require strong foundations. This is true in two senses.<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/architecture/">architecture</a><a class="tag" href="/tags/testing/">testing</a></p></li><li class="item">
+        
         <a class="note" href="/post/why-i-dont-use-roboletric/">
         
             <p class="note title">Why I Don't use Robolectric</p><p class="note date">2017-01-06</p><p class="note content">The more that I learn about testing, the more suspicious of Robolectric I get. I&rsquo;m honestly starting to think that many of the heros of unit testing (e.g., Kent Beck, Michael Feathers, Steve Freeman, and Nat Pryce) would be pretty suspicious of Robolectric. Here are my concerns:
@@ -49,22 +65,7 @@ The fundamental thing to recognize is that when we look at a call in an object-o
         
             <p class="note title">Why we Should Probably Write More Tests for Our Android Apps</p><p class="note date">2016-11-07</p><p class="note content">This past weekend, I had the privilege of speaking about writing testable Android apps at Florida DevFest. This post is a written version of one of the major points I made in my presentation.
 Let&rsquo;s start off with two descriptions of attitudes towards testing. The first comes from Kaushik Goupal (he&rsquo;s describing an attitude, not endorsing it):
-Testing seems to be like going to gym. Everyone feels like &ldquo;yeah. I should be testing.<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li><li class="item">
-        
-        <a class="note" href="/post/using-git-submodules-effectively/">
-        
-            <p class="note title">Using Git Submodules Effectively</p><p class="note date">2016-10-23</p><p class="note content">I used to think git submodules were categorically evil. This was naive, as most choices in software development are about tradeoffs. A part of the reason I had this simplistic view was because of an article called &ldquo;Why your Company Shouldn&rsquo;t use Git Submodules.&rdquo; I took a second look at this article recently and I read the docs on git submodules. What follows are some more nuanced thoughts on how and when git submodules can be used effectively.<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/git/">git</a></p></li><li class="item">
-        
-        <a class="note" href="/post/3-ways-of-getting-to-green/">
-        
-            <p class="note title">3 Ways of 'Getting to Green'</p><p class="note date">2016-10-16</p><p class="note content">A part of the TDD work flow is getting a failing test to pass as quickly as possible. This makes sense if we think about how TDD is supposed to help us take smaller steps when we&rsquo;re writing programs. Beck goes over three ways of getting a test to pass quickly in the fist part of TDD By Example.
-The first method is to fake it. Just hard code whatever values you need to to get the tests to pass.<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/testing/">testing</a><a class="tag" href="/tags/TDD/">TDD</a></p></li><li class="item">
-        
-        <a class="note" href="/post/the-goal-of-refactoring-during-tdd/">
-        
-            <p class="note title">The goal of refactoring During TDD</p><p class="note date">2016-10-16</p><p class="note content">Red, green, refactor. That&rsquo;s the TDD flow. That much was obvious to me.
-However, refactoring is a pretty broad term. There are many reasons you may want to refactor code and as a result of this, I didn&rsquo;t really understand what exactly was supposed to happen during the refactor step of the TDD loop until I finished the first part of Kent Beck&rsquo;s TDD by Example.
-Actually, in the first description of TDD, Beck uses a more helpful description of the &ldquo;refactor step.<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/testing/">testing</a><a class="tag" href="/tags/TDD/">TDD</a></p></li></ul><div class="pagination">
+Testing seems to be like going to gym. Everyone feels like &ldquo;yeah. I should be testing.<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li></ul><div class="pagination">
     <ul><li><a href="/page/7/"><span class="iconfont icon-pagepreview"></span></a></li><li><a class="" href="/page/6/">6</a></li><li><a class="" href="/page/7/">7</a></li><li><a class="active" href="/page/8/">8</a></li><li><a class="" href="/page/9/">9</a></li><li><a class="" href="/page/10/">10</a></li><li><a href="/page/9/"><span class="iconfont icon-pagenext"></span></a></li></ul>
 </div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>

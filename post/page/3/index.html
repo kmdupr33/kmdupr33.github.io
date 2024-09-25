@@ -15,6 +15,25 @@
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><section class="article header"><h1>Posts</h1></section><ul class="note list"><li class="item">
         
+        <a class="note" href="/post/when-to-dry/">
+        
+            <p class="note title">When should we create abstractions instead of duplication?</p><p class="note date">2020-11-14</p><p class="note content">Because abstractions aren&rsquo;t free, sometimes we&rsquo;re better off duplicating code instead of creating them.
+If that claim doesn&rsquo;t make sense to you, read Martin Fowler&rsquo;s &ldquo;YAGNI&rdquo; or Sandi Metz&rsquo;s &ldquo;The Wrong Abstraction&rdquo; or watch Dan Abramov&rsquo;s &ldquo;WET Code&rdquo; talk or Kent C. Dodd&rsquo;s &ldquo;AHA Programming&rdquo; talk.
+Each of these programmers give advice on when to duplicate code vs. create an abstraction, advice that broadly falls into two camps: either we are advised to follow some rule of thumb or we&rsquo;re told to ignore rules of thumb, trust our feelings and to only introduce abstractions when it &ldquo;feels right.<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/programming/">programming</a></p></li><li class="item">
+        
+        <a class="note" href="/post/improving-forecasting/">
+        
+            <p class="note title">Programming and Forecasting</p><p class="note date">2020-10-19</p><p class="note content">Good programmers are good at forecasting. They can often predict roughly how long it&rsquo;ll take to accomplish a particular programming task. They can also predict when and to what extent a project will see ROI from a particular technical investment.
+Unfortunately, this skill isn&rsquo;t guaranteed to develop as we gain more experience programming. In Superforecasters, the authors note that many experienced people are surprisingly bad at making forecasts and that time and experience often don&rsquo;t make us any better.<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/programming/">programming</a><a class="tag" href="/tags/project-management/">project management</a><a class="tag" href="/tags/architecture/">architecture</a></p></li><li class="item">
+        
+        <a class="note" href="/post/why-mobile-ides-are-bad/">
+        
+            <p class="note title">Why Mobile IDEs Are Bad</p><p class="note date">2020-09-23</p><p class="note content">An old coworker of mine (who is still an android dev) asked me a question earlier today:
+Why has it become acceptable in our industry to have tools that are such poor quality?
+He was referring to Android Studio, but we could ask the same question about Xcode, which is also bad:
+Was it really all that unexpected? pic.twitter.com/QU7GPbOhu0
+&mdash; Code Standards (@codestandards) February 23, 2017 I mean no offense to the teams working on these products.<span class="mldr">&mldr;</span></p></a></li><li class="item">
+        
         <a class="note" href="/post/are-source-file-diffs-serially-correlated/">
         
             <p class="note title">Should we refactor files we're working on?</p><p class="note date">2020-05-09</p><p class="note content">When programming, always follow the camping rule: Always leave the code base healthier than when you found it.
@@ -53,26 +72,7 @@ Everything I cover here is covered in Andrew Ng&rsquo;s excellent Coursera machi
         <a class="note" href="/post/dagger-2-years-later/">
         
             <p class="note title">Dagger 2, 2 Years Later</p><p class="note date">2019-08-27</p><p class="note content">&hellip;in software, feedback cycles tend to be on the order of months, if not years&hellip;It’s during the full lifetime of a project that a developer gains experience writing code, source controlling it, modifying it, testing it, and living with previous design and architecture decisions during maintenance phases. With everything I’ve just described, a developer is lucky to have a first try of less than six months&hellip;
-&ndash;Erik Dietrich, &ldquo;How Developers Stop Learning: Rise of the Expert Beginner&rdquo;<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/dependency-injection/">dependency injection</a><a class="tag" href="/tags/programming/">programming</a></p></li><li class="item">
-        
-        <a class="note" href="/post/towards-readable-clis/">
-        
-            <p class="note title">Maybe we Should Stop Creating Inscrutable CLIs</p><p class="note date">2019-08-17</p><p class="note content">In the original Unix tradition, command-line options are single letters preceded by a single hyphen&hellip;The original Unix style evolved on slow ASR-33 teletypes that made terseness a virtue; thus the single-letter options.
-Eric Steven Raymond, The Art of Unix Programming
-Programs must be written for people to read, and only incidentally for machines to execute.
-Abelson et. al., Structure and Interpretation of Computer Programs
-I just wrote this little bash-ism the other day for removing all attachments from a jira ticket:<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/programming/">programming</a><a class="tag" href="/tags/clis/">clis</a></p></li><li class="item">
-        
-        <a class="note" href="/post/roadmap-presentation-tips/">
-        
-            <p class="note title">Some Tips for Delivering an Effective Roadmap Presentation</p><p class="note date">2019-07-13</p><p class="note content">I recently delivered a presentation of our (outcome-based) roadmap. Several people approached me after the presentation to tell me that they found it useful and informative, so I thought I’d jot down some of the things that I think contributed to the warm reception of the presentation. Hopefully, these tips will come in handy both for others and for my future self.
-<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/product-management/">product management</a><a class="tag" href="/tags/roadmaps/">roadmaps</a></p></li><li class="item">
-        
-        <a class="note" href="/post/jira-cli-fu/">
-        
-            <p class="note title">How to Automate Common Jira Tasks with Go Jira Custom Commands</p><p class="note date">2019-07-03</p><p class="note content">in all but small teams I typically recommend separate people for the separate roles [of product managment and project management]. But in every case I believe that developing strong project management skills is a big advantage for product managers – at the least your product will get to market faster, and it could make the difference between getting your product shipped at all.
-&ndash;Marty Cagan, &ldquo;Ebay&rsquo;s Secret Weapon&rdquo;
-Every morning, I get the following slack message reminder:<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/jira/">jira</a><a class="tag" href="/tags/product-management/">product management</a><a class="tag" href="/tags/project-management/">project management</a></p></li></ul><div class="pagination">
+&ndash;Erik Dietrich, &ldquo;How Developers Stop Learning: Rise of the Expert Beginner&rdquo;<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/dependency-injection/">dependency injection</a><a class="tag" href="/tags/programming/">programming</a></p></li></ul><div class="pagination">
     <ul><li><a class="" href="/post/">1</a></li><li><a class="" href="/post/page/2/">2</a></li><li><a class="active" href="/post/page/3/">3</a></li><li><a class="" href="/post/page/4/">4</a></li><li><a class="" href="/post/page/5/">5</a></li><li><a href="/post/page/4/"><span class="iconfont icon-pagenext"></span></a></li></ul>
 </div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>

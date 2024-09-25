@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Dont Get Into the UX Business&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Dont Get Into the UX Business" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Dont Get Into the UX Business</h1><p class="article date">2024-02-20<span class="lastmod"> • edited 2024-09-25</span><span class="reading-time"> • 6 minutes to read</span></p></section><article class="article markdown-body"><p>We built an LLM-powered product that improves software help UX. Although there are a few exceptions, generally speaking, no one will pay for it. Below I discuss the headwinds I encountered while trying to sell this product, headwinds that will affect anyone in the business of helping other software companies improve the UX of their product.</p>
+<p>These headwinds aren’t worth fighting. Unless you’re offering a UX improvement that very obviously leads to more revenue, don’t get in to the UX business.</p>
+<h2 id="if-we-have-good-ux-we-dont-need-your-product">“If we have good UX, we don’t need your product“</h2>
+<p>I’ve noted <a href="relref%20%22conflicting-employee-co-incentives%22">[elsewhere]</a> that when you’re selling B2B software, you’re selling to businesses and employees that may have conflicting incentives. When a solution is good for the business but bad for employees, they will sabotage your sales and slow your growth.</p>
+<p>Selling better UX suffers from this problem. It’s the product team’s job to build good UX that drives revenue, so even if it’s better for the company to buy a UX solution, product teams aren’t incentivized to push for this. They are much more likely to get a promotion for building the revenue-driving UX than buying it.</p>
+<p>In other words, this:</p>
+<p><img  src="./2by2.webp"
+        alt/></p>
+<p>One way in which this dynamic manifested itself was when folks objected to our product by saying, “If we have good UX, we don’t need your product.” A part of what they were saying here is, “UX is our job, not yours.”</p>
+<p>The other part of what they’re saying was that needing an LLM to overlay instructions on top of a UI points to lack of good UX copy and progressive disclosure. Interestingly, when we tried to sell LLM-generated UX copy improvements to folks who made this objection, that didn’t work. This is for the same reason selling our first solution didn’t work: UX is the product team’s job, not a vendor’s job.</p>
+<h2 id="the-goldilocks-problem">The Goldilocks problem</h2>
+<p>One way of escaping the conflicting incentives discussed above is to sell to a company so small that they haven’t hired the employees who compete with your solution and are who are therefore disincentivized to adopt it. Once a company has made those hires, they’re too big for an easy sale.</p>
+<p>This is hard to do while selling UX because it’s also possible for a startup to be too small for a UX solution. UX isn’t hard when your early-stage product only has 3 screens.</p>
+<p>More importantly, early founders actually benefit from UX friction and bugs. Users get stuck. They agree to a call to get unstuck. The founder gets UX and product feedback on that call, builds rapport, etc.</p>
+<p>So, startups in the UX business face a Goldilocks problem. They’ll have a hard time selling to companies that are too big1 and to companies that are too small. They have to find them sized just right.</p>
+<h2 id="painkiller-ux-doesnt-matter">Painkiller UX doesn’t matter</h2>
+<p>Even if you solve the Goldlocks problem, there’s another headwind to deal with, one that I should have seen early on in our user research when I spoke with a customer success consultant. During our call, she told me:</p>
+<blockquote>
+<p>Most of the founders I work with don’t think about customer success until its too late. Their product is a few years old and they’ve already started to see some churn that they’re worried will affect their ability to raise the next round.</p>
+</blockquote>
+<p>Translation: software companies only want to help their customers if they’re so fed up that they’re willing to churn, and customers tolerate all sorts of abuse before getting to this point.</p>
+<p>In this sense, software customers are like painkiller users: they only quit when the experience of using is worse than the experience of not using. And things can get very bad before that happens. LinkedIn’s Sales Navigator UX drives me nuts, but its the only way to get the data I need to prospect. During user research calls, I have listened to 20-minute tirades about how awful it is to use Salesforce. Their market cap doesn’t seem to care.</p>
+<p>When founders have a hit software product, they are selling something that has the addictive properties of a drug, or, if you prefer the more palatable VC-speak: “They’re selling pain-killers, not vitamins.” Whatever metaphor you prefer, try to sell a drug dealer on something that makes the UX of drug usage easier. Unless it somehow increases revenue, they won’t care. People are already bending over backwards to buy their product.</p>
+<h2 id="the-tenuous-connection-between-good-ux-and-revenue">The tenuous connection between good UX and revenue</h2>
+<p>But doesn’t good UX increase revenue? If a user is looking at products A and B and all other things are equal, except that A has better UX, won’t they pick A? Sure, but the price of the two products can’t be equal because building a product with better UX costs something and someone has to pay that cost somehow.</p>
+<p>We are often unwilling to pay that cost, even with a product as great as the iPhone. The leap from laptops to the iPhone is arguably the greatest UX improvement of our generation, and most of us don’t even pay full price for the device. Instead, the cost of the device is subsidized by cell carriers who are just trying to sell more data/minutes.</p>
+<p>Even with the iPhone’s subsidies and better UX, <a href="https://explodingtopics.com/blog/iphone-android-users"target="_blank" rel="noopener noreferrer">Android has 70% of the smartphone market</a>. We will put up with worse UX for a cheaper phone that is also partially paid for by our willingness to feed data into Google’s ads business.</p>
+<p>Why don’t we care enough about good UX to pay for it, even though good UX saves us time? We don’t really value our time. At work, we get paid the same regardless of how efficient we are. Why pay to be more efficient by using products with good UX? At home, we already waste hours of our lives doom scrolling and binge watching Netflix. We can probably just suffer the extra 2-minutes using an app with shit UX and save our dollars for the next streaming service that drops.</p>
+<p>If anyone values UX enough to pay for it, it would be me, someone who was working in the UX business, someone who literally curses at my computer all the time as I’m dealing with shit software. As I’ve thought more about this business and my own behavior, I realized that I’ve drastically over-estimated my willingness to pay for better UX. Wittgenstein was right:</p>
+<blockquote>
+<p>“Nothing is so difficult as not deceiving oneself.”</p>
+</blockquote>
+</article>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/billion-dollar-mistakes/"><span class="iconfont icon-article"></span>Look for billion dollar mistakes</a></p><p><a class="link" href="/post/conflicting-employee-co-incentives/"><span class="iconfont icon-article"></span>Conflicting employee vs. business incentives slow B2B SaaS growth rates</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2024 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>
