@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Why I Avoid Singletons for Android Data Loading&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Why I Avoid Singletons for Android Data Loading" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Why I Avoid Singletons for Android Data Loading</h1><p class="article date">2017-02-04</p></section><article class="article markdown-body"><p><img  src="/images/nuke.jpg"
+        alt/></p>
+<p>Imagine for a moment that there&rsquo;s an annoying fly buzzing around your guests at a BBQ you&rsquo;re hosting. You and your guests swat at it a few times, but no one manages to nail the sucker. You run into the house to grab a fly swatter, but you find that even if you wait for the fly to settle down somewhere, you can&rsquo;t quite smash it.</p>
+<p>Frustrated and desperate, you decide to evacuate the party (and the state), get your hands on a nuke, and nuke the fly along with your backyard and neighborhood. Watching the mushroom cloud form from your fallout shelter, you raise glasses with your guests and say, &ldquo;we got&rsquo;em boys. Good work.&rdquo;</p>
+<hr>
+<p>Obviously, this is an absurd story. I&rsquo;m telling this brief absurd story because there are parallels between singletons as a data loading solution and nukes as a fly swatter. Singletons for data loading, like nukes, are hard to test, leave a mess behind them, and are overkill. These parallels are the reasons that I try to avoid using singletons for data loading on Android. That&rsquo;s what this post is about.</p>
+<h3 id="the-fly-data-loading-in-activities">The Fly: Data Loading in Activities</h3>
+<p>Before I dive into the reasons I try to avoid singletons for data loading in Activities, I want to clearly state the problem for which I think singletons are poorly suited.</p>
+<p>Here&rsquo;s the problem:</p>
+<ol>
+<li><code>Activity</code>s are destroyed and re-created on configuration changes.</li>
+<li>If we&rsquo;ve performed an expensive operation to get the data displayed by that <code>Activity</code>, we&rsquo;ll want a way for the results of long-running operations to be cached across orientation changes.</li>
+<li>If we need to perform an expensive operation to get data, the results of this operation must be held if there&rsquo;s a configuration change while the operation is being performed and delivered once the <code>Activity</code> has been re-created after the configuration change.</li>
+</ol>
+<p>I think singletons are a <em>sub-optimal</em> solution for this specific problem. This is not a post about why singletons are bad, full stop. Let&rsquo;s move on to why I think this.</p>
+<h3 id="hard-to-test">Hard to Test</h3>
+<p>Fortunately, nukes are hard to test. You&rsquo;ve got to find a large area that you can pollute with radiation, and, depending on your place in the world order, you need to be prepared to handle varying degrees of fallout from the international community.</p>
+<p>Unfortunately, singletons are also hard to test, and this counts as one strike against them as a data loading solution in my mind. Others have already noted in detail why testing with singletons is hard,<sup>1</sup> but let&rsquo;s look at a brief example to see why testing with singletons is hard.</p>
+<p>Let&rsquo;s say you&rsquo;re tasked with implementing a screen that loads data from a database like the explore sessions screen from the google I/O app:</p>
+<p><img  src="/images/session-data-ss.png"
+        alt="Session list"/></p>
+<p>Because the fairly complicated logic governing whether the list of sessions should be preceded by various preference cards <a href="/post/what-should-we-unit-test/">scares you a little</a>, you decide to write tests for this screen. Since you know <a href="/post/why-we-should-stop-putting-logic-in-activities/">you&rsquo;re not going to have an easy time testing logic in an <code>Activity</code></a>, you move the logic to a presenter:</p>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> SessionsPresenter {  
+</span></span><span style="display:flex;"><span>  <span style="color:#007f7f">//...</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#fff;font-weight:bold">void</span> present() {
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> (shouldShowSessionNotificationsCard()) {
+</span></span><span style="display:flex;"><span>      sessionsView.<span style="color:#007f7f">showSessionNotificationsCard</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> (shouldShowConferenceMessagesCard()) {
+</span></span><span style="display:flex;"><span>      sessionsView.<span style="color:#007f7f">showConferenceMessagesCard</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex; background-color:#191919"><span>    SessionsStore.<span style="color:#007f7f">getInstance</span>()
+</span></span><span style="display:flex;"><span>      .<span style="color:#007f7f">loadSessions</span>(<span style="color:#fff;font-weight:bold">new</span> SessionsStore.<span style="color:#007f7f">LoadCompleteListener</span>() {
+</span></span><span style="display:flex;"><span>        @Override <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoadComplete(List&lt;Session&gt; sessions) {
+</span></span><span style="display:flex; background-color:#191919"><span>          <span style="color:#fff;font-weight:bold">if</span> (sessions.<span style="color:#007f7f">isEmpty</span>()) {
+</span></span><span style="display:flex; background-color:#191919"><span>            sessionsView.<span style="color:#007f7f">showNoSessions</span>();
+</span></span><span style="display:flex; background-color:#191919"><span>          } <span style="color:#fff;font-weight:bold">else</span> {
+</span></span><span style="display:flex; background-color:#191919"><span>            sessionsView.<span style="color:#007f7f">showSessions</span>(sessions);
+</span></span><span style="display:flex;"><span>          }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      });      
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
+<p>In the first highlighted line, we&rsquo;re accessing a singleton to load the sessions. In the following highlighted lines, we either show the sessions or something indicating that there are no sessions at this time.</p>
+<p>The use of a singleton in this code makes this presenter difficult to test. When we&rsquo;re writing a test for <code>SessionsPresenter</code>, we need to be able to swap out the implementation of <code>SessionsStore</code> with stubs that will return canned responses so that we can execute each branch of the if-statement highlighted above. This is not easy with a singleton in place.</p>
+<p>Getting around this problem forces us to create additional methods that are only used by the tests. For example, to test the above code, we&rsquo;d need to add <code>SessionStore.setTestInstance</code> and set the test instance with a stub during our unit test:</p>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> SessionsPresenterTests {  
+</span></span><span style="display:flex;"><span>  <span style="color:#007f7f">//...</span>
+</span></span><span style="display:flex;"><span>  @Test <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> showsNoSessionsViewWhenNoSessions() {    
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...</span>
+</span></span><span style="display:flex;"><span>    SessionsStore.<span style="color:#007f7f">setTestInstance</span>(<span style="color:#fff;font-weight:bold">new</span> SessionsStore() {
+</span></span><span style="display:flex;"><span>      @Override
+</span></span><span style="display:flex;"><span>      <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> loadSessions(SessionsStore.<span style="color:#007f7f">LoadCompleteListener</span> listener) {
+</span></span><span style="display:flex;"><span>        listener.<span style="color:#007f7f">onLoadComplete</span>(Collections.<span style="color:#007f7f">emptyList</span>());
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
+<p>When we need to change the API of the SUT <em>solely</em><sup>2</sup> for the purpose of testing, our tests are telling us there&rsquo;s a problem with our design.</p>
+<p>Even with these added methods, however, we lose the ability to speed up our tests by running them in parallel.<sup>3</sup> The likelihood that tests are run regularly is related to how long it takes to run them. Tests are often more likely to be useful the more often they are run, so placing an unneeded limit on how quickly our tests can run is not ideal.</p>
+<p>At this point, some readers may point out that these problems are alleviated if we inject the singleton through the constructor and if we keep our <code>Activity</code> as a dumb view that isn&rsquo;t scary enough to test. The code for this suggestion might look something like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> SessionsActivity <span style="color:#fff;font-weight:bold">extends</span> Activity {
+</span></span><span style="display:flex;"><span>  @Override <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(Bundle bundle) {
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onCreate</span>(bundle);
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">new</span> SessionsPresenter(SessionStore.<span style="color:#007f7f">getInstance</span>()).<span style="color:#007f7f">present</span>();
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
+<p>This does alleviate the testing problems at the unit level. However, if we want to stub out what gets returned by the singleton <code>SessionStore</code> for UI tests, we&rsquo;ll still have to add a <code>SessionStore.setTestInstance</code> method. Again, modifying the API of our classes for testing purposes is smelly.</p>
+<p>If you&rsquo;re using a <code>@Singleton</code>-scoped dependency that you inject with dagger, then we can facilitate UI testing without adding a <code>setTestInstance</code> method. This is the best version of the idea of using singletons for loading data in <code>Activity</code>s. Even if I didn&rsquo;t mind the fact that including dagger was a high price to pay for doing any data loading in an Android app, I still wouldn&rsquo;t ever feel comfortable using <code>@Singleton</code>-scoped dependencies for data loading for the following reasons.</p>
+<h3 id="leaves-a-mess-behind-them">Leaves a mess behind them</h3>
+<p>Data owned by your singleton will live <em>for the entire process</em>, unless you do something to clean it up. We&rsquo;re often worried about memory on Android devices. <em>Even if our app performs fairly well on devices with low-memory</em>, irresponsible use of memory can lead to a sort of tragedy of the commons, where the user experience suffers overall.</p>
+<p>Chet Haase in <a href="https://medium.com/google-developers/developing-for-android-i-understanding-the-mobile-context-fd2351b131f8#.t0wde59q7"target="_blank" rel="noopener noreferrer"><em>Developing for Android</em></a> captures this well:</p>
+<blockquote>
+<p>if any of these apps consume more memory than they need to, then there will be less system memory left over for the others. When that happens, the system will evict app processes (shutting them down), forcing the user into a situation where apps are constantly re-launching when the user switches to them because they cannot stay present in the background due to memory pressure.</p>
+</blockquote>
+<blockquote>
+<p>So overall: use as little memory as you can, because the entire system suffers if you don’t.</p>
+</blockquote>
+<p>If our apps are going to be good citizens on user&rsquo;s devices, we ought to clean up the data owned by our singleton once we&rsquo;re done using it. Singletons for loading data, along with the memory concerns on Android, place an extra burden on us as programmers. Strike two for singletons.</p>
+<p>I can imagine cases and apps where the memory issue isn&rsquo;t a big deal. I work at <a href="http://www.unikey.com/"target="_blank" rel="noopener noreferrer">a company where the minimum API level for our app is 20</a>, so we definitely have less performance concerns than other companies. In cases where the data held by singletons really isn&rsquo;t cause for concern, I could just never clean up the data held by the singleton, which definitely makes working with them easier. Still, there&rsquo;s another reason I try to avoid singleton&rsquo;s for data loading.</p>
+<h3 id="overkill">Overkill</h3>
+<p>Nuking a fly is absurd because its overkill. You just want to kill the fly. You don&rsquo;t mean to obliterate the 3 mile radius around the fly.</p>
+<p>Similarly, singletons are overkill. We don&rsquo;t really need the data loaded for our <code>Activity</code> to live for the entire process. This is precisely why we usually have to clean up some of the data when the <code>Activity</code> is done using it.</p>
+<p>Often what we really want is data that is cached across configuration changes, but the fact that the cached data within a singleton lives for the entire process makes implementing our retrieval of that data more complicated. Let me explain why.</p>
+<p>Suppose I want to want to send two emails with two different attachments. Both times I go to attach an email, the same <em>type</em> of Activity will be launched. Suppose this <code>Activity</code> gets its data from a singleton-based data loader. If both of these <code>Activity</code>s try to grab data from the Singleton, the user can wind up with stale data the second time they try to attach an email because the first <code>Activity</code> has already populated the cache with data that was fresh at the time the first <code>Activity</code> asked for it.</p>
+<p>Of course, these are solvable problems. However, I think it&rsquo;d be better if we didn&rsquo;t have these problems in the first place. It turns out there&rsquo;s already a solution for data loading that doesn&rsquo;t have any of these problems/complications.</p>
+<h3 id="loaders-a-professional-fly-swatter">Loaders: A Professional Fly Swatter</h3>
+<p><code>Loader</code>s are designed for this exact problem. They don&rsquo;t &ldquo;overkill&rdquo; by giving us data that lasts the entire process instead of what we need: data that survives configuration changes. Because of this, there&rsquo;s no need for us to worry about stale data when multiple <code>Activitiy</code>s need the same data. Moreover, we don&rsquo;t have to worry about cleaning up data once its no long used. Finally, if we use them sensibly, <code>Loader</code>s don&rsquo;t pose any special challenges to testing.</p>
+<p>I&rsquo;m not denying that it can be difficult to get a handle on how <code>Loader</code>s work. Nor am I saying that their API is a joy to work with. However, I think trudging through the docs and/or wrapping the Loader API in something more usable (e.g., <a href="/post/rxloader-boilerplate-free-data-loading-with-loaders-and-rxjava/">RxLoader</a>) is the best option we have.</p>
+<p>The alternative is to use singletons for data loading in our <code>Activity</code>s, which, if you buy into my argument and analogy is silly for the same reason it&rsquo;s silly to nuke a fly at a BBQ you&rsquo;re hosting.</p>
+<h3 id="notes">Notes:</h3>
+<ol>
+<li>
+<p>Misko Hevery, &ldquo;father of AngularJS,&rdquo; has a really nice explanation of the relationship between singletons and testing as a part of his testing guide <a href="http://misko.hevery.com/code-reviewers-guide/flaw-brittle-global-state-singletons/"target="_blank" rel="noopener noreferrer">here</a>.</p>
+</li>
+<li>
+<p>&ldquo;Soley&rdquo; is emphasized because otherwise the statement might feel like a contradiction. I&rsquo;ve been saying recently that tests force us to design better applications, so how can it be that there&rsquo;s a problem if the tests make us change the API of the SUT? There&rsquo;s no problem the if we change the API of our classes to support testing, as long as that change introduces flexibility that can be used both by the application <em>and</em> by the tests. A <code>setTestInstance</code> method, as the name implies, is only used by tests. This seems like a sensible way of resolving the contradiction, but honestly, I need to think about this more to be sure.</p>
+</li>
+<li>
+<p>Ibid.</p>
+</li>
+</ol>
+</article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a><a class="tag" href=/tags/loaders/>loaders</a><a class="tag" href=/tags/architecture/>architecture</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/why-android-testing-is-so-hard-historical-edition/"><span class="iconfont icon-article"></span>Why Android Testing is so Hard: Historical Edition</a></p><p><a class="link" href="/post/espresso-test-addiction/"><span class="iconfont icon-article"></span>Espresso Test Addiction: An Anti-pattern</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "philosophicalhacker" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2024 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>

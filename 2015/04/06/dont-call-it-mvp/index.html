@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Don&#39;t call it &#34;MVP&#34;&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Don&#39;t call it &#34;MVP&#34;" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Don't call it "MVP"</h1><p class="article date">2015-04-06</p></section><article class="article markdown-body"><p>Lately there&rsquo;s been a lot of discussion about an alternative architectural pattern for Android development. The acronym that&rsquo;s being used to denote this alternative pattern is &ldquo;MVP.&rdquo; I think that &ldquo;MVP&rdquo; is an inaccurate and confusing designation for this pattern. In this post, I will say why I think &ldquo;MVP&rdquo; is a bad name for the pattern, and I&rsquo;ll suggest a different name for referring to it.</p>
+<h1 id="what-ismvp">What is &ldquo;MVP?&rdquo;</h1>
+<p>There are plenty of blog posts out there that describe the &ldquo;MVP&rdquo; pattern, so I&rsquo;m not going to do that here. If you&rsquo;re not familiar with MVP, then I suggest checking out S<a href="https://corner.squareup.com/2014/10/advocating-against-android-fragments.html"target="_blank" rel="noopener noreferrer">quare&rsquo;s tirade against fragments</a> or <a href="http://hannesdorfmann.com/android/mosby/"target="_blank" rel="noopener noreferrer">Hannes Dorfmann&rsquo;s post about his library that&rsquo;s supposed to help with implementing MVP</a>.</p>
+<h1 id="why-mvp-is-an-unhelpful-name">Why &ldquo;MVP&rdquo; is an Unhelpful Name</h1>
+<p>The problem with the name &ldquo;MVP&rdquo; is that the <code>View</code>s in the MVP triad are actually quite different from the <code>View</code>s in Android SDK. They each have fundamentally different responsibilities, so we need a way to mark the difference between Android <code>View</code>s and MVP <code>View</code>s. Without clearly marking the difference between them, we make it more difficult to understand the &ldquo;MVP&rdquo; pattern and we run the risk of conflating the two object&rsquo;s responsibilities when we start trying to follow the MVP pattern.</p>
+<p>Let me try to clearly distinguish an Android <code>View</code> from an MVP <code>View</code>.</p>
+<p>Traditionally, an Android <code>View</code> is generic; it is not application specific. There is no <code>RedditPostTitleView</code> in the Android SDK. Instead, we just have something generic like a <code>TextView</code>. There is no <code>onRedditPostTitleClicked()</code>, but there is a generic <code>onClick()</code> method.</p>
+<p>An MVP <code>View</code>, on the other hand, is application specific. The MVP <code>View</code> responds to application-specific messages from the <code>Presenter</code>. It responds to messages like <code>showRedditPosts()</code>. An MVP <code>View</code> also sends application-specific event messages to its <code>Presenter</code>, messages like <code>onRedditPostTitleClicked()</code>.</p>
+<p>So, Android <code>View</code>s and MVP <code>View</code>s are fundamentally different, but both are present in any Android application that follows the &ldquo;MVP&rdquo; pattern. The name &ldquo;MVP&rdquo; obscures the difference between these two <code>View</code>s. That&rsquo;s why I think its unhelpful.</p>
+<h1 id="an-alternative-name">An Alternative Name</h1>
+<p>Here&rsquo;s the new name I think we should use instead of &ldquo;MVP&rdquo;: MVVTP</p>
+<p>The &ldquo;VT&rdquo; in the above acronym stands for &ldquo;ViewTranslator.&rdquo;</p>
+<p>To see why this acronym is more accurate than &ldquo;MVP,&rdquo; let&rsquo;s look a little closer at the responsibilities of Android <code>View</code>s and MVP <code>View</code>s. Remember that Android <code>View</code>s are generic. They&rsquo;re generic because they need to be reusable. A <code>RedditPostTitleView</code> can only be used in a Reddit client app, so instead we have a generic <code>TextView</code>.</p>
+<p>An MVP <code>View</code>, on the other hand, has a different responsibility. It lets the <code>Presenter</code> manipulate what gets drawn on the screen on a more abstract, application-specific level. In other words, an MVP <code>View</code> translates a higher level, application-specific request from the <code>Presenter</code> into code that Android <code>View</code>s can &ldquo;understand.&rdquo;</p>
+<p>For example, there is no <code>showRedditPosts()</code> method on a <code>RecyclerView</code>, but an MVP View takes a <code>showRedditPosts()</code> message and &ldquo;says&rdquo; to an Android <code>View</code>, &ldquo;Hey. What the <code>Presenter</code> really wants when he says &lsquo;<code>showRedditPosts()</code>&rsquo; is &lsquo;<code>recyclerView.setAdapter(redditPostsAdapter)</code>&rsquo;.</p>
+<p>That&rsquo;s why I think we should call MVP <code>View</code>s &ldquo;ViewTranslators.&rdquo; That name more accurately captures their responsibility.</p>
+<p>If we recall that MVP <code>View</code>s also forward UI events to their <code>Presenter</code>, we can see another reason why &ldquo;ViewTranslator&rdquo; is a better name for an MVP <code>View</code>. When an MVP <code>View</code> forwards a UI event to its <code>Presenter</code>, it is also translating that generic event into an application-specific one. It converts a generic <code>onClick()</code> event from a <code>TextView</code> to an application-specific <code>onRedditTitleClicked()</code> event.</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>&ldquo;MVP&rdquo; is a bad name for the new architectural pattern that Android devs are talking about because it obscures the difference between MVP <code>View</code>s and Android <code>View</code>s. &ldquo;MVVTP,&rdquo; where VT stands for &ldquo;ViewTranslator&rdquo; is a better name for this pattern because it explicitly marks a difference between Android <code>View</code>s and <code>ViewTranslators</code>. Android <code>View</code>s know how to draw stuff, and they don&rsquo;t need any application-specific knowledge to do that. <code>ViewTranslators</code> translate application-specific requests from the <code>Presenter</code> into generic messages that Android <code>View</code>s can understand and they translate generic UI events from <code>View</code>s to application-specific events that the <code>Presenter </code>can act on.</p>
+</article><section class="article labels"><a class="category" href=/categories/Android/>Android</a><a class="tag" href=/tags/android/>android</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/2015/04/10/against-android-unit-tests/"><span class="iconfont icon-article"></span>Against Android Unit Tests</a></p><p><a class="link" href="/2015/03/24/how-to-keep-your-rxjava-subscribers-from-leaking/"><span class="iconfont icon-article"></span>How to Keep your RxJava Subscribers from Leaking</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "philosophicalhacker" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2024 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>

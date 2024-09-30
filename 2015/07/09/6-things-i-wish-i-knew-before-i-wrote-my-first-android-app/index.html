@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>6 Things I wish I Knew before I Wrote my first Android App&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="6 Things I wish I Knew before I Wrote my first Android App" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">6 Things I wish I Knew before I Wrote my first Android App</h1><p class="article date">2015-07-09</p></section><article class="article markdown-body"><p>My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&rsquo;t even bother listing it on my resume&rsquo; anymore. That app wouldn&rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.</p>
+<p>Here&rsquo;s a list of things to keep in mind as you&rsquo;re writing your first Android apps. These lessons are derived from actual mistakes that I made in the source code of my first app, mistakes that I&rsquo;ll be showing below. Keeping these things in mind will help you write an app that you can be a little prouder of.</p>
+<p>Of course, if you&rsquo;re doing your job right as a student of Android development, you&rsquo;ll probably hate your app later regardless. As @codestandards says,</p>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">If the code you wrote a year ago doesn&#39;t seem bad to you, you&#39;re probably not learning enough.</p>&mdash; Code Standards (@codestandards) <a href="https://twitter.com/codestandards/status/601373392059518976?ref_src=twsrc%5Etfw">May 21, 2015</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>If you&rsquo;re an experienced Java developer, items 1, 2, and 5 probably won&rsquo;t be interesting to you. Items 3 and 4, on the other hand, might show you some cool stuff you can do with Android Studio that you might not have known about, even if you&rsquo;ve never been guilty of making the mistakes I demo in those items.</p>
+<h2 id="1-dont-have-static-references-to-contexts">1. Don&rsquo;t have static references to Contexts</h2>
+<script src="https://gist.github.com/kmdupr33/e9af62a0ad04abbb0a7d.js"></script>
+
+<p>This might seem like an impossible mistake for anyone to make. Its not. I made this mistake. I&rsquo;ve seen others make this mistake, and I&rsquo;ve interviewed people who weren&rsquo;t very quick at figuring out why this is a mistake in the first place. Don&rsquo;t do this. Its a n00b move.</p>
+<p>If <code>MeTrackerStore</code> keeps a reference to the Activity passed into its constructor, the Activity will never be garbage collected. (Unless the static variable is reassigned to a different Activity.) This is because <code>mMeTrackerStore</code> is static, and the memory for static variables isn&rsquo;t reclaimed until the process in which the application is running quits. If you find yourself tempted to do this, there&rsquo;s probably something seriously wrong with your code. Find help. Maybe looking at Google&rsquo;s Udacity course on <a href="https://www.udacity.com/course/android-development-for-beginners--ud837"target="_blank" rel="noopener noreferrer">&ldquo;Android Development for Beginners&rdquo;</a> will help you out.</p>
+<p>Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but <a href="http://www.philosophicalhacker.com/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/"target="_blank" rel="noopener noreferrer">I wouldn&rsquo;t recommend that you do that either</a>. </p>
+<h2 id="2-beware-of-implicit-references-toobjects-whose-lifecycle-you-do-not-control">2. Beware of &ldquo;implicit references&rdquo; to objects whose lifecycle you do not control</h2>
+<script src="https://gist.github.com/kmdupr33/494707e126e5fc7156ea.js"></script>
+
+<p>There&rsquo;s multiple problems with this code. I&rsquo;m only going to focus on one of those problems. In Java, (non-static) inner classes have an implicit reference to the instances of the class that encloses them.</p>
+<p>In this example, any GetLatAndLongAndUpdateMapCameraAsyncTask would have a reference to the DefineGeofenceFragment that contains it. The same thing is true for anonymous classes: they have an implicit reference to instances of the class that contains the anonymous class.</p>
+<p>The GetLatAndLongAndUpdateMapCameraAsyncTask has an implicit reference to a Fragment, an object whose lifecycle we don&rsquo;t control. The Android SDK is responsible for creating and destroying Fragments appropriately and if GetLatAndLongAndUpdateCameraAsyncTask can&rsquo;t be garbage collected because its still executing, the DefineGeofenceFragment that it implicitly refers to will also be kept from being garbage collected.</p>
+<p>There&rsquo;s a great Google IO video <a href="https://www.youtube.com/watch?v=_CruQY55HOk"target="_blank" rel="noopener noreferrer">that explains why this sort of thing happens</a>.</p>
+<h2 id="3-makeandroid-studio-work-for-you">3. Make Android Studio work for You</h2>
+<script src="https://gist.github.com/kmdupr33/f0e08822fe0d3b74973a.js"></script>
+
+<p>This snippet is what Android Studio generated when I used the &ldquo;Generate Getter&rdquo; code completion in Android Studio. The getter keeps the &rsquo;m&rsquo; prefixed to the instance variable and uses it when generating a getter method name. This is not ideal.</p>
+<p>(In case you&rsquo;re wondering why &rsquo;m&rsquo; is prefixed to the instance variable name in the first place: the &rsquo;m&rsquo; is often prefixed to instance variables by convention. It stands for &lsquo;member.&rsquo;)</p>
+<p>Regardless of whether you think prefixing &rsquo;m&rsquo; to your instance variables is a good idea, there&rsquo;s a lesson here: Android studio can help you code to whatever convention you adopt. For example, you can use the code style dialog in Android Studio to make Android Studio automatically prepend &rsquo;m&rsquo; to your instance variable and automatically remove the &rsquo;m&rsquo; when its generating getters, setters, and constructor params for the instance variables.</p>
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.16.13-PM.png"target="_blank" rel="noopener noreferrer"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.16.13-PM-1024x714.png"
+        alt="Screen Shot 2015-07-09 at 4.16.13 PM"/></a></p>
+<p>Android Studio can do a lot more than that too. <a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/"target="_blank" rel="noopener noreferrer">Learning shortcuts</a> and learning about <a href="https://www.jetbrains.com/idea/help/live-templates.html"target="_blank" rel="noopener noreferrer">live templates</a> are good places to start.</p>
+<h2 id="4-methods-should-do-one-thing">4. Methods should do one thing</h2>
+<p>There&rsquo;s a method in one of the classes that I wrote that&rsquo;s over 100 lines long. Such methods are hard to read, modify, and reuse. Try to write methods that only do one thing. Typically, this means that you should be suspicious of methods that are over 20 lines long. Here you can recruit Android Studio to help you spot problematic methods:</p>
+<p><a href="http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.25.00-PM.png"target="_blank" rel="noopener noreferrer"><img  src="http://www.philosophicalhacker.com/wp-content/uploads/2015/07/Screen-Shot-2015-07-09-at-4.25.00-PM-1024x718.png"
+        alt="Screen Shot 2015-07-09 at 4.25.00 PM"/></a></p>
+<h2 id="5-learn-fromother-people-who-are-smarter-and-more-experienced-than-you">5. Learn from other people who are smarter and more experienced than you.</h2>
+<p>This might sound trivial, but its a mistake that I made when I wrote my first app.</p>
+<p>When you&rsquo;re writing an app you&rsquo;re going to make mistakes. Other people have already made those mistakes. Learn from those people. You&rsquo;re wasting your time if you repeat the avoidable mistakes of others. I wasted a ton of time on my first app making mistakes that I could have avoided if I just spent a little more time learning from experienced software developers.</p>
+<p>Read <a href="http://www.amazon.com/The-Pragmatic-Programmer-Journeyman-Master/dp/020161622X"target="_blank" rel="noopener noreferrer">Pragmatic Programmer</a>. Then read <a href="http://www.amazon.com/Effective-Java-Edition-Joshua-Bloch/dp/0321356683"target="_blank" rel="noopener noreferrer">Effective Java</a>. These two books will help you avoid making common mistakes that we make as novice developers. After you done with those books, keep looking for smart people to learn from.</p>
+<h2 id="6-use-libraries">6. Use Libraries</h2>
+<p>When you&rsquo;re writing an app, you&rsquo;re probably going to encounter problems that smarter and more experienced people have already solved. Moreover, a lot of these solutions are available as open source libraries. Take advantage of them.</p>
+<p>In my first app, I wrote code that provided functionality that&rsquo;s already provided by libraries. Some of those libraries are standard java ones. Others are third-party libraries like Retrofit and Picasso. If you&rsquo;re not sure what libraries you should be using you can do three things:</p>
+<ol>
+<li>
+<p>Listen to the <a href="http://fragmentedpodcast.com/episodes/9/"target="_blank" rel="noopener noreferrer">Google IO Fragmented podcast episode</a>. In this episode the ask developers what 3rd party libraries they see as essential for Android development. Spoiler: its mostly Dagger, Retrofit, Picasso, and Mockito.</p>
+</li>
+<li>
+<p>Subscribe <a href="http://androidweekly.net/"target="_blank" rel="noopener noreferrer">to Android Weekly</a>. They&rsquo;ve got a section that contains the latest libraries that are coming out. Keep an eye out for what seems useful to you.</p>
+</li>
+<li>
+<p>Look for open source applications that solve problems similar to the ones that you are solving with your app. You might find one that uses a third-party library that you want to use or you might find that they&rsquo;ve used a standard java library that you were unaware of.</p>
+</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>Writing good Android apps can be very difficult. Don&rsquo;t make it harder on yourself by repeating the mistakes I made. If you found a mistake in what I&rsquo;ve written, please let me know in the comments. (Misleading comments are worse than no comments at all.) If you think this&rsquo;ll be useful for a new developer, share it. Save them some headache.</p></article><section class="article labels"><a class="category" href=/categories/Android/>Android</a><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/"><span class="iconfont icon-article"></span>Why Having Global Static References to Application Contexts is Probably not the Best Idea</a></p><p><a class="link" href="/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/"><span class="iconfont icon-article"></span>My Response to Hannes Dorfmann on "the Circular Dependency Problem"</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "philosophicalhacker" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2024 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>

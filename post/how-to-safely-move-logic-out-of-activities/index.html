@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>How to Safely move Logic out of Activities&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="How to Safely move Logic out of Activities" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">How to Safely move Logic out of Activities</h1><p class="article date">2016-06-16</p></section><article class="article markdown-body"><p><img  src="/images/life-ring.jpg"
+        alt/></p>
+<p>In <a href="http://www.philosophicalhacker.com/post/why-we-should-stop-putting-logic-in-activities/"target="_blank" rel="noopener noreferrer">my last post</a>, I argued that we should stop putting our app logic in <code>Activity</code>s and <code>Fragment</code>s because it makes both unit testing <em>and</em> functional testing our apps more difficult. In this post, I&rsquo;ll try to suggest a method of safely removing app logic from our <code>Activity</code>s and <code>Fragment</code>s, drawing on a central idea discussed in Michael Feathers&rsquo; <em>Working Effectively with Legacy Code</em>: characterization tests.</p>
+<p>In the first section, I briefly introduce the idea of characterization tests. In the second section, I walk through some of the complications that arise when you&rsquo;re trying to write characterization tests for <code>Activity</code>/<code>Fragment</code>s. Source code examples are excerpts from <a href="https://github.com/kmdupr33/iosched/tree/refactor/characterization_tests"target="_blank" rel="noopener noreferrer">my fork of the Google IO app</a>.</p>
+<h3 id="brief-intro-characterization-tests">Brief Intro Characterization Tests</h3>
+<blockquote>
+<p>Changes in a system can be made in two primary ways. I like to call them Edit and Pray and Cover and Modify&hellip;When you use Edit and Pray, you carefully plan the changes you are going to make, you make sure that you understand the code you are going to modify, and then you start to make the changes. When you’re done, you run the system to see if the change was enabled, and then you poke around further to make sure that you didn’t break anything&hellip;Cover and Modify is a different way of making changes. The idea behind it is that it is possible to work with a safety net when we change software.</p>
+</blockquote>
+<blockquote>
+<p>Michael Feathers, <em>Working Effectively with Legacy Code</em>, pg. 32</p>
+</blockquote>
+<p>Characterization tests are tests that form the &ldquo;safety net&rdquo; that Feathers refers to in the above quotation. The purpose of characterization tests is, as the name implies, to <em>characterize</em> the <em>current behavior</em> of the system. These tests help us ensure that when we refactor our code, we are preserving the current behavior of the system. For every change we make, the result of running our characterization tests will tell us whether we&rsquo;ve accidentally changed the behavior of our app.</p>
+<p>Usually, writing a characterization tests is a pretty simple process. According to Feathers:</p>
+<blockquote>
+<ol>
+<li>Write tests for the area where you will make your changes. Write as many cases as you feel you need to understand the behavior of the code.</li>
+<li>After doing this, take a look at the specific things you are going to change, and attempt to write tests for those.</li>
+<li>If you are attempting to extract or move some functionality, write tests that verify the existence and connection of those behaviors on a case-by-case basis. Verify that you are exercising the code that you are going to move and that it is connected properly. Exercise conversions.</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>Pg. 218</p>
+</blockquote>
+<p><img  src="/images/net.jpg"
+        alt="safety net"/></p>
+<blockquote>
+<p>Image Credit: Cea on <a href="https://www.flickr.com/photos/centralasian/3896333282/in/photolist-6WiJ93-i2ZU8-AL26v-NqLkJ-57Gmup-4QiXwQ-67j8Sw-fuf5d1-5DJrYY-9YjbZP-7UJ75S-piX5fr-jzCox-8s9BdN-uST4Hi-tw8VdM-5yxEvF-2QSfpF-onBRex-6Aj5cU-3Jyy7k-8YYKtq-8TRZ33-as2Fdq-rhXdJ8-oTXJh5-aNqeHH-hcEk7d-7ACDg-6EcoYB-mmgBPF-mz68zf-sFGHZq-6EhPsd-dor5Cp-6EcFhV-coe1tY-EDaP5-9Yn6dW-2zCxU-8YiQA1-7dQsZA-8Fq6BQ-n1F765-7dQssm-6wskCt-C44Dg-6EepXT-6EesLa-C4543"target="_blank" rel="noopener noreferrer">Flickr Creative Commons</a></p>
+</blockquote>
+<h3 id="characterization-tests-for-activities-and-fragments">Characterization Tests for Activities and Fragments</h3>
+<p>Unfortunately, writing characterization tests for <code>Activity</code>/<code>Fragment</code>s is not as simple as writing characterization tests in the general case. In fact, writing characterization tests for any object instantiated by the Android OS is not easy (think <code>Activity</code>, <code>Fragment</code>, <code>Service</code>, <code>BroadcastReceiver</code>, etc.). In this section, I explore two things that make writing characterization tests for <code>Activity</code>s and <code>Fragment</code>s challenging. I also suggest ways to work around these challenges.</p>
+<h4 id="law-of-demeter-violations">Law of Demeter Violations</h4>
+<p><code>Activity</code>s and <code>Fragment</code>s have dependencies. Some of those dependencies are only accessible if we violate the law of demeter. For example, the <code>PresenterFragmentImpl</code> needs to get a hold of a <code>ContentResolver</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@Override
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onAttach(Activity activity) {
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onAttach</span>(activity);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// Register content observers with the content resolver.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> (mContentObservers != <span style="color:#fff;font-weight:bold">null</span>) {
+</span></span><span style="display:flex;"><span>        Iterator&lt;Map.<span style="color:#007f7f">Entry</span>&lt;Uri, ThrottledContentObserver&gt;&gt; observers =
+</span></span><span style="display:flex;"><span>                mContentObservers.<span style="color:#007f7f">entrySet</span>().<span style="color:#007f7f">iterator</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">while</span> (observers.<span style="color:#007f7f">hasNext</span>()) {
+</span></span><span style="display:flex;"><span>            Map.<span style="color:#007f7f">Entry</span>&lt;Uri, ThrottledContentObserver&gt; entry = observers.<span style="color:#007f7f">next</span>();
+</span></span><span style="display:flex; background-color:#191919"><span>            activity.<span style="color:#007f7f">getContentResolver</span>().<span style="color:#007f7f">registerContentObserver</span>(
+</span></span><span style="display:flex;"><span>                    entry.<span style="color:#007f7f">getKey</span>(), <span style="color:#fff;font-weight:bold">true</span>, entry.<span style="color:#007f7f">getValue</span>());
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
+<p>Characterizing the behavior of this method is challenging because law of demeter violations force us to make our mocks return mocks so that we can verify the interactions with the <code>Fragment</code>&rsquo;s dependencies:</p>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">void</span> characterizeOnAttach(Actor actor, Asserter asserter) {
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// Arrange</span>
+</span></span><span style="display:flex;"><span>    mPresenterFragSpy.<span style="color:#007f7f">configure</span>(mFragmentManager, 0, mModel,
+</span></span><span style="display:flex;"><span>      <span style="color:#fff;font-weight:bold">new</span> QueryEnum[]{}, <span style="color:#fff;font-weight:bold">new</span> UserActionEnum[]{});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex; background-color:#191919"><span>    <span style="color:#fff;font-weight:bold">final</span> Activity activity = mock(Activity.<span style="color:#007f7f">class</span>);
+</span></span><span style="display:flex; background-color:#191919"><span>    <span style="color:#fff;font-weight:bold">final</span> ContentResolver contentResolver = mock(ContentResolver.<span style="color:#007f7f">class</span>);
+</span></span><span style="display:flex; background-color:#191919"><span>    when(activity.<span style="color:#007f7f">getContentResolver</span>()).<span style="color:#007f7f">thenReturn</span>(contentResolver);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// Act</span>
+</span></span><span style="display:flex;"><span>    actor.<span style="color:#007f7f">act</span>(activity);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// Assert</span>
+</span></span><span style="display:flex;"><span>    asserter.<span style="color:#007f7f">doAssert</span>(contentResolver);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>@Test
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> characterizeOnAttachIfRegisteredContentObservers() <span style="color:#fff;font-weight:bold">throws</span> Exception {
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...</span>
+</span></span><span style="display:flex;"><span>    characterizeOnAttach(<span style="color:#fff;font-weight:bold">new</span> Actor() {
+</span></span><span style="display:flex;"><span>        @Override
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> act(Activity activity) {
+</span></span><span style="display:flex;"><span>            mPresenterFragSpy.<span style="color:#007f7f">registerContentObserverOnUri</span>(Uri.<span style="color:#007f7f">EMPTY</span>, queriesToRun);
+</span></span><span style="display:flex;"><span>            mPresenterFragSpy.<span style="color:#007f7f">onAttach</span>(activity);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }, <span style="color:#fff;font-weight:bold">new</span> Asserter() {
+</span></span><span style="display:flex;"><span>        @Override
+</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> doAssert(ContentResolver contentResolver) {
+</span></span><span style="display:flex;"><span>            <span style="color:#007f7f">// ...</span>
+</span></span><span style="display:flex; background-color:#191919"><span>            verify(contentResolver).<span style="color:#007f7f">registerContentObserver</span>(eq(Uri.<span style="color:#007f7f">EMPTY</span>),
+</span></span><span style="display:flex; background-color:#191919"><span>              eq(<span style="color:#fff;font-weight:bold">true</span>), notNull(ThrottledContentObserver.<span style="color:#007f7f">class</span>));
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
+<p>Typically, we don&rsquo;t want to write tests with mocks returning mocks since this suggests that our design may smell. In this case, we are merely trying to characterize the already existing behavior of our <code>Activity</code> or <code>Fragment</code>. Once we refactor, we should have a design that doesn&rsquo;t require this, but in the mean-time, we need this characterization test to make sure that we are preserving app behavior during our refactor.</p>
+<h4 id="nearly-impossible-di">(Nearly) Impossible DI</h4>
+<p><code>Fragment</code>s and <code>Activity</code>s get their dependencies via an accessor method. <code>getLoaderManager</code>, <code>getContentResolver</code>, or <code>getFragmentManager</code> are a few examples of such accessor methods. Here&rsquo;s a method that uses one of these accessors:</p>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 1</span><span>@Override
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 2</span><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onActivityCreated(Bundle savedInstanceState) {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 3</span><span>    <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onActivityCreated</span>(savedInstanceState);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 4</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 5</span><span>    mLoaderIdlingResource =
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 6</span><span>            <span style="color:#fff;font-weight:bold">new</span> LoaderIdlingResource(getClass().<span style="color:#007f7f">getName</span>() + <span style="color:#0ff;font-weight:bold">&#34;/&#34;</span> + getId(), getLoaderManager());
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 7</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 8</span><span>    <span style="color:#007f7f">// Load data queries if any.</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272"> 9</span><span>    <span style="color:#fff;font-weight:bold">if</span> (mInitialQueriesToLoad != <span style="color:#fff;font-weight:bold">null</span> &amp;&amp; mInitialQueriesToLoad.<span style="color:#007f7f">length</span> &gt; 0) {
+</span></span><span style="display:flex; background-color:#191919"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">10</span><span>        LoaderManager manager = getLoaderManager();
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">11</span><span>        <span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">int</span> i = 0; i &lt; mInitialQueriesToLoad.<span style="color:#007f7f">length</span>; i++) {
+</span></span><span style="display:flex; background-color:#191919"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">12</span><span>            manager.<span style="color:#007f7f">initLoader</span>(mInitialQueriesToLoad[i].<span style="color:#007f7f">getId</span>(), <span style="color:#fff;font-weight:bold">null</span>, <span style="color:#fff;font-weight:bold">this</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">13</span><span>        }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">14</span><span>    } <span style="color:#fff;font-weight:bold">else</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">15</span><span>        <span style="color:#007f7f">// No data query to load, update the view.</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">16</span><span>        mUpdatableView.<span style="color:#007f7f">displayData</span>(mModel, <span style="color:#fff;font-weight:bold">null</span>);
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">17</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#727272">18</span><span>}</span></span></code></pre></div>
+<p>If we&rsquo;re characterizing a method like this one, we need to verify that the <code>Fragment</code> calls the correct methods on the dependencies returned by these accessor methods. Verifying the interaction of an object with its dependencies means that we need to be able to swap out those dependencies with mocks.</p>
+<p>One way of doing this would be to have a special subclass of the <code>Activity</code> or <code>Fragment</code> you&rsquo;d like to test. This sub-class could override the accessors to return mocks. Our characterization tests could then instantiate these special subclasses and use the mocks returned by the accessors to verify the interactions.</p>
+<p>This isn&rsquo;t a great solution. For reasons that I hope are clear, using this solution would force us to repeatedly subclass every <code>Activity</code> or <code>Fragment</code> in our app to return mock accessors.</p>
+<p>A better solution is to use mockito spies. Like mocks returning mocks, we typically don&rsquo;t use spies in our tests because it suggests a smelly design. However, in this case, spies help us write characterization tests without having make a non-trivial changes to the code we are trying to characterize or without having to repeatedly subclass all of our <code>Activity</code>s and <code>Fragment</code>s to return mocks. Here&rsquo;s an example of how spies help us do this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@Test
+</span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> characterizeOnActivityCreatedIfInitialQueriesToLoad() <span style="color:#fff;font-weight:bold">throws</span> Exception {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">final</span> ExploreModel.<span style="color:#007f7f">ExploreQueryEnum</span> sessions = ExploreModel.<span style="color:#007f7f">ExploreQueryEnum</span>.<span style="color:#007f7f">SESSIONS</span>;
+</span></span><span style="display:flex;"><span>    mPresenterFragSpy.<span style="color:#007f7f">configure</span>(mFragmentManager, 0, mModel, <span style="color:#fff;font-weight:bold">new</span> QueryEnum[]{sessions}, <span style="color:#fff;font-weight:bold">new</span> UserActionEnum[]{});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex; background-color:#191919"><span>    <span style="color:#fff;font-weight:bold">final</span> LoaderManager loaderManager = mock(LoaderManager.<span style="color:#007f7f">class</span>);
+</span></span><span style="display:flex; background-color:#191919"><span>    when(mPresenterFragSpy.<span style="color:#007f7f">getLoaderManager</span>()).<span style="color:#007f7f">thenReturn</span>(loaderManager);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    mPresenterFragSpy.<span style="color:#007f7f">onActivityCreated</span>(mock(Bundle.<span style="color:#007f7f">class</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    assertNotNull(mPresenterFragSpy.<span style="color:#007f7f">getLoaderIdlingResource</span>());
+</span></span><span style="display:flex; background-color:#191919"><span>    verify(loaderManager).<span style="color:#007f7f">initLoader</span>(eq(sessions.<span style="color:#007f7f">getId</span>()), isNull(Bundle.<span style="color:#007f7f">class</span>), notNull(LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>.<span style="color:#007f7f">class</span>));
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
+<p>Using a spy, we&rsquo;re able to stub out the <code>getLoaderManager</code> method to return a mock <code>LoaderManager</code>. We can then verify that <code>onActivityCreated</code> calls the right methods on the <code>LoaderManager</code>.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>Safely moving logic out of large <code>Activity</code>s and <code>Fragment</code>s can be a lot of work, but its less work than manually verifying that we haven&rsquo;t broken anything every time we make a change to the <code>Activity</code> or <code>Fragment</code> we are refactoring.</p>
+<p>Even if we recognize that writing these characterization tests is better than manual verification, writing them can be pretty soul-sucking. Keep in mind that we don&rsquo;t need to move all of the logic out at once, so we don&rsquo;t need to write all characterization tests at once.</p>
+<p>Instead, we can identify various responsibilities that are carried out by our <code>Activity</code>s and <code>Fragment</code>s and plan to extract classes to handle those responsibilities. Once we have a clear picture of the class we want to extract from the <code>Activity</code> or <code>Fragment</code>, we can write characterization tests that will serve as a safety net for that single extraction, rather than attempting to write characterization tests for all the non-trivial methods in the <code>Activity</code>/<code>Fragment</code> we are refactoring.</p>
+</article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a><a class="tag" href=/tags/refactoring/>refactoring</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/vice-a-regression-test-generation-library/"><span class="iconfont icon-article"></span>Vice: A Regression Test Generation Library</a></p><p><a class="link" href="/post/why-we-should-stop-putting-logic-in-activities/"><span class="iconfont icon-article"></span>Why we Should Stop Putting Logic in Activities</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "philosophicalhacker" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2024 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>

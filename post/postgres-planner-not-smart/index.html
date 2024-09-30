@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Working Around a Case Where the Postgres Planner Is &#34;Not Very Smart&#34;&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Working Around a Case Where the Postgres Planner Is &#34;Not Very Smart&#34;" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+
+<link rel="canonical" href="https://heap.io/blog/when-the-postgres-planner-is-not-very-smart"/>
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Working Around a Case Where the Postgres Planner Is "Not Very Smart"</h1><p class="article date">2021-08-10</p></section><article class="article markdown-body"><hr>
+<p><strong><em>Note: This post was originally published on <a href="https://heap.io/blog/when-the-postgres-planner-is-not-very-smart"target="_blank" rel="noopener noreferrer">heap&rsquo;s blog</a></em></strong></p>
+<hr>
+<p>Heap is a digital insights platform that automatically captures web and mobile behavior like page views, clicks, and taps. We recently shipped <a href="https://heap.io/blog/introducing-effort-a-new-product-metric"target="_blank" rel="noopener noreferrer">Effort Analysis</a>, a way for Heap customers to see the median number of interactions and seconds engaged between each step within a funnel. Here’s what it looks like:</p>
+<p><img  src="./effort-analysis-snapshot.png"
+        alt="effort analysis feature"/></p>
+<p>To build this feature, we needed to write a query that could quickly scan more than a billion rows of event data. But when we first started working on this feature, it took too long to scan the data.</p>
+<p>Fortunately, we found a way to double the speed of this feature&rsquo;s p90 performance. To do this, we had to work around a case where the Postgres planner is, according to the Postgres docs, “not very smart.” This Postgres quirk surprisingly prevented an existing index from supporting an index-only scan. This post is about the quirk that caused our performance problem and the workaround we leveraged to achieve a 2x performance win.</p>
+<h1 id="whats-an-index-only-scan">What’s an index-only scan?</h1>
+<p>First, a quick refresher on index-only scans. An index is a secondary data structure in your database that the query planner can use to make some queries faster. For example, an index on the <code>user_id</code> column can make lookups of a specific <code>user_id</code> faster. An index-only scan is a special kind of operation in which the database can satisfy a query with just the information that’s in the index, without having to read the table’s actual rows.</p>
+<p>For example, a typical index at Heap contains the time of an event and the <code>user_id</code> of the user who performed that event:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">INDEX</span> heap_index <span style="color:#66d9ef">ON</span> events (time, user_id);
+</span></span></code></pre></div><p>That index is created on a table with a schema like this one:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> events (time bigint, user_id bigint, <span style="color:#66d9ef">data</span> jsonb);
+</span></span></code></pre></div><p>Given this table and index, the query planner would use an index-only scan for a query like <code>SELECT user_id FROM events WHERE time &gt; now() - ‘7 days’::interval</code> because the only value we need, <code>user_id</code>, is in the index.</p>
+<p>For a slightly different query like <code>SELECT * FROM events WHERE time &gt; now() - ‘7 days’::interval</code>, the query planner couldn’t use an index-only scan because we need columns that are not in this index. The planner may<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> use an index scan instead.</p>
+<p>An index scan, as the name implies, scans the index for rows that satisfy the query predicate. However, it also reads in pages of data from the table itself to return and/or perform computations on values that aren’t in the index. This additional step often makes index scans slower than index-only scans.</p>
+<h1 id="our-performance-problem">Our performance problem</h1>
+<p>Many of our clients record more than 100 million events a week, meaning a 90-day funnel would require scanning more than a billion rows. As a result, the p90 for the query was about 20 seconds, much slower than we wanted for our initial launch. Here’s a simplified version of the initial query that powered Effort Analysis:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> step_num,
+</span></span><span style="display:flex;"><span>       PERCENTILE_CONT(<span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">5</span>) WITHIN <span style="color:#66d9ef">GROUP</span> (<span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> num_actions)  <span style="color:#66d9ef">AS</span> num_actions,
+</span></span><span style="display:flex;"><span>       PERCENTILE_CONT(<span style="color:#ae81ff">0</span>.<span style="color:#ae81ff">5</span>) WITHIN <span style="color:#66d9ef">GROUP</span> (<span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> time_engaged) <span style="color:#66d9ef">AS</span> time_engaged
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> users_funnel_events
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">WHERE</span> <span style="color:#66d9ef">data</span> <span style="color:#f92672">-&gt;&gt;</span> <span style="color:#e6db74">&#39;type&#39;</span> <span style="color:#66d9ef">IN</span> (<span style="color:#e6db74">&#39;click&#39;</span>, <span style="color:#e6db74">&#39;change&#39;</span>, <span style="color:#e6db74">&#39;touch&#39;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">AND</span> time <span style="color:#f92672">&gt;</span> now() <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;7 days&#39;</span>::interval
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> step_num
+</span></span></code></pre></div><p>Initially, the query that powered Effort Analysis wasn’t using an index-only scan. This surprised us because we had an index that looked like the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">INDEX</span> effort_analaysis_index <span style="color:#66d9ef">ON</span> users_funnel_events ((<span style="color:#66d9ef">data</span> <span style="color:#f92672">-&gt;&gt;</span> <span style="color:#e6db74">&#39;type&#39;</span>), time) INCLUDE (num_actions, time_engaged, step_num)
+</span></span></code></pre></div><p>The reason this index didn’t yield an index-only scan is because of a surprising Postgres quirk.</p>
+<p>The quirk: functions and operators can prevent index-only scans</p>
+<p>Here’s what was happening: although <code>data -&gt;&gt; ‘type’</code> is in the index, the query planner thinks it also needs to have <code>data</code> in the index, even though <code>data</code> itself isn’t ever referenced in the query except as a part of the <code>data -&gt;&gt; ‘type’</code> expression. If that doesn’t seem like a smart way for the planner to work, the Postgres documentation agrees with you:</p>
+<blockquote>
+<p>“PostgreSQL&rsquo;s planner is currently not very smart about such cases.”</p>
+</blockquote>
+<p><strong>This problem arises any time a query uses a function or operator on a column.</strong> (Operators are just syntactic sugar for functions.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>) If your query references <code>f(x)</code>, you must include <code>f(x)</code> and <code>x</code> in your index to get an index-only scan. This isn’t a random hack; it&rsquo;s the suggested workaround for this issue in <a href="https://www.postgresql.org/docs/current/indexes-index-only-scans.html"target="_blank" rel="noopener noreferrer">the Postgres docs</a>.</p>
+<p>However, in our case, <code>x</code> is <code>data</code>, and because <code>data</code> contains most of the data associated with an event (e.g., type, page url where event occurred, etc.),<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> this workaround would result in an unacceptably large index.</p>
+<h1 id="the-workaround-predicates-of-partial-indexes-can-enable-index-only-scans">The workaround: predicates of partial indexes can enable index-only scans</h1>
+<p>We’ve just seen that if your query includes a column as a function parameter or operand, it doesn’t matter if that column is in the index; you still won’t get an index-only scan. If, however, your column is only used in a predicate that matches the predicate of the partial index, the planner is smart enough to realize that it doesn’t need to visit the table to filter down the result, even if your column is a function parameter or operand.<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+<p>This is the workaround we leveraged for our performance win. To better understand it, let’s look at how it applies to our above example query. Notice that in our example query, we only reference <code>data -&gt;&gt; ‘type’</code> in the WHERE clause of the query. We aren’t actually returning the value of <code>data -&gt;&gt; ‘type’</code>. So the only reason Postgres would need to visit the table would be to ensure that <code>data -&gt;&gt; ‘type’ IN (‘click’, ‘change’, ‘touch’)</code> is true for each row of the returned result, but because of how partial indexes are constructed, this visit isn’t necessary.</p>
+<p>As a refresher, partial indexes only contain entries for rows that match a predicate. For example, this partial index only contains entries where <code>data -&gt;&gt; ‘type’ IN (‘click’, ‘change’, ‘touch’)</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">INDEX</span> effort_analysis_index <span style="color:#66d9ef">ON</span> users_funnel_events (time) INCLUDE (num_actions, time_engaged, step_num) <span style="color:#66d9ef">WHERE</span> ((<span style="color:#66d9ef">data</span> <span style="color:#f92672">-&gt;&gt;</span> <span style="color:#e6db74">&#39;type&#39;</span>) <span style="color:#66d9ef">IN</span> (<span style="color:#e6db74">&#39;click&#39;</span>, <span style="color:#e6db74">&#39;change&#39;</span>, <span style="color:#e6db74">&#39;touch&#39;</span>))
+</span></span></code></pre></div><p>Because Postgres knows that <code>ea_index</code> only has entries where <code>data -&gt;&gt; ‘type’ IN (‘click’, ‘change’, ‘touch’)</code>, a query like: <code>SELECT time FROM funnel_events WHERE data -&gt;&gt; ‘type’ IN (‘click’, ‘change’, ‘touch’</code> would result in an index-only scan.</p>
+<p>Our example query references the columns <code>step_num</code>, <code>time</code>, <code>num_actions</code>, <code>time_engaged</code>, and <code>data</code>. <code>step_num</code>, <code>time</code>, <code>num_actions</code>, and <code>time_engaged</code> are in the index, and data is only referenced in the where clause via <code>data -&gt;&gt; ‘type’ IN (‘click’, ‘change’)</code>. Because the query predicate matches the partial index predicate, the planner knows that the index only contains values that satisfy the query predicate, and it doesn’t need to visit the table to filter down the results of scanning the index. Thus, we wind up with an index-only scan for our example query.</p>
+<h1 id="the-performance-win">The performance win</h1>
+<p>This workaround lead to a 2x p90 performance improvement for Effort Analysis, and it made our p70 and p50 query faster as well:</p>
+<p><img  src="./Effort-Analysis-p90-Performance.png"
+        alt="perf chart"/></p>
+<p>Only after looking at these results did we fully understand the quirk that caused this performance issue and the workaround that solved it. In some sense, we got lucky. We hope that by sharing these Postgres facts, other teams can be more deliberate about improving the performance of their queries.</p>
+<p>If you like nerding out about optimizing Postgres and/or citus queries, @-me on Twitter @philosohacker, and if you’re not getting enough opportunities to optimize queries at your current gig, we’re hiring! Check out our team and open roles.</p>
+<p>I’d like to thank John Krauss, Dave Robinson, and Dan Robinson for their help with reviewing early drafts of this post.</p>
+<hr>
+<p><a href="https://news.ycombinator.com/item?id=28040801"target="_blank" rel="noopener noreferrer">HN Discussion</a></p>
+<h2 id="notes">Notes:</h2>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Whether Postgres uses an index scan or a sequential scan depends on the percentage of rows it anticipates it will need to fetch from the table.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>This is noted in the <a href="https://www.postgresql.org/docs/13/xoper.html"target="_blank" rel="noopener noreferrer">“User Defined Operators” chapter of the Postgres docs.</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>We know that <a href="https://heap.io/blog/when-to-avoid-jsonb-in-a-postgresql-schema"target="_blank" rel="noopener noreferrer">there are lots of downsides</a> to relying this heavily on a JSONB column.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p>The docs have <a href="https://www.postgresql.org/docs/current/indexes-partial.html#INDEXES-PARTIAL-EX3"target="_blank" rel="noopener noreferrer">a nice example</a> demonstrating this fact.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><section class="article labels"><a class="tag" href=/tags/postgres/>postgres</a><a class="tag" href=/tags/sql/>sql</a><a class="tag" href=/tags/performance-optimization/>performance optimization</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/million-indexes/"><span class="iconfont icon-article"></span>Lessons from Deploying 1 million Postgres Indexes</a></p><p><a class="link" href="/post/controlling-for-confounders/"><span class="iconfont icon-article"></span>How and When to Control for Confounders During Product Usage Analyses</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2024 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Building Better Code Review at Heap&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Building Better Code Review at Heap" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+
+<link rel="canonical" href="https://heap.io/blog/engineering/building-better-code-review-at-heap"/>
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Building Better Code Review at Heap</h1><p class="article date">2021-03-20</p></section><article class="article markdown-body"><hr>
+<p><strong><em>Note: This post was originally published on <a href="https://heap.io/blog/engineering/building-better-code-review-at-heap"target="_blank" rel="noopener noreferrer">heap&rsquo;s blog</a></em></strong></p>
+<hr>
+<p>Heap — like most companies — has a code review (CR) process. Until recently, that process often involved manually catching trivial issues in PRs (Pull Requests), which led to slow, inconsistent, and low-quality PR comments.</p>
+<p>To address this, we adopted Prettier, Danger, some custom StyleLint rules, and a Buildkite step that automatically adds specific checklists to PRs depending on which files are changed in our monorepo. <strong>Here’s why we took these steps towards CR automation, how we did it, and what we learned along the way.</strong></p>
+<h1 id="why-more-automation">Why more automation?</h1>
+<p><strong>Not everything that can be automated should be.</strong> The work we do to build automation has an opportunity cost; we have to weigh it against the value we can create by doing other things. The following xkcd comic illustrates this point nicely:</p>
+<p><img  src="https://imgs.xkcd.com/comics/is_it_worth_the_time.png"
+        alt="xckd when to automate comic"/></p>
+<p>Given this, it’s understandable that many teams don’t invest in tools that streamline CR beyond simple linting and automated testing. Standard tools like ESLint do a decent job of catching many issues, and the trivial issues that they do miss only take a second or two to find. Since most of us aren’t reviewing more than five PRs in a day, it looks like building additional tooling to streamline CR isn’t a stellar investment (or at least according to the above chart).</p>
+<p><strong>There are, however, three big advantages to automating code review that don’t fit as neatly into this chart and make the investment worth it.</strong></p>
+<ol>
+<li>
+<p><strong>Consistency.</strong> Even if humans were just as fast as computers at catching issues, they wouldn’t be able to keep up for long. Humans get tired. They skip reviewing files that they “know” are issue-free. They forget standards that were worked out months ago.</p>
+</li>
+<li>
+<p><strong>Tighter feedback loop.</strong> Even if the humans reviewing code could consistently catch all issues in a PR in 300 milliseconds like a computer can, the humans writing the code are still better off with automation because it provides a tighter feedback loop. Humans can take a while to actually look at the PR (we do have other work to do, you know), and while we’re waiting, we’re losing precious context on the code we wrote.</p>
+</li>
+<li>
+<p><strong>More bandwidth to focus on what matters.</strong> When we lack the tools to catch trivial issues in our code, we risk spending our limited CR time bike-shedding instead of focusing on higher-leverage issues (e.g., Did we build the right thing? Is this component over architected?). We’re much better off when we can’t fool ourselves into thinking we’ve done a good job reviewing a PR simply because we’ve pointed out simple issues that a computer could spot.</p>
+</li>
+</ol>
+<h1 id="tools-adopted-lessons-learned">Tools adopted, lessons learned</h1>
+<h2 id="prettier">Prettier</h2>
+<p>Prettier is an opinionated code formatter for JavaScript, similar to gofmt for Go and rufo for Ruby. It intentionally exposes fewer options than most devs would like in order to cut down on debates over formatting.</p>
+<p>The biggest obstacle to getting Prettier adopted was the team’s doubt as to whether Prettier would do a “good enough” job formatting code, given that configuration options are limited. The best thing we did to gain momentum towards adoption was to point out that companies like Webpack, Babel, and Dropbox have successfully used Prettier for large projects. And once our team had more experience with the tool, they realized that it could do everything we needed it to do.</p>
+<p>The second biggest obstacle to adoption was concern about how the formatting would affect git history. We solved this by formatting nearly all files at once. This didn’t lead to any bugs or incidents, and because we used <a href="https://git-scm.com/docs/git-blame#Documentation/git-blame.txt---ignore-revs-fileltfilegt"target="_blank" rel="noopener noreferrer">git blame’s –ignore-revs-file option</a>, we haven’t had issues working with our git history since we ran the formatter.</p>
+<h2 id="danger">Danger</h2>
+<p><a href="https://danger.systems/"target="_blank" rel="noopener noreferrer">Danger</a> is a tool that allows you to build automated checks against PR metadata instead of just the code contained in those PRs. For example, for SOC2 compliance, we require that all PRs contain a link to a Jira ticket, a Salesforce support issue, or a Slack message describing why a change is being made. Previously, engineers would point out the lack of these references during CR. Now, Danger does it for us. Another example: We have a check that fails the build if people introduce any new CoffeeScript. This helps facilitate <a href="https://heap.io/blog/engineering/migrating-to-typescript"target="_blank" rel="noopener noreferrer">our transition to typescript</a>.</p>
+<p>A key lesson we learned was how to organize our danger checks. <a href="https://github.com/ReactiveX/rxjs/blob/3e9d5295f118c29193f88ea825902ac359901119/dangerfile.js"target="_blank" rel="noopener noreferrer">Many</a> <a href="https://github.com/artsy/emission/blob/master/dangerfile.ts"target="_blank" rel="noopener noreferrer">projects</a> <a href="https://github.com/facebook/react-native/blob/6e6443afd04a847ef23fb6254a84e48c70b45896/bots/dangerfile.js"target="_blank" rel="noopener noreferrer">seem</a> to favor keeping all rules in one file. This makes the file unwieldy after a few checks are added. Once we worked around Danger’s <a href="https://github.com/danger/danger-js/issues/425"target="_blank" rel="noopener noreferrer">odd import behavior</a>, we found that we’re better off splitting each of our checks into their own file so that our Dangerfile looks something like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">checkSoc2Compliance</span>(<span style="color:#a6e22e">danger</span>, <span style="color:#a6e22e">fail</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">checkFileNamingConventions</span>(<span style="color:#a6e22e">danger</span>, <span style="color:#a6e22e">fail</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">checkCoffeeAdditions</span>(<span style="color:#a6e22e">danger</span>, <span style="color:#a6e22e">warn</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">checkCoffeeModifications</span>(<span style="color:#a6e22e">danger</span>, <span style="color:#a6e22e">fail</span>);
+</span></span></code></pre></div><p>We followed the Danger docs recommendation of slowly introducing Danger checks, and we initially made Danger check failures optional to fix. Both of these were good moves, as we had some unexpected bugs with our initial Danger checks.</p>
+<h2 id="custom-stylelint-rules">Custom StyleLint Rules</h2>
+<p>StyleLint formats and lints your CSS and CSS-like files (e.g., Sass, LESS, etc.). As we started introducing more tools, we noticed that CSS source code often doesn’t receive the same amount of scrutiny as other source files during CR. For example, we wouldn’t accept the use of magic constants in TypeScript, but we found that this same standard wasn’t consistently applied in our LESS files when we specified colors.</p>
+<p>So we wrote a custom StyleLint rule that encourages use of LESS variables instead of hex values. This was easier than we expected. The meat of the rule is only a few lines of code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">plugin</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">stylelint</span>.<span style="color:#a6e22e">createPlugin</span>(
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;heap/no-magic-hex-colors&#34;</span>,
+</span></span><span style="display:flex;"><span>  () =&gt; (<span style="color:#a6e22e">postcssRoot</span>, <span style="color:#a6e22e">postcssResult</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">postcssRoot</span>.<span style="color:#a6e22e">walkDecls</span>(<span style="color:#e6db74">/background-color|color/</span>, (<span style="color:#a6e22e">decl</span>) =&gt; {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">map</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;#1a181b&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;@uiColorGray900&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;#411A66&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;uiColorPurple800&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;#d13f3f&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;uiColorError&#34;</span>,
+</span></span><span style="display:flex;"><span>      };
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">value</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">rawValue</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">decl</span>;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">rawValue</span>.<span style="color:#a6e22e">toLowerCase</span>();
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">variableForMagic</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">map</span>[<span style="color:#a6e22e">value</span>];
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">variableForMagic</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">stylelint</span>.<span style="color:#a6e22e">utils</span>.<span style="color:#a6e22e">report</span>({
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`Use </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">variableForMagic</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> instead of </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">value</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">ruleName</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">result</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">postcssResult</span>,
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">node</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">decl</span>,
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><h2 id="folder-specific-pr-checklists">Folder-specific PR checklists</h2>
+<p>Not every issue with our code can be caught via static analysis, but we can still introduce some automation into the manual checks we make on certain PRs. GitHub has PR templates with checklists for this, but in our monorepo, they’re not as useful. GitHub allows you to set a default template to apply to every PR in your repo, but this doesn’t scale.</p>
+<p>Not every team has the same checklist items and a noisy PR template is one that’s more likely to be ignored. (Note: You can also pre-fill the PR with the template via a query parameter, but this relies on humans to remember to use a specific url.)</p>
+<p><a href="https://github.com/chronotc/monorepo-diff-buildkite-plugin"target="_blank" rel="noopener noreferrer">Using the monorepo-diff Buildkite plugin</a>, we built a solution that’s more flexible. Teams can simply create a markdown checklist file and specify in YAML which directories that checklist is associated with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#f92672">-</span> <span style="color:#a6e22e">path</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">tracker</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">config</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">command</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;CHECKLIST_FILE=.checklists/capture.md add_checklist_to_pr.py&#34;</span>
+</span></span></code></pre></div><p>Whenever a PR lands that touches a file in the tracker directory, the appropriate checklist is automatically added to the PR as a comment.</p>
+<h2 id="results">Results</h2>
+<p>Since we’ve adopted these tools, our PR process has allowed us to merge more consistent, higher-quality code without some of the “nitpicky” comments people were manually adding to PRs. The result: PR comments that are less trivial and more focused on relevant issues.</p>
+<p>We’re still in the early stages of quantifying the impact of these tools since we adopted them late last year, but we can say for sure that Prettier has saved a lot of formatting headaches and that our Danger rules have already caught issues with 168 Pull Requests.</p>
+<p>Given the success we’ve had with the tools we’ve adopted so far, we believe that CR automation is well worth our time, and we’ll continue to invest in it. If you have any helpful thoughts on CR automation or developer tooling in general, feel free to reach out to me via <a href="https://twitter.com/philosohacker?lang=en"target="_blank" rel="noopener noreferrer">@philosohacker</a> on Twitter, and if you’re interested in this kind of work, <a href="https://grnh.se/dff5d2671us"target="_blank" rel="noopener noreferrer">we’re hiring</a>.</p>
+<p><em>I’d like to give a shout-out to Greg Huels, Howie Benefiel, and Dan Loewenherz for their help with reviewing early drafts of this post, and also Heap’s engineering team for their willingness to experiment, reflect, and iterate on our code review to make it the best that it can be.</em></p>
+</article><section class="article labels"><a class="tag" href=/tags/programming/>programming</a><a class="tag" href=/tags/ci/>ci</a></section>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/build-a-faster-horse/"><span class="iconfont icon-article"></span>Maybe you should build a faster horse</a></p><p><a class="link" href="/post/user-story-suprise/"><span class="iconfont icon-article"></span>Exposing Imposter User Stories</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2024 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>

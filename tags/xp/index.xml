@@ -1,0 +1,336 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Xp on Philosophical Hacker</title>
+    <link>https://www.philosophicalhacker.com/tags/xp/</link>
+    <description>Recent content in Xp on Philosophical Hacker</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 03 May 2017 08:57:08 -0400</lastBuildDate>
+    
+        <atom:link href="https://www.philosophicalhacker.com/tags/xp/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Which developers care most about security?</title>
+      <link>https://www.philosophicalhacker.com/post/which-devs-security/</link>
+      <pubDate>Tue, 06 Aug 2024 09:35:59 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/which-devs-security/</guid>
+      <description>&lt;p&gt;We’re thinking about building a product for developers that enables them to build applications that operate on encrypted data via homomorphic encryption. We think developers have seen enough data leaks to want a product like this, but we’re worried we’re wrong.&lt;/p&gt;
+&lt;p&gt;Even if we’re right, we’re worried about finding specific devs who can be early adopters. Where do these devs live? What languages do they use? What kind of companies do they work for?&lt;/p&gt;
+&lt;p&gt;To assuage these worries, we analyzed data from ~6000 Github profiles listed in a &lt;a href=&#34;https://appleprivacyletter.com/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;2021 open letter to Apple&lt;/a&gt; expressing concern over their proposed content scanning technology &lt;a href=&#34;https://www.wired.com/story/apple-csam-scanning-heat-initiative-letter/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;they nearly introduced to iCloud&lt;/a&gt;. We also ran &lt;a href=&#34;https://x.com/philosohacker/status/1819060102906720455&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;a promoted Twitter poll&lt;/a&gt; with 39 responses.&lt;/p&gt;
+&lt;p&gt;Here are our results.&lt;/p&gt;
+&lt;h2 id=&#34;do-b2c-devs-care-more-about-privacy-than-b2b-ones&#34;&gt;Do B2C devs care more about privacy than B2B ones?&lt;/h2&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Trying to get a sense of developer attitudes about data privacy. Please pick the option that best fills in the blanks in the sentence below:  &lt;br&gt;&lt;br&gt;I am building a (B2B | B2C) product and am (happy | unhappy) with our privacy practices.  &lt;br&gt;&lt;br&gt;e.g., pick choice 1 if you&amp;#39;re working on a…&lt;/p&gt;&amp;mdash; Matt Dupree (@philosohacker) &lt;a href=&#34;https://twitter.com/philosohacker/status/1819060102906720455?ref_src=twsrc%5Etfw&#34;&gt;August 1, 2024&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;B2C devs seem unhappier about their company’s privacy practices than B2B devs. Is the difference statistically significant? The p-value, according to R’s prop.test, function is &lt;code&gt;0.05417&lt;/code&gt;&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;. Good enough for me.&lt;/p&gt;
+&lt;h2 id=&#34;where-do-privacy-conscious-devs-tend-to-live&#34;&gt;Where do privacy-conscious devs tend to live?&lt;/h2&gt;
+&lt;p&gt;&lt;img  src=&#34;./where.webp&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;Most of the devs who signed the letter are in the USA. Good. We are too.&lt;/p&gt;
+&lt;h2 id=&#34;what-languages-do-privacy-conscious-devs-tend-to-use&#34;&gt;What languages do privacy-conscious devs tend to use?&lt;/h2&gt;
+&lt;p&gt;&lt;img  src=&#34;./language.webp&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;“Usage Count” on the x-axis here is 10s of trillions of bytes written in the programming language across the public repositories of all the users who signed the letter. Some signatories had no public repositories. Some didn’t write as much code. We think they are appropriately penalized in this measure and are comfortable saying, for example, that we’re better off starting with C(++), Python, and JS devs than Rust and Scala devs.&lt;/p&gt;
+&lt;h2 id=&#34;data-analysis-code&#34;&gt;Data analysis code&lt;/h2&gt;
+&lt;p&gt;I grabbed the list of Github profiles by executing a little JS&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; on the Apple open letter website and pasting the result into &lt;a href=&#34;https://gist.github.com/kmdupr33/8219a0e54d0907821b378495564e0ada#file-appleprivacyopenlettersignatories-json&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;a json file&lt;/a&gt;. &lt;a href=&#34;https://gist.github.com/kmdupr33/8219a0e54d0907821b378495564e0ada#file-index-js&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Here’s&lt;/a&gt; the node code written to hit the Github API, and &lt;a href=&#34;https://chatgpt.com/share/80277926-c921-46ef-a267-d34962e21d69&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;here’s&lt;/a&gt; the ChatGPT convo that generated python and data vis code. The code looks reasonable to me, but happy to hear critiques of the analysis and code given that I’ve been a CEO instead of a engineer/data practitioner for a couple years now and given that these days I can barely turn on a computer without asking my CTO for help.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Based on these results, seems like we’d be well served by start talking with C(++), JS, and Python devs at B2C companies.&lt;/p&gt;
+&lt;p&gt;If you’re a dev unsatisfied with your company’s privacy practices or if you’re founder looking to assuage security concerns of prospects by getting a SOC2 report, shoot me an email. I’d love to hear how you think about privacy and security. This is not a veiled attempt at starting a sales conversation. We have nothing to sell. We’re just trying to understand how founders and devs think about the problem.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;Don’t be fooled by the fact that the same number of people are unhappy with the privacy practices across B2B vs. B2C. What matters is the proportion. The function call forces us to consider this: prop.test(c(16, 3), c(26, 13))&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;Here it is: &lt;code&gt;Array.from($$(&#39;#individuals &amp;gt; li &amp;gt; a&#39;)).map(a =&amp;gt; a.href)&lt;/code&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>We Need Another Code Copilot</title>
+      <link>https://www.philosophicalhacker.com/post/we-need-another-copilot/</link>
+      <pubDate>Fri, 21 Jun 2024 10:01:48 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/we-need-another-copilot/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve been an programmer for a decade, and I can&amp;rsquo;t believe how much wasteful code we write. Even more unbelievably, many of us &amp;ldquo;justify&amp;rdquo; our waste with vague appeals to &amp;ldquo;clean code&amp;rdquo; or &amp;ldquo;best practices.&amp;rdquo; I used to do this all the time.&lt;/p&gt;
+&lt;p&gt;These vague appeals — and the religious fervor that often accompanies them — betray a common lack of serious thinking about what makes code useful vs. wasteful. Instead, we have lots of shouting:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Every function needs a test! No wait. Only write end to end tests! You classes must be SOLID! Functions must be less than 15 LoC! DRY up your code! No wait. Actually, WET (write everything twice), then deduplicate! Leave the code better than you found it!&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;These are cute heuristics that fit in a Tweet, but they&amp;rsquo;ll never take us beyond &amp;ldquo;best practice&amp;rdquo; holy wars. If we want to ship valuable software quickly and consistently, we need deeper thinking.&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;Deeper thinking isn&amp;rsquo;t enough, however. Many of the heuristics I poked fun at above can be traced back to careful, tome-sized texts on how to write good code. The authors are horrified at how their views have been caricatured and twisted,&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; but this watering down of ideas is inevitable given that we prefer hot takes on Twitter over reading books.&lt;/p&gt;
+&lt;p&gt;To avoid this unfortunate dynamic, we need to take our best thinking about what code is useful vs. wasteful and bake that thinking into our editors. Our editor should nudge us into making better decisions about what code to write.&lt;/p&gt;
+&lt;p&gt;We need this kind of copilot more than we need the code generating kind.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;What could this look like?&lt;/p&gt;
+&lt;p&gt;My editor could tell me that the test code I&amp;rsquo;m currently fixing has been broken 27 times and has never caught a single regression. I could take that stat and tell the TDD zealot on my team that automated tests are often helpful but we should delete this one.&lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;On the other hand, my editor could tell me when the TDD zealot is right. It could show me data on which files tend to produce the most bugs and give us a data-driven answer for which files would benefit the most from TDD zealotry:&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;data.webp&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;When I was a TDD zealot, I would have benefitted from seeing graphs like this.&lt;/p&gt;
+&lt;p&gt;Maybe these specific ideas are bad, but they&amp;rsquo;re not worse than what we&amp;rsquo;re doing now:&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;this-is-fine.webp&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;Example of the need for deeper thinking: the principle of single responsibility — one of the most commonly cited programming principles — falls apart under minor scrutiny. My cofounder and I have written about this here and here.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;Dave Thomas — one of the OG agile manifesto signatories — said agile is dead because the common understanding of agile is so far from what he intended. In the same talk, he says he doesn’t actually write tests for the most part. Both Kent Beck and Martin Fowler talked about how their ideas are often twisted in “Is TDD dead?” conversation with DHH&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;TDD zealots will point out that just because a test doesn’t catch defects doesn’t mean they’re completely useless and should be deleted. They’ll say that tests are also valuable because they document the exercised code and because they lead us to write more flexible code. Sometimes these benefits are real and sometimes they’re worth the cost of maintaining the test. Sometimes neither of these things are true. Data can help us answer this question better than religion.&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>On OpenAI&#39;s supposed &#34;scientific certainty&#34; that GPT-5 will be better than GPT-4</title>
+      <link>https://www.philosophicalhacker.com/post/openai-scientific-certainty/</link>
+      <pubDate>Mon, 13 May 2024 10:11:06 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/openai-scientific-certainty/</guid>
+      <description>&lt;p&gt;When we were raising money for ATLAS, I often told investors that my cofounder and I were probably the most skeptical GenAI founders they would meet. Sam Altman&amp;rsquo;s recent hyperbolic claim that Open AI has &amp;ldquo;scientific certainty that GPT-5 will be better than GPT-4&amp;rdquo; at Stanford University fuels this skepticism:&lt;/p&gt;
+
+
+    
+    &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+      &lt;iframe allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&#34; allowfullscreen=&#34;allowfullscreen&#34; loading=&#34;eager&#34; referrerpolicy=&#34;strict-origin-when-cross-origin&#34; src=&#34;https://www.youtube.com/embed/GLKoDkbS1Cg?autoplay=0&amp;controls=1&amp;end=0&amp;loop=0&amp;mute=0&amp;start=1381&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; title=&#34;YouTube video&#34;
+      &gt;&lt;/iframe&gt;
+    &lt;/div&gt;
+
+&lt;p&gt;I&amp;rsquo;m impressed by OpenAI, we use their models, and I&amp;rsquo;m sure Sam is a nice guy, but I cannot imagine that whatever evidence they have to think GPT-5 will be better than GPT-4 would be enough for &amp;ldquo;scientific certainty.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m not even sure what he means by &amp;ldquo;scientific certainty,&amp;rdquo; but here&amp;rsquo;s a guess: OpenAI has previously discussed how they&amp;rsquo;ve modeled the relationship between parameter count and LLM performance and have successfully predicted LLM performance using this model. Here&amp;rsquo;s the thing: the prior usefulness of this model says very little about it&amp;rsquo;s predictive power as they scale parameter count.&lt;/p&gt;
+&lt;p&gt;The problem of extrapolating from existing data like this is as old as David Hume and it&amp;rsquo;s something that thoughtful scientists and philosophers of science have thought about since then. In some ways, being &amp;ldquo;certain&amp;rdquo; about this kind of extrapolation feels unscientific.&lt;/p&gt;
+&lt;p&gt;Regardless of whatever OpenAI&amp;rsquo;s fancy curve predicts, at the end of the day, GPT-5 is just another data point that new versions of their curve will have to fit. It&amp;rsquo;s an experiment, not a &amp;ldquo;scientific certainty,&amp;rdquo; and the use of that term makes me worried that &amp;ldquo;science&amp;rdquo; is being pressed into the service of marketing for OpenAI.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How AI Startups Can Beat Incumbents</title>
+      <link>https://www.philosophicalhacker.com/post/how-ai-startups-can-beat-incumbents/</link>
+      <pubDate>Fri, 12 Apr 2024 10:55:38 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/how-ai-startups-can-beat-incumbents/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://medium.com/birds-view/value-accrual-in-the-modern-ai-stack-7152f1fe6981&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;There&lt;/a&gt; &lt;a href=&#34;https://fullratchet.net/410-navigating-the-ai-hype-where-value-will-accrue-for-investors-the-future-of-ai-tech-stack-and-the-role-of-open-source-vector-databases-and-recommendations-engines-tim-tully/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;are&lt;/a&gt; &lt;a href=&#34;https://blog.eladgil.com/p/ai-startup-vs-incumbent-value&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;lots&lt;/a&gt; &lt;a href=&#34;https://twitter.com/jasoncwarner/status/1764788568126587299&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;of&lt;/a&gt; &lt;a href=&#34;https://www.nfx.com/post/startups-vs-incumbents-ai&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;takes&lt;/a&gt; on where value will accrue as LLM-tech proliferates. Here’s one more.&lt;/p&gt;
+&lt;p&gt;“Where will value accrue?” — in case you’re not tuned into VC-speak — translates to “When can LLM startups beat incumbents?”&lt;/p&gt;
+&lt;p&gt;My answer: Startups with LLM-enabled, counter-positioned pricing will beat incumbents. They have the giant-defeating potential that David did.&lt;/p&gt;
+&lt;p&gt;What’s “counter-positioned pricing?” It’s a pricing model that incumbents can’t copy without losing money.&lt;/p&gt;
+&lt;p&gt;The classic example&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; of counter-positioning is Vanguard index funds. Fund managers could not offer passively managed funds without cannibalizing high-margin revenue from their managed funds. Even worse: offering unmanaged funds was tantamount to admitting that their core value proposition was bogus, that fund managers couldn’t really beat the market.&lt;/p&gt;
+&lt;p&gt;LLMs open up new counter-positioned pricing models for software.&lt;/p&gt;
+&lt;p&gt;For example, lots of marketing software for SaaS companies charge based on number of users or number of emails sent, but the customer doesn’t get any additional value when an email is sent or a new contact is added. The customer only cares when those marketing efforts convert a free user to a paying customer.&lt;/p&gt;
+&lt;p&gt;If you feed an LLM data about how a user is using a piece of software, the LLM can tell you when the user converts, which means customers can pay for converted users — the thing they actually care about — instead of emails sent. This is literally &lt;a href=&#34;https://joinatlas.ai/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;what we’re building&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Incumbents can build LLMs that understand what users do in an app, but they can’t copy the startup’s pricing without losing money. An incumbent that prices on emails sent will inevitably build a product that doesn’t optimize a customer’s ability to convert their users because they get paid regardless. Switching pricing models forces them into a dilemma: lose revenue from customers who aren’t converting their users or price higher than the startup.&lt;/p&gt;
+&lt;p&gt;There are very likely other cases where LLMs open up counter-positioned pricing models that startups can exploit. I don’t know any others offhand, which shouldn’t be surprising. Startups &lt;a href=&#34;https://www.philosophicalhacker.com/post/billion-dollar-mistakes/&#34;&gt;exploit billion dollar mistakes&lt;/a&gt;, and given that people are strongly incentivized to avoid making billion dollar mistakes, it’s hard for anyone to find a single mistake, much less two.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;The idea of “Counter-positioning” and this example comes from 7 Powers, a book on business strategy by a Stanford economist turned VC.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Under Appreciated Benefits of Selling to Startups</title>
+      <link>https://www.philosophicalhacker.com/post/under-appreciated-benefits-of-selling-to-startups/</link>
+      <pubDate>Fri, 05 Apr 2024 11:40:16 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/under-appreciated-benefits-of-selling-to-startups/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://www.unusual.vc/articles/how-traceable-found-design-partners&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Unusual’s Startup Field Guide says&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We’ve found startups to be less optimal design partners&amp;hellip;While they have extreme urgency and can certainly move quickly, they lack the stability and consistency that a [larger] company has. In addition, they often have small budgets and a high propensity to “DIY.” They are often consumed with their own challenges and feedback so you can easily get lost in the shuffle.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;We’re trying to make startups our design partners and early customers in spite of advice like this. Here’s why.&lt;/p&gt;
+&lt;h2 id=&#34;for-startups-building-vs-buying-has-a-higher-opportunity-cost&#34;&gt;For startups, building (vs. buying) has a higher opportunity cost&lt;/h2&gt;
+&lt;p&gt;Let’s start with Unusual’s claim that startups have a higher propensity to DIY than larger companies. That can&amp;rsquo;t be right. Startups need to grow much more quickly than large companies in order to satisfy their investors. Given that, the hurdle rate for any internal tool building should be much higher.&lt;/p&gt;
+&lt;p&gt;Concretely, given the choice between building feature X that accelerates revenue growth or tool Y that can be purchased off the shelf, smart founders will choose to buy Y and build X. This is good for tool vendors like us.&lt;/p&gt;
+&lt;h2 id=&#34;selling-to-startups-forces-plg&#34;&gt;Selling to startups forces PLG&lt;/h2&gt;
+&lt;p&gt;Unusual also warns that startups have small budgets. That’s obviously bad if you’re optimizing for revenue, but there&amp;rsquo;s an advantage to working with customers who have small budgets: you’re forced to execute on PLG (or some other efficient GTM strategy) from the get-go.&lt;/p&gt;
+&lt;p&gt;That forcing function is good because going from sales-led to product-led is hard and because if a competitor figures out how to do PLG before you do, you’re in big trouble. (This is one of the more useful pieces of advice I’ve ever received from a VC.)&lt;/p&gt;
+&lt;p&gt;I was at Heap as they started to transition from sales-led to product-led and it was hard. Now PLG upstarts like Posthog seem to be giving them and run for their money:&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;./posthog.webp&#34;
+        alt=&#34;Posthog ad&#34;/&gt;&lt;/p&gt;
+&lt;p&gt;Might have been better if Heap was PLG from the outset. Again, selling to startups with small budgets makes this happen automatically.&lt;/p&gt;
+&lt;h2 id=&#34;startup-employees-wont-compete-with-your-solution&#34;&gt;Startup employees won’t compete with your solution&lt;/h2&gt;
+&lt;p&gt;When people need work, they’ll advocate to build instead of buying whatever you’re selling, even if building is suboptimal for the company. Conway of “Conway’s law” puts it this way:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Probably the greatest single common factor behind many poorly designed systems now in existence has been the availability of a design organization in need of work.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Larger companies are often full of employees who are eager to solve “fun problems,” even if those problems should be solved by a vendor. In other words, at larger companies its harder to be in the below sweet spot where &lt;a href=&#34;https://www.philosophicalhacker.com/post/conflicting-employee-co-incentives/&#34;&gt;both companies AND employees are incentivized to adopt your solution&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;./2by2.webp&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;Startups don’t have this problem. They don’t have enough people to do all the work. There’s no one sitting around trying to justify their salary who can plausibly argue the startup should build in-house. This is a big part of why startups are all in the cloud, but there’s still a ton of legacy enterprises with expensive, on-prem servers.&lt;/p&gt;
+&lt;h2 id=&#34;startups-turn-into-companies-that-everyone-wants-to-copy&#34;&gt;Startups turn into companies that everyone wants to copy&lt;/h2&gt;
+&lt;p&gt;For a while, everyone wanted to be like Google, then everyone wanted to be like Facebook. Now everyone wants to be like OpenAI. If you sold software to a startup that becomes a darling of Silicon Valley, their logo is going to boost your sales a ton. When I first saw OpenAI’s logo on &lt;a href=&#34;https://pilot.com/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;pilot’s landing page&lt;/a&gt;, I was already 75% of the way to opening my wallet.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>What Your MVP Says About Your Market</title>
+      <link>https://www.philosophicalhacker.com/post/what-your-mvp-says-about-your-market/</link>
+      <pubDate>Tue, 12 Mar 2024 11:48:32 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/what-your-mvp-says-about-your-market/</guid>
+      <description>&lt;p&gt;Tuomas Artman, Linear’s CTO, recently claimed that increasing SaaS competition is raising the bar for what’s required of MVPs. Mocks, demo videos, and even ugly prototypes aren’t enough anymore. Others have made the same claim.&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;They’re wrong. There are lots of markets where minimal MVPs are good enough, and if you aren’t in one of those markets, you may be better off pivoting instead of building a fancy MVP for picky customers who are flush with alternatives.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;My co-founder’s furnace broke a few months ago. It was cold, and he spent hours lining up multiple contractors to visit his home. No one could fix it.&lt;/p&gt;
+&lt;p&gt;My co-founder also &lt;em&gt;hates&lt;/em&gt; cold email, and is generally a skeptical, cautious guy, but in that moment, he told me he would still answer an email like this one:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Hey,&lt;/p&gt;
+&lt;p&gt;I’m a VC-backed founder working on an software platform that manages HVAC contractors for you. We manage HVAC issues from start to finish, including price negotiation and scheduling. If one contractor doesn’t fix you’re issue, we’ll find another one, and if you’re unhappy with our service, we’ll refund your money.&lt;/p&gt;
+&lt;p&gt;If that sounds useful, here’s my calendly.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;If we remember the original definition of an MVP — the fastest way to validating the key assumptions of your startup — this email could be the MVP of a startup. Neither a working prototype, website, nor video was needed to understand if this HVAC management value prop was compelling.&lt;/p&gt;
+&lt;p&gt;Would an email MVP like this work for Linear? If it’s delivered to the right segment at the right time, I don’t see why not. Say the following email was sent to an IC at a small startup&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Hey,&lt;/p&gt;
+&lt;p&gt;I’m a dev turned VC-backed founder who hated working in Jira at previous startups. We’re working on a keyboard-centric, Jira alternative that responds to every command in less than 50ms. It makes your project management tool feel more like Vim or VSCode.&lt;/p&gt;
+&lt;p&gt;We’re looking for early beta users. If you’re interested, here’s my calendly.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I suspect a simple cold email like this would have been enough to see if a Vim-like project management tool was compelling.&lt;/p&gt;
+&lt;p&gt;But let’s say an email like this wasn’t good enough for Linear. Shouldn’t that make us worried as founders? If people need to “see it to believe it,” it suggests we’re selling to people who have lots of other alternatives, people who can afford to be skeptical because they don’t have a compelling need for what we’re offering.&lt;/p&gt;
+&lt;p&gt;The CEO of Singular mobile, the exclusive cellular partner of the original iPhone, never saw the iPhone before signing a partner agreement. He knew Jobs could do it, and the value prop of a new revenue stream via selling data was too good to pass up. The MVP for one the most successful B2B products of our generation — the iPhone as a new data-centric revenue stream for cell carriers — was &lt;a href=&#34;https://youtu.be/VQKMoT-6XSg?feature=shared&amp;amp;t=4120&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;a conversation and a handshake&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Because the smartphone market was crowded, the consumer side of the business required more of an MVP to validate whether Apple was on the right track. Maybe the fancy demo with the charisma of Steve Jobs was a part of that MVP. We like fancy demos and charismatic CEOs, but if we need either of them to validate the riskiest parts of our business, we might be in a bad business.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;The founder of Heap and Airplane has also &lt;a href=&#34;https://www.airplane.dev/blog/i-started-a-saas-company-in-2013-and-2021-heres-how-its-changed&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;said this&lt;/a&gt;, but iirc, he later changed his mind.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;This was their ICP according to Artman: “When we started Linear, our vision was to become the standard of how software is built…you should demonstrate you have the ability to achieve your bigger vision via your early bets. We chose to do this by focusing on IC’s at small startups.”&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Look for billion dollar mistakes</title>
+      <link>https://www.philosophicalhacker.com/post/billion-dollar-mistakes/</link>
+      <pubDate>Wed, 28 Feb 2024 11:00:33 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/billion-dollar-mistakes/</guid>
+      <description>&lt;p&gt;Successful startups grow so quickly that incumbents can’t catch up. Google couldn’t catch Facebook. Facebook couldn’t catch Instagram. Instagram couldn’t catch Snapchat. From each of these incumbent’s perspectives, the competitive startup’s success is actually a $1B+ strategic mistake.&lt;/p&gt;
+&lt;p&gt;This incumbent perspective leads to a novel approach for finding startup ideas. Instead of generating ideas by trying to be creative or visionary, we can just focus on flaws in human reasoning and knowledge and ask which of those flaws are likely to lead to $1B+ strategic errors.&lt;/p&gt;
+&lt;p&gt;Here’s how this method would generate the idea for Vanguard, the investment platform that very profitably eschewed managed funds in favor of passive ones. First, we note that executives in wealth management work in an industry large enough to make a billion dollar mistake. Second, we remember that humans easily mistake luck for skill, especially when they are considering their success and the value of their work. Thinking Fast and Slow puts it this way:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The illusion of skill…is deeply ingrained in the culture of the [wealth management] industry. Facts that…threaten people’s livelihood and self-esteem—are simply not absorbed.&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Knowing about this bias, we can ask: Are fund managers overestimating the value they provide and therefore over-changing for their services? The answer on average is “yes,” and their margin became Vanguard’s opportunity.&lt;/p&gt;
+&lt;p&gt;Here’s another example of how this method would generate the idea for Spotify. The music industry is obviously huge enough for billion dollar errors, but it’s much less obvious that selling music in bundles isn’t merely an artifact of its prior physical distribution channel but &lt;a href=&#34;https://cdixon.org/2012/07/08/how-bundling-benefits-sellers-and-buyers&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;rather a way to generate more surplus for buyers and sellers via price discrimination&lt;/a&gt;. Steve Jobs probably didn’t know this obscure detail of microeconomic theory, which is why Spotify wound up crushing iTunes.&lt;/p&gt;
+&lt;p&gt;If you’re looking for a startup idea, run this exercise with every combination of large industry and human cognitive bias / knowledge gap you can think of. When you come up with an idea, remember:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It’s unlikely someone is making an obvious billion dollar mistake. If you’re startup idea is obvious, it’s probably not a good one.&lt;/li&gt;
+&lt;li&gt;Big mistakes are less likely when there are many people trying to avoid them.&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; Look for ideas in industries that have relatively few people trying to avoid billion dollar mistakes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;Daniel Kahneman, Thinking Fast and Slow, 216s&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;This is why open source software is often more secure. It benefits from more eyeballs that can catch glaring security issues. This is why its so hard to beat the stock market.&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Dont Get Into the UX Business</title>
+      <link>https://www.philosophicalhacker.com/post/dont-get-into-the-ux-business/</link>
+      <pubDate>Tue, 20 Feb 2024 11:53:51 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/dont-get-into-the-ux-business/</guid>
+      <description>&lt;p&gt;We built an LLM-powered product that improves software help UX. Although there are a few exceptions, generally speaking, no one will pay for it. Below I discuss the headwinds I encountered while trying to sell this product, headwinds that will affect anyone in the business of helping other software companies improve the UX of their product.&lt;/p&gt;
+&lt;p&gt;These headwinds aren’t worth fighting. Unless you’re offering a UX improvement that very obviously leads to more revenue, don’t get in to the UX business.&lt;/p&gt;
+&lt;h2 id=&#34;if-we-have-good-ux-we-dont-need-your-product&#34;&gt;“If we have good UX, we don’t need your product“&lt;/h2&gt;
+&lt;p&gt;I’ve noted &lt;a href=&#34;relref%20%22conflicting-employee-co-incentives%22&#34;&gt;[elsewhere]&lt;/a&gt; that when you’re selling B2B software, you’re selling to businesses and employees that may have conflicting incentives. When a solution is good for the business but bad for employees, they will sabotage your sales and slow your growth.&lt;/p&gt;
+&lt;p&gt;Selling better UX suffers from this problem. It’s the product team’s job to build good UX that drives revenue, so even if it’s better for the company to buy a UX solution, product teams aren’t incentivized to push for this. They are much more likely to get a promotion for building the revenue-driving UX than buying it.&lt;/p&gt;
+&lt;p&gt;In other words, this:&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;./2by2.webp&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;One way in which this dynamic manifested itself was when folks objected to our product by saying, “If we have good UX, we don’t need your product.” A part of what they were saying here is, “UX is our job, not yours.”&lt;/p&gt;
+&lt;p&gt;The other part of what they’re saying was that needing an LLM to overlay instructions on top of a UI points to lack of good UX copy and progressive disclosure. Interestingly, when we tried to sell LLM-generated UX copy improvements to folks who made this objection, that didn’t work. This is for the same reason selling our first solution didn’t work: UX is the product team’s job, not a vendor’s job.&lt;/p&gt;
+&lt;h2 id=&#34;the-goldilocks-problem&#34;&gt;The Goldilocks problem&lt;/h2&gt;
+&lt;p&gt;One way of escaping the conflicting incentives discussed above is to sell to a company so small that they haven’t hired the employees who compete with your solution and are who are therefore disincentivized to adopt it. Once a company has made those hires, they’re too big for an easy sale.&lt;/p&gt;
+&lt;p&gt;This is hard to do while selling UX because it’s also possible for a startup to be too small for a UX solution. UX isn’t hard when your early-stage product only has 3 screens.&lt;/p&gt;
+&lt;p&gt;More importantly, early founders actually benefit from UX friction and bugs. Users get stuck. They agree to a call to get unstuck. The founder gets UX and product feedback on that call, builds rapport, etc.&lt;/p&gt;
+&lt;p&gt;So, startups in the UX business face a Goldilocks problem. They’ll have a hard time selling to companies that are too big1 and to companies that are too small. They have to find them sized just right.&lt;/p&gt;
+&lt;h2 id=&#34;painkiller-ux-doesnt-matter&#34;&gt;Painkiller UX doesn’t matter&lt;/h2&gt;
+&lt;p&gt;Even if you solve the Goldlocks problem, there’s another headwind to deal with, one that I should have seen early on in our user research when I spoke with a customer success consultant. During our call, she told me:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Most of the founders I work with don’t think about customer success until its too late. Their product is a few years old and they’ve already started to see some churn that they’re worried will affect their ability to raise the next round.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Translation: software companies only want to help their customers if they’re so fed up that they’re willing to churn, and customers tolerate all sorts of abuse before getting to this point.&lt;/p&gt;
+&lt;p&gt;In this sense, software customers are like painkiller users: they only quit when the experience of using is worse than the experience of not using. And things can get very bad before that happens. LinkedIn’s Sales Navigator UX drives me nuts, but its the only way to get the data I need to prospect. During user research calls, I have listened to 20-minute tirades about how awful it is to use Salesforce. Their market cap doesn’t seem to care.&lt;/p&gt;
+&lt;p&gt;When founders have a hit software product, they are selling something that has the addictive properties of a drug, or, if you prefer the more palatable VC-speak: “They’re selling pain-killers, not vitamins.” Whatever metaphor you prefer, try to sell a drug dealer on something that makes the UX of drug usage easier. Unless it somehow increases revenue, they won’t care. People are already bending over backwards to buy their product.&lt;/p&gt;
+&lt;h2 id=&#34;the-tenuous-connection-between-good-ux-and-revenue&#34;&gt;The tenuous connection between good UX and revenue&lt;/h2&gt;
+&lt;p&gt;But doesn’t good UX increase revenue? If a user is looking at products A and B and all other things are equal, except that A has better UX, won’t they pick A? Sure, but the price of the two products can’t be equal because building a product with better UX costs something and someone has to pay that cost somehow.&lt;/p&gt;
+&lt;p&gt;We are often unwilling to pay that cost, even with a product as great as the iPhone. The leap from laptops to the iPhone is arguably the greatest UX improvement of our generation, and most of us don’t even pay full price for the device. Instead, the cost of the device is subsidized by cell carriers who are just trying to sell more data/minutes.&lt;/p&gt;
+&lt;p&gt;Even with the iPhone’s subsidies and better UX, &lt;a href=&#34;https://explodingtopics.com/blog/iphone-android-users&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Android has 70% of the smartphone market&lt;/a&gt;. We will put up with worse UX for a cheaper phone that is also partially paid for by our willingness to feed data into Google’s ads business.&lt;/p&gt;
+&lt;p&gt;Why don’t we care enough about good UX to pay for it, even though good UX saves us time? We don’t really value our time. At work, we get paid the same regardless of how efficient we are. Why pay to be more efficient by using products with good UX? At home, we already waste hours of our lives doom scrolling and binge watching Netflix. We can probably just suffer the extra 2-minutes using an app with shit UX and save our dollars for the next streaming service that drops.&lt;/p&gt;
+&lt;p&gt;If anyone values UX enough to pay for it, it would be me, someone who was working in the UX business, someone who literally curses at my computer all the time as I’m dealing with shit software. As I’ve thought more about this business and my own behavior, I realized that I’ve drastically over-estimated my willingness to pay for better UX. Wittgenstein was right:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“Nothing is so difficult as not deceiving oneself.”&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Conflicting employee vs. business incentives slow B2B SaaS growth rates</title>
+      <link>https://www.philosophicalhacker.com/post/conflicting-employee-co-incentives/</link>
+      <pubDate>Fri, 09 Feb 2024 09:18:49 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/conflicting-employee-co-incentives/</guid>
+      <description>&lt;p&gt;B2B founders are often told to build solutions that cut costs or drive revenue for businesses or to solve severe pain for a particular employee within a business, but this advice is overly simplistic. When you’re building a B2B SaaS, you’re selling to employees and companies that can have conflicting incentives. When those conflicting incentives intersect with your value prop, you’ll face serious headwinds to growth, even if your solution drives revenue, cuts costs, or solves pain for an employee.&lt;/p&gt;
+&lt;p&gt;Here are the four possible states your value prop can be in vis-a-vis employee and company incentives:&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;./2by2.webp&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;The bottom left quadrant isn’t interesting, but below, we’ll first unpack these other quadrants with examples and explore how these incentives shift over the life of a company and affect B2B SaaS product growth rates.&lt;/p&gt;
+&lt;h2 id=&#34;when-employees-will-kill-solutions&#34;&gt;When employees will kill solutions&lt;/h2&gt;
+&lt;p&gt;Executives want to adopt software that drives revenue and cuts costs, but when employees see that software as a threat to their job — or even to aspects of their job that they enjoy — they won’t look for solutions or actively block solutions from reaching an buyer.&lt;/p&gt;
+&lt;p&gt;This happened at a previous job when we needed to rebuild a piece of our product. I pointed out a vendor we could have used, but the engineering team couldn’t be bothered to talk to a sales person. They would rather rebuild the functionality because it was an interesting technical challenge and because they could leverage their work on the project as ammunition for a promotion when performance reviews came around. Of course, they didn’t explicitly think to themselves, “I don’t care about the business. I just want interesting problems and a raise,” but their incentives lead them down a path that was suboptimal for the business.&lt;/p&gt;
+&lt;h2 id=&#34;when-executives-will-kill-solutions&#34;&gt;When executives will kill solutions&lt;/h2&gt;
+&lt;p&gt;Employees adopt software when it automates away an aspect of their job they don’t enjoy or don’t stand to be promoted for doing. This software doesn’t necessarily drive revenue or cut costs for the business and when this becomes clear, executes will kill off software that has grass roots adoption.&lt;/p&gt;
+&lt;p&gt;We saw this when we interviewed a marketing leader who was complaining about the proliferation of different types of project management software at her company. Different teams had different solutions they preferred, but the advantages of each solution for a particular team didn’t justify the cost and overhead of having multiple solutions. Leaders in this situation will work to kill off solutions that employees have brought into the company.&lt;/p&gt;
+&lt;p&gt;Another classic example of this is the perennial technical debt debate between engineers and management. While technical debt is a real issue, a large percentage of what gets labeled as “technical debt” is just engineers complaining about code that isn’t fun to work in. It’s written in an old framework that’s not as shiny or the code is just a pain the ass to work with. Engineers will try to justify a rewrite to avoid the yucky code, but often times the ROI for the business just isn’t there. Executives will kill these rewrite projects and nicely tell the engineer to STFU and deal with the shit code.&lt;/p&gt;
+&lt;h2 id=&#34;sweet-spot&#34;&gt;Sweet Spot&lt;/h2&gt;
+&lt;p&gt;The hugely successful B2B SaaS companies built stuff that employees and companies were both strongly incentivized to adopt. This means that — with one notable exception we’ll discuss below — successful B2B SaaS companies don’t try to directly replace employees or parts of an employees job that they like.&lt;/p&gt;
+&lt;p&gt;Stipe is a great example here. Developers didn’t want to engage in the schlep of dealing with credit card payment infrastructure so they were happy to find a vendor. Infrastructure for getting paid, moreover, was essential for businesses.&lt;/p&gt;
+&lt;p&gt;Twilio is another example. SMS infra was a schlep. Businesses needed to reach customers via SMS to market to them. Boom. Now they have a 13B dollar dollar market cap.&lt;/p&gt;
+&lt;p&gt;Salesforce is another example. They didn’t try to replace reps or sales managers. They gave sales managers a way to predict revenue with a slick dashboard instead of manually calling their reps or managing things in a spreadsheet which was hugely useful for their promotion and hugely useful for executives who are trying to manage investor expectations around quarterly revenue.&lt;/p&gt;
+&lt;h2 id=&#34;how-these-incentives-shift-over-the-life-of-a-company&#34;&gt;How these incentives shift over the life of a company&lt;/h2&gt;
+&lt;p&gt;As companies grow, they will hire employees to solve every important problem that doesn’t already have a software-based solution. Once that employee is hired, they can kill off solutions that attempt to replace them or aspects of their job that they like. Before that employee is hired, however, B2B SaaS startups have an opportunity to pre-empt that employee’s hire or to shape the responsibilities of the hire that addresses related problems that aren’t solved by the SaaS. This means that B2B SaaS companies that can sell to startups before they grow into large ones have a distinct advantage over ones that can’t.&lt;/p&gt;
+&lt;p&gt;A classic example here is AWS and other cloud providers. Most of their success comes from selling to startups who grow into massive customers. This is why they have a startup program. On the other hand, many enterprises that existed before AWS still have on-prem infrastructure. Their existing IT employees sabatoge cloud vendor sales reps.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Embeddings are cooler than ChatGPT</title>
+      <link>https://www.philosophicalhacker.com/talk/embeddings-cooler-chatgpt/</link>
+      <pubDate>Fri, 14 Jul 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/talk/embeddings-cooler-chatgpt/</guid>
+      <description>&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/gXo8qnFWvxU&#34; title=&#34;YouTube video player&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&#34; allowfullscreen&gt;&lt;/iframe&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
