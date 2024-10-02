@@ -15,6 +15,11 @@
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><section class="article header"><h1>Posts</h1></section><ul class="note list"><li class="item">
         
+        <a class="note" href="/post/reading-sqlite-schema-tables-the-hard-way/">
+        
+            <p class="note title">Reading Sqlite Schema Tables the Hard Way</p><p class="note date">2024-09-25</p><p class="note content">Parsing a Sqlite database file is a nice way to brush up on data structures, bit manipulation, and recursion. I know this because I recently implemented the read_schema_tables function below such that the following test passes:
+import sqlite3 def test_read_table_names(db_file): con = sqlite3.connect(db_file) assert list(con.execute(&#34;SELECT * FROM sqlite_schema;&#34;)) == list(read_schema_tables(db_file)) read_schema_tables doesn&rsquo;t use the sqlite3 python package. That&rsquo;d make for a trivial test case and would be too easy. For comp sci fun, we have to do it the hard way.<span class="mldr">&mldr;</span></p></a></li><li class="item">
+        
         <a class="note" href="/post/which-devs-security/">
         
             <p class="note title">Which developers care most about security?</p><p class="note date">2024-08-06</p><p class="note content">We’re thinking about building a product for developers that enables them to build applications that operate on encrypted data via homomorphic encryption. We think developers have seen enough data leaks to want a product like this, but we’re worried we’re wrong.
