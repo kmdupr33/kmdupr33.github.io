@@ -11,6 +11,24 @@
     
     
     <item>
+      <title>LLM Proofing Our Takehome Challenge</title>
+      <link>https://www.philosophicalhacker.com/post/llm-proofing-our-takehome/</link>
+      <pubDate>Fri, 20 Jun 2025 15:16:06 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/llm-proofing-our-takehome/</guid>
+      <description>&lt;p&gt;Our original idea for our coding challenge was to ask candidates to build a tic-tac-toe game in React with a few curve balls thrown in around making the solution more general for larger game boards and play modes. We scrapped that idea when we discovered ChatGPT could trivially do this.&lt;/p&gt;
+&lt;p&gt;Here are some things we did to &amp;ldquo;LLM-proof&amp;rdquo; our new challenge.&lt;/p&gt;
+&lt;p&gt;But first, why the scare quotes around &amp;ldquo;LLM-proof.&amp;rdquo; Because I&amp;rsquo;m sure someone could get an LLM to solve the new challenge, but the quality of prompting that would be necessary to pull this off would be an indication of a strong engineer. The point of an interview process is to find strong engineers, not to find ones who don&amp;rsquo;t use LLMs.&lt;/p&gt;
+&lt;p&gt;First, we focused the challenge on a product-specific feature instead of a toy problem. Products need to be differentiated to exist at all, so starting the challenge w/ a unique product feature already sets us up well for finding a task that&amp;rsquo;s different from what was in the LLM&amp;rsquo;s training dataset.&lt;/p&gt;
+&lt;p&gt;Second, we made abstraction and good design a core part of the challenge. Again, this is something that LLMs aren&amp;rsquo;t particularly great at. This shouldn&amp;rsquo;t be surprising since most code that LLMs are trained on is a mess.&lt;/p&gt;
+&lt;p&gt;Third, we asked candidates to post a 30 minute video of them solving the challenge. This helped us get a sense of how much they were leaning on an LLM while they were solving the challenge. If it looked like they didn&amp;rsquo;t understand basic language concepts, we didn&amp;rsquo;t move forward with them.&lt;/p&gt;
+&lt;p&gt;Finally, we playtested the challenge with LLM assistance. The LLM was able to come up with a basic implementation with one or two prompts. However, trying to get the LLM to refactor its code to be more flexible was a lot harder. We gave up after 90 minutes of trying.&lt;/p&gt;
+&lt;p&gt;Without giving away too much of the challenge, all we wanted was the LLM to introduce a new Typescript inteface that would DRY up the React code it generated and enable additional implementations of the interface. I couldn&amp;rsquo;t get ChatGPT 4o to do it.&lt;/p&gt;
+&lt;p&gt;If some LLM whisperer could get an LLM make the refactor, great. Welcome to the team, but for the dozens of solutions seen since implementing the new challenge, the hires we&amp;rsquo;ve made wrote the solution the old fashioned way.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Value-based pricing can be a trap for early startups</title>
       <link>https://www.philosophicalhacker.com/post/value-based-pricing-is-a-trap/</link>
       <pubDate>Thu, 03 Oct 2024 11:10:12 -0500</pubDate>
@@ -418,47 +436,6 @@
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Dont Get Into the UX Business</title>
-      <link>https://www.philosophicalhacker.com/post/dont-get-into-the-ux-business/</link>
-      <pubDate>Tue, 20 Feb 2024 11:53:51 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/dont-get-into-the-ux-business/</guid>
-      <description>&lt;p&gt;We built an LLM-powered product that improves software help UX. Although there are a few exceptions, generally speaking, no one will pay for it. Below I discuss the headwinds I encountered while trying to sell this product, headwinds that will affect anyone in the business of helping other software companies improve the UX of their product.&lt;/p&gt;
-&lt;p&gt;These headwinds aren’t worth fighting. Unless you’re offering a UX improvement that very obviously leads to more revenue, don’t get in to the UX business.&lt;/p&gt;
-&lt;h2 id=&#34;if-we-have-good-ux-we-dont-need-your-product&#34;&gt;“If we have good UX, we don’t need your product“&lt;/h2&gt;
-&lt;p&gt;I’ve noted &lt;a href=&#34;relref%20%22conflicting-employee-co-incentives%22&#34;&gt;[elsewhere]&lt;/a&gt; that when you’re selling B2B software, you’re selling to businesses and employees that may have conflicting incentives. When a solution is good for the business but bad for employees, they will sabotage your sales and slow your growth.&lt;/p&gt;
-&lt;p&gt;Selling better UX suffers from this problem. It’s the product team’s job to build good UX that drives revenue, so even if it’s better for the company to buy a UX solution, product teams aren’t incentivized to push for this. They are much more likely to get a promotion for building the revenue-driving UX than buying it.&lt;/p&gt;
-&lt;p&gt;In other words, this:&lt;/p&gt;
-&lt;p&gt;&lt;img  src=&#34;./2by2.webp&#34;
-        alt/&gt;&lt;/p&gt;
-&lt;p&gt;One way in which this dynamic manifested itself was when folks objected to our product by saying, “If we have good UX, we don’t need your product.” A part of what they were saying here is, “UX is our job, not yours.”&lt;/p&gt;
-&lt;p&gt;The other part of what they’re saying was that needing an LLM to overlay instructions on top of a UI points to lack of good UX copy and progressive disclosure. Interestingly, when we tried to sell LLM-generated UX copy improvements to folks who made this objection, that didn’t work. This is for the same reason selling our first solution didn’t work: UX is the product team’s job, not a vendor’s job.&lt;/p&gt;
-&lt;h2 id=&#34;the-goldilocks-problem&#34;&gt;The Goldilocks problem&lt;/h2&gt;
-&lt;p&gt;One way of escaping the conflicting incentives discussed above is to sell to a company so small that they haven’t hired the employees who compete with your solution and are who are therefore disincentivized to adopt it. Once a company has made those hires, they’re too big for an easy sale.&lt;/p&gt;
-&lt;p&gt;This is hard to do while selling UX because it’s also possible for a startup to be too small for a UX solution. UX isn’t hard when your early-stage product only has 3 screens.&lt;/p&gt;
-&lt;p&gt;More importantly, early founders actually benefit from UX friction and bugs. Users get stuck. They agree to a call to get unstuck. The founder gets UX and product feedback on that call, builds rapport, etc.&lt;/p&gt;
-&lt;p&gt;So, startups in the UX business face a Goldilocks problem. They’ll have a hard time selling to companies that are too big1 and to companies that are too small. They have to find them sized just right.&lt;/p&gt;
-&lt;h2 id=&#34;painkiller-ux-doesnt-matter&#34;&gt;Painkiller UX doesn’t matter&lt;/h2&gt;
-&lt;p&gt;Even if you solve the Goldlocks problem, there’s another headwind to deal with, one that I should have seen early on in our user research when I spoke with a customer success consultant. During our call, she told me:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Most of the founders I work with don’t think about customer success until its too late. Their product is a few years old and they’ve already started to see some churn that they’re worried will affect their ability to raise the next round.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Translation: software companies only want to help their customers if they’re so fed up that they’re willing to churn, and customers tolerate all sorts of abuse before getting to this point.&lt;/p&gt;
-&lt;p&gt;In this sense, software customers are like painkiller users: they only quit when the experience of using is worse than the experience of not using. And things can get very bad before that happens. LinkedIn’s Sales Navigator UX drives me nuts, but its the only way to get the data I need to prospect. During user research calls, I have listened to 20-minute tirades about how awful it is to use Salesforce. Their market cap doesn’t seem to care.&lt;/p&gt;
-&lt;p&gt;When founders have a hit software product, they are selling something that has the addictive properties of a drug, or, if you prefer the more palatable VC-speak: “They’re selling pain-killers, not vitamins.” Whatever metaphor you prefer, try to sell a drug dealer on something that makes the UX of drug usage easier. Unless it somehow increases revenue, they won’t care. People are already bending over backwards to buy their product.&lt;/p&gt;
-&lt;h2 id=&#34;the-tenuous-connection-between-good-ux-and-revenue&#34;&gt;The tenuous connection between good UX and revenue&lt;/h2&gt;
-&lt;p&gt;But doesn’t good UX increase revenue? If a user is looking at products A and B and all other things are equal, except that A has better UX, won’t they pick A? Sure, but the price of the two products can’t be equal because building a product with better UX costs something and someone has to pay that cost somehow.&lt;/p&gt;
-&lt;p&gt;We are often unwilling to pay that cost, even with a product as great as the iPhone. The leap from laptops to the iPhone is arguably the greatest UX improvement of our generation, and most of us don’t even pay full price for the device. Instead, the cost of the device is subsidized by cell carriers who are just trying to sell more data/minutes.&lt;/p&gt;
-&lt;p&gt;Even with the iPhone’s subsidies and better UX, &lt;a href=&#34;https://explodingtopics.com/blog/iphone-android-users&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Android has 70% of the smartphone market&lt;/a&gt;. We will put up with worse UX for a cheaper phone that is also partially paid for by our willingness to feed data into Google’s ads business.&lt;/p&gt;
-&lt;p&gt;Why don’t we care enough about good UX to pay for it, even though good UX saves us time? We don’t really value our time. At work, we get paid the same regardless of how efficient we are. Why pay to be more efficient by using products with good UX? At home, we already waste hours of our lives doom scrolling and binge watching Netflix. We can probably just suffer the extra 2-minutes using an app with shit UX and save our dollars for the next streaming service that drops.&lt;/p&gt;
-&lt;p&gt;If anyone values UX enough to pay for it, it would be me, someone who was working in the UX business, someone who literally curses at my computer all the time as I’m dealing with shit software. As I’ve thought more about this business and my own behavior, I realized that I’ve drastically over-estimated my willingness to pay for better UX. Wittgenstein was right:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;“Nothing is so difficult as not deceiving oneself.”&lt;/p&gt;
-&lt;/blockquote&gt;
 </description>
     </item>
     
