@@ -5,10 +5,30 @@
     <description>Recent content on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 23 Jul 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 30 Jul 2025 23:31:50 -0500</lastBuildDate>
     
         <atom:link href="https://www.philosophicalhacker.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Libraries are under-used. LLMs make this problem worse.</title>
+      <link>https://www.philosophicalhacker.com/post/libraries-llms/</link>
+      <pubDate>Wed, 30 Jul 2025 23:31:50 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/libraries-llms/</guid>
+      <description>&lt;p&gt;Libraries are under-used. Why? Briefly:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Writing code is more fun than reading documentation.&lt;/li&gt;
+&lt;li&gt;We tend to understimate the complexity of problems we don&amp;rsquo;t understand well, so we undervalue libraries that solve these poorly understood problems.&lt;/li&gt;
+&lt;li&gt;Perverse incentives: libraries compete with big internal engineering projects that look good in a promo packet.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;LLMs make this problem worse. Why? Less briefly:&lt;/p&gt;
+&lt;p&gt;Vibe coding is more fun than reading documentation. Shit, vibe-coding can be more fun than ordinary coding. You write a small prompt, get a ton of output, and get to revel in how long writing all of that code manually would have taken. You get to feel like we&amp;rsquo;re on the cusp of a new era.&lt;/p&gt;
+&lt;p&gt;The problem is that the LLM&amp;rsquo;s output just isn&amp;rsquo;t as good as a battle-tested library. As we all know, LLMs don&amp;rsquo;t follow our prompts perfectly, but even if they did, our prompts comes from our niave view of our problems. Niave prompt in, niave code out.&lt;/p&gt;
+&lt;p&gt;By contrast, library creators know the problem better than us. They have better prompts and the experience to shape an LLM&amp;rsquo;s output into solid library code. For many complex problems, we should use their library, not an LLM directly.&lt;/p&gt;
+&lt;p&gt;Perverse incentives push us the wrong way here too. An engineer who uses an LLM to generate thousands of lines of code is a innovative leader who will help the company win in the new age of AI. &amp;ldquo;Promote them!,&amp;rdquo; the managers say. I&amp;rsquo;m not saying that engineers consciously choose to use LLMs over libraries because of the hype. Just saying the incentives are there.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Generated Union Types from Go Structs with Static Analysis</title>
@@ -391,41 +411,6 @@
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Under Appreciated Benefits of Selling to Startups</title>
-      <link>https://www.philosophicalhacker.com/post/under-appreciated-benefits-of-selling-to-startups/</link>
-      <pubDate>Fri, 05 Apr 2024 11:40:16 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/under-appreciated-benefits-of-selling-to-startups/</guid>
-      <description>&lt;p&gt;&lt;a href=&#34;https://www.unusual.vc/articles/how-traceable-found-design-partners&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Unusual’s Startup Field Guide says&lt;/a&gt;:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;We’ve found startups to be less optimal design partners&amp;hellip;While they have extreme urgency and can certainly move quickly, they lack the stability and consistency that a [larger] company has. In addition, they often have small budgets and a high propensity to “DIY.” They are often consumed with their own challenges and feedback so you can easily get lost in the shuffle.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;We’re trying to make startups our design partners and early customers in spite of advice like this. Here’s why.&lt;/p&gt;
-&lt;h2 id=&#34;for-startups-building-vs-buying-has-a-higher-opportunity-cost&#34;&gt;For startups, building (vs. buying) has a higher opportunity cost&lt;/h2&gt;
-&lt;p&gt;Let’s start with Unusual’s claim that startups have a higher propensity to DIY than larger companies. That can&amp;rsquo;t be right. Startups need to grow much more quickly than large companies in order to satisfy their investors. Given that, the hurdle rate for any internal tool building should be much higher.&lt;/p&gt;
-&lt;p&gt;Concretely, given the choice between building feature X that accelerates revenue growth or tool Y that can be purchased off the shelf, smart founders will choose to buy Y and build X. This is good for tool vendors like us.&lt;/p&gt;
-&lt;h2 id=&#34;selling-to-startups-forces-plg&#34;&gt;Selling to startups forces PLG&lt;/h2&gt;
-&lt;p&gt;Unusual also warns that startups have small budgets. That’s obviously bad if you’re optimizing for revenue, but there&amp;rsquo;s an advantage to working with customers who have small budgets: you’re forced to execute on PLG (or some other efficient GTM strategy) from the get-go.&lt;/p&gt;
-&lt;p&gt;That forcing function is good because going from sales-led to product-led is hard and because if a competitor figures out how to do PLG before you do, you’re in big trouble. (This is one of the more useful pieces of advice I’ve ever received from a VC.)&lt;/p&gt;
-&lt;p&gt;I was at Heap as they started to transition from sales-led to product-led and it was hard. Now PLG upstarts like Posthog seem to be giving them and run for their money:&lt;/p&gt;
-&lt;p&gt;&lt;img  src=&#34;./posthog.webp&#34;
-        alt=&#34;Posthog ad&#34;/&gt;&lt;/p&gt;
-&lt;p&gt;Might have been better if Heap was PLG from the outset. Again, selling to startups with small budgets makes this happen automatically.&lt;/p&gt;
-&lt;h2 id=&#34;startup-employees-wont-compete-with-your-solution&#34;&gt;Startup employees won’t compete with your solution&lt;/h2&gt;
-&lt;p&gt;When people need work, they’ll advocate to build instead of buying whatever you’re selling, even if building is suboptimal for the company. Conway of “Conway’s law” puts it this way:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Probably the greatest single common factor behind many poorly designed systems now in existence has been the availability of a design organization in need of work.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Larger companies are often full of employees who are eager to solve “fun problems,” even if those problems should be solved by a vendor. In other words, at larger companies its harder to be in the below sweet spot where &lt;a href=&#34;https://www.philosophicalhacker.com/post/conflicting-employee-co-incentives/&#34;&gt;both companies AND employees are incentivized to adopt your solution&lt;/a&gt;:&lt;/p&gt;
-&lt;p&gt;&lt;img  src=&#34;./2by2.webp&#34;
-        alt/&gt;&lt;/p&gt;
-&lt;p&gt;Startups don’t have this problem. They don’t have enough people to do all the work. There’s no one sitting around trying to justify their salary who can plausibly argue the startup should build in-house. This is a big part of why startups are all in the cloud, but there’s still a ton of legacy enterprises with expensive, on-prem servers.&lt;/p&gt;
-&lt;h2 id=&#34;startups-turn-into-companies-that-everyone-wants-to-copy&#34;&gt;Startups turn into companies that everyone wants to copy&lt;/h2&gt;
-&lt;p&gt;For a while, everyone wanted to be like Google, then everyone wanted to be like Facebook. Now everyone wants to be like OpenAI. If you sold software to a startup that becomes a darling of Silicon Valley, their logo is going to boost your sales a ton. When I first saw OpenAI’s logo on &lt;a href=&#34;https://pilot.com/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;pilot’s landing page&lt;/a&gt;, I was already 75% of the way to opening my wallet.&lt;/p&gt;
 </description>
     </item>
     
