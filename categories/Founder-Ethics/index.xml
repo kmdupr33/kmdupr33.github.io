@@ -314,6 +314,60 @@
     </item>
     
     <item>
+      <title>The UIs ChatGpt Wont Replace</title>
+      <link>https://www.philosophicalhacker.com/post/uis-chat-gpt-wont-replace/</link>
+      <pubDate>Mon, 29 Apr 2024 20:43:50 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/uis-chat-gpt-wont-replace/</guid>
+      <description>&lt;p&gt;What percentage of traditional UIs will be replaced by chat-based experiences? I’m building a AI/LLM-powered app guide and company that’s betting the percentage is low.&lt;/p&gt;
+&lt;p&gt;Sci-fi is a part of what guides my intuition here. Jarvis didn’t make GUIs obsolete for Tony Stark. GPT-X won’t make them obsolete for us.&lt;/p&gt;
+&lt;p&gt;Even if you don’t like sci-fi as a guide for the future, you can see that chat-based UIs won’t dominate it by looking closely at how we use computers today. That’s what we’ll do here: we’ll examine cases where chat-based UIs don’t make sense, no matter how smart the AI chat-bot is. We’ll see that chat-based UIs won’t dominate the future because the cases we examine below represent the overwhelming majority of what we use computers for.&lt;/p&gt;
+&lt;h1 id=&#34;operating-on-items-in-a-list&#34;&gt;Operating on items in a list&lt;/h1&gt;
+&lt;p&gt;The CEO of OpenAI gave a nice example showing how chat-based interfaces aren’t great for operating on list items in his recent TED talk. First, he shows that ChatGPT can generate a grocery list on Instacart:&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;./instacart.jpg&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;Then he says,&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;…The traditional UI is still very valuable…you can click through it and…modify the actual quantities…I think this shows that traditional UIs are not going away.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In this case, no one prefers to type (or even speak) the words “increase the number of quinoa packets to two.” We just want to tap the plus button on our iPads. The same thing is true any time we’re archiving emails. Swiping away an email to archive it is deeply intuitive to the parts of our brain that evolved before language.&lt;/p&gt;
+&lt;h1 id=&#34;tasks-performed-via-spatial-metaphors&#34;&gt;Tasks performed via spatial metaphors&lt;/h1&gt;
+&lt;p&gt;Speaking of swiping away emails, there are many many tasks we perform on computers that leverage our sense of space. Think about Google Calendar:&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;./calendar.webp&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;We know that our schedule is “full” because we see lots of space occupied by boxes. Moreover, when we want to manipulate an event, GCal’s interface gives us a spatial metaphor that makes it extremely natural to “drag an event one day in the future.” We don’t want to type or say, “move the investor week event on Wednesday one day forward.” Again, given that spatial cognition evolved before language, it’s no surprise that spatial metaphors are common and effective in GUIs and that language-based interaction feel less natural when a spatial metaphor is available.&lt;/p&gt;
+&lt;h1 id=&#34;mutations-with-invariants&#34;&gt;Mutations with invariants&lt;/h1&gt;
+&lt;p&gt;We can re-use the calendar screenshot above for this case: if you can avoid it, you don’t want to double-book your calendar. While chat-based interfaces can refuse to book an event if there’s a conflict, the busier you are, the more you’ll want a GCal-like interface that shows you where you “have room” (notice the spatial metaphor!) in your schedule. Corollary: busy people won’t use ChatGPT to create calendar events, no matter how good the language model is.&lt;/p&gt;
+&lt;p&gt;Even if you don’t use GCal, invariants helpfully constrain what you can do within software you use every day. Any time you see a required field, for example, the GUI is helpfully saying, “Hey! I can’t do what you want with what you’ve given me.” E.g., I can’t give you a revenue forecast if this deal you’re creating is missing a contract value.&lt;/p&gt;
+&lt;p&gt;You don’t want to discover what’s needed for your task by arguing back and forth with a chatbot. You want a UI that proactively tells you how to avoid invalid inputs, or, if you prefer the computer-science-esque way of putting it: you want a system that proactively communicates its invariants.&lt;/p&gt;
+&lt;h1 id=&#34;complex-mutations&#34;&gt;Complex mutations&lt;/h1&gt;
+&lt;p&gt;Watch this video of the Hubspot CTO demoing a chatbot that can add a new Hubspot contact:&lt;/p&gt;
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/fayBEXSKyoI?si=ncp3iPts68iuzasc&amp;amp;start=196&#34; title=&#34;YouTube video player&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&#34; referrerpolicy=&#34;strict-origin-when-cross-origin&#34; allowfullscreen&gt;&lt;/iframe&gt;
+&lt;p&gt;Did you notice that he has to stop and think about what additional information he wants to include in the request to create a new contact? That’s a strong sign that the mutation he’s performing is too complicated to do via a chat-interface. Very often when we’re mutating data, we need to know our available options for our mutation. (This is especially if there are invariants involved. See above!)&lt;/p&gt;
+&lt;p&gt;If you can keep track of the entire mutation and it’s options in your head, great. Use ChatGPT. Otherwise, something like a form is a pretty good surface for simultaneously conveying what’s possible for a mutation and enabling us to the provide information that fully leverages the capabilities of the software we’re using.&lt;/p&gt;
+&lt;h1 id=&#34;low-intent-product-exploration&#34;&gt;Low-intent product exploration&lt;/h1&gt;
+&lt;p&gt;Even outside of mutations, we are often unsure of the capabilities of the software we’re using. When this is true, we don’t have a specific task to delegate to an AI. Instead, we simply want to see what’s possible.&lt;/p&gt;
+&lt;p&gt;You can ask a chatbot to write out what’s possible, but we lose information when we translate product possibilities into textual descriptions. A particular screen’s layout and the size of its elements contain lots of information about how the software is supposed to be used. (A picture is worth a thousand words.) Moreover, visual design patterns instantly orient us and let us re-use knowledge of how software works.&lt;/p&gt;
+&lt;p&gt;You can see both of these points at work if you look a screenshot from this piece of software you’ve probably never used (it’s Obisidian):&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;./obsidian.webp&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;If you’ve worked with text editors before, when you see this:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The layout screams “This is a file editor!”&lt;/li&gt;
+&lt;li&gt;The tabs design pattern says you can easily jump between multiple files while working.&lt;/li&gt;
+&lt;li&gt;The star symbol always means something like “favorite,” so in this context, it’s saying you can mark certain files as important. It’s prominent position tells you the software designers think this will be especially useful.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Again, ChatGPT could have written these things out for us, but we process them faster by simply looking at the GUI. The GUI visually tells us what matters within the software.&lt;/p&gt;
+&lt;h1 id=&#34;high-frequency-tasks&#34;&gt;High-frequency tasks&lt;/h1&gt;
+&lt;p&gt;There’s a reason so many of us have memorized the Cmd+C shortcut: it takes too damn long to copy text via a mouse. The feeling we have on this generalizes: when we perform a task frequently, we want affordances that help us move at the speed of thought. The proliferation of the “Command K” design pattern and tools like Command Bar are further evidence of this. So is swiping left on Tinder.&lt;/p&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;If these are all bad use cases for chat-based UI, ChatGPT won’t be as disruptive to how we interact with computers as some have suggested. This is not because of current limitations in ChatGPT or AI. Rather, it’s because — as the best sci-fi reminds us — despite all our technology, we remain human and the human machine works best on spatial and kinetic inputs.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&#34;https://news.ycombinator.com/item?id=35734660&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;HN Discussion&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>How AI Startups Can Beat Incumbents</title>
       <link>https://www.philosophicalhacker.com/post/how-ai-startups-can-beat-incumbents/</link>
       <pubDate>Fri, 12 Apr 2024 10:55:38 -0500</pubDate>
@@ -372,47 +426,6 @@
 &lt;p&gt;Startups don’t have this problem. They don’t have enough people to do all the work. There’s no one sitting around trying to justify their salary who can plausibly argue the startup should build in-house. This is a big part of why startups are all in the cloud, but there’s still a ton of legacy enterprises with expensive, on-prem servers.&lt;/p&gt;
 &lt;h2 id=&#34;startups-turn-into-companies-that-everyone-wants-to-copy&#34;&gt;Startups turn into companies that everyone wants to copy&lt;/h2&gt;
 &lt;p&gt;For a while, everyone wanted to be like Google, then everyone wanted to be like Facebook. Now everyone wants to be like OpenAI. If you sold software to a startup that becomes a darling of Silicon Valley, their logo is going to boost your sales a ton. When I first saw OpenAI’s logo on &lt;a href=&#34;https://pilot.com/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;pilot’s landing page&lt;/a&gt;, I was already 75% of the way to opening my wallet.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>What Your MVP Says About Your Market</title>
-      <link>https://www.philosophicalhacker.com/post/what-your-mvp-says-about-your-market/</link>
-      <pubDate>Tue, 12 Mar 2024 11:48:32 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/what-your-mvp-says-about-your-market/</guid>
-      <description>&lt;p&gt;Tuomas Artman, Linear’s CTO, recently claimed that increasing SaaS competition is raising the bar for what’s required of MVPs. Mocks, demo videos, and even ugly prototypes aren’t enough anymore. Others have made the same claim.&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-&lt;p&gt;They’re wrong. There are lots of markets where minimal MVPs are good enough, and if you aren’t in one of those markets, you may be better off pivoting instead of building a fancy MVP for picky customers who are flush with alternatives.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;My co-founder’s furnace broke a few months ago. It was cold, and he spent hours lining up multiple contractors to visit his home. No one could fix it.&lt;/p&gt;
-&lt;p&gt;My co-founder also &lt;em&gt;hates&lt;/em&gt; cold email, and is generally a skeptical, cautious guy, but in that moment, he told me he would still answer an email like this one:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Hey,&lt;/p&gt;
-&lt;p&gt;I’m a VC-backed founder working on an software platform that manages HVAC contractors for you. We manage HVAC issues from start to finish, including price negotiation and scheduling. If one contractor doesn’t fix you’re issue, we’ll find another one, and if you’re unhappy with our service, we’ll refund your money.&lt;/p&gt;
-&lt;p&gt;If that sounds useful, here’s my calendly.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;If we remember the original definition of an MVP — the fastest way to validating the key assumptions of your startup — this email could be the MVP of a startup. Neither a working prototype, website, nor video was needed to understand if this HVAC management value prop was compelling.&lt;/p&gt;
-&lt;p&gt;Would an email MVP like this work for Linear? If it’s delivered to the right segment at the right time, I don’t see why not. Say the following email was sent to an IC at a small startup&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Hey,&lt;/p&gt;
-&lt;p&gt;I’m a dev turned VC-backed founder who hated working in Jira at previous startups. We’re working on a keyboard-centric, Jira alternative that responds to every command in less than 50ms. It makes your project management tool feel more like Vim or VSCode.&lt;/p&gt;
-&lt;p&gt;We’re looking for early beta users. If you’re interested, here’s my calendly.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;I suspect a simple cold email like this would have been enough to see if a Vim-like project management tool was compelling.&lt;/p&gt;
-&lt;p&gt;But let’s say an email like this wasn’t good enough for Linear. Shouldn’t that make us worried as founders? If people need to “see it to believe it,” it suggests we’re selling to people who have lots of other alternatives, people who can afford to be skeptical because they don’t have a compelling need for what we’re offering.&lt;/p&gt;
-&lt;p&gt;The CEO of Singular mobile, the exclusive cellular partner of the original iPhone, never saw the iPhone before signing a partner agreement. He knew Jobs could do it, and the value prop of a new revenue stream via selling data was too good to pass up. The MVP for one the most successful B2B products of our generation — the iPhone as a new data-centric revenue stream for cell carriers — was &lt;a href=&#34;https://youtu.be/VQKMoT-6XSg?feature=shared&amp;amp;t=4120&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;a conversation and a handshake&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Because the smartphone market was crowded, the consumer side of the business required more of an MVP to validate whether Apple was on the right track. Maybe the fancy demo with the charisma of Steve Jobs was a part of that MVP. We like fancy demos and charismatic CEOs, but if we need either of them to validate the riskiest parts of our business, we might be in a bad business.&lt;/p&gt;
-&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
-&lt;hr&gt;
-&lt;ol&gt;
-&lt;li id=&#34;fn:1&#34;&gt;
-&lt;p&gt;The founder of Heap and Airplane has also &lt;a href=&#34;https://www.airplane.dev/blog/i-started-a-saas-company-in-2013-and-2021-heres-how-its-changed&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;said this&lt;/a&gt;, but iirc, he later changed his mind.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id=&#34;fn:2&#34;&gt;
-&lt;p&gt;This was their ICP according to Artman: “When we started Linear, our vision was to become the standard of how software is built…you should demonstrate you have the ability to achieve your bigger vision via your early bets. We chose to do this by focusing on IC’s at small startups.”&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
 </description>
     </item>
     

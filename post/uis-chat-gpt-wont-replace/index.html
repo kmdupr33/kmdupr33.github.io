@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>The UIs ChatGpt Wont Replace&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="The UIs ChatGpt Wont Replace" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">The UIs ChatGpt Wont Replace</h1><p class="article date">2024-04-29<span class="lastmod"> • edited 2025-07-30</span><span class="reading-time"> • 6 minutes to read</span></p></section><article class="article markdown-body"><p>What percentage of traditional UIs will be replaced by chat-based experiences? I’m building a AI/LLM-powered app guide and company that’s betting the percentage is low.</p>
+<p>Sci-fi is a part of what guides my intuition here. Jarvis didn’t make GUIs obsolete for Tony Stark. GPT-X won’t make them obsolete for us.</p>
+<p>Even if you don’t like sci-fi as a guide for the future, you can see that chat-based UIs won’t dominate it by looking closely at how we use computers today. That’s what we’ll do here: we’ll examine cases where chat-based UIs don’t make sense, no matter how smart the AI chat-bot is. We’ll see that chat-based UIs won’t dominate the future because the cases we examine below represent the overwhelming majority of what we use computers for.</p>
+<h1 id="operating-on-items-in-a-list">Operating on items in a list</h1>
+<p>The CEO of OpenAI gave a nice example showing how chat-based interfaces aren’t great for operating on list items in his recent TED talk. First, he shows that ChatGPT can generate a grocery list on Instacart:</p>
+<p><img  src="./instacart.jpg"
+        alt/></p>
+<p>Then he says,</p>
+<blockquote>
+<p>…The traditional UI is still very valuable…you can click through it and…modify the actual quantities…I think this shows that traditional UIs are not going away.</p>
+</blockquote>
+<p>In this case, no one prefers to type (or even speak) the words “increase the number of quinoa packets to two.” We just want to tap the plus button on our iPads. The same thing is true any time we’re archiving emails. Swiping away an email to archive it is deeply intuitive to the parts of our brain that evolved before language.</p>
+<h1 id="tasks-performed-via-spatial-metaphors">Tasks performed via spatial metaphors</h1>
+<p>Speaking of swiping away emails, there are many many tasks we perform on computers that leverage our sense of space. Think about Google Calendar:</p>
+<p><img  src="./calendar.webp"
+        alt/></p>
+<p>We know that our schedule is “full” because we see lots of space occupied by boxes. Moreover, when we want to manipulate an event, GCal’s interface gives us a spatial metaphor that makes it extremely natural to “drag an event one day in the future.” We don’t want to type or say, “move the investor week event on Wednesday one day forward.” Again, given that spatial cognition evolved before language, it’s no surprise that spatial metaphors are common and effective in GUIs and that language-based interaction feel less natural when a spatial metaphor is available.</p>
+<h1 id="mutations-with-invariants">Mutations with invariants</h1>
+<p>We can re-use the calendar screenshot above for this case: if you can avoid it, you don’t want to double-book your calendar. While chat-based interfaces can refuse to book an event if there’s a conflict, the busier you are, the more you’ll want a GCal-like interface that shows you where you “have room” (notice the spatial metaphor!) in your schedule. Corollary: busy people won’t use ChatGPT to create calendar events, no matter how good the language model is.</p>
+<p>Even if you don’t use GCal, invariants helpfully constrain what you can do within software you use every day. Any time you see a required field, for example, the GUI is helpfully saying, “Hey! I can’t do what you want with what you’ve given me.” E.g., I can’t give you a revenue forecast if this deal you’re creating is missing a contract value.</p>
+<p>You don’t want to discover what’s needed for your task by arguing back and forth with a chatbot. You want a UI that proactively tells you how to avoid invalid inputs, or, if you prefer the computer-science-esque way of putting it: you want a system that proactively communicates its invariants.</p>
+<h1 id="complex-mutations">Complex mutations</h1>
+<p>Watch this video of the Hubspot CTO demoing a chatbot that can add a new Hubspot contact:</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/fayBEXSKyoI?si=ncp3iPts68iuzasc&amp;start=196" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<p>Did you notice that he has to stop and think about what additional information he wants to include in the request to create a new contact? That’s a strong sign that the mutation he’s performing is too complicated to do via a chat-interface. Very often when we’re mutating data, we need to know our available options for our mutation. (This is especially if there are invariants involved. See above!)</p>
+<p>If you can keep track of the entire mutation and it’s options in your head, great. Use ChatGPT. Otherwise, something like a form is a pretty good surface for simultaneously conveying what’s possible for a mutation and enabling us to the provide information that fully leverages the capabilities of the software we’re using.</p>
+<h1 id="low-intent-product-exploration">Low-intent product exploration</h1>
+<p>Even outside of mutations, we are often unsure of the capabilities of the software we’re using. When this is true, we don’t have a specific task to delegate to an AI. Instead, we simply want to see what’s possible.</p>
+<p>You can ask a chatbot to write out what’s possible, but we lose information when we translate product possibilities into textual descriptions. A particular screen’s layout and the size of its elements contain lots of information about how the software is supposed to be used. (A picture is worth a thousand words.) Moreover, visual design patterns instantly orient us and let us re-use knowledge of how software works.</p>
+<p>You can see both of these points at work if you look a screenshot from this piece of software you’ve probably never used (it’s Obisidian):</p>
+<p><img  src="./obsidian.webp"
+        alt/></p>
+<p>If you’ve worked with text editors before, when you see this:</p>
+<ol>
+<li>The layout screams “This is a file editor!”</li>
+<li>The tabs design pattern says you can easily jump between multiple files while working.</li>
+<li>The star symbol always means something like “favorite,” so in this context, it’s saying you can mark certain files as important. It’s prominent position tells you the software designers think this will be especially useful.</li>
+</ol>
+<p>Again, ChatGPT could have written these things out for us, but we process them faster by simply looking at the GUI. The GUI visually tells us what matters within the software.</p>
+<h1 id="high-frequency-tasks">High-frequency tasks</h1>
+<p>There’s a reason so many of us have memorized the Cmd+C shortcut: it takes too damn long to copy text via a mouse. The feeling we have on this generalizes: when we perform a task frequently, we want affordances that help us move at the speed of thought. The proliferation of the “Command K” design pattern and tools like Command Bar are further evidence of this. So is swiping left on Tinder.</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>If these are all bad use cases for chat-based UI, ChatGPT won’t be as disruptive to how we interact with computers as some have suggested. This is not because of current limitations in ChatGPT or AI. Rather, it’s because — as the best sci-fi reminds us — despite all our technology, we remain human and the human machine works best on spatial and kinetic inputs.</p>
+<hr>
+<p><a href="https://news.ycombinator.com/item?id=35734660"target="_blank" rel="noopener noreferrer">HN Discussion</a></p>
+</article>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/openai-scientific-certainty/"><span class="iconfont icon-article"></span>On OpenAI's supposed "scientific certainty" that GPT-5 will be better than GPT-4</a></p><p><a class="link" href="/post/how-ai-startups-can-beat-incumbents/"><span class="iconfont icon-article"></span>How AI Startups Can Beat Incumbents</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2025 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>

@@ -15,6 +15,11 @@
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><section class="article header"><h1>Posts</h1></section><ul class="note list"><li class="item">
         
+        <a class="note" href="/2015/07/08/my-response-to-hannes-dorfmann-on-the-circular-dependency-problem/">
+        
+            <p class="note title">My Response to Hannes Dorfmann on "the Circular Dependency Problem"</p><p class="note date">2015-07-08</p><p class="note content">In my last post, I argued that there are two disadvantages to Activities and Presenters. The first disadvantage is that they are often bloated classes. The second disadvantage is that these classes often have a circular dependency between themselves and their Views. Yesterday, Hannes Dorfmann made a comment on my post that was so thoughtful and excellent that I think its worth dedicating an entire post to responding to it.
+<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Android/">Android</a><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li><li class="item">
+        
         <a class="note" href="/2015/07/07/mvpr-a-flexible-testable-architecture-for-android-pt-1/">
         
             <p class="note title">MVPR: A Flexible, Testable Architecture for Android (Pt. 1)</p><p class="note date">2015-07-07</p><p class="note content">Thorough unit testing helps us improve the internal quality because, to be tested, a unit has to be structured to run outside the system in a test fixture. A unit test for an object needs to create the object, provide its dependencies, interact with it, and check that it behaved as expected. So, for a class to be easy to unit-test, the class must have explicit dependencies that can easily be substituted and clear responsibilities that can easily be invoked and verified. In software engineering terms, that means that the code must be loosely coupled and highly cohesive —in other words, well-designed. Steve Freeman and Nat Pryce, Growing Object Oriented Software Guided by Tests
@@ -74,17 +79,8 @@ In this screenshot, the &ldquo;Distribute,&rdquo; &ldquo;Android,&rdquo; and &ld
         
             <p class="note title">Towards A Unit Testable Fork of Google's IOSched App</p><p class="note date">2015-05-31</p><p class="note content">In my recent Against Android Unit Tests series, I discussed the difficulties of unit testing android applications and proposed a different way of building applications that would enhance their unit testability. My proposal in that series was really largely a rough sketch of what it would take to make parts of Google&rsquo;s IOSched app unit testable.
 More recently, I&rsquo;ve started to fill in the details of that proposal by forking the IOSched repo and refactoring it to make it unit testable. In the next few posts, I&rsquo;ll be discussing some of the challenges that arose when attempting to make the SessionDetailActivity unit testable within the IOSched app. In this post, I want to provide a broad overview of the challenges I&rsquo;ll be discussing.
-<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Android/">Android</a><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li><li class="item">
-        
-        <a class="note" href="/2015/05/29/making-the-most-of-android-studios-unit-testing-support/">
-        
-            <p class="note title">An Introduction to Unit Testing on Android</p><p class="note date">2015-05-29</p><p class="note content">Yesterday at IO Extended Orlando, I gave a talk on testing. What follows is a written version of the presentation I gave.
-Android 1.2 introduced unit testing support. Now, we can run junit tests on the jvm while we&rsquo;re developing our apps. During my talk, we&rsquo;ll discuss the following questions:
-Why should anyone care about this new feature?
-What the heck is unit testing anyways?
-Briefly, I&rsquo;ll also mention some of the challenges of writing unit tests for Android.
 <span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Android/">Android</a><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li></ul><div class="pagination">
-    <ul><li><a href="/post/page/11/"><span class="iconfont icon-pagepreview"></span></a></li><li><a class="" href="/post/page/11/">11</a></li><li><a class="active" href="/post/page/12/">12</a></li><li><a class="" href="/post/page/13/">13</a></li><li><a class="" href="/post/page/14/">14</a></li></ul>
+    <ul><li><a href="/post/page/11/"><span class="iconfont icon-pagepreview"></span></a></li><li><a class="" href="/post/page/11/">11</a></li><li><a class="active" href="/post/page/12/">12</a></li><li><a class="" href="/post/page/13/">13</a></li><li><a class="" href="/post/page/14/">14</a></li><li><a class="" href="/post/page/15/">15</a></li></ul>
 </div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
     &copy; 2025 Matt Dupree
