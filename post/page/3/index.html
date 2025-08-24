@@ -15,6 +15,12 @@
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><section class="article header"><h1>Posts</h1></section><ul class="note list"><li class="item">
         
+        <a class="note" href="/post/audit-tables/">
+        
+            <p class="note title">How Postgres Audit Tables Saved Us From Taking Down Production</p><p class="note date">2021-11-08</p><p class="note content">Note: This post was originally published on heap&rsquo;s blog
+Audit tables record changes that occur to rows in another table. They’re like commit logs for database tables, and they&rsquo;re typically used to figure out who made what changes when. But surprisingly, we&rsquo;ve found them useful for keeping our distributed Postgres cluster stable.
+To convince you of the stability-related value of audit tables, we&rsquo;ll cover how audit tables helped us avoid a serious incident.<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/postgres/">postgres</a></p></li><li class="item">
+        
         <a class="note" href="/post/million-indexes/">
         
             <p class="note title">Lessons from Deploying 1 million Postgres Indexes</p><p class="note date">2021-10-13</p><p class="note content">Note: This post was originally published on heap&rsquo;s blog
@@ -66,15 +72,7 @@ Unfortunately, this skill isn&rsquo;t guaranteed to develop as we gain more expe
 Why has it become acceptable in our industry to have tools that are such poor quality?
 He was referring to Android Studio, but we could ask the same question about Xcode, which is also bad:
 Was it really all that unexpected? pic.twitter.com/QU7GPbOhu0
-&mdash; Code Standards (@codestandards) February 23, 2017 I mean no offense to the teams working on these products.<span class="mldr">&mldr;</span></p></a></li><li class="item">
-        
-        <a class="note" href="/post/are-source-file-diffs-serially-correlated/">
-        
-            <p class="note title">Should we refactor files we're working on?</p><p class="note date">2020-05-09</p><p class="note content">When programming, always follow the camping rule: Always leave the code base healthier than when you found it.
-&mdash; Martin Fowler, Refactoring
-The Boy Scouts of America have a simple rule that we can apply to our profession. Leave the campground cleaner than you found it.
-&mdash; Robert Martin, Clean Code
-Many of us share the attitude expressed by the above Fowler and Martin quotes. The attitude presumes that code we&rsquo;re working on now will change again soon, and we&rsquo;ll reap the benefits of a refactor when that happens.<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="tag" href="/tags/programming/">programming</a><a class="tag" href="/tags/refactoring/">refactoring</a><a class="tag" href="/tags/statistics/">statistics</a></p></li></ul><div class="pagination">
+&mdash; Code Standards (@codestandards) February 23, 2017 I mean no offense to the teams working on these products.<span class="mldr">&mldr;</span></p></a></li></ul><div class="pagination">
     <ul><li><a class="" href="/post/">1</a></li><li><a class="" href="/post/page/2/">2</a></li><li><a class="active" href="/post/page/3/">3</a></li><li><a class="" href="/post/page/4/">4</a></li><li><a class="" href="/post/page/5/">5</a></li><li><a href="/post/page/4/"><span class="iconfont icon-pagenext"></span></a></li></ul>
 </div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>

@@ -15,6 +15,15 @@
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><section class="article header"><h1>Posts</h1></section><ul class="note list"><li class="item">
         
+        <a class="note" href="/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/">
+        
+            <p class="note title">Why Having Global Static References to Application Contexts is Probably not the Best Idea</p><p class="note date">2015-07-14</p><p class="note content">In my last post, I went over 6 things I wish I knew before I wrote my first Android app. One of the things I listed in that post was this:
+Don’t have static references to Contexts The reason I warned against this is that static references to Contexts can cause memory leaks. An astute reader pointed out that a static reference to an application Context wouldn&rsquo;t cause a memory leak since the application Context is around for the lifetime the app is running anyway. I then qualified my warning by saying:
+Note: Technically, you can hold a static reference to an application Context without causing a memory leak, but I wouldn’t recommend that you do that either. In this post, I want to say a little more about why think having and using a static reference to an application Context is less-than-ideal. I emphasize &ldquo;less-than-ideal&rdquo; in the previous sentence as a way of highlighting what I&rsquo;m not saying: I&rsquo;m not saying that a kitten dies every time you use a static reference to an application Context. Once again, @codestandards is hilarious and relevant here:
+Please, for the sake of the kittens. pic.twitter.com/xaj7pNDVfH
+&mdash; Code Standards (@codestandards) February 24, 2015 Instead, all I&rsquo;m doing in this post is offering a few points that suggest that using static references to Contexts is probably not the cleanest way of coding Android apps.
+<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Android/">Android</a><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li><li class="item">
+        
         <a class="note" href="/2015/07/09/6-things-i-wish-i-knew-before-i-wrote-my-first-android-app/">
         
             <p class="note title">6 Things I wish I Knew before I Wrote my first Android App</p><p class="note date">2015-07-09</p><p class="note content">My first app was terrible. It was so terrible, in fact, that I removed it from the store and I don&rsquo;t even bother listing it on my resume&rsquo; anymore. That app wouldn&rsquo;t have been so terrible if I knew a few things about Android development before I wrote it.
@@ -76,13 +85,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
         <a class="note" href="/2015/06/07/developer-golf/">
         
             <p class="note title">Developer Golf</p><p class="note date">2015-06-07</p><p class="note content"> What is Developer Golf? Developer golf is a fun way to measure developer performance. It turns our job into a game of producing the most lines of high quality (bug free) code.
-<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Hacking/">Hacking</a></p></li><li class="item">
-        
-        <a class="note" href="/2015/06/06/unit-testing-dynamically-constructed-views/">
-        
-            <p class="note title">Unit Testing Dynamically Constructed Views</p><p class="note date">2015-06-06</p><p class="note content">Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&rsquo;ve fetched or in response to some input. The SessionDetailActivity in Google&rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the SessionDetailActivity&rsquo;s view hierarchy.
-In this screenshot, the &ldquo;Distribute,&rdquo; &ldquo;Android,&rdquo; and &ldquo;Games&rdquo; tags are added to the view hierarchy based on the tags associated with the &ldquo;Going global with Google Play&rdquo; IO session. In this post, I&rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the SesisonDetailActivity&rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards making Google&rsquo;s IOSched app unit testable.
-<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Android/">Android</a><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li></ul><div class="pagination">
+<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Hacking/">Hacking</a></p></li></ul><div class="pagination">
     <ul><li><a href="/post/page/11/"><span class="iconfont icon-pagepreview"></span></a></li><li><a class="" href="/post/page/11/">11</a></li><li><a class="active" href="/post/page/12/">12</a></li><li><a class="" href="/post/page/13/">13</a></li><li><a class="" href="/post/page/14/">14</a></li><li><a class="" href="/post/page/15/">15</a></li></ul>
 </div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
