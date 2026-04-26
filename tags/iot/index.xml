@@ -11,6 +11,56 @@
     
     
     <item>
+      <title>Anthropic&#39;s Argument for Mythos SWE-bench &lt;br&gt;improvement contains a fatal error</title>
+      <link>https://www.philosophicalhacker.com/post/anthropic-error/</link>
+      <pubDate>Sun, 26 Apr 2026 07:01:12 -0500</pubDate>
+      
+      <guid>https://www.philosophicalhacker.com/post/anthropic-error/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://www-cdn.anthropic.com/08ab9158070959f88f296514c21b7facce6f52bc.pdf&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Mythos&amp;rsquo; system card&lt;/a&gt; contains the following graph to support its argument that Mythos performs better on SWE-bench:&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;./swebench.png&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;Antrhopic and others are worried LLMs are memorizing SWE-bench, so they asked an LLM to estimate the probability that a solution is memorized. Next, they calculated the pass rate if they only included solutions an LLM judged to be memorized with less than 5% confidence, 10% confidence, and so on.&lt;/p&gt;
+&lt;p&gt;Picking a point on the graph for example: if they include ~400 out of 500 solutions because an LLM has judged them as memorized with a probability &amp;lt;= 60%, Mythos&amp;rsquo; success rate is ~92% while Opus 4.6&amp;rsquo;s is ~82%. This is a hard graph. Read the full caption&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; if you need to. Take your time. I stared at it for a long time.&lt;/p&gt;
+&lt;p&gt;After presenting this graph, they conclude:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Our detectors are imperfect, but this result is robust to the choice of threshold and
+consistent with Claude Mythos Preview’s gains on internal benchmarks not present in any
+training corpus. We conclude that memorization does not explain its SWE-bench
+improvements.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Gains on internal benchmarks count for something, but does an imperfect memorization detector&amp;rsquo;s consistent judgment that Mythos has genuine gains on SWE-bench support their claim at all?&lt;/p&gt;
+&lt;p&gt;It doesn&amp;rsquo;t. It is perfectly possible to have an imperfect cheating detector consistently judge a model whose gains are entirely explained by cheating as making genuine gains. Here&amp;rsquo;s a short python program proving it.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s start by modeling an LLM like Opus 4.6 that gets the right answer 80% of the time and has an equally likely chance of cheating between 5% and 90%. These bounds are chosen here because according to the above graph, it looks like LLMs don&amp;rsquo;t like giving probability estimates below 5% and above 90%.&lt;/p&gt;
+&lt;p&gt;We&amp;rsquo;ll do this by simply generating an array of pairs where the first item has an 80% of being 1 to represent a successfully solved problem and the second item being the probability the solution was memorized:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;opus_4_6 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, random&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;uniform(&lt;span style=&#34;color:#ae81ff&#34;&gt;.05&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;.9&lt;/span&gt;))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; random&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;random() &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0.8&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; (&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, random&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;uniform(&lt;span style=&#34;color:#ae81ff&#34;&gt;.05&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;.9&lt;/span&gt;))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; _ &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; range(&lt;span style=&#34;color:#ae81ff&#34;&gt;500&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Next, we model a cheating Mythos whose 10% performance gain is &amp;mdash; by hypothesis &amp;mdash; entirely explained by cheating. In this array, half the time &lt;code&gt;opus_4_6&lt;/code&gt; got the answer wrong, we give &lt;code&gt;mythos&lt;/code&gt; a 50% chance of getting the right answer and when it does, we increment the probability of cheating with a random value somewhere between 10% and 65% with a cap at 90% since in Anthropic&amp;rsquo;s data we see LLMs don&amp;rsquo;t like to give estimates above ~90%. This is meant to model how Anthropic&amp;rsquo;s cheating detection is imprefect.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;mythos &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    (&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, min(&lt;span style=&#34;color:#ae81ff&#34;&gt;.9&lt;/span&gt;, og[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; random&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;uniform(&lt;span style=&#34;color:#ae81ff&#34;&gt;.1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;.65&lt;/span&gt;)))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; random&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;random() &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0.5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; og[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; og &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; og &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; opus_4_6
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you graph this data, you can get something that looks very similar to the graph above:&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;output.png&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;Obviously, a perfect cheating detector wouldn&amp;rsquo;t have this problem, but Anthropic admits their detection isn&amp;rsquo;t perfect. Until we quantify the degree of their detector&amp;rsquo;s imperfection, citing it as evidence of Mythos&amp;rsquo; performance gains should hold zero weight.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://gist.github.com/kmdupr33/c61593d040234d50533a80d0ed7507a4&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Here&amp;rsquo;s&lt;/a&gt; all the code if you want to try it yourself. h/t to Claude for figuring out the visualization code and a few other things. h/t to Antrhopic for making Claude.&lt;/p&gt;
+&lt;section class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;The full caption is on page 186 of &lt;a href=&#34;https://www-cdn.anthropic.com/08ab9158070959f88f296514c21b7facce6f52bc.pdf&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;the system card&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/section&gt;
+</description>
+    </item>
+    
+    <item>
       <title>LLMs and the Russellian Inversion</title>
       <link>https://www.philosophicalhacker.com/post/llms-russellian-inversion/</link>
       <pubDate>Sat, 23 Aug 2025 22:38:44 -0400</pubDate>
@@ -354,60 +404,6 @@
 &lt;p&gt;I&amp;rsquo;m not even sure what he means by &amp;ldquo;scientific certainty,&amp;rdquo; but here&amp;rsquo;s a guess: OpenAI has previously discussed how they&amp;rsquo;ve modeled the relationship between parameter count and LLM performance and have successfully predicted LLM performance using this model. Here&amp;rsquo;s the thing: the prior usefulness of this model says very little about it&amp;rsquo;s predictive power as they scale parameter count.&lt;/p&gt;
 &lt;p&gt;The problem of extrapolating from existing data like this is as old as David Hume and it&amp;rsquo;s something that thoughtful scientists and philosophers of science have thought about since then. In some ways, being &amp;ldquo;certain&amp;rdquo; about this kind of extrapolation feels unscientific.&lt;/p&gt;
 &lt;p&gt;Regardless of whatever OpenAI&amp;rsquo;s fancy curve predicts, at the end of the day, GPT-5 is just another data point that new versions of their curve will have to fit. It&amp;rsquo;s an experiment, not a &amp;ldquo;scientific certainty,&amp;rdquo; and the use of that term makes me worried that &amp;ldquo;science&amp;rdquo; is being pressed into the service of marketing for OpenAI.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>The UIs ChatGpt Wont Replace</title>
-      <link>https://www.philosophicalhacker.com/post/uis-chat-gpt-wont-replace/</link>
-      <pubDate>Mon, 29 Apr 2024 20:43:50 -0500</pubDate>
-      
-      <guid>https://www.philosophicalhacker.com/post/uis-chat-gpt-wont-replace/</guid>
-      <description>&lt;p&gt;What percentage of traditional UIs will be replaced by chat-based experiences? I’m building a AI/LLM-powered app guide and company that’s betting the percentage is low.&lt;/p&gt;
-&lt;p&gt;Sci-fi is a part of what guides my intuition here. Jarvis didn’t make GUIs obsolete for Tony Stark. GPT-X won’t make them obsolete for us.&lt;/p&gt;
-&lt;p&gt;Even if you don’t like sci-fi as a guide for the future, you can see that chat-based UIs won’t dominate it by looking closely at how we use computers today. That’s what we’ll do here: we’ll examine cases where chat-based UIs don’t make sense, no matter how smart the AI chat-bot is. We’ll see that chat-based UIs won’t dominate the future because the cases we examine below represent the overwhelming majority of what we use computers for.&lt;/p&gt;
-&lt;h1 id=&#34;operating-on-items-in-a-list&#34;&gt;Operating on items in a list&lt;/h1&gt;
-&lt;p&gt;The CEO of OpenAI gave a nice example showing how chat-based interfaces aren’t great for operating on list items in his recent TED talk. First, he shows that ChatGPT can generate a grocery list on Instacart:&lt;/p&gt;
-&lt;p&gt;&lt;img  src=&#34;./instacart.jpg&#34;
-        alt/&gt;&lt;/p&gt;
-&lt;p&gt;Then he says,&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;…The traditional UI is still very valuable…you can click through it and…modify the actual quantities…I think this shows that traditional UIs are not going away.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;In this case, no one prefers to type (or even speak) the words “increase the number of quinoa packets to two.” We just want to tap the plus button on our iPads. The same thing is true any time we’re archiving emails. Swiping away an email to archive it is deeply intuitive to the parts of our brain that evolved before language.&lt;/p&gt;
-&lt;h1 id=&#34;tasks-performed-via-spatial-metaphors&#34;&gt;Tasks performed via spatial metaphors&lt;/h1&gt;
-&lt;p&gt;Speaking of swiping away emails, there are many many tasks we perform on computers that leverage our sense of space. Think about Google Calendar:&lt;/p&gt;
-&lt;p&gt;&lt;img  src=&#34;./calendar.webp&#34;
-        alt/&gt;&lt;/p&gt;
-&lt;p&gt;We know that our schedule is “full” because we see lots of space occupied by boxes. Moreover, when we want to manipulate an event, GCal’s interface gives us a spatial metaphor that makes it extremely natural to “drag an event one day in the future.” We don’t want to type or say, “move the investor week event on Wednesday one day forward.” Again, given that spatial cognition evolved before language, it’s no surprise that spatial metaphors are common and effective in GUIs and that language-based interaction feel less natural when a spatial metaphor is available.&lt;/p&gt;
-&lt;h1 id=&#34;mutations-with-invariants&#34;&gt;Mutations with invariants&lt;/h1&gt;
-&lt;p&gt;We can re-use the calendar screenshot above for this case: if you can avoid it, you don’t want to double-book your calendar. While chat-based interfaces can refuse to book an event if there’s a conflict, the busier you are, the more you’ll want a GCal-like interface that shows you where you “have room” (notice the spatial metaphor!) in your schedule. Corollary: busy people won’t use ChatGPT to create calendar events, no matter how good the language model is.&lt;/p&gt;
-&lt;p&gt;Even if you don’t use GCal, invariants helpfully constrain what you can do within software you use every day. Any time you see a required field, for example, the GUI is helpfully saying, “Hey! I can’t do what you want with what you’ve given me.” E.g., I can’t give you a revenue forecast if this deal you’re creating is missing a contract value.&lt;/p&gt;
-&lt;p&gt;You don’t want to discover what’s needed for your task by arguing back and forth with a chatbot. You want a UI that proactively tells you how to avoid invalid inputs, or, if you prefer the computer-science-esque way of putting it: you want a system that proactively communicates its invariants.&lt;/p&gt;
-&lt;h1 id=&#34;complex-mutations&#34;&gt;Complex mutations&lt;/h1&gt;
-&lt;p&gt;Watch this video of the Hubspot CTO demoing a chatbot that can add a new Hubspot contact:&lt;/p&gt;
-&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/fayBEXSKyoI?si=ncp3iPts68iuzasc&amp;amp;start=196&#34; title=&#34;YouTube video player&#34; frameborder=&#34;0&#34; allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&#34; referrerpolicy=&#34;strict-origin-when-cross-origin&#34; allowfullscreen&gt;&lt;/iframe&gt;
-&lt;p&gt;Did you notice that he has to stop and think about what additional information he wants to include in the request to create a new contact? That’s a strong sign that the mutation he’s performing is too complicated to do via a chat-interface. Very often when we’re mutating data, we need to know our available options for our mutation. (This is especially if there are invariants involved. See above!)&lt;/p&gt;
-&lt;p&gt;If you can keep track of the entire mutation and it’s options in your head, great. Use ChatGPT. Otherwise, something like a form is a pretty good surface for simultaneously conveying what’s possible for a mutation and enabling us to the provide information that fully leverages the capabilities of the software we’re using.&lt;/p&gt;
-&lt;h1 id=&#34;low-intent-product-exploration&#34;&gt;Low-intent product exploration&lt;/h1&gt;
-&lt;p&gt;Even outside of mutations, we are often unsure of the capabilities of the software we’re using. When this is true, we don’t have a specific task to delegate to an AI. Instead, we simply want to see what’s possible.&lt;/p&gt;
-&lt;p&gt;You can ask a chatbot to write out what’s possible, but we lose information when we translate product possibilities into textual descriptions. A particular screen’s layout and the size of its elements contain lots of information about how the software is supposed to be used. (A picture is worth a thousand words.) Moreover, visual design patterns instantly orient us and let us re-use knowledge of how software works.&lt;/p&gt;
-&lt;p&gt;You can see both of these points at work if you look a screenshot from this piece of software you’ve probably never used (it’s Obisidian):&lt;/p&gt;
-&lt;p&gt;&lt;img  src=&#34;./obsidian.webp&#34;
-        alt/&gt;&lt;/p&gt;
-&lt;p&gt;If you’ve worked with text editors before, when you see this:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;The layout screams “This is a file editor!”&lt;/li&gt;
-&lt;li&gt;The tabs design pattern says you can easily jump between multiple files while working.&lt;/li&gt;
-&lt;li&gt;The star symbol always means something like “favorite,” so in this context, it’s saying you can mark certain files as important. It’s prominent position tells you the software designers think this will be especially useful.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Again, ChatGPT could have written these things out for us, but we process them faster by simply looking at the GUI. The GUI visually tells us what matters within the software.&lt;/p&gt;
-&lt;h1 id=&#34;high-frequency-tasks&#34;&gt;High-frequency tasks&lt;/h1&gt;
-&lt;p&gt;There’s a reason so many of us have memorized the Cmd+C shortcut: it takes too damn long to copy text via a mouse. The feeling we have on this generalizes: when we perform a task frequently, we want affordances that help us move at the speed of thought. The proliferation of the “Command K” design pattern and tools like Command Bar are further evidence of this. So is swiping left on Tinder.&lt;/p&gt;
-&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
-&lt;p&gt;If these are all bad use cases for chat-based UI, ChatGPT won’t be as disruptive to how we interact with computers as some have suggested. This is not because of current limitations in ChatGPT or AI. Rather, it’s because — as the best sci-fi reminds us — despite all our technology, we remain human and the human machine works best on spatial and kinetic inputs.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&#34;https://news.ycombinator.com/item?id=35734660&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;HN Discussion&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

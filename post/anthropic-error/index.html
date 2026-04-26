@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.97.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Anthropic&#39;s Argument for Mythos SWE-bench &lt;br&gt;improvement contains a fatal error&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Anthropic&#39;s Argument for Mythos SWE-bench &lt;br&gt;improvement contains a fatal error" />
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+  heap.load("2872977926");
+</script>
+<script type="application/javascript">
+  (function(b,o,n,g,s,r,c){if(b[s])return;b[s]={};b[s].scriptToken="Xy0yMDEzNTMyMTI3";b[s].callsQueue=[];b[s].api=function(){b[s].callsQueue.push(arguments);};r=o.createElement(n);c=o.getElementsByTagName(n)[0];r.async=1;r.src=g;r.id=s+n;c.parentNode.insertBefore(r,c);})(window,document,"script","https://cdn.oribi.io/Xy0yMDEzNTMyMTI3/oribi.js","ORIBI");
+</script>
+
+<body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><span class="site name">Philosophical Hacker</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/talk">Talks</a><a class="nav item" href="https://www%2eoreilly%2ecom/programming/free/rxjava-for-android-app-development%2ecsp?intcmp=il-prog-free-product-na_new_site_rxjava_for_android_app_development"target="_blank" rel="noopener noreferrer">RxJava O&#39;Reilly Book</a><a class="nav item" href="/note">Notes</a></nav></div></span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Anthropic's Argument for Mythos SWE-bench <br>improvement contains a fatal error</h1><p class="article date">2026-04-26</p></section><article class="article markdown-body"><p><a href="https://www-cdn.anthropic.com/08ab9158070959f88f296514c21b7facce6f52bc.pdf"target="_blank" rel="noopener noreferrer">Mythos&rsquo; system card</a> contains the following graph to support its argument that Mythos performs better on SWE-bench:</p>
+<p><img  src="./swebench.png"
+        alt/></p>
+<p>Antrhopic and others are worried LLMs are memorizing SWE-bench, so they asked an LLM to estimate the probability that a solution is memorized. Next, they calculated the pass rate if they only included solutions an LLM judged to be memorized with less than 5% confidence, 10% confidence, and so on.</p>
+<p>Picking a point on the graph for example: if they include ~400 out of 500 solutions because an LLM has judged them as memorized with a probability &lt;= 60%, Mythos&rsquo; success rate is ~92% while Opus 4.6&rsquo;s is ~82%. This is a hard graph. Read the full caption<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> if you need to. Take your time. I stared at it for a long time.</p>
+<p>After presenting this graph, they conclude:</p>
+<blockquote>
+<p>Our detectors are imperfect, but this result is robust to the choice of threshold and
+consistent with Claude Mythos Preview’s gains on internal benchmarks not present in any
+training corpus. We conclude that memorization does not explain its SWE-bench
+improvements.</p>
+</blockquote>
+<p>Gains on internal benchmarks count for something, but does an imperfect memorization detector&rsquo;s consistent judgment that Mythos has genuine gains on SWE-bench support their claim at all?</p>
+<p>It doesn&rsquo;t. It is perfectly possible to have an imperfect cheating detector consistently judge a model whose gains are entirely explained by cheating as making genuine gains. Here&rsquo;s a short python program proving it.</p>
+<p>Let&rsquo;s start by modeling an LLM like Opus 4.6 that gets the right answer 80% of the time and has an equally likely chance of cheating between 5% and 90%. These bounds are chosen here because according to the above graph, it looks like LLMs don&rsquo;t like giving probability estimates below 5% and above 90%.</p>
+<p>We&rsquo;ll do this by simply generating an array of pairs where the first item has an 80% of being 1 to represent a successfully solved problem and the second item being the probability the solution was memorized:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>opus_4_6 <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    (<span style="color:#ae81ff">1</span>, random<span style="color:#f92672">.</span>uniform(<span style="color:#ae81ff">.05</span>, <span style="color:#ae81ff">.9</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> random<span style="color:#f92672">.</span>random() <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0.8</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> (<span style="color:#ae81ff">0</span>, random<span style="color:#f92672">.</span>uniform(<span style="color:#ae81ff">.05</span>, <span style="color:#ae81ff">.9</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">500</span>)
+</span></span><span style="display:flex;"><span>]
+</span></span></code></pre></div><p>Next, we model a cheating Mythos whose 10% performance gain is &mdash; by hypothesis &mdash; entirely explained by cheating. In this array, half the time <code>opus_4_6</code> got the answer wrong, we give <code>mythos</code> a 50% chance of getting the right answer and when it does, we increment the probability of cheating with a random value somewhere between 10% and 65% with a cap at 90% since in Anthropic&rsquo;s data we see LLMs don&rsquo;t like to give estimates above ~90%. This is meant to model how Anthropic&rsquo;s cheating detection is imprefect.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>mythos <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    (<span style="color:#ae81ff">1</span>, min(<span style="color:#ae81ff">.9</span>, og[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">+</span> random<span style="color:#f92672">.</span>uniform(<span style="color:#ae81ff">.1</span>, <span style="color:#ae81ff">.65</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> random<span style="color:#f92672">.</span>random() <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0.5</span> <span style="color:#f92672">and</span> og[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> og <span style="color:#66d9ef">for</span> og <span style="color:#f92672">in</span> opus_4_6
+</span></span><span style="display:flex;"><span>]
+</span></span></code></pre></div><p>If you graph this data, you can get something that looks very similar to the graph above:</p>
+<p><img  src="output.png"
+        alt/></p>
+<p>Obviously, a perfect cheating detector wouldn&rsquo;t have this problem, but Anthropic admits their detection isn&rsquo;t perfect. Until we quantify the degree of their detector&rsquo;s imperfection, citing it as evidence of Mythos&rsquo; performance gains should hold zero weight.</p>
+<p><a href="https://gist.github.com/kmdupr33/c61593d040234d50533a80d0ed7507a4"target="_blank" rel="noopener noreferrer">Here&rsquo;s</a> all the code if you want to try it yourself. h/t to Claude for figuring out the visualization code and a few other things. h/t to Antrhopic for making Claude.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>The full caption is on page 186 of <a href="https://www-cdn.anthropic.com/08ab9158070959f88f296514c21b7facce6f52bc.pdf"target="_blank" rel="noopener noreferrer">the system card</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/llms-russellian-inversion/"><span class="iconfont icon-article"></span>LLMs and the Russellian Inversion</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
+  <p>
+    &copy; 2026 Matt Dupree
+  </p>
+</div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script><script src="/js/core.min.38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b.js" integrity="sha384-OLBgp1GsljhM2TJ&#43;sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l&#43;9Ua0vFImLlb"></script></body>
+
+</html>
