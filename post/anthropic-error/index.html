@@ -17,7 +17,7 @@
     <h1 class="article title">Anthropic's Argument for Mythos SWE-bench <br>improvement contains a fatal error</h1><p class="article date">2026-04-26</p></section><article class="article markdown-body"><p><a href="https://www-cdn.anthropic.com/08ab9158070959f88f296514c21b7facce6f52bc.pdf"target="_blank" rel="noopener noreferrer">Mythos&rsquo; system card</a> contains the following graph to support its argument that Mythos performs better on SWE-bench:</p>
 <p><img  src="./swebench.png"
         alt/></p>
-<p>Antrhopic and others are worried LLMs are memorizing SWE-bench, so they asked an LLM to estimate the probability that a solution is memorized. Next, they calculated the pass rate if they only included solutions an LLM judged to be memorized with less than 5% confidence, 10% confidence, and so on.</p>
+<p>Anthropic and others are worried LLMs are memorizing SWE-bench, so they asked an LLM to estimate the probability that a solution is memorized. Next, they calculated the pass rate if they only included solutions an LLM judged to be memorized with less than 5% confidence, 10% confidence, and so on.</p>
 <p>Picking a point on the graph for example: if they include ~400 out of 500 solutions because an LLM has judged them as memorized with a probability &lt;= 60%, Mythos&rsquo; success rate is ~92% while Opus 4.6&rsquo;s is ~82%. This is a hard graph. Read the full caption<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> if you need to. Take your time. I stared at it for a long time.</p>
 <p>After presenting this graph, they conclude:</p>
 <blockquote>
