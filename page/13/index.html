@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.97.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark"><title>Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><link rel="alternate" type="application/rss+xml" href="/index.xml" title="Philosophical Hacker" /><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Philosophical Hacker" />
@@ -23,6 +23,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
         <a class="note" href="/2015/06/12/an-introduction-to-rxjava-for-android/">
         
             <p class="note title">An Introduction to RxJava for Android (Pt. 1)</p><p class="note date">2015-06-12</p><p class="note content">I&rsquo;m taking a brief break from talking about testing. I&rsquo;ll resume my discussion of how I&rsquo;m making Google&rsquo;s IOSched app unit testable after I&rsquo;ve posted the content from my upcoming talk on RxJava.
+ 
 <span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Android/">Android</a><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/rxjava/">rxjava</a></p></li><li class="item">
         
         <a class="note" href="/2015/06/07/developer-golf/">
@@ -33,6 +34,7 @@ If you want to hear a hilarious take down of the design of the new Pizza Hut app
         <a class="note" href="/2015/06/06/unit-testing-dynamically-constructed-views/">
         
             <p class="note title">Unit Testing Dynamically Constructed Views</p><p class="note date">2015-06-06</p><p class="note content">Some view hierarchies in Android are specified statically. The structure of these hierarchies does not change at run-time. Occasionally, we need to have dynamically constructed view hierarchies, hierarchies whose structure change at run-time. We might need to, for example, add or remove a view depending on some data we&rsquo;ve fetched or in response to some input. The SessionDetailActivity in Google&rsquo;s IOSched app has a dynamically constructed view hierarchy. The number of tags associated with a particular IO session determines how many tag views are added to the SessionDetailActivity&rsquo;s view hierarchy.
+
 In this screenshot, the &ldquo;Distribute,&rdquo; &ldquo;Android,&rdquo; and &ldquo;Games&rdquo; tags are added to the view hierarchy based on the tags associated with the &ldquo;Going global with Google Play&rdquo; IO session. In this post, I&rsquo;ll outline an approach that I used to write the code that is both unit testable and able to dynamically construct the SesisonDetailActivity&rsquo;s view hierarchy. This post is a part of a series of parts in which I discuss how we can take steps towards making Google&rsquo;s IOSched app unit testable.
 <span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Android/">Android</a><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li><li class="item">
         
@@ -45,20 +47,21 @@ More recently, I&rsquo;ve started to fill in the details of that proposal by for
         <a class="note" href="/2015/05/29/making-the-most-of-android-studios-unit-testing-support/">
         
             <p class="note title">An Introduction to Unit Testing on Android</p><p class="note date">2015-05-29</p><p class="note content">Yesterday at IO Extended Orlando, I gave a talk on testing. What follows is a written version of the presentation I gave.
+
 Android 1.2 introduced unit testing support. Now, we can run junit tests on the jvm while we&rsquo;re developing our apps. During my talk, we&rsquo;ll discuss the following questions:
-Why should anyone care about this new feature?
-What the heck is unit testing anyways?
-Briefly, I&rsquo;ll also mention some of the challenges of writing unit tests for Android.
+  Why should anyone care about this new feature?
+  What the heck is unit testing anyways?
+  Briefly, I&rsquo;ll also mention some of the challenges of writing unit tests for Android.
 <span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Android/">Android</a><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li><li class="item">
         
         <a class="note" href="/2015/05/22/what-ive-learned-from-trying-to-make-an-android-app-unit-testable/">
         
             <p class="note title">What I've Learned From Trying to Make An Android App Unit Testable</p><p class="note date">2015-05-22</p><p class="note content">For the past few posts, I&rsquo;ve introduced and showed how we would apply The Square Way of building Android applications. The primary motivation for The Square Way was to increase the unit testability of our applications. As I stated in the introduction to this series, most tests in Android are slow, instrumentation tests and/or tests that rely on third-party frameworks like Roboletric. The Square Way was supposed to help us write fast unit tests that didn&rsquo;t rely on any third-party frameworks.
 Now that we&rsquo;ve discussed why unit testing in Android is so difficult and seen how The Square Way resolves those difficulties, we are finally in a position to assess The Square Way as a whole as a method of creating unit testable Android applications. That assessment is the subject of this article. My assessment consists of the following three claims:
-Removing all compile time dependencies on the Android SDK is not necessary for us write fast unit tests for Android. (Its also not really a practical thing to try to do anyway.)
-Provided that we redefine The Square Way so that it does not require us to remove compile-time dependencies on the Android SDK, the only problem that arises when trying to apply The Square Way is simply writing all of boilerplate code. Fortunately, much of this boilerplate can be written for us by Android Studio.
-Dependency Injection is really the main &ldquo;active ingredient&rdquo; that allows The Square Way enhance the unit testability of our applications.
-<span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Android/">Android</a><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li><li class="item">
+  Removing all compile time dependencies on the Android SDK is not necessary for us write fast unit tests for Android. (Its also not really a practical thing to try to do anyway.)
+  Provided that we redefine The Square Way so that it does not require us to remove compile-time dependencies on the Android SDK, the only problem that arises when trying to apply The Square Way is simply writing all of boilerplate code. Fortunately, much of this boilerplate can be written for us by Android Studio.
+  Dependency Injection is really the main &ldquo;active ingredient&rdquo; that allows The Square Way enhance the unit testability of our applications.
+ <span class="mldr">&mldr;</span></p></a><p class="note labels"><a class="category" href="/categories/Android/">Android</a><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/testing/">testing</a></p></li><li class="item">
         
         <a class="note" href="/2015/05/09/android-unit-testing-guides/">
         
@@ -80,7 +83,7 @@ The heart of the square way way is this: remove all business logic from app comp
     <ul><li><a href="/page/12/"><span class="iconfont icon-pagepreview"></span></a></li><li><a class="" href="/page/11/">11</a></li><li><a class="" href="/page/12/">12</a></li><li><a class="active" href="/page/13/">13</a></li><li><a class="" href="/page/14/">14</a></li><li><a class="" href="/page/15/">15</a></li></ul>
 </div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2025 Matt Dupree
+    &copy; 2026 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"

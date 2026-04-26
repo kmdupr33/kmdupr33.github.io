@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.97.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark"><title>PSA: Dont Use Espresso Idling Resources like Google does&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="PSA: Dont Use Espresso Idling Resources like Google does" />
@@ -29,17 +29,17 @@
 <p><a href="https://codelabs.developers.google.com/codelabs/android-testing/index.html?index=..%2F..%2Findex#0"target="_blank" rel="noopener noreferrer">The Android testing code lab</a> walks you through the process of creating tests for a Todo application. One of the features of the todo application is that it shows a list of todos. This feature is implemented by a <code>NotesPresenter</code> class (presenter as in &ldquo;<a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter"target="_blank" rel="noopener noreferrer">Model View Presenter</a>&rdquo;). While I was looking at the testing code lab on testing, I stumbled upon something disturbing within the <code>NotesPresenter</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@Override
 </span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> loadNotes(<span style="color:#fff;font-weight:bold">boolean</span> forceUpdate) {    
-</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// The network request might be handled in a different thread so make sure Espresso knows</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// that the app is busy until the response is handled.</span>
-</span></span><span style="display:flex; background-color:#191919"><span>    EspressoIdlingResource.<span style="color:#007f7f">increment</span>(); <span style="color:#007f7f">// App is busy until further notice</span>
-</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// The network request might be handled in a different thread so make sure Espresso knows
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>    <span style="color:#007f7f">// that the app is busy until the response is handled.
+</span></span></span><span style="display:flex; background-color:#191919"><span><span style="color:#007f7f"></span>    EspressoIdlingResource.<span style="color:#007f7f">increment</span>(); <span style="color:#007f7f">// App is busy until further notice
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>
 </span></span><span style="display:flex;"><span>    mNotesRepository.<span style="color:#007f7f">getNotes</span>(<span style="color:#fff;font-weight:bold">new</span> NotesRepository.<span style="color:#007f7f">LoadNotesCallback</span>() {
 </span></span><span style="display:flex;"><span>        @Override
 </span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onNotesLoaded(List&lt;Note&gt; notes) {
-</span></span><span style="display:flex; background-color:#191919"><span>            EspressoIdlingResource.<span style="color:#007f7f">decrement</span>(); <span style="color:#007f7f">// Set app as idle.</span>
-</span></span><span style="display:flex;"><span>            mNotesView.<span style="color:#007f7f">setProgressIndicator</span>(<span style="color:#fff;font-weight:bold">false</span>);
+</span></span><span style="display:flex; background-color:#191919"><span>            EspressoIdlingResource.<span style="color:#007f7f">decrement</span>(); <span style="color:#007f7f">// Set app as idle.
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>            mNotesView.<span style="color:#007f7f">setProgressIndicator</span>(<span style="color:#fff;font-weight:bold">false</span>);
 </span></span><span style="display:flex;"><span>            <span style="color:#fff;font-weight:bold">if</span> (notes.<span style="color:#007f7f">isEmpty</span>()) {
 </span></span><span style="display:flex;"><span>                mNotesView.<span style="color:#007f7f">showNotesEmptyPlaceholder</span>();
 </span></span><span style="display:flex;"><span>            } <span style="color:#fff;font-weight:bold">else</span> {
@@ -61,17 +61,17 @@
 <p>Let&rsquo;s take a second look at the disturbing code:</p>
 <div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@Override
 </span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> loadNotes(<span style="color:#fff;font-weight:bold">boolean</span> forceUpdate) {    
-</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// The network request might be handled in a different thread so make sure Espresso knows</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// that the app is busy until the response is handled.</span>
-</span></span><span style="display:flex; background-color:#191919"><span>    EspressoIdlingResource.<span style="color:#007f7f">increment</span>(); <span style="color:#007f7f">// App is busy until further notice</span>
-</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// The network request might be handled in a different thread so make sure Espresso knows
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>    <span style="color:#007f7f">// that the app is busy until the response is handled.
+</span></span></span><span style="display:flex; background-color:#191919"><span><span style="color:#007f7f"></span>    EspressoIdlingResource.<span style="color:#007f7f">increment</span>(); <span style="color:#007f7f">// App is busy until further notice
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>
 </span></span><span style="display:flex;"><span>    mNotesRepository.<span style="color:#007f7f">getNotes</span>(<span style="color:#fff;font-weight:bold">new</span> NotesRepository.<span style="color:#007f7f">LoadNotesCallback</span>() {
 </span></span><span style="display:flex;"><span>        @Override
 </span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onNotesLoaded(List&lt;Note&gt; notes) {
-</span></span><span style="display:flex; background-color:#191919"><span>            EspressoIdlingResource.<span style="color:#007f7f">decrement</span>(); <span style="color:#007f7f">// Set app as idle.</span>
-</span></span><span style="display:flex;"><span>            mNotesView.<span style="color:#007f7f">setProgressIndicator</span>(<span style="color:#fff;font-weight:bold">false</span>);
+</span></span><span style="display:flex; background-color:#191919"><span>            EspressoIdlingResource.<span style="color:#007f7f">decrement</span>(); <span style="color:#007f7f">// Set app as idle.
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>            mNotesView.<span style="color:#007f7f">setProgressIndicator</span>(<span style="color:#fff;font-weight:bold">false</span>);
 </span></span><span style="display:flex;"><span>            <span style="color:#fff;font-weight:bold">if</span> (notes.<span style="color:#007f7f">isEmpty</span>()) {
 </span></span><span style="display:flex;"><span>                mNotesView.<span style="color:#007f7f">showNotesEmptyPlaceholder</span>();
 </span></span><span style="display:flex;"><span>            } <span style="color:#fff;font-weight:bold">else</span> {
@@ -101,13 +101,13 @@
 </span></span><span style="display:flex;"><span>            });
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#007f7f">//...</span>
-</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>        <span style="color:#007f7f">//...
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>    };
 </span></span><span style="display:flex;"><span>}</span></span></code></pre></div>
 <p>The <code>NotesRepository</code> returned by this method gets injected into the <code>Presenter</code> here:</p>
 <div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> NotesFragment <span style="color:#fff;font-weight:bold">extends</span> Fragment <span style="color:#fff;font-weight:bold">implements</span> NotesContract.<span style="color:#007f7f">View</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...</span>
-</span></span><span style="display:flex;"><span>    @Override
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>    @Override
 </span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(@Nullable Bundle savedInstanceState) {
 </span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onCreate</span>(savedInstanceState);
 </span></span><span style="display:flex;"><span>        /...
@@ -119,7 +119,7 @@
 </article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section>
 </div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/react-and-redux-like-architectures-for-android/"><span class="iconfont icon-article"></span>How React-and-Redux-like Architectures for Android can make Testing Easier</a></p><p><a class="link" href="/post/process-vs-procedure-recursion/"><span class="iconfont icon-article"></span>Process vs. Procedure Recursion</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     window.disqus_config = function () {
     
     
@@ -139,7 +139,7 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2025 Matt Dupree
+    &copy; 2026 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"

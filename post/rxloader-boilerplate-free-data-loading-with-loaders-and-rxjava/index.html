@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.97.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark"><title>RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="RxLoader: Lightweight, Boilerplate-Free Data loading with Loaders and RxJava" />
@@ -21,8 +21,8 @@
 <p>The following code should make you nervous:</p>
 <div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> BoilerplateFree <span style="color:#fff;font-weight:bold">extends</span> AppCompatActivity {
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...    </span>
-</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...    
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>
 </span></span><span style="display:flex;"><span>    @Override
 </span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">protected</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(Bundle savedInstanceState) {
 </span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onCreate</span>(savedInstanceState);
@@ -41,9 +41,6 @@
 <h3 id="prior-art">Prior Art</h3>
 <h4 id="loaders">Loaders</h4>
 <p>Loaders give us what we want vis-a-vis memory-leak-free querying whose results persist across orientation changes, but many people find the API clunky and/or confusing. Apparently, Jake Wharton is one of these people:</p>
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The fragment and loader APIs fit in perfectly on Android. Useful enough that you use them but also want shoot yourself in the face.</p>&mdash; Jake Wharton (@JakeWharton) <a href="https://twitter.com/JakeWharton/status/325630461852413952?ref_src=twsrc%5Etfw">April 20, 2013</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
 
 <h4 id="retained-fragment">Retained Fragment</h4>
 <p>Using a retained fragment is another approach for persisting the results of a network request across orientation changes and avoiding memory leaks. Unfortunately, this approach requires a fair amount of boiler-plate code. The barebones implementation as discussed in <a href="https://developer.android.com/guide/topics/resources/runtime-changes.html"target="_blank" rel="noopener noreferrer">the docs</a> will make this clear enough. Even if we could get rid of most of this boilerplate, we still don&rsquo;t have an api for working with our asynchronous data that&rsquo;s as nice as RxJava&rsquo;s <code>Observable</code>.</p>
@@ -80,8 +77,8 @@
 </span></span><span style="display:flex;"><span>                <span style="color:#fff;font-weight:bold">new</span> LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;T&gt;() {
 </span></span><span style="display:flex;"><span>                    @Override
 </span></span><span style="display:flex;"><span>                    <span style="color:#fff;font-weight:bold">public</span> Loader&lt;U&gt; onCreateLoader(<span style="color:#fff;font-weight:bold">int</span> id, Bundle args) {
-</span></span><span style="display:flex;"><span>                        <span style="color:#007f7f">// return some loader</span>
-</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                        <span style="color:#007f7f">// return some loader
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>                    }
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>                    @Override
 </span></span><span style="display:flex;"><span>                    <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onLoadFinished(Loader&lt;T&gt; loader, T data) {
@@ -98,8 +95,8 @@
 <p>These two properties let us write boilerplate-free data loading code like the code with which we began this article:</p>
 <div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> BoilerplateFree <span style="color:#fff;font-weight:bold">extends</span> AppCompatActivity {
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...    </span>
-</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...    
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>
 </span></span><span style="display:flex;"><span>    @Override
 </span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">protected</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(Bundle savedInstanceState) {
 </span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onCreate</span>(savedInstanceState);
@@ -115,8 +112,8 @@
 <p>But where does the <code>mLoginObservable</code> that&rsquo;s wrapped the <code>LoaderManager.init</code> call come from? That&rsquo;s where RxLoader comes into play. RxLoader is a <em>very</em> lightweight library (less than 150 LOC). It&rsquo;s simply an RxJava <code>Transformer</code> that lets you take an Observable and compose it into something with loader-like behaviour, something that in fact uses a <code>Loader</code> to get this behaviour for free. With RxLoader, your data loading code is as simple as this:</p>
 <div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> BoilerplateFree <span style="color:#fff;font-weight:bold">extends</span> AppCompatActivity {
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...    </span>
-</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">//...    
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>
 </span></span><span style="display:flex;"><span>    @Override
 </span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">protected</span> <span style="color:#fff;font-weight:bold">void</span> onCreate(Bundle savedInstanceState) {
 </span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onCreate</span>(savedInstanceState);
@@ -138,7 +135,7 @@
 </ol></article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/rxjava/>rxjava</a></section>
 </div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/unit-testable-recycler-views/"><span class="iconfont icon-article"></span>Unit Testable RecyclerViews</a></p><p><a class="link" href="/post/an-espresso-test-recorder-deep-dive/"><span class="iconfont icon-article"></span>An Espresso Test Recorder Deep Dive</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     window.disqus_config = function () {
     
     
@@ -158,7 +155,7 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2025 Matt Dupree
+    &copy; 2026 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"

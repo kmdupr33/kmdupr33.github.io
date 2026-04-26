@@ -1,8 +1,8 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>React on Philosophical Hacker</title>
+    <title>react on Philosophical Hacker</title>
     <link>https://www.philosophicalhacker.com/tags/react/</link>
-    <description>Recent content in React on Philosophical Hacker</description>
+    <description>Recent content in react on Philosophical Hacker</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 18 May 2018 15:43:29 -0400</lastBuildDate>
@@ -282,17 +282,17 @@
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;Based on these results, seems like we’d be well served by start talking with C(++), JS, and Python devs at B2C companies.&lt;/p&gt;
 &lt;p&gt;If you’re a dev unsatisfied with your company’s privacy practices or if you’re founder looking to assuage security concerns of prospects by getting a SOC2 report, shoot me an email. I’d love to hear how you think about privacy and security. This is not a veiled attempt at starting a sales conversation. We have nothing to sell. We’re just trying to understand how founders and devs think about the problem.&lt;/p&gt;
-&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;section class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
 &lt;hr&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn:1&#34;&gt;
+&lt;li id=&#34;fn:1&#34; role=&#34;doc-endnote&#34;&gt;
 &lt;p&gt;Don’t be fooled by the fact that the same number of people are unhappy with the privacy practices across B2B vs. B2C. What matters is the proportion. The function call forces us to consider this: prop.test(c(16, 3), c(26, 13))&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
-&lt;li id=&#34;fn:2&#34;&gt;
+&lt;li id=&#34;fn:2&#34; role=&#34;doc-endnote&#34;&gt;
 &lt;p&gt;Here it is: &lt;code&gt;Array.from($$(&#39;#individuals &amp;gt; li &amp;gt; a&#39;)).map(a =&amp;gt; a.href)&lt;/code&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;/div&gt;
+&lt;/section&gt;
 </description>
     </item>
     
@@ -321,20 +321,20 @@
 &lt;p&gt;Maybe these specific ideas are bad, but they&amp;rsquo;re not worse than what we&amp;rsquo;re doing now:&lt;/p&gt;
 &lt;p&gt;&lt;img  src=&#34;this-is-fine.webp&#34;
         alt/&gt;&lt;/p&gt;
-&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;section class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
 &lt;hr&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn:1&#34;&gt;
+&lt;li id=&#34;fn:1&#34; role=&#34;doc-endnote&#34;&gt;
 &lt;p&gt;Example of the need for deeper thinking: the principle of single responsibility — one of the most commonly cited programming principles — falls apart under minor scrutiny. My cofounder and I have written about this here and here.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
-&lt;li id=&#34;fn:2&#34;&gt;
+&lt;li id=&#34;fn:2&#34; role=&#34;doc-endnote&#34;&gt;
 &lt;p&gt;Dave Thomas — one of the OG agile manifesto signatories — said agile is dead because the common understanding of agile is so far from what he intended. In the same talk, he says he doesn’t actually write tests for the most part. Both Kent Beck and Martin Fowler talked about how their ideas are often twisted in “Is TDD dead?” conversation with DHH&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
-&lt;li id=&#34;fn:3&#34;&gt;
+&lt;li id=&#34;fn:3&#34; role=&#34;doc-endnote&#34;&gt;
 &lt;p&gt;TDD zealots will point out that just because a test doesn’t catch defects doesn’t mean they’re completely useless and should be deleted. They’ll say that tests are also valuable because they document the exercised code and because they lead us to write more flexible code. Sometimes these benefits are real and sometimes they’re worth the cost of maintaining the test. Sometimes neither of these things are true. Data can help us answer this question better than religion.&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;/div&gt;
+&lt;/section&gt;
 </description>
     </item>
     
@@ -346,12 +346,9 @@
       <guid>https://www.philosophicalhacker.com/post/openai-scientific-certainty/</guid>
       <description>&lt;p&gt;When we were raising money for ATLAS, I often told investors that my cofounder and I were probably the most skeptical GenAI founders they would meet. Sam Altman&amp;rsquo;s recent hyperbolic claim that Open AI has &amp;ldquo;scientific certainty that GPT-5 will be better than GPT-4&amp;rdquo; at Stanford University fuels this skepticism:&lt;/p&gt;
 
-
-    
-    &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
-      &lt;iframe allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&#34; allowfullscreen=&#34;allowfullscreen&#34; loading=&#34;eager&#34; referrerpolicy=&#34;strict-origin-when-cross-origin&#34; src=&#34;https://www.youtube.com/embed/GLKoDkbS1Cg?autoplay=0&amp;controls=1&amp;end=0&amp;loop=0&amp;mute=0&amp;start=1381&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; title=&#34;YouTube video&#34;
-      &gt;&lt;/iframe&gt;
-    &lt;/div&gt;
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/GLKoDkbS1Cg&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
 
 &lt;p&gt;I&amp;rsquo;m impressed by OpenAI, we use their models, and I&amp;rsquo;m sure Sam is a nice guy, but I cannot imagine that whatever evidence they have to think GPT-5 will be better than GPT-4 would be enough for &amp;ldquo;scientific certainty.&amp;rdquo;&lt;/p&gt;
 &lt;p&gt;I&amp;rsquo;m not even sure what he means by &amp;ldquo;scientific certainty,&amp;rdquo; but here&amp;rsquo;s a guess: OpenAI has previously discussed how they&amp;rsquo;ve modeled the relationship between parameter count and LLM performance and have successfully predicted LLM performance using this model. Here&amp;rsquo;s the thing: the prior usefulness of this model says very little about it&amp;rsquo;s predictive power as they scale parameter count.&lt;/p&gt;

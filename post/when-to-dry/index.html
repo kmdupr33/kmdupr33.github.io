@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.97.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark"><title>When should we create abstractions instead of duplication?&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="When should we create abstractions instead of duplication?" />
@@ -75,34 +75,34 @@ here. Using this method for assessing abstraction vs. duplicate decisions, is as
 <p>Tracking this sort of thing is obviously more work that applying simple rules of thumb or relying on our feelings, but it&rsquo;s not that bad. We don&rsquo;t have to track every decision this way, and updating this spreadsheet is something that I spend less than five minutes on each day.</p>
 <p>If spending 5 minutes a day<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup> gets me a context-specific, data-driven model about where to spend my refactoring time, that&rsquo;s totally worth the trouble. I&rsquo;ll take it over simple heuristics or my flawed intuition any day.</p>
 <h2 id="notes">Notes</h2>
-<div class="footnotes" role="doc-endnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn:1">
+<li id="fn:1" role="doc-endnote">
 <p>I&rsquo;m thinking of Martin Fowler, <em>Refactoring</em>, 49 and <a href="https://www.deconstructconf.com/2019/dan-abramov-the-wet-codebase"target="_blank" rel="noopener noreferrer">Abromov&rsquo;s WET code talk</a> here.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:2">
+<li id="fn:2" role="doc-endnote">
 <p>Sandi Metz, <a href="https://sandimetz.com/blog/2016/1/20/the-wrong-abstraction"target="_blank" rel="noopener noreferrer">&ldquo;The Wrong Abstraction&rdquo;</a>.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:3">
+<li id="fn:3" role="doc-endnote">
 <p>I&rsquo;m waving my hands a bit here, but I think this is plausible enough without further explanation. Feel free to call me on this and I&rsquo;ll say more here.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:4">
+<li id="fn:4" role="doc-endnote">
 <p>Eric Evans, <em>Domain Driven Design</em>, 292-294.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:5">
+<li id="fn:5" role="doc-endnote">
 <p>Daniel Kahneman, <em>Thinking Fast and Slow</em>. Too lazy to find the specific pages. Just read all of it.&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:6">
+<li id="fn:6" role="doc-endnote">
 <p>A part of that 5 minutes is actually spent updating <a href="/post/improving-forecasting/">brier scores on time estimates</a>, so the ROI for this is actually better than I&rsquo;ve suggested here.&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
-</div>
+</section>
 </article><section class="article labels"><a class="tag" href=/tags/programming/>programming</a></section>
 </div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/user-story-suprise/"><span class="iconfont icon-article"></span>Exposing Imposter User Stories</a></p><p><a class="link" href="/post/improving-forecasting/"><span class="iconfont icon-article"></span>Programming and Forecasting</a></p></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2025 Matt Dupree
+    &copy; 2026 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.97.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark"><title>Why we Should Stop Putting Logic in Activities&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Why we Should Stop Putting Logic in Activities" />
@@ -47,15 +47,15 @@
 </span></span><span style="display:flex;"><span>        mLoaderIdlingResource =
 </span></span><span style="display:flex;"><span>                <span style="color:#fff;font-weight:bold">new</span> LoaderIdlingResource(getClass().<span style="color:#007f7f">getName</span>() + <span style="color:#0ff;font-weight:bold">&#34;/&#34;</span> + getId(), getLoaderManager());
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#007f7f">// Load data queries if any.</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">if</span> (mInitialQueriesToLoad != <span style="color:#fff;font-weight:bold">null</span> &amp;&amp; mInitialQueriesToLoad.<span style="color:#007f7f">length</span> &gt; 0) {
+</span></span><span style="display:flex;"><span>        <span style="color:#007f7f">// Load data queries if any.
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>        <span style="color:#fff;font-weight:bold">if</span> (mInitialQueriesToLoad != <span style="color:#fff;font-weight:bold">null</span> &amp;&amp; mInitialQueriesToLoad.<span style="color:#007f7f">length</span> &gt; 0) {
 </span></span><span style="display:flex;"><span>            LoaderManager manager = getLoaderManager();
 </span></span><span style="display:flex;"><span>            <span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">int</span> i = 0; i &lt; mInitialQueriesToLoad.<span style="color:#007f7f">length</span>; i++) {
 </span></span><span style="display:flex;"><span>                manager.<span style="color:#007f7f">initLoader</span>(mInitialQueriesToLoad[i].<span style="color:#007f7f">getId</span>(), <span style="color:#fff;font-weight:bold">null</span>, <span style="color:#fff;font-weight:bold">this</span>);
 </span></span><span style="display:flex;"><span>            }
 </span></span><span style="display:flex;"><span>        } <span style="color:#fff;font-weight:bold">else</span> {
-</span></span><span style="display:flex;"><span>            <span style="color:#007f7f">//...</span>
-</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>            <span style="color:#007f7f">//...
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>        }
 </span></span><span style="display:flex;"><span>    }  
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>  @Override
@@ -75,8 +75,8 @@
 <div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>@RunWith(AndroidJUnit4.<span style="color:#007f7f">class</span>)
 </span></span><span style="display:flex;"><span>@LargeTest
 </span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">class</span> VideoLibraryActivityTest {
-</span></span><span style="display:flex;"><span>  <span style="color:#007f7f">//...</span>
-</span></span><span style="display:flex;"><span>  @Before
+</span></span><span style="display:flex;"><span>  <span style="color:#007f7f">//...
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>  @Before
 </span></span><span style="display:flex;"><span>  <span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> setupMembersAndIdlingResource() {
 </span></span><span style="display:flex;"><span>      mPresenter = (PresenterFragmentImpl) mActivityRule.<span style="color:#007f7f">getActivity</span>()
 </span></span><span style="display:flex;"><span>              .<span style="color:#007f7f">getFragmentManager</span>().<span style="color:#007f7f">findFragmentByTag</span>(BaseActivity.<span style="color:#007f7f">PRESENTER_TAG</span>);
@@ -90,23 +90,23 @@
 </span></span><span style="display:flex;"><span>@Override
 </span></span><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">void</span> onActivityCreated(Bundle savedInstanceState) {
 </span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">super</span>.<span style="color:#007f7f">onActivityCreated</span>(savedInstanceState);
-</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// Load data queries if any.</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#fff;font-weight:bold">if</span> (mInitialQueriesToLoad != <span style="color:#fff;font-weight:bold">null</span> &amp;&amp; mInitialQueriesToLoad.<span style="color:#007f7f">length</span> &gt; 0) {
+</span></span><span style="display:flex;"><span>    <span style="color:#007f7f">// Load data queries if any.
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>    <span style="color:#fff;font-weight:bold">if</span> (mInitialQueriesToLoad != <span style="color:#fff;font-weight:bold">null</span> &amp;&amp; mInitialQueriesToLoad.<span style="color:#007f7f">length</span> &gt; 0) {
 </span></span><span style="display:flex;"><span>        LoaderManager manager = getLoaderManager();
 </span></span><span style="display:flex;"><span>        <span style="color:#fff;font-weight:bold">for</span> (<span style="color:#fff;font-weight:bold">int</span> i = 0; i &lt; mInitialQueriesToLoad.<span style="color:#007f7f">length</span>; i++) {
 </span></span><span style="display:flex; background-color:#191919"><span>            manager.<span style="color:#007f7f">initLoader</span>(mInitialQueriesToLoad[i].<span style="color:#007f7f">getId</span>(),
 </span></span><span style="display:flex; background-color:#191919"><span>              <span style="color:#fff;font-weight:bold">null</span>, mLoaderCallbacks);
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    } <span style="color:#fff;font-weight:bold">else</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#007f7f">// No data query to load, update the view.</span>
-</span></span><span style="display:flex;"><span>        mUpdatableView.<span style="color:#007f7f">displayData</span>(mModel, <span style="color:#fff;font-weight:bold">null</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#007f7f">// No data query to load, update the view.
+</span></span></span><span style="display:flex;"><span><span style="color:#007f7f"></span>        mUpdatableView.<span style="color:#007f7f">displayData</span>(mModel, <span style="color:#fff;font-weight:bold">null</span>);
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex; background-color:#191919"><span><span style="color:#fff;font-weight:bold">public</span> <span style="color:#fff;font-weight:bold">static</span> <span style="color:#fff;font-weight:bold">class</span> CursorLoaderCallbacks
 </span></span><span style="display:flex; background-color:#191919"><span>    <span style="color:#fff;font-weight:bold">implements</span> LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; {
-</span></span><span style="display:flex; background-color:#191919"><span>  <span style="color:#007f7f">// We&#39;ve just moved the callback code that was in the Fragment into this class.</span>
-</span></span><span style="display:flex; background-color:#191919"><span>}</span></span></code></pre></div>
+</span></span><span style="display:flex; background-color:#191919"><span>  <span style="color:#007f7f">// We&#39;ve just moved the callback code that was in the Fragment into this class.
+</span></span></span><span style="display:flex; background-color:#191919"><span><span style="color:#007f7f"></span>}</span></span></code></pre></div>
 <p>Next, we provide an alternative implementation of <code>LoaderManager.LoaderCallbacks</code> that we&rsquo;ll use for our espresso tests. This implementation uses the decorator pattern, just like last time:</p>
 <div class="highlight"><pre tabindex="0" style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4;display:grid;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#fff;font-weight:bold">private</span> <span style="color:#fff;font-weight:bold">static</span> <span style="color:#fff;font-weight:bold">class</span> EspressoNotifyingLoaderCallbacks <span style="color:#fff;font-weight:bold">implements</span> LoaderManager.<span style="color:#007f7f">LoaderCallbacks</span>&lt;Cursor&gt; {
 </span></span><span style="display:flex;"><span>
@@ -165,7 +165,7 @@
 </article><section class="article labels"><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section>
 </div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/post/how-to-safely-move-logic-out-of-activities/"><span class="iconfont icon-article"></span>How to Safely move Logic out of Activities</a></p><p><a class="link" href="/post/a-new-way-of-learning-android-development/"><span class="iconfont icon-article"></span>A New way of Learning (Android Development)</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     window.disqus_config = function () {
     
     
@@ -185,7 +185,7 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2025 Matt Dupree
+    &copy; 2026 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"

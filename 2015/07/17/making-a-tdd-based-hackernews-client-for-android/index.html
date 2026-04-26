@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.125.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.97.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="light dark"><title>Making a TDD-based HackerNews client for Android&nbsp;&ndash;&nbsp;Philosophical Hacker</title><link rel="stylesheet" href="/css/core.min.63f706677e61b4ee62b8daf083358d3bbf8ac8ab03c7d171af3180fab3a3ebb83efb79fb98674f13dde6db11de2bf694.css" integrity="sha384-Y/cGZ35htO5iuNrwgzWNO7&#43;KyKsDx9FxrzGA&#43;rOj67g&#43;&#43;3n7mGdPE93m2xHeK/aU"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Making a TDD-based HackerNews client for Android" />
@@ -20,19 +20,19 @@
 <blockquote>A “walking skeleton” is an implementation of the thinnest possible slice of real functionality that we can automatically build, deploy, and test end-to-end.
 <p>pg. 69-70</blockquote></p>
 <p>A walking skeleton for a HackerNews client, as I see it, should just display a list of HackerNews story ids. To implement this test, I use a simple espresso test that looks like this:</p>
-<script src="https://gist.github.com/kmdupr33/a25db0930e583db05535.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/a25db0930e583db05535.js"></script>
 
 <h3 id="how-i-got-consistent-test-data">How I Got Consistent Test Data</h3>
 <p>Here&rsquo;s a question that arose immediately when writing this test: How can we ensure that the MainActivity was fetching the same data for every test run so that the value 9897306 that we&rsquo;re checking against is always appropriate. <a href="https://www.google.com/webhp?sourceid=chrome-instant&amp;ion=1&amp;espv=2&amp;ie=UTF-8#q=jake%20wharton%20dagger%20parley"target="_blank" rel="noopener noreferrer">Jake Wharton&rsquo;s discussion</a> on Dagger modules that can override the dependencies that are injected into your Android objects came to mind here, so I decided to use this approach to ensure that the data the test uses is always the same.</p>
 <p>Let me briefly describe how I used this approach in my application.</p>
 <p>Objects in PhilHackerNews access the Dagger object graph from the <code>PhilHackerNewsApplication</code> subclass. That class is responsible for making the <code>ObjectGraph</code>:</p>
-<script src="https://gist.github.com/kmdupr33/eb4565747da03d9f1309.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/eb4565747da03d9f1309.js"></script>
 
 <p>So, when I&rsquo;m running a test, I use a custom test runner that creates a subclass of <code>PhilHackerNewsApplication</code> to create the <code>ObjectGraph</code> with the overridden module:</p>
-<script src="https://gist.github.com/kmdupr33/d8a344157014e3cf0c8a.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/d8a344157014e3cf0c8a.js"></script>
 
 <p>The <code>TestApplication</code> class creates the <code>ObjectGraph</code> with a module that overrides the dependencies responsible for fetching HackerNews data:</p>
-<script src="https://gist.github.com/kmdupr33/36c1e516b335092057c2.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/36c1e516b335092057c2.js"></script>
 
 <p><code>TestLoaderModule</code> is the module that provides the overridden dependency. It provides a HackerNewsRestAdapter that simply loads HackerNews data from memory instead of the server:</p>
 <h3 id="the-current-state-of-apps-architecture">The Current State of App&rsquo;s Architecture</h3>
@@ -52,18 +52,18 @@
 <blockquote>We don’t want technical concepts to leak into the application model, so we write interfaces to describe its relationships with the outside world in its terminology (Cockburn’s ports ). Then we write bridges between the application core and each technical domain (Cockburn’s adapters ).
 <p>Pg. 90</blockquote></p>
 <p>The problem that Loaders attempt to solve, as I see it, is a technical one that doesn&rsquo;t belong in the Application Layer. To shield application layer objects from this technical detail, I&rsquo;ve created and pass around an Observable that, upon subscription, initializes a load from a Loader using a LoaderManager:</p>
-<script src="https://gist.github.com/kmdupr33/c6c1641ed1a24e07e062.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/c6c1641ed1a24e07e062.js"></script>
 
 <p>Rather than dealing with loaders directly, clients that want to consume the &ldquo;loaded&rdquo; data subscribe to the <code>Observable</code> that&rsquo;s created with a <code>LoaderInitializingOnSubscribe</code>. In my application, Activities/Fragments/Presenters will not interact with this Observable directly, however. Instead, they&rsquo;ll interact with a StoryRepository that will (eventually) be responsible for deciding whether data gets loaded from the cache or from the network. Here&rsquo;s what that class looks like at the moment:</p>
-<script src="https://gist.github.com/kmdupr33/378997639d5bac95a392.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/378997639d5bac95a392.js"></script>
 
 <p>And here&rsquo;s a relevant snippet of the Fragment that uses this class to load the HackerNews data:</p>
-<script src="https://gist.github.com/kmdupr33/fb1c638f2fdbe6a8bd68.js"></script>
+<script type="application/javascript" src="https://gist.github.com/kmdupr33/fb1c638f2fdbe6a8bd68.js"></script>
 
 <p>If you want to have a closer look at what I&rsquo;ve done, feel free to take a look at <a href="https://github.com/kmdupr33/PhilHackerNews"target="_blank" rel="noopener noreferrer">the repo for this project</a>.</p></article><section class="article labels"><a class="category" href=/categories/Android/>Android</a><a class="tag" href=/tags/android/>android</a><a class="tag" href=/tags/testing/>testing</a></section>
 </div>
 <div class="article bottom"><section class="article navigation"><p><a class="link" href="/2016/01/13/should-we-use-mocking-libraries-for-go-testing/"><span class="iconfont icon-article"></span>Should we use mocking libraries for go testing?</a></p><p><a class="link" href="/2015/07/14/why-static-references-to-application-contexts-are-probably-not-the-best-idea/"><span class="iconfont icon-article"></span>Why Having Global Static References to Application Contexts is Probably not the Best Idea</a></p></section><section class="article discussion"><div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     window.disqus_config = function () {
     
     
@@ -83,7 +83,7 @@
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a></section></div></section><section id="footer"><div style="display: flex; flex-direction: row; justify-content: center;">
   <p>
-    &copy; 2025 Matt Dupree
+    &copy; 2026 Matt Dupree
   </p>
 </div>
 </section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
